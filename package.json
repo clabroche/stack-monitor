@@ -1,0 +1,30 @@
+{
+  "name": "@iryu54/stack-monitor",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "bin": {
+    "stack-monitor": "./bundle.js"
+  },
+  "scripts": {
+    "makeExecutable": "node ./post-build.js",
+    "build": "webpack && npm run makeExecutable",
+    "start": "npm run build && node bundle.js"
+  },
+  "files": [
+    "package.json",
+    "bundle.js",
+    "README.md"
+  ],
+  "devDependencies": {
+    "blessed-vue": "2.0.1",
+    "vue-loader": "13.7.0",
+    "vue": "2.5.13",
+    "vue-template-compiler": "2.5.13",
+    "webpack": "^2.3.3",
+    "webpack-node-externals": "^1.5.4"
+  },
+  "dependencies": {
+    "pidusage-tree": "^2.0.5"
+  }
+}
