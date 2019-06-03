@@ -76,7 +76,7 @@ module.exports = [
 ]
 ```
 This will show: 
-![Menu](./1.png)
-![Menu](./2.png)
-![Menu](./3.png)
-![Menu](./4.png)
+![Menu](https://raw.githubusercontent.com/clabroche/stack-monitor/master/1.png)
+![Menu](https://raw.githubusercontent.com/clabroche/stack-monitor/master/2.png)
+![Menu](https://raw.githubusercontent.com/clabroche/stack-monitor/master/3.png)
+![Menu](https://raw.githubusercontent.com/clabroche/stack-monitor/master/4.png)
