@@ -1,11 +1,11 @@
 {
   "name": "@iryu54/stack-monitor",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": "index.js",
   "license": "MIT",
   "repository": {
-    "type" : "git",
-    "url" : "https://github.com/clabroche/stack-monitor.git"
+    "type": "git",
+    "url": "https://github.com/clabroche/stack-monitor.git"
   },
   "bin": {
     "stack-monitor": "./bundle.js"
