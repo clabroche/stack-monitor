@@ -30,5 +30,18 @@
   },
   "dependencies": {
     "pidusage-tree": "^2.0.5"
-  }
+  },
+  "keywords": [
+    "stack",
+    "monitoring",
+    "stack-monitor",
+    "bash",
+    "zsh",
+    "terminal",
+    "blessed",
+    "blessed-contrib",
+    "vue",
+    "vuejs",
+    "git"
+  ]
 }
