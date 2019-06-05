@@ -31,7 +31,6 @@ export default {
   methods: {
     watchSystem() {
       this.interval = setInterval(async() => {
-        console.log(Math.random())
         if(!this.project.pid) return 
         try {
           const system = await this.getCPU(this.project.pid)

@@ -1,14 +1,26 @@
 import Vue from 'blessed-vue'
-import Main from './Main.vue'
+import Main from './cli/Main.vue'
 import colors from 'colors'
-const el = Vue.dom.createElement()
 
-Vue.dom.append(el)
+if(process.argv[3] === '--gui') {
+  launchView()
+} else {
+  launchCli()
+}
 
-const instance = new Vue({
-  name: 'app',
-  components: {
-    'main': Main
-  },
-  template: '<main />'
-}).$mount(el)
+
+function launchCli() {
+  const el = Vue.dom.createElement()
+  Vue.dom.append(el)
+  new Vue({
+    name: 'app',
+    components: {
+      'main': Main
+    },
+    template: '<main />'
+  }).$mount(el)
+}
+
+function launchView() {
+
+}

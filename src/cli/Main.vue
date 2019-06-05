@@ -15,7 +15,7 @@ import MultipleViewVue from './views/MultipleView.vue';
 import path from 'path'
 import StackChooserVue from './views/StackChooser.vue';
 import {spawn} from 'child_process'
-import SpawnStore from './spawn.store'
+import SpawnStore from '../spawn.store'
 
 export default {
   name: 'main',
