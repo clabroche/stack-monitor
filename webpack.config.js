@@ -1,7 +1,9 @@
 var nodeExternals = require('webpack-node-externals')
 
 module.exports = {
-  entry: './src/index.js',
+  entry: {
+    cli: './src/index.js'
+  },
   output: {
     filename: 'bundle.js',
     libraryTarget: 'commonjs'

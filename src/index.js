@@ -1,8 +1,7 @@
-import Vue from 'blessed-vue'
-import Main from './cli/Main.vue'
+import VueBlessed from 'blessed-vue'
+import MainCli from './cli/Main.vue'
 import colors from 'colors'
-
-if(process.argv[3] === '--gui') {
+if(process.argv.includes('--gui')) {
   launchView()
 } else {
   launchCli()
@@ -10,17 +9,17 @@ if(process.argv[3] === '--gui') {
 
 
 function launchCli() {
-  const el = Vue.dom.createElement()
-  Vue.dom.append(el)
-  new Vue({
+  const el = VueBlessed.dom.createElement()
+  VueBlessed.dom.append(el)
+  new VueBlessed({
     name: 'app',
     components: {
-      'main': Main
+      'main': MainCli
     },
     template: '<main />'
   }).$mount(el)
 }
 
-function launchView() {
-
+async function launchView() {
+  require('./gui/server/bin/www')
 }

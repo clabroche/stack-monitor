@@ -58,24 +58,37 @@ export default {
   },
   mounted() {
     this.updateGit()
-    this.interval = setInterval(() => {
-      this.updateGit()
-    }, 5000);
+    setTimeout(this.updateGit, 100)
+    this.interval = setInterval(this.updateGit, 5000);
   },
   beforeDestroy() {
     clearInterval(this.interval)
   },
   methods: {
-    updateGit() {
+    async updateGit() {
       if(!this.project || !this.project.spawnOptions) return
       this.$set(this.project, 'git', {
-        branch: cp.execSync('git branch', {
-          cwd: this.project.spawnOptions.cwd
-        }).toString().split('\n'),
-        status: cp.execSync('git status -s', {
-          cwd: this.project.spawnOptions.cwd
-        }).toString().split('\n')
+        branch: await this.branches(),
+        status: await this.status()
       })
+    },
+    branches() {
+      return new Promise((resolve, reject) => {
+        cp.exec('git branch', {
+          cwd: this.project.spawnOptions.cwd
+        }, (err, stdout, stderr) => {
+          resolve(stdout.toString().split('\n'))
+        })
+      });
+    },
+    status() {
+      return new Promise((resolve, reject) => {
+        cp.exec('git status -s', {
+          cwd: this.project.spawnOptions.cwd
+        }, (err, stdout, stderr) => {
+          resolve(stdout.toString().split('\n'))
+        })
+      });
     }
   }
 }

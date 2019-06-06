@@ -22,13 +22,18 @@
   ],
   "devDependencies": {
     "blessed-vue": "2.0.1",
+    "vue": "^2.5.13",
     "vue-loader": "13.7.0",
-    "vue": "2.5.13",
     "vue-template-compiler": "2.5.13",
     "webpack": "^2.3.3",
     "webpack-node-externals": "^1.5.4"
   },
   "dependencies": {
+    "cookie-parser": "^1.4.4",
+    "debug": "^4.1.1",
+    "express": "^4.17.1",
+    "morgan": "^1.9.1",
+    "open": "^6.3.0",
     "pidusage-tree": "^2.0.5"
   },
   "keywords": [
