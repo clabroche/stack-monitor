@@ -22,7 +22,6 @@
     "README.md"
   ],
   "devDependencies": {
-    "blessed-vue": "2.0.1",
     "vue": "^2.5.13",
     "vue-loader": "13.7.0",
     "vue-template-compiler": "2.5.13",
@@ -30,6 +29,7 @@
     "webpack-node-externals": "^1.5.4"
   },
   "dependencies": {
+    "blessed-vue": "2.0.1",
     "cookie-parser": "^1.4.4",
     "debug": "^4.1.1",
     "express": "^4.17.1",
