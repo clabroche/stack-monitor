@@ -4,8 +4,12 @@
       :top="$root.getPosition(0)" :left="$root.getPosition(1)" v-if="project">
     <box
       border="line" :content='project.label' :scrollable="true" :mouse="true" :alwaysScroll="true" :scrollbar="{style: { bg: 'yellow' }}"
-      :width="$root.getPosition(11)" :height="$root.getPosition(1)"
+      :width="$root.getPosition(10)" :height="$root.getPosition(1)"
       :top="$root.getPosition(0)" :left="$root.getPosition(0)"/>
+    <box
+      border="line" content="Open VsCode" :mouse="true" @click="vscode" align='center' valign='middle'
+      :width="$root.getPosition(1)" :height="$root.getPosition(1)"
+      :top="$root.getPosition(0)" :left="$root.getPosition(10)"/>
     <box ref="stdout" label="Output"
       border="line" :content='project.store' :scrollable="true" :mouse="true" :alwaysScroll="true" :scrollbar="{style: { bg: 'yellow' }}"
       :width="$root.getPosition(8)" :height="$root.getPosition(9)"
@@ -89,6 +93,9 @@ export default {
           resolve(stdout.toString().split('\n'))
         })
       });
+    },
+    vscode() {
+      cp.exec('code .', {cwd: this.project.spawnOptions.cwd})
     }
   }
 }
