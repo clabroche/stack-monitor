@@ -14,7 +14,7 @@
     "makeExecutable": "node ./post-build.js",
     "build": "webpack && npm run makeExecutable",
     "start": "npm run build && node bundle.js",
-    "prepublish": "npm i && npm run build"
+    "prepublishOnly": "npm i && npm run build"
   },
   "files": [
     "package.json",
