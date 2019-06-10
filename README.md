@@ -1,4 +1,6 @@
 # Stack Monitor
+![vulnerabilities](./badge-audit.svg)
+
 Monitor processes as a stack
 
 ## Install
