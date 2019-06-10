@@ -14,7 +14,8 @@
     "makeExecutable": "node ./post-build.js",
     "build": "webpack && npm run makeExecutable",
     "start": "npm run build && node bundle.js",
-    "prepublishOnly": "npm i && npm run build"
+    "prepublishOnly": "npm i && npm run build",
+    "version": "badge-audit > ./badge-audit.svg"
   },
   "files": [
     "package.json",
@@ -29,6 +30,7 @@
     "webpack-node-externals": "^1.5.4"
   },
   "dependencies": {
+    "@iryu54/badge-audit": "^1.0.1",
     "blessed-vue": "2.0.1",
     "cookie-parser": "^1.4.4",
     "debug": "^4.1.1",
