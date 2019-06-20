@@ -23,7 +23,7 @@ export default {
   props: {
     stack: {default: _ => ([])}
   },
-  mounted() {
+  created() {
     this.currentProject = this.stack[0]
   },
   methods: {

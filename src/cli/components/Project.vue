@@ -10,7 +10,7 @@
       border="line" content="Open VsCode" :mouse="true" @click="vscode" align='center' valign='middle'
       :width="$root.getPosition(1)" :height="$root.getPosition(1)"
       :top="$root.getPosition(0)" :left="$root.getPosition(10)"/>
-    <box ref="stdout" label="Output"
+    <box ref="stdout" label="Output" 
       border="line" :content='project.store' :scrollable="true" :mouse="true" :alwaysScroll="true" :scrollbar="{style: { bg: 'yellow' }}"
       :width="$root.getPosition(8)" :height="$root.getPosition(9)"
       :top="$root.getPosition(1)" :left="$root.getPosition(0)"/>
@@ -46,23 +46,24 @@ export default {
     'system': SystemVue
   },
   watch: {
+    project() {
+      this.updateGit()
+    },
     'project.store'() {
       setTimeout(async () => {
-      this.$refs.stdout.setScrollPerc(0)
-      await this.$nextTick()
-      this.$forceUpdate()
-      this.$refs.stdout.setScrollPerc(100)
-      }, 10);
+        this.$refs.stdout.setScrollPerc(0)
+        await this.$nextTick()
+        this.$refs.stdout.setScrollPerc(100)
+      });
     },
   },
-  data: () => {
+  data() {
     return {
       systemData: []
     }
   },
-  mounted() {
+  created() {
     this.updateGit()
-    setTimeout(this.updateGit, 100)
     this.interval = setInterval(this.updateGit, 5000);
   },
   beforeDestroy() {
