@@ -15,7 +15,7 @@
       :width="$root.getPosition(8)" :height="$root.getPosition(9)"
       :top="$root.getPosition(1)" :left="$root.getPosition(0)"/>
     <box border="line" content='Clear' :mouse="true" align="center" @click="clear()"
-      :width="$root.getPosition(1)" :height="$root.getPosition(2)"
+      :width="$root.getPosition(1)" :height="$root.getPosition(1)"
       :top="$root.getPosition(1)" :left="$root.getPosition(7)"/>
     <box :width="$root.getPosition(3)" :height="$root.getPosition(4)" label="Git branches" v-if="project.git" :scrollable="true" :mouse="true" :alwaysScroll="true" :scrollbar="{style: { bg: 'yellow' }}"
       :top="$root.getPosition(1)" :left="$root.getPosition(8)" border="line">
