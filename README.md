@@ -1,10 +1,8 @@
 # Stack Monitor
-![vulnerabilities](./badge-audit.svg)
-
-Monitor processes as a stack
+Monitor processes as a stack 
+(Tested only on linux) 
 
 ## Install
-
 ``` npm i -g @iryu54/stack-monitor ```
 
 
@@ -36,7 +34,6 @@ stack-monitor <path/to/my/config>
 ```
 
 ## Examples
-
 This stack is composed of a vue client, an express server and a mongo database
 
 ``` javascript 
@@ -46,7 +43,7 @@ module.exports = [
     spawnCmd: 'npm',
     spawnArgs: ['run', 'start'],
     spawnOptions: {
-      cwd:  '/home/coco/demo-stack/server',
+      cwd:  '/home/coco/Projects/demo-stack/server',
       env: Object.assign({
         PORT:"3006",
         mongoDbURL:`mongodb://root:123456@localhost:27017/test?authSource=admin`,
@@ -58,7 +55,7 @@ module.exports = [
     spawnCmd: 'npm',
     spawnArgs: ['run', 'serve'],
     spawnOptions: {
-      cwd:  '/home/coco/demo-stack/client',
+      cwd:  '/home/coco/Projects/demo-stack/client',
       env: process.env
     }
   },
@@ -78,7 +75,6 @@ module.exports = [
 ]
 ```
 This will show: 
-![Menu](https://raw.githubusercontent.com/clabroche/stack-monitor/master/1.png)
-![Menu](https://raw.githubusercontent.com/clabroche/stack-monitor/master/2.png)
-![Menu](https://raw.githubusercontent.com/clabroche/stack-monitor/master/3.png)
-![Menu](https://raw.githubusercontent.com/clabroche/stack-monitor/master/4.png)
+![Menu](https://raw.githubusercontent.com/clabroche/stack-monitor/master/README/1.png)
+![Menu](https://raw.githubusercontent.com/clabroche/stack-monitor/master/README/2.png)
+
