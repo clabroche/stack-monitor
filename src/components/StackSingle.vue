@@ -68,7 +68,8 @@
             <div class="title">Status</div>
             <div class="content">
               <ul>
-                <li v-for="(status, i) of Git.status" :key="'status-' + i">{{status}}</li>
+                <li v-for="(status, i) of Git.status" :key="'status-' + i" v-html="colorStatus(status)">
+                </li>
               </ul>
             </div>
           </div>
@@ -128,6 +129,20 @@ export default {
     clearInterval(this.interval)
   },
   methods: {
+    colorStatus(status) {
+      status = status.trim()
+      if(status.charAt(0) === 'D') {
+        status = '<span style="color: #ff7f7f; font-weight: bold">D</span>' + status.slice(1) 
+      }
+      if(status.charAt(0) === 'M') {
+        status = '<span style="color: #ffe47f; font-weight: bold">M</span>' + status.slice(1) 
+      }
+      if(status.charAt(0) === '?') {
+        status = '<span style="color: #7fe1ff; font-weight: bold">??</span>' + status.slice(2) 
+
+      }
+      return status
+    },
     openInVsCode() {
       Stack.openInVsCode(this.currentService.label)
     },
