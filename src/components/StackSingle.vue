@@ -35,14 +35,14 @@
               Mem:
               <div class="container">    
                 <div class="progress2 progress-moved">
-                  <div class="progress-bar2" :style="{width: +System.infos.cpu.toFixed(2) + '%'}">
+                  <div class="progress-bar2" :style="{width: System.infos.cpu ? +System.infos.cpu.toFixed(2) + '%' : 0}">
                   </div>                       
                 </div> 
               </div>
               CPU:
               <div class="container">    
                 <div class="progress2 progress-moved">
-                  <div class="progress-bar2" :style="{width: +System.infos.mem.toFixed(2) + '%'}">
+                  <div class="progress-bar2" :style="{width: System.infos.mem ? +System.infos.mem.toFixed(2) + '%' : 0}">
                   </div>                       
                 </div> 
               </div>
@@ -50,6 +50,7 @@
             <div class="actions">
               <!-- <button @click="restart">Restart</button> -->
               <button @click="openInVsCode">Open in VsCode</button>
+              <a :href="currentService.port" :target="currentService.label"><button v-if="currentService.port">{{currentService.port}}</button></a>
             </div>
           </div>
         </div>
@@ -94,6 +95,7 @@ import Stack from '../models/stack'
 import System from '../models/system'
 import Git from '../models/git'
 import LogsVue from './Logs.vue';
+import Socket from '../helpers/socket'
 export default {
   name: 'StackSingle',
   components: {
@@ -104,7 +106,8 @@ export default {
       Stack,
       Git,
       System,
-      currentService: null
+      currentService: null,
+      port:''
     }
   },
   watch: {
@@ -117,7 +120,11 @@ export default {
   async mounted() {
     await Stack.getCurrentStack()
     if(!this.currentService) this.currentService = Stack.stack[0]
-    
+    Socket.on('port:update', data => {
+      console.log('port')
+      if(data.label !== this.service.label) return 
+      this.currentService.port = data.msg
+    })
     this.interval = setInterval(async () => {
       await Git.getBranches(this.currentService.label)
       await Git.getStatus(this.currentService.label)
@@ -218,7 +225,10 @@ export default {
       box-sizing: border-box;
       background-color: rgba(0,0,0,0.4);
       color: white;
-
+      .actions {
+        display: flex;
+        flex-direction: column;
+      }
       .title {
         font-size: 1.4em;
         margin-bottom: 20px;
