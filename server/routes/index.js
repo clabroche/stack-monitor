@@ -188,12 +188,29 @@ function launchService(microservice) {
   microservice.pid = SpawnStore[microservice.label].pid
   SpawnStore[microservice.label].stdout.on('data', data => {
     const line = data.toString()
+    findURL(microservice)
     microservice.store += line
     Socket.socket.emit('logs:update', {msg: line, label: microservice.label})
   })
   SpawnStore[microservice.label].stderr.on('data', data => {
     const line = data.toString().red
+    findURL(microservice)
     microservice.store += line
     Socket.socket.emit('logs:update', {msg: line, label: microservice.label})
   })
+}
+
+function findURL(microservice) {
+  const text = microservice.store.replace(
+    /[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g, '');
+  const regex = /^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/g
+  if(!regex.exec(text)) {
+    const regexLocal = /(https|http):\/\/localhost:[0-9]*/g
+    const resLocal = regexLocal.exec(text)
+    if(resLocal) {
+      microservice.port = resLocal[0]
+      console.log(microservice.port)
+      Socket.socket.emit('port:update', {msg: microservice.port, label: microservice.label})
+    }
+  }
 }
