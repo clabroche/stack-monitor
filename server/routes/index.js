@@ -9,56 +9,48 @@ const os = require('os')
 const SpawnStore = {}
 require('colors')
 /* GET home page. */
-router.get('/stack/configuration', function(req, res, next) {
+router.get('/stack/configuration', function(req, res) {
   res.json(Stack.stackConfig)
 });
-router.post('/stack/choose', function(req, res, next) {
+router.post('/stack/choose', function(req, res) {
   Stack.stack = req.body
   launch()
   res.json(Stack.stack)
 });
-router.get('/stack', function(req, res, next) {
+router.get('/stack', function(req, res) {
   res.json(Stack.stack)
 });
 
-router.get('/stack/:service/logs', function(req, res, next) {
+router.get('/stack/:service/logs', function(req, res) {
   const service = findService(req.params.service)
   res.send(service ? service.store : '')
 });
-router.delete('/stack/:service/logs', function(req, res, next) {
+router.delete('/stack/:service/logs', function(req, res) {
   const service = findService(req.params.service)
-  console.log(req.params.service)
   service.store = ''
   res.send(service ? service.store : '')
 });
-router.get('/stack/:service/open-in-vs-code', function(req, res, next) {
+router.get('/stack/:service/open-in-vs-code', function(req, res) {
   const service = findService(req.params.service)
   exec('code .', {cwd: service.spawnOptions.cwd})
   res.send()
 });
-router.get('/stack/:service/restart', async function(req, res, next) {
+router.get('/stack/:service/restart', async function(req, res) {
   const service = findService(req.params.service)
-  const pid = SpawnStore[service.label].pid
   SpawnStore[service.label].kill('SIGQUIT')
   SpawnStore[service.label].kill('SIGTERM')
   SpawnStore[service.label].kill('SIGINT')
   SpawnStore[service.label].kill('SIGKILL')
-  // exec('kill -9 ' + pid)
-  // console.log(await netstat(pid))
-  // console.log('kill -9 ' + pid, service.pid)
   await new Promise(resolve => setTimeout(resolve, 100))
   launchService(service)
   res.send()
 });
 
-router.get('/system/infos', async function(req, res, next) {
-  
-})
-router.get('/git/:service/branches', async function(req, res, next) {
+router.get('/git/:service/branches', async function(req, res) {
   const service = findService(req.params.service)
   res.json(await getBranches(service))
 })
-router.get('/git/:service/status', async function(req, res, next) {
+router.get('/git/:service/status', async function(req, res) {
   const service = findService(req.params.service)
   res.json(await getStatus(service))
 })
@@ -69,7 +61,7 @@ setInterval(() => {
     cpuUsage = v
   })
 }, 1100);
-router.get('/system/global-infos', async function(req, res, next) {
+router.get('/system/global-infos', async function(req, res) {
   const ram = await getRam()
   try {
     res.json({
@@ -83,7 +75,7 @@ router.get('/system/global-infos', async function(req, res, next) {
     res.json({cpu: null, mem: null, memPercentage:null, freemem:null, totalmem:null})
   }
 })
-router.get('/system/:service/infos', async function(req, res, next) {
+router.get('/system/:service/infos', async function(req, res) {
   try {
     const service = findService(req.params.service)
     res.json(await getCPU(SpawnStore[service.label].pid))
@@ -91,12 +83,12 @@ router.get('/system/:service/infos', async function(req, res, next) {
     res.json({cpu: null, mem: null})
   }
 })
-router.get('/system/disconnect', async function(req, res, next) {
+router.get('/system/disconnect', async function() {
   process.exit(0)
 })
 
 async function getRam() {
-  const line = await new Promise((resolve, reject) => {
+  const line = await new Promise(resolve => {
     exec('free -t --mega | grep Total', (err, stdout) => resolve(stdout))
   });
   const regex = /\d+/gm;
@@ -114,7 +106,7 @@ async function getRam() {
   }
 }
 async function getCPU(pid) {
-  const tree = await pidusageTree(pid).catch(err => {
+  const tree = await pidusageTree(pid).catch(() => {
     return null
   })
   let cpus = []
@@ -139,21 +131,21 @@ async function getCPU(pid) {
 
 function getBranches(project) {
   if(!project) return []
-  return new Promise((resolve, reject) => {
+  return new Promise(resolve => {
     exec('git branch', {
       cwd: project.spawnOptions.cwd
-    }, (err, stdout, stderr) => {
+    }, (err, stdout) => {
       resolve(stdout.toString().trim().split('\n'))
     })
   });
 }
 
 function getStatus(project) {
-  return new Promise((resolve, reject) => {
+  return new Promise(resolve => {
     if(!project) return resolve([])
     exec('git status -s', {
       cwd: project.spawnOptions.cwd
-    }, (err, stdout, stderr) => {
+    }, (err, stdout) => {
       resolve(stdout.toString().trim().split('\n'))
     })
   });
@@ -166,51 +158,26 @@ function findService(serviceLabel) {
 module.exports = router;
 const {spawn} = require('child_process')
 function launch() {
-  Stack.stack.map((microservice, i) => {
+  Stack.stack.map(microservice => {
     microservice.store = ''
     launchService(microservice)
   })
 }
 
-function netstat(pid) {
-  return new Promise((resolve, reject) => {
-    exec('netstat -tulpn | grep ' + pid, (err, stdout) => {
-      resolve(stdout)
-    })
-  });
-}
 function launchService(microservice) {
   microservice.spawnOptions = microservice.spawnOptions || {}
   microservice.spawnOptions.shell = true
-  // microservice.spawnOptions.stdio = 'inherit'
   SpawnStore[microservice.label] = spawn(microservice.spawnCmd, microservice.spawnArgs || [], microservice.spawnOptions)
   SpawnStore[microservice.label].title = microservice.label
   microservice.pid = SpawnStore[microservice.label].pid
   SpawnStore[microservice.label].stdout.on('data', data => {
     const line = data.toString()
-    findURL(microservice)
     microservice.store += line
     Socket.socket.emit('logs:update', {msg: line, label: microservice.label})
   })
   SpawnStore[microservice.label].stderr.on('data', data => {
     const line = data.toString().red
-    findURL(microservice)
     microservice.store += line
     Socket.socket.emit('logs:update', {msg: line, label: microservice.label})
   })
-}
-
-function findURL(microservice) {
-  const text = microservice.store.replace(
-    /[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g, '');
-  const regex = /^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/g
-  if(!regex.exec(text)) {
-    const regexLocal = /(https|http):\/\/localhost:[0-9]*/g
-    const resLocal = regexLocal.exec(text)
-    if(resLocal) {
-      microservice.port = resLocal[0]
-      console.log(microservice.port)
-      Socket.socket.emit('port:update', {msg: microservice.port, label: microservice.label})
-    }
-  }
 }
