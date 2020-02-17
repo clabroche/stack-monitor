@@ -121,7 +121,6 @@ export default {
     await Stack.getCurrentStack()
     if(!this.currentService) this.currentService = Stack.stack[0]
     Socket.on('port:update', data => {
-      console.log('port')
       if(data.label !== this.service.label) return 
       this.currentService.port = data.msg
     })
