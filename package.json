@@ -37,7 +37,10 @@
     "socket.io": "^2.2.0",
     "socket.io-client": "^2.2.0",
     "vue-router": "^3.0.3",
-    "xterm": "^3.14.5"
+    "vue-term": "^0.1.2",
+    "xterm": "^3.14.5",
+    "xterm-addon-attach": "^0.5.0",
+    "xterm-addon-fit": "^0.3.0"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.11.0",
@@ -64,7 +67,9 @@
       "plugin:vue/essential",
       "eslint:recommended"
     ],
-    "rules": {},
+    "rules": {
+      "no-console": "off"
+    },
     "parserOptions": {
       "parser": "babel-eslint"
     }
