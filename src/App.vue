@@ -17,12 +17,15 @@ export default {
 
 <style lang="scss">
 @import '~@fortawesome/fontawesome-free/css/all.min.css';
+@import './assets/fonts/Jost/Jost.css';
 body {
   margin: 0;
   width: 100vw;
   height: 100vh;
-  background-size: cover;
-  background: url(assets/background1.jpg) no-repeat center fixed;
+  background-color: #f4f4f4;
+  color: #4c4c4c;
+  font-size: 0.9em;
+  font-family: JOST;
   
   #app {
     width: 100vw;
@@ -35,12 +38,30 @@ body {
 button {
   padding: 10px;
   margin: 3px;
-  background-color: #d1aa41;
+  border-radius: 4px;
+  background-color: #0054bc;
   color: white;
   font-weight: bold;
   border:none;
+  transition: 300ms;
+  cursor: pointer;
+  box-sizing: border-box;
+  &:hover {
+    background-color: #194f91;
+    transform: scale(1.01);
+    box-shadow: 1px 1px 1px 1px rgba(0,0,0,0.5);
+  }
+  &.small {
+    padding: 5px;
+    font-size: 0.7em;
+  }
 }
+
 button.success {
   background-color: #41d143;
+  &:hover {
+    background-color: #258d27;
+  }
 }
+
 </style>

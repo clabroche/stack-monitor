@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import StackChooserVue from './components/StackChooser.vue'
-import StackSingle from './components/StackSingle.vue'
+import StackChooserVue from './views/StackChooser.vue'
+import StackSingle from './views/StackSingle.vue'
 
 Vue.use(Router)
 

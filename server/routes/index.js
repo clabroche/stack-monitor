@@ -6,5 +6,9 @@ router.use('/system', require('./system'))
 router.use('/stack', require('./stack'))
 router.use('/git', require('./git'))
 
+
+router.get('/version', async function (req, res) {
+  res.send(require('../../package.json').version)
+})
 module.exports = router;
 

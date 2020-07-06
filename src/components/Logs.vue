@@ -1,6 +1,5 @@
 <template>
   <div class="hello">
-    <!-- <vue-term v-if="service" ></vue-term> -->
     <div v-if="service" class="logs-container" ref="logsContainer" id="terminal">
     </div>
   </div>
@@ -9,7 +8,7 @@
 <script>
 import Stack from '../models/stack'
 import Socket from '../helpers/socket';
-import { Terminal } from 'xterm';
+import { Terminal } from 'xterm/lib/xterm';
 import { FitAddon } from 'xterm-addon-fit';
 
 export default {
@@ -26,16 +25,22 @@ export default {
     await new Promise(resolve=> setTimeout(resolve, 10));
     const terminal = new Terminal({
       experimentalCharAtlas: 'static',
-      columns: 12600,
-      theme: '',
       convertEol: true,
       disableStdin: true,
+      fontSize: 13,
+      theme: {
+        background: '#ffffff',
+        foreground: '#4c4c4c',
+        
+      }
+      
     });
     const fitAddon = new FitAddon();
     terminal.loadAddon(fitAddon);
     this.terminal = terminal
     terminal.open(this.$refs.logsContainer);
-    terminal.resize(100, terminal.rows)
+    fitAddon.activate(terminal)
+    fitAddon.fit();
     const logs = await Stack.getLogs(this.service.label)
     logs.split('\n').map(line => terminal.writeln(line))
     Socket.on('logs:update', data => {
@@ -62,8 +67,6 @@ export default {
   width: 100%;
 }
 .logs-container {
-  background-color: #000000;
-  color: white;
   width: 100%;
   margin: auto;
   height: 400px;
@@ -73,7 +76,7 @@ export default {
 
 </style>
 <style lang="scss">
-@import '~xterm/dist/xterm.css';
+@import '~xterm/css/xterm.css';
 
 
 </style>
