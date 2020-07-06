@@ -16,13 +16,23 @@
     "package.json"
   ],
   "scripts": {
-    "postinstall": "cd server && npm i",
     "build": "vue-cli-service build --dest server/public",
     "start": "server/bin/www",
     "lint": "vue-cli-service lint",
     "serve": "NODE_ENV=DEV concurrently --kill-others \"vue-cli-service serve\" \"nodemon server/bin/www $STACKFILE\""
   },
   "dependencies": {
+    "cookie-parser": "~1.4.4",
+    "colors": "^1.3.3",
+    "core-js": "^2.6.5",
+    "cors": "^2.8.5",
+    "debug": "^4.1.1",
+    "express": "^4.17.1",
+    "morgan": "~1.9.1",
+    "open": "^6.4.0",
+    "os-utils": "0.0.14",
+    "pidusage-tree": "^2.0.5",
+    "socket.io": "^2.2.0",
     "@fortawesome/fontawesome-free": "^5.13.1",
     "axios": "^0.19.2",
     "consola": "^2.14.0",
