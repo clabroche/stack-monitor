@@ -11,11 +11,17 @@ function System() {
     freemem: 0,
     memPercentage: 0
   }
+  this.version = '0.0.0'
 }
-System.prototype.getInfos = async function(serviceLabel) {
-  const {data: infos} = await axios.get('/system/'+serviceLabel+'/infos')
+System.prototype.getInfos = async function (serviceLabel) {
+  const { data: infos } = await axios.get('/system/' + serviceLabel + '/infos')
   this.infos = infos
   return this.infos
+}
+System.prototype.getVersion = async function () {
+  const { data: version } = await axios.get('/version')
+  this.version = version
+  return this.version
 }
 System.prototype.getGlobalInfos = async function() {
   const {data: globalInfos} = await axios.get('/system/global-infos')
