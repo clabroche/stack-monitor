@@ -11,7 +11,7 @@
   },
   "main": "server/bin/www",
   "files": [
-    "server",
+    "server/**/*",
     ".env.production",
     "package.json"
   ],
