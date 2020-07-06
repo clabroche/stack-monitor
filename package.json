@@ -16,7 +16,6 @@
     "package.json"
   ],
   "scripts": {
-    "prepublish": "npm run build",
     "postinstall": "cd server && npm i",
     "build": "vue-cli-service build --dest server/public",
     "start": "server/bin/www",
