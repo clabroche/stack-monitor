@@ -26,7 +26,6 @@ babel.config.js
 LICENSE
 package-lock.json
 src/
-node_modules
 README/
-public/
+/public/
 .github
