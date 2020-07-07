@@ -1,9 +1,9 @@
 <template>
-  <div v-if="Stack.stack" class="sidebar">
-      <ul v-if="currentService">
-        <li v-for="service of Stack.stack" :key="service.label"
-          @click="$emit('navigate', service)"
-          :class="currentService.label === service.label ? 'active': ''">
+  <div class="sidebar">
+      <ul v-if="stack && stack.length">
+        <li v-for="service of stack" :key="service.label"
+          @click="$router.push({name: 'stack-single', params: {label: service.label}})"
+          :class="isActive(service) ? 'active': ''">
             {{service.label}}
             <i class="fas fa-chevron-right"></i>
         </li>
@@ -39,8 +39,20 @@ export default {
   },
   data() {
     return {
-      Stack,
-      System
+      System,
+      stack: []
+    }
+  },
+  async mounted() {
+    this.stack = await Stack.getCurrentStack()
+    console.log(this.stack)
+  },
+  methods: {
+    /** @param {import('../models/stack').default} service*/
+    isActive(service) {
+      const url = this.$route.fullPath.split('?')[0]
+      const serviceLabel = url.split('/').pop()
+      return service.label === serviceLabel
     }
   }
 }

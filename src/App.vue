@@ -1,16 +1,21 @@
 <template>
   <div id="app">
+    <sidebar v-if="$route.name !== 'stack-chooser'"/>
     <router-view/>
   </div>
 </template>
 
 <script>
 import Stack from './models/stack'
+import sidebarVue from './components/sidebar.vue'
 export default {
+  components: {
+    sidebar: sidebarVue
+  },
   async mounted() {
     const stack = await Stack.getCurrentStack()
     if(!stack.length && this.$route.name !== 'stack-chooser') this.$router.push({name:'stack-chooser'})
-    if(stack.length && this.$route.name !== 'stack-single') this.$router.push({name:'stack-single'})
+    if(stack.length && this.$route.name !== 'stack-single') this.$router.push({name:'stack-single', params: {label: stack[0].label}})
   }
 }
 </script>
@@ -30,6 +35,7 @@ body {
   #app {
     width: 100vw;
     height: 100vh;
+    overflow: hidden;
     display: flex;
     justify-content: center;
     align-items: center;

@@ -1,5 +1,5 @@
 <template>
-  <div class="hello">
+  <div class="hello" v-scroll-stop>
     <div v-if="service" class="logs-container" ref="logsContainer" id="terminal">
     </div>
   </div>
@@ -41,7 +41,7 @@ export default {
     terminal.open(this.$refs.logsContainer);
     fitAddon.activate(terminal)
     fitAddon.fit();
-    const logs = await Stack.getLogs(this.service.label)
+    const logs = await this.service.getLogs()
     logs.split('\n').map(line => terminal.writeln(line))
     Socket.on('logs:update', data => {
       if(data.label !== this.service.label || !data.msg) return 
