@@ -60,6 +60,17 @@ button {
   &.small {
     padding: 5px;
     font-size: 0.7em;
+    width: 70px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    i {
+      margin-right: 5px;
+    }
+    .text {
+      flex-grow: 1;
+      text-align: center;
+    }
   }
 }
 

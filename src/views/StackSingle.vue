@@ -16,7 +16,7 @@
         </div>
       </div>
       <div class="sections">
-        <section-cmp header="System load by this service">
+        <section-cmp header="System load by this service" :actions="[{label: 'Restart', click: () => restart(), icon: 'fas fa-trash'}]">
           <div class="systemInfos">
             <div class="progress-container">
               <label>Mem</label>
@@ -171,16 +171,16 @@ export default {
       return status
     },
     openInVsCode() {
-      Stack.openInVsCode(this.currentService.label)
+      this.currentService.openInVsCode()
     },
     openFolder() {
-      Stack.openFolder(this.currentService.label)
+      this.currentService.openFolder()
     },
     restart() {
-      Stack.restart(this.currentService.label)
+      this.currentService.restart()
     },
     clear() {
-      Stack.clear(this.currentService.label)
+      this.currentService.clear()
     }
   }
 }
