@@ -82,7 +82,6 @@ Stack.prototype.reset = async function () {
 
 Stack.prototype.checkoutFile = async function (file) {
   file = encodeURIComponent(file)
-  console.log(file)
   await axios.delete('/git/' + this.label + '/checkout/' + file)
 }
 
