@@ -17,6 +17,7 @@
   ],
   "scripts": {
     "build": "vue-cli-service build --dest server/public",
+    "launchExamples": "cd example/front/ && npm ci && cd ../server && npm ci && cd .. && node ../server/bin/www ./stack.js",
     "start": "server/bin/www",
     "lint": "vue-cli-service lint",
     "serve:server": "NODE_ENV=DEV nodemon server/bin/www $STACKFILE",
