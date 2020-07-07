@@ -103,6 +103,8 @@ function onListening() {
   var bind = typeof addr === 'string'
     ? 'pipe ' + addr
     : 'port ' + addr.port;
-  require('open')('http://localhost:'+port)
+  if (process.env.NODE_ENV === "DEV") {
+    require('open')('http://localhost:'+port)
+  }
   console.log('Magic happens on ' + bind);
 }
