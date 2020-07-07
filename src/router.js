@@ -15,7 +15,7 @@ export default new Router({
       component: StackChooserVue
     },
     {
-      path: '/stack-single',
+      path: '/stack-single/:label',
       name: 'stack-single',
       component: StackSingle
     },

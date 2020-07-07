@@ -1,10 +1,22 @@
 <template>
-  <div class="stack-single">
-    <sidebar @navigate="currentService = $event" :currentService="currentService"></sidebar>
-    <div class="main" v-if="currentService">
-      <div class="header">{{currentService.label}}</div>
+  <div class="stack-single" v-if="currentService" :key="$route.params.label">
+    <div class="main">
+      <div class="header">
+        <div class="left">
+          <div class="title">{{currentService.label}}</div>
+          <div class="description">{{currentService.description}}</div>
+        </div>
+        <div class="right">
+          <div class="icons">
+            <a v-if="currentService.git && currentService.git.home" :href="currentService.git.home" target="_blank" title="Open git home"><i class="fab fa-github"></i></a>
+            <a v-if="currentService.url" :href="currentService.url" target="_blank" title="Open service URL"><i class="fas fa-globe"></i></a>
+            <i v-if="currentService.spawnOptions && currentService.spawnOptions.cwd" class="fas fa-file-code" title="Open in Visual Studio Code" @click="openInVsCode()"></i>
+            <i v-if="currentService.spawnOptions && currentService.spawnOptions.cwd" class="fas fa-folder" title="Open folder" @click="openFolder()"></i>
+          </div>
+        </div>
+      </div>
       <div class="sections">
-        <section-cmp :actions="[{label: 'Open in VsCode', icon: 'fas fa-open', click: () => openInVsCode()}]" header="System load by this service">
+        <section-cmp header="System load by this service">
           <div class="systemInfos">
             <div class="progress-container">
               <label>Mem</label>
@@ -17,15 +29,15 @@
           </div>
         </section-cmp>
 
-        <div class="git-section">
-          <section-cmp v-if="Git.branches.length" :key="currentService.label" header="Branches">
-            <ul>
-              <li v-for="(branch, i) of Git.branches" :key="'branch' +i">{{branch}}</li>
+        <div class="git-section" v-if="currentService.git && currentService.git.remote">
+          <section-cmp v-if="git.branches.length" :key="currentService.label" header="Branches">
+            <ul class="branches">
+              <li v-for="(branch, i) of git.branches" :key="'branch' +i">{{branch}} <i class="fas fa-chevron-right"></i></li>
             </ul>
           </section-cmp>
-          <section-cmp v-if="Git.status.length" header="Status">
+          <section-cmp v-if="git.status.length" header="Status">
             <ul>
-              <li v-for="(status, i) of Git.status" :key="'status-' + i" v-html="colorStatus(status)">
+              <li v-for="(status, i) of git.status" :key="'status-' + i" v-html="colorStatus(status)">
               </li>
             </ul>
           </section-cmp>
@@ -42,46 +54,43 @@
 <script>
 import Stack from '../models/stack'
 import System from '../models/system'
-import Git from '../models/git'
-import Socket from '../helpers/socket'
 import LogsVue from '../components/Logs.vue';
 import ProgressVue from '../components/Progress.vue';
-import sidebarVue from '../components/sidebar.vue';
 import SectionVue from '../components/Section.vue'
 export default {
   name: 'StackSingle',
   components: {
     logs: LogsVue,
     progressCmp: ProgressVue,
-    sidebar: sidebarVue,
     sectionCmp: SectionVue
   },
   data() {
     return {
-      Stack,
-      Git,
+      stack: [],
+      git: {
+        branches: [],
+        status: [],
+      },
       System,
+      /** @type {import('../models/stack').default}*/
       currentService: null,
       port:''
     }
   },
   watch: {
-    async currentService() {
-      if(!this.currentService) return 
-      await Git.getBranches(this.currentService.label)
-      await Git.getStatus(this.currentService.label)
+    async '$route.params.label'() {
+      this.currentService = new Stack({label: this.$route.params.label})
+      await this.currentService.fetch()
+      if (this.currentService.git) {
+        this.updateGit()
+      }
     }
   },
   async mounted() {
-    await Stack.getCurrentStack()
-    if(!this.currentService) this.currentService = Stack.stack[0]
-    Socket.on('port:update', data => {
-      if(data.label !== this.service.label) return 
-      this.currentService.port = data.msg
-    })
+    this.currentService = new Stack({label: this.$route.params.label})
+    await this.currentService.fetch()
     this.interval = setInterval(async () => {
-      await Git.getBranches(this.currentService.label)
-      await Git.getStatus(this.currentService.label)
+      await this.updateGit()
       await System.getInfos(this.currentService.label)
       await System.getGlobalInfos()
     }, 1000);
@@ -90,6 +99,11 @@ export default {
     clearInterval(this.interval)
   },
   methods: {
+    async updateGit() {
+      this.git.branches = await this.currentService.getBranches(this.currentService.label)
+      this.git.status = await this.currentService.getStatus(this.currentService.label)
+      
+    },
     colorStatus(status) {
       status = status.trim()
       if(status.charAt(0) === 'D') {
@@ -106,6 +120,9 @@ export default {
     },
     openInVsCode() {
       Stack.openInVsCode(this.currentService.label)
+    },
+    openFolder() {
+      Stack.openFolder(this.currentService.label)
     },
     restart() {
       Stack.restart(this.currentService.label)
@@ -124,22 +141,50 @@ export default {
   width: 100%;
   .main {
     height: calc(100vh);
-    width: 90%;
+    width: calc(100vw - 150px);
     margin: auto;
     overflow: auto;
     scroll-behavior: smooth;
     .header {
-      font-size: 2em;
       width: 100%;
+      height: 85px;
       text-align: center;
-      height: 60px;
       display: flex;
-      align-items: center;
-      padding: 0 calc(5% + 10px);
+      justify-content: space-between;
+      padding: 10px calc(5% + 10px);
       font-weight: 700;
       position: relative;
       color: white;
+      text-align: left;
       box-sizing: border-box;
+      .left {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        .title {
+          font-size: 2em;
+        }
+        .description {
+          color: #97d8ff;
+          font-weight: 500;
+        }
+      }
+      .right {
+        display: flex;
+        justify-content: flex-end;
+        align-items: flex-end;
+        flex-shrink: 0;
+        i {
+          color: white;
+          font-size: 1.4em;
+          margin: 0 5px;
+          transition: 300ms;
+          cursor: pointer;
+          &:hover {
+            transform: scale(1.1);
+          }
+        }
+      }
       &::before {
         content: '';
         z-index: -1;
@@ -151,7 +196,6 @@ export default {
         background-color: #0076bc;
         width: 100%;
         height: calc(100% + 75px);
-
       }
     }
     .sections {
@@ -167,6 +211,35 @@ export default {
   margin: auto;
   max-height: 240px;
   overflow: hidden;
+  ul {
+    margin: 0;
+    padding: 0;
+    &.branches {
+      li {
+        transition: 300ms;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        cursor: pointer;
+        i {
+          transition: 300ms;
+          opacity: 0;
+          margin: 0 3px
+        }
+        &:hover {
+          background-color: rgba(0,0,0,0.05);
+          i {
+            opacity: 1;
+          }
+        }
+      }
+    }
+    li {
+      padding: 0;
+      list-style: none;
+      margin: 0;
+    }
+  }
 }
 
 

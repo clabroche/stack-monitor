@@ -4,7 +4,8 @@ const Stack = require('../models/stack')
 const { spawn } = require('child_process')
 const SpawnStore = require('../models/SpawnStore')
 const Socket = require('../models/socket')
-const { exec } = require('child_process')
+const { exec } = require('child_process');
+const open = require('open');
 
 router.get('/configuration', function (req, res) {
   res.json(Stack.stackConfig)
@@ -17,7 +18,10 @@ router.post('/choose', function (req, res) {
 router.get('/', function (req, res) {
   res.json(Stack.stack)
 });
-
+router.get('/:service', function (req, res) {
+  const service = findService(req.params.service)
+  res.send(service)
+});
 router.get('/:service/logs', function (req, res) {
   const service = findService(req.params.service)
   res.send(service ? service.store : '')
@@ -32,6 +36,13 @@ router.get('/:service/open-in-vs-code', function (req, res) {
   exec('code .', { cwd: service.spawnOptions.cwd })
   res.send()
 });
+
+router.get('/:service/open-folder', function (req, res) {
+  const service = findService(req.params.service)
+  open(service.spawnOptions.cwd)
+  res.send()
+});
+
 router.get('/:service/restart', async function (req, res) {
   const service = findService(req.params.service)
   SpawnStore[service.label].kill('SIGQUIT')

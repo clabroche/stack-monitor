@@ -1,16 +1,16 @@
 <template>
 <div class="stack-chooser-root">
-  <section-cmp class="stack-chooser" v-if="Stack.stackConfiguration" header="Choose all services to launch">
+  <section-cmp class="stack-chooser" v-if="configuration" header="Choose all services to launch">
     <ul>
-      <li v-for="service of Stack.stackConfiguration" :key="'services-'+service.label">
-        <input :id="'input-' + service.label" type="checkbox" @input="selectService($event.target.checked, service)" :checked="Stack.stack.indexOf(service) !== -1 ? 'checked' : null">
+      <li v-for="service of configuration" :key="'services-'+service.label">
+        <input :id="'input-' + service.label" type="checkbox" @input="selectService($event.target.checked, service)" :checked="stack.indexOf(service) !== -1 ? 'checked' : null">
         <label :for="'input-' + service.label">
           {{service.label}}
         </label>
       </li>
     </ul>
     <div class="actions">
-      <button @click="Stack.stack = Stack.stackConfiguration">Select all</button>
+      <button @click="stack = configuration">Select all</button>
       <button @click="validate" class="success">Validate</button>
     </div>
   </section-cmp>
@@ -30,23 +30,26 @@ export default {
   data() {
     return {
       Stack,
+      stack: [],
+      configuration: [],
       System
     }
   },
   async mounted() {
-    await Stack.getConfiguration()
+    this.configuration = await Stack.getConfiguration()
+    console.log(this.configuration)
   },
   methods: {
     selectService(checked, service) {
       if(checked) {
-        Stack.stack.push(service)
+        this.stack.push(service)
       } else {
-        Stack.stack.splice(Stack.stack.indexOf(service), 1)
+        this.stack.splice(this.stack.indexOf(service), 1)
       }
     },
     async validate() {
-      await Stack.setCurrentStack()
-      this.$router.push({name: 'stack-single'})
+      await Stack.setCurrentStack(this.stack)
+      this.$router.push({name: 'stack-single', params: {label: this.stack[0].label}})
     }
   }
 }
