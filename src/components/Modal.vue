@@ -20,7 +20,7 @@
 
 <script>
 import {Subject} from 'rxjs'
-import uuid from 'uuid/v4'
+import uuid from 'uuid/dist/v4'
 export default {
   props: [
     'value',

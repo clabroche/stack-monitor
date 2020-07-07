@@ -4,7 +4,7 @@ function Stack(service) {
   this.updateFields(service)
 }
 
-Stack.prototype.updateFields =function(service = {}) {
+Stack.prototype.updateFields = function (service = {}) {
   if (!service.label) throw new Error('A service should have a label')
   this.label = service.label || ''
   this.description = service.description || ''
@@ -64,14 +64,26 @@ Stack.prototype.restart = async function() {
 
 Stack.prototype.getBranches = async function () {
   const { data: branches } = await axios.get('/git/' + this.label + '/branches')
-  this.branches = branches
-  return this.branches
+  return branches
 }
 
 Stack.prototype.getStatus = async function () {
   const { data: status } = await axios.get('/git/' + this.label + '/status')
-  this.status = status
-  return this.status
+  return status
+}
+
+Stack.prototype.changeBranch = async function (branchName) {
+  await axios.post('/git/' + this.label + '/branch/' + branchName + '/change')
+}
+
+Stack.prototype.reset = async function () {
+  await axios.delete('/git/' + this.label + '/reset')
+}
+
+Stack.prototype.checkoutFile = async function (file) {
+  file = encodeURIComponent(file)
+  console.log(file)
+  await axios.delete('/git/' + this.label + '/checkout/' + file)
 }
 
 export default Stack

@@ -13,6 +13,35 @@ router.get('/:service/status', async function (req, res) {
   res.json(await getStatus(service))
 })
 
+router.post('/:service/branch/:branchName/change', async function (req, res) {
+  try {
+    const service = findService(req.params.service)
+    exec('git checkout ' + req.params.branchName, { cwd: service.spawnOptions.cwd })
+  } catch (error) {
+    res.status(500).json('ko')
+  }
+})
+
+router.delete('/:service/reset', async function (req, res) {
+  try {
+    const service = findService(req.params.service)
+    exec('git reset --hard', { cwd: service.spawnOptions.cwd })
+    res.json('ok')
+  } catch (error) {
+    res.status(500).json('ko')
+  }
+})
+
+router.delete('/:service/checkout/:file', async function (req, res) {
+  try {
+    const service = findService(req.params.service)
+    exec('git checkout ' + req.params.file.trim(), { cwd: service.spawnOptions.cwd })
+    res.json('ok')
+  } catch (error) {
+    res.status(500).json('ko')
+  }
+})
+
 function getBranches(project) {
   if (!project) return []
   return new Promise(resolve => {
