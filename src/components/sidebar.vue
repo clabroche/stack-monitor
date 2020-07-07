@@ -45,7 +45,6 @@ export default {
   },
   async mounted() {
     this.stack = await Stack.getCurrentStack()
-    console.log(this.stack)
   },
   methods: {
     /** @param {import('../models/stack').default} service*/
