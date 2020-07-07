@@ -5,7 +5,9 @@ const { spawn } = require('child_process')
 const SpawnStore = require('../models/SpawnStore')
 const Socket = require('../models/socket')
 const { exec } = require('child_process');
+const killport = require('kill-port')
 const open = require('open');
+const url = require('url')
 
 router.get('/configuration', function (req, res) {
   res.json(Stack.stackConfig)
@@ -45,10 +47,11 @@ router.get('/:service/open-folder', function (req, res) {
 
 router.get('/:service/restart', async function (req, res) {
   const service = findService(req.params.service)
-  SpawnStore[service.label].kill('SIGQUIT')
-  SpawnStore[service.label].kill('SIGTERM')
-  SpawnStore[service.label].kill('SIGINT')
   SpawnStore[service.label].kill('SIGKILL')
+  if(service.url) {
+    const port = url.parse(service.url).port
+    await killport(port)
+  }
   await new Promise(resolve => setTimeout(resolve, 100))
   launchService(service)
   res.send()

@@ -9,7 +9,7 @@
           :key="action.label"
           class="action small">
           <i :class="action.icon" v-if="action.icon"></i>
-          {{action.label}}
+          <span class="text">{{action.label}}</span>
         </button>
       </div>
     </div>
