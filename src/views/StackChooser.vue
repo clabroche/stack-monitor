@@ -37,7 +37,6 @@ export default {
   },
   async mounted() {
     this.configuration = await Stack.getConfiguration()
-    console.log(this.configuration)
   },
   methods: {
     selectService(checked, service) {
