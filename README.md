@@ -9,23 +9,52 @@ Monitor processes as a stack
 ## Usage
 Create a config file like: 
 ``` javascript
-module.exports = [{
-  label: 'My beautiful service',
-  spawnCmd: './node_modules/.bin/gulp', // Cmd to execute
-  spawnOptions: { // Pass to spawn argument
-    cwd:  '<path/to/my/beautiful/service>',
-    env: {
-      port:"3006",
-      mongoDbURL:`mongodb://root:123456@localhost:27017/test?authSource=admin`,
+const path = __dirname
+let BASE = "espace-des-marques"
+
+module.exports = [
+  {
+    label: 'Server',
+    description: 'This is the backend of an unbelievable project',
+    git: {
+      home: 'https://<an-awesome-url>',
+      remote: 'git@github.com:<your-beautiful-profile>/<your-excellent-project>.git'
+    },
+    url: 'http://localhost:3010',
+    spawnCmd: 'npm',
+    spawnArgs: ['run', 'serve'],
+    spawnOptions: {
+      cwd: `${path}/server`,
+      env: Object.assign({
+        PORT: "3010",
+        mongoDbURL: `mongodb://root:123456@localhost:27017/${BASE}?authSource=admin`,
+      }, process.env)
     }
-  }
-}, {
-  label: 'Mongo',
-  spawnCmd: 'docker',
-  spawnArgs: [ // Args argument of spawn
-    'start', 'mongo',
-  ],
-}]
+  },
+  {
+    label: 'Mongo',
+    description: 'Just start the mongodb in docker',
+    spawnCmd: 'docker',
+    spawnArgs: ['start', 'mongo'],
+  },
+  {
+    label: 'Front',
+    description: 'This is the front of an unbelievable project',
+    git: {
+      home: 'https://<an-awesome-url>',
+      remote: 'git@github.com:<your-beautiful-profile>/<your-excellent-project>.git'
+    },
+    url: 'http://localhost:8080',
+    spawnCmd: 'npm',
+    spawnArgs: ['run', 'serve'],
+    spawnOptions: {
+      cwd: `${path}/front`,
+      env: Object.assign({
+        VUE_APP_API_URL: "http://localhost:3010"
+      }, process.env)
+    }
+  },
+]
 ```
 
 Then, in a terminal:
@@ -33,47 +62,6 @@ Then, in a terminal:
 stack-monitor <path/to/my/config>
 ```
 
-## Examples
-This stack is composed of a vue client, an express server and a mongo database
-
-``` javascript 
-module.exports = [
-  {
-    label: 'Server',
-    spawnCmd: 'npm',
-    spawnArgs: ['run', 'start'],
-    spawnOptions: {
-      cwd:  '/home/coco/Projects/demo-stack/server',
-      env: Object.assign({
-        PORT:"3006",
-        mongoDbURL:`mongodb://root:123456@localhost:27017/test?authSource=admin`,
-      }, process.env)
-    }
-  },
-  {
-    label: 'Client',
-    spawnCmd: 'npm',
-    spawnArgs: ['run', 'serve'],
-    spawnOptions: {
-      cwd:  '/home/coco/Projects/demo-stack/client',
-      env: process.env
-    }
-  },
-
-  {
-    label: 'Mongo',
-    spawnCmd: 'docker',
-    spawnArgs: [
-      'run', '--rm',
-      '-p', '2701:27017',
-      '-e', "MONGO_INITDB_ROOT_USERNAME=root",
-      '-e', 'MONGO_INITDB_ROOT_PASSWORD=123456',
-      '-e', 'MONGO_INITDB_DATABASE=test',
-      'mongo:latest'
-    ],
-  },
-]
-```
 This will show: 
 ![Menu](https://raw.githubusercontent.com/clabroche/stack-monitor/master/README/1.png)
 ![Menu](https://raw.githubusercontent.com/clabroche/stack-monitor/master/README/2.png)
