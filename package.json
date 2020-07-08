@@ -1,6 +1,6 @@
 {
   "name": "@iryu54/stack-monitor",
-  "version": "1.4.6",
+  "version": "1.4.7",
   "bin": {
     "stack-monitor": "server/bin/www"
   },
