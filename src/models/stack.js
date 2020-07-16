@@ -6,7 +6,7 @@ function Stack(service) {
 
 Stack.prototype.updateFields = function (service = {}) {
   if (!service.label) throw new Error('A service should have a label')
-  this.label = service.label || ''
+  this.label = service.label
   this.description = service.description || ''
   this.url = service.url || ''
   this.git = service.git || {

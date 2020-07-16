@@ -69,7 +69,7 @@ async function getCPU(pid) {
   let cpuPerc = 0
   let totalMem = 0
   if (tree) {
-    Object.keys(tree).map(key => {
+    Object.keys(tree).forEach(key => {
       if (tree && tree[key] && tree[key].cpu) cpus.push(tree[key].cpu)
       if (tree && tree[key] && tree[key].memory) mem += tree[key].memory
     })
