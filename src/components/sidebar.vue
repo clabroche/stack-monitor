@@ -35,7 +35,7 @@ export default {
     sectionCmp: SectionVue
   },
   props: {
-    currentService: {defaul: null}
+    currentService: {default: null}
   },
   data() {
     return {

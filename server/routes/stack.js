@@ -31,7 +31,7 @@ router.get('/:service/logs', function (req, res) {
 router.delete('/:service/logs', function (req, res) {
   const service = findService(req.params.service)
   service.store = ''
-  res.send(service ? service.store : '')
+  res.send(service.store)
 });
 router.get('/:service/open-in-vs-code', function (req, res) {
   const service = findService(req.params.service)
@@ -59,7 +59,7 @@ router.get('/:service/restart', async function (req, res) {
 
 
 function launch() {
-  Stack.stack.map(microservice => {
+  Stack.stack.forEach(microservice => {
     microservice.store = ''
     launchService(microservice)
   })
