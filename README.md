@@ -1,6 +1,8 @@
 # Stack Monitor
+
+[![DeepScan grade](https://deepscan.io/api/teams/10201/projects/12903/branches/207230/badge/grade.svg)](https://deepscan.io/dashboard#view=project&tid=10201&pid=12903&bid=207230)
+
 Monitor processes as a stack 
-(Tested only on linux) 
 
 ## Install
 ``` npm i -g @iryu54/stack-monitor ```
