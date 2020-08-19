@@ -8,10 +8,10 @@
         </div>
         <div class="right">
           <div class="icons">
-            <a v-if="currentService.git && currentService.git.home" :href="currentService.git.home" target="_blank" title="Open git home"><i class="fab fa-github"></i></a>
-            <a v-if="currentService.url" :href="currentService.url" target="_blank" title="Open service URL"><i class="fas fa-globe"></i></a>
-            <i v-if="currentService.spawnOptions && currentService.spawnOptions.cwd" class="fas fa-file-code" title="Open in Visual Studio Code" @click="openInVsCode()"></i>
-            <i v-if="currentService.spawnOptions && currentService.spawnOptions.cwd" class="fas fa-folder" title="Open folder" @click="openFolder()"></i>
+            <a v-if="currentService.git && currentService.git.home" :href="currentService.git.home" target="_blank" title="Open git home"><i class="fab fa-github"  aria-hidden="true"></i></a>
+            <a v-if="currentService.url" :href="currentService.url" target="_blank" title="Open service URL"><i class="fas fa-globe"  aria-hidden="true"></i></a>
+            <i v-if="currentService.spawnOptions && currentService.spawnOptions.cwd" class="fas fa-file-code"  aria-hidden="true" title="Open in Visual Studio Code" @click="openInVsCode()"></i>
+            <i v-if="currentService.spawnOptions && currentService.spawnOptions.cwd" class="fas fa-folder" aria-hidden="true" title="Open folder" @click="openFolder()"></i>
           </div>
         </div>
       </div>
@@ -33,7 +33,7 @@
           <section-cmp v-if="git.branches" :key="currentService.label" header="Branches">
             <ul class="branches">
               <li v-for="(branch, i) of git.branches" :key="'branch' +i" @click="changeBranch(branch)" :class="{active: branch.includes('*')}">
-                {{branch.replace(/^\* /gm, '')}} <i class="fas fa-chevron-right"></i>
+                {{branch.replace(/^\* /gm, '')}} <i class="fas fa-chevron-right"  aria-hidden="true"></i>
               </li>
             </ul>
           </section-cmp>
@@ -41,11 +41,11 @@
             <ul v-if="git.status.filter(a =>a).length">
               <li v-for="(status, i) of git.status" :key="'status-' + i" @click="checkoutFile(status)">
                 <span v-html="colorStatus(status)"></span>
-                <i class="fas fa-times"></i>
+                <i class="fas fa-times" aria-hidden="true"></i>
               </li>
             </ul>
             <div v-else class="check">
-              <i class="fas fa-check"></i>
+              <i class="fas fa-check" aria-hidden="true"></i>
             </div>
           </section-cmp>
         </div>
@@ -200,7 +200,6 @@ export default {
     .header {
       width: 100%;
       height: 85px;
-      text-align: center;
       display: flex;
       justify-content: space-between;
       padding: 10px calc(5% + 10px);

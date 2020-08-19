@@ -59,7 +59,6 @@ export default {
 .stack-chooser-root {
   width: 100vw;
   height: 100vh;
-  background-color: black;
   background-size: cover;
   background: url(../assets/background2.jpg) no-repeat center fixed;
   display: flex;

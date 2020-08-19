@@ -2,7 +2,7 @@
   <modal :name="uuid" height="auto" :width="width || '60%'" :scrollable="noScroll ? !noScroll : true" class="modal" @closed="cancel()">
     <div id="modal-content" :style="{height: height || 'auto'}">
       <div class="close-cross" v-if="closeCross" @click="close()">
-        <i class="fas fa-times"></i>
+        <i class="fas fa-times" aria-hidden="true"></i>
       </div>
       <div class="title-modal" v-if="$slots.header" :style="{'font-size': headerFontSize}">
         <slot name="header"></slot>

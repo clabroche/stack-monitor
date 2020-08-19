@@ -5,7 +5,7 @@
           @click="$router.push({name: 'stack-single', params: {label: service.label}})"
           :class="isActive(service) ? 'active': ''">
             {{service.label}}
-            <i class="fas fa-chevron-right"></i>
+            <i class="fas fa-chevron-right"  aria-hidden="true"></i>
         </li>
       </ul>
       <div class="system">

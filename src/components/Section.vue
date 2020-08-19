@@ -8,7 +8,7 @@
           v-for="action of actions"
           :key="action.label"
           class="action small">
-          <i :class="action.icon" v-if="action.icon"></i>
+          <i :class="action.icon" v-if="action.icon"  aria-hidden="true"></i>
           <span class="text">{{action.label}}</span>
         </button>
       </div>
