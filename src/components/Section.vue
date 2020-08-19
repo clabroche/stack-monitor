@@ -52,7 +52,6 @@ export default {
   }
   .actions {
     display: flex;
-    flex-direction: column;
   }
   .content {
     overflow: auto;
