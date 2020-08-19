@@ -1,7 +1,7 @@
-import axios from 'axios'
+import Axios from 'axios'
 
-const axiosInstance = axios.create({
+const axios = Axios.create({
   baseURL: process.env.VUE_APP_SERVER_URL + ':' + process.env.VUE_APP_SERVER_PORT
 })
 
-export default axiosInstance
+export default axios
