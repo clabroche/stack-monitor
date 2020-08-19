@@ -12,7 +12,7 @@ Monitor processes as a stack
 Create a config file like: 
 ``` javascript
 const path = __dirname
-let BASE = "espace-des-marques"
+let BASE = "database"
 
 module.exports = [
   {
