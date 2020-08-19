@@ -116,6 +116,7 @@ export default {
   },
   watch: {
     async '$route.params.label'() {
+      this.currentService = await Stack.getService(this.$route.params.label)
       if (this.currentService.git) {
         this.updateGit()
       }
