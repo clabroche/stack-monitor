@@ -92,8 +92,6 @@ export default {
     list-style: none;
       margin: 0;
       padding: 0;
-    li {
-    }
   }
   .version {
     background-color: rgb(255, 255, 255);
