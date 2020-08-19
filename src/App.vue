@@ -13,9 +13,9 @@ export default {
     sidebar: sidebarVue
   },
   async mounted() {
-    const stack = await Stack.getCurrentStack()
-    if(!stack.length && this.$route.name !== 'stack-chooser') this.$router.push({name:'stack-chooser'})
-    if(stack.length && this.$route.name !== 'stack-single') this.$router.push({name:'stack-single', params: {label: stack[0].label}})
+    const enabledServices = await Stack.getEnabledServices()
+    if(!enabledServices.length && this.$route.name !== 'stack-chooser') this.$router.push({name:'stack-chooser'})
+    if(enabledServices.length && this.$route.name !== 'stack-single') this.$router.push({name:'stack-single', params: {label: enabledServices[0].label}})
   }
 }
 </script>

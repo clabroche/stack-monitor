@@ -15,8 +15,8 @@
           </div>
         </div>
       </div>
-      <div class="sections">
-        <section-cmp header="System load by this service" :actions="[{label: 'Restart', click: () => restart(), icon: 'fas fa-trash'}]">
+      <div class="sections" v-if="currentService.enabled">
+        <section-cmp header="System load by this service" :actions="[{label: 'Restart', click: () => restart(), icon: 'fas fa-sync'}, {label: 'Stop', click: () => stop(), icon: 'fas fa-stop'}]">
           <div class="systemInfos">
             <div class="progress-container">
               <label>Mem</label>
@@ -37,7 +37,7 @@
               </li>
             </ul>
           </section-cmp>
-          <section-cmp v-if="git.status" header="Status" :actions="[{label: 'Reset', click: () => reset(), icon: 'fas fa-trash'}]">
+          <section-cmp v-if="git.status" header="Status" :actions="[{label: 'Reset', click: () => reset(), icon: 'fas fa-eraser'}]">
             <ul v-if="git.status.filter(a =>a).length">
               <li v-for="(status, i) of git.status" :key="'status-' + i" @click="checkoutFile(status)">
                 <span v-html="colorStatus(status)"></span>
@@ -52,6 +52,10 @@
 
         <section-cmp header="Logs" :actions="[{label: 'Clear', icon: 'fas fa-trash', click: () => clear()}]">
           <logs v-if="currentService" :service="currentService" :key="currentService.label"></logs>
+        </section-cmp>
+      </div>
+      <div v-else class="sections">
+        <section-cmp header="This service is not started" :actions="[{label: 'Start', click: () => start(), icon: 'fas fa-play'}]">
         </section-cmp>
       </div>
     </div>
@@ -177,7 +181,16 @@ export default {
       this.currentService.openFolder()
     },
     restart() {
+      this.currentService.enabled = true
       this.currentService.restart()
+    },
+    stop() {
+      this.currentService.enabled = false
+      this.currentService.stop()
+    },
+    start() {
+      this.currentService.enabled = true
+      this.currentService.start()
     },
     clear() {
       this.currentService.clear()
@@ -188,6 +201,9 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
+.not-started {
+  background-color: white;
+}
 .stack-single {
   display: flex;
   width: 100%;

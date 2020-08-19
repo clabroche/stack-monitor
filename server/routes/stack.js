@@ -10,10 +10,15 @@ const open = require('open');
 const url = require('url')
 
 router.get('/configuration', function (req, res) {
-  res.json(Stack.stackConfig)
+  res.json(Stack.stack)
 });
 router.post('/choose', function (req, res) {
-  Stack.stack = req.body
+  const servicesLabelSelected = req.body
+  Stack.stack.map(service => {
+    if(servicesLabelSelected.includes(service.label)) {
+      service.enabled = true
+    }
+  })
   launch()
   res.json(Stack.stack)
 });
@@ -31,6 +36,7 @@ router.get('/:service/logs', function (req, res) {
 router.delete('/:service/logs', function (req, res) {
   const service = findService(req.params.service)
   service.store = ''
+  Socket.socket.emit('logs:clear', { label: service.label })
   res.send(service.store)
 });
 router.get('/:service/open-in-vs-code', function (req, res) {
@@ -47,21 +53,39 @@ router.get('/:service/open-folder', function (req, res) {
 
 router.get('/:service/restart', async function (req, res) {
   const service = findService(req.params.service)
-  SpawnStore[service.label].kill('SIGKILL')
-  if(service.url) {
-    const port = url.parse(service.url).port
-    await killport(port)
-  }
-  await new Promise(resolve => setTimeout(resolve, 100))
+  await killService(service)
+  launchService(service)
+  res.send()
+});
+router.get('/:service/start', async function (req, res) {
+  const service = findService(req.params.service)
   launchService(service)
   res.send()
 });
 
+router.get('/:service/stop', async function (req, res) {
+  const service = findService(req.params.service)
+  killService(service)
+  res.send()
+});
+
+async function killService(service) {
+  SpawnStore[service.label].kill('SIGKILL')
+  if (service.url) {
+    const port = url.parse(service.url).port
+    await killport(port)
+  }
+  Socket.socket.emit('logs:clear', { label: service.label })
+  service.store = ''
+  await new Promise(resolve => setTimeout(resolve, 100))
+}
 
 function launch() {
   Stack.stack.forEach(microservice => {
     microservice.store = ''
-    launchService(microservice)
+    if(microservice.enabled) {
+      launchService(microservice)
+    }
   })
 }
 
@@ -82,6 +106,7 @@ function launchService(microservice) {
     microservice.store += line
     Socket.socket.emit('logs:update', { msg: line, label: microservice.label })
   })
+  microservice.enabled = true
 }
 
 function findService(serviceLabel) {

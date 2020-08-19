@@ -1,9 +1,9 @@
 const path = require('path')
-let stackConfig = [];
+let stack = [];
 try {
   if(process.argv[2]) {
     const confPath = path.resolve(process.argv[2]) 
-    stackConfig = confPath ? require(confPath) : []
+    stack = confPath ? require(confPath) : []
   } else {
     console.error('Provide path to config as argument')
     process.exit(1)
@@ -13,8 +13,7 @@ try {
 }
 
 module.exports = {
-  stackConfig,
-  stack: [],
+  stack,
   getStack() {
     return this.stack
   }

@@ -19,7 +19,7 @@ Stack.prototype.updateFields = function (service = {}) {
     env: ''
   }
   this.stack = []
-  this.stackConfiguration = []
+  this.enabled = service.enabled || false
 }
 Stack.prototype.fetch = async function () {
   const { data: service } = await axios.get(`/stack/${this.label}`)
@@ -27,16 +27,21 @@ Stack.prototype.fetch = async function () {
   return this
 }
 Stack.getConfiguration = async function() {
-  const {data: stackConfiguration} = await axios.get('/stack/configuration')
-  return stackConfiguration
-}
-Stack.getCurrentStack = async function() {
-  const {data: stack} = await axios.get('/stack')
+  const {data: stack} = await axios.get('/stack/configuration')
   return stack
+}
+Stack.getCurrentStack = async function () {
+  const { data: stack } = await axios.get('/stack')
+  return stack
+}
+Stack.getEnabledServices = async function () {
+  const { data: stack } = await axios.get('/stack')
+  console.log(stack)
+  return stack.filter(service => service.enabled)
 }
 
 Stack.setCurrentStack = async function(stack) {
-  await axios.post('/stack/choose', stack)
+  await axios.post('/stack/choose', stack.map(service => service.label))
   return Stack.getCurrentStack()
 }
 
@@ -58,8 +63,14 @@ Stack.prototype.openFolder = async function () {
   return axios.get('/stack/' + this.label + '/open-folder')
 }
 
-Stack.prototype.restart = async function() {
-  return axios.get('/stack/'+this.label+'/restart')
+Stack.prototype.restart = async function () {
+  return axios.get('/stack/' + this.label + '/restart')
+}
+Stack.prototype.start = async function () {
+  return axios.get('/stack/' + this.label + '/start')
+}
+Stack.prototype.stop = async function () {
+  return axios.get('/stack/' + this.label + '/stop')
 }
 
 Stack.prototype.getBranches = async function () {

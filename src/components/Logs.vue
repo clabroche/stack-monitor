@@ -49,6 +49,10 @@ export default {
         terminal.writeln(line)
       })
     })
+    Socket.on('logs:clear', data => {
+      if(data.label !== this.service.label) return 
+      terminal.clear()
+    })
     if(this.$refs.logsContainer) {
       this.$refs.logsContainer.scrollTo({
         'behavior': 'smooth',
