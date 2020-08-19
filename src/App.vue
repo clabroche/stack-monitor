@@ -12,6 +12,9 @@ export default {
   components: {
     sidebar: sidebarVue
   },
+  created() {
+    this.$set(Stack, 'services', [])
+  },
   async mounted() {
     const enabledServices = await Stack.getEnabledServices()
     if(!enabledServices.length && this.$route.name !== 'stack-chooser') this.$router.push({name:'stack-chooser'})

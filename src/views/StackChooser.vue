@@ -1,16 +1,16 @@
 <template>
 <div class="stack-chooser-root">
-  <section-cmp class="stack-chooser" v-if="configuration" header="Choose all services to launch">
+  <section-cmp class="stack-chooser" v-if="Stack.services" header="Choose all services to launch">
     <ul>
-      <li v-for="service of configuration" :key="'services-'+service.label">
-        <input :id="'input-' + service.label" type="checkbox" @input="selectService($event.target.checked, service)" :checked="stack.indexOf(service) !== -1 ? 'checked' : null">
+      <li v-for="service of Stack.services" :key="'services-'+service.label">
+        <input :id="'input-' + service.label" type="checkbox" v-model="service.enabled" :checked="service.enabled ? 'checked' : null">
         <label :for="'input-' + service.label">
           {{service.label}}
         </label>
       </li>
     </ul>
     <div class="actions">
-      <button @click="stack = configuration">Select all</button>
+      <button @click="stack = Stack.services">Select all</button>
       <button @click="validate" class="success">Validate</button>
     </div>
   </section-cmp>
@@ -30,25 +30,13 @@ export default {
   data() {
     return {
       Stack,
-      stack: [],
-      configuration: [],
       System
     }
   },
-  async mounted() {
-    this.configuration = await Stack.getConfiguration()
-  },
   methods: {
-    selectService(checked, service) {
-      if(checked) {
-        this.stack.push(service)
-      } else {
-        this.stack.splice(this.stack.indexOf(service), 1)
-      }
-    },
     async validate() {
-      await Stack.setCurrentStack(this.stack)
-      this.$router.push({name: 'stack-single', params: {label: this.stack[0].label}})
+      await Stack.launchServices(Stack.services.filter(service => service.enabled))
+      this.$router.push({name: 'stack-single', params: {label: Stack.services[0].label}})
     }
   }
 }
