@@ -36,7 +36,8 @@ export default {
   methods: {
     async validate() {
       await Stack.launchServices(Stack.services.filter(service => service.enabled))
-      this.$router.push({name: 'stack-single', params: {label: Stack.services[0].label}})
+      const enabledServices = await Stack.getEnabledServices()
+      this.$router.push({name: 'stack-single', params: {label: enabledServices[0].label}})
     }
   }
 }
