@@ -1,9 +1,10 @@
 <template>
-  <li @click="$router.push({name: 'stack-single', params: {label: service.label}})"
+  <div @click="$router.push({name: 'stack-single', params: {label: service.label}})"
+    class="sidebar-item"
     :class="{active: isActive(service), disabled: !service.enabled}">
       {{service.label}}
       <i class="fas fa-chevron-right"  aria-hidden="true"></i>
-  </li>
+  </div>
 </template>
 
 <script>
@@ -23,7 +24,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-li {
+.sidebar-item {
   cursor: pointer;
   transform: translateZ(0);
   transition: background-color 300ms;
