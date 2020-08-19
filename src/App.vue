@@ -30,7 +30,7 @@ body {
   background-color: #f4f4f4;
   color: #4c4c4c;
   font-size: 0.9em;
-  font-family: JOST;
+  font-family: JOST, sans-serif;
   
   #app {
     width: 100vw;
