@@ -1,12 +1,8 @@
 <template>
   <div class="sidebar">
-      <ul v-if="stack && stack.length">
-        <li v-for="service of stack" :key="service.label"
-          @click="$router.push({name: 'stack-single', params: {label: service.label}})"
-          :class="isActive(service) ? 'active': ''">
-            {{service.label}}
-            <i class="fas fa-chevron-right"  aria-hidden="true"></i>
-        </li>
+      <ul v-if="Stack.services.length">
+        <sidebar-item v-for="service of sortedStack" :key="service.label" :service="service">
+        </sidebar-item>
       </ul>
       <div class="system">
         <section-cmp header="System" class="system">
@@ -29,10 +25,13 @@ import Stack from '../models/stack'
 import System from '../models/system'
 import ProgressVue from './Progress.vue'
 import SectionVue from './Section.vue'
+import sort from 'fast-sort'
+import sidebarItemVue from './sidebarItem.vue'
 export default {
   components: {
     progressCmp: ProgressVue,
-    sectionCmp: SectionVue
+    sectionCmp: SectionVue,
+    sidebarItem: sidebarItemVue
   },
   props: {
     currentService: {default: null}
@@ -40,20 +39,15 @@ export default {
   data() {
     return {
       System,
-      stack: []
+      Stack,
+      services: Stack.services
     }
   },
-  async mounted() {
-    this.stack = await Stack.getCurrentStack()
-  },
-  methods: {
-    /** @param {import('../models/stack').default} service*/
-    isActive(service) {
-      const url = this.$route.fullPath.split('?')[0]
-      const serviceLabel = url.split('/').pop()
-      return service.label === serviceLabel
+  computed: {
+    sortedStack() {
+      return sort(this.Stack.services).desc((a) => a.enabled)
     }
-  }
+  },
 }
 </script>
 
@@ -72,28 +66,6 @@ export default {
       list-style: none;
       padding: 0;
       margin: 0;
-      li {
-        cursor: pointer;
-        transform: translateZ(0);
-        transition: background-color 300ms;
-        padding: 5px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        i {
-          opacity: 0;
-          transition: 300ms
-        }
-        &:hover {
-          background-color: #eee;
-          i {
-            opacity: 1;
-          }
-        }
-        &.active {
-          border-left: 3px solid #194f91
-        }
-      }
     }
   }
 

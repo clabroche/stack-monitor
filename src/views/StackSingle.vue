@@ -109,23 +109,20 @@ export default {
         status: [],
       },
       System,
-      /** @type {import('../models/stack').default}*/
+      /** @type {import('../models/service').default}*/
       currentService: null,
       port:''
     }
   },
   watch: {
     async '$route.params.label'() {
-      this.currentService = new Stack({label: this.$route.params.label})
-      await this.currentService.fetch()
       if (this.currentService.git) {
         this.updateGit()
       }
     }
   },
   async mounted() {
-    this.currentService = new Stack({label: this.$route.params.label})
-    await this.currentService.fetch()
+    this.currentService = await Stack.getService(this.$route.params.label)
     this.interval = setInterval(async () => {
       await this.updateGit()
       await System.getInfos(this.currentService.label)
@@ -174,25 +171,25 @@ export default {
       }
       return status
     },
-    openInVsCode() {
+    async openInVsCode() {
       this.currentService.openInVsCode()
     },
-    openFolder() {
+    async openFolder() {
       this.currentService.openFolder()
     },
-    restart() {
-      this.currentService.enabled = true
-      this.currentService.restart()
+    async restart() {
+      await this.currentService.restart()
+      Stack.services = [...Stack.services]
     },
-    stop() {
-      this.currentService.enabled = false
-      this.currentService.stop()
+    async stop() {
+      await this.currentService.stop()
+      Stack.services = [...Stack.services]
     },
-    start() {
-      this.currentService.enabled = true
-      this.currentService.start()
+    async start() {
+      await this.currentService.start()
+      Stack.services = [...Stack.services]
     },
-    clear() {
+    async clear() {
       this.currentService.clear()
     }
   }

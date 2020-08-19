@@ -78,6 +78,7 @@ async function killService(service) {
   Socket.socket.emit('logs:clear', { label: service.label })
   service.store = ''
   await new Promise(resolve => setTimeout(resolve, 100))
+  service.enabled = false
 }
 
 function launch() {
