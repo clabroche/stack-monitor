@@ -2,6 +2,11 @@
 
 [![DeepScan grade](https://deepscan.io/api/teams/10201/projects/12903/branches/207230/badge/grade.svg)](https://deepscan.io/dashboard#view=project&tid=10201&pid=12903&bid=207230)
 
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=clabroche_stack-monitor&metric=alert_status)](https://sonarcloud.io/dashboard?id=clabroche_stack-monitor)
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=clabroche_stack-monitor&metric=code_smells)](https://sonarcloud.io/dashboard?id=clabroche_stack-monitor)
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=clabroche_stack-monitor&metric=bugs)](https://sonarcloud.io/dashboard?id=clabroche_stack-monitor)
+[![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=clabroche_stack-monitor&metric=sqale_index)](https://sonarcloud.io/dashboard?id=clabroche_stack-monitor)
+
 Monitor processes as a stack 
 
 ## Install
