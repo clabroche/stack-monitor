@@ -20,22 +20,6 @@ Service.prototype.updateFields = function (service = {}) {
   }
   this.enabled = service.enabled || false
 }
-Service.prototype.fetch = async function () {
-  const service = Service.stack.filter(service => service.label === this.label).pop()
-  this.updateFields(service)
-  return this
-}
-Service.getConfiguration = async function() {
-  const {data: stack} = await axios.get('/stack/configuration')
-  return stack
-}
-
-Service.getEnabledServices = async function () {
-  const { data: stack } = await axios.get('/stack')
-  return stack.filter(service => service.enabled)
-}
-
-
 
 Service.prototype.getLogs = async function() {
   const {data: logs} = await axios.get('/stack/'+this.label+'/logs')
