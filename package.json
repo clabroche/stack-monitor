@@ -1,13 +1,14 @@
 {
   "name": "@iryu54/stack-monitor",
   "version": "1.5.1",
-  "bin": {
-    "stack-monitor": "server/bin/www"
-  },
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/clabroche/stack-monitor.git"
+  "scripts": {
+    "serve": "concurrently --kill-others \"npm run serve:front\" \"npm run serve:server\"",
+    "build": "vue-cli-service build --dest server/public",
+    "lint": "vue-cli-service lint",
+    "launchExamples": "cd example/front/ && npm ci && cd ../server && npm ci && cd .. && node ../server/bin/www ./stack.js",
+    "serve:front": "vue-cli-service serve",
+    "serve:server": "NODE_ENV=DEV nodemon server/bin/www $STACKFILE",
+    "start": "server/bin/www"
   },
   "main": "server/bin/www",
   "files": [
@@ -15,22 +16,13 @@
     ".env.production",
     "package.json"
   ],
-  "scripts": {
-    "build": "vue-cli-service build --dest server/public",
-    "launchExamples": "cd example/front/ && npm ci && cd ../server && npm ci && cd .. && node ../server/bin/www ./stack.js",
-    "start": "server/bin/www",
-    "lint": "vue-cli-service lint",
-    "serve:server": "NODE_ENV=DEV nodemon server/bin/www $STACKFILE",
-    "serve:front": "vue-cli-service serve",
-    "serve": "concurrently --kill-others \"npm run serve:front\" \"npm run serve:server\""
-  },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.13.1",
     "axios": "^0.19.2",
     "colors": "^1.3.3",
     "consola": "^2.14.0",
     "cookie-parser": "~1.4.4",
-    "core-js": "^2.6.5",
+    "core-js": "^3.6.5",
     "cors": "^2.8.5",
     "debug": "^4.1.1",
     "express": "^4.17.1",
@@ -53,13 +45,13 @@
   "devDependencies": {
     "@iryu54/badge-audit": "^1.0.1",
     "@types/axios": "^0.14.0",
-    "@vue/cli-plugin-babel": "^3.12.1",
-    "@vue/cli-plugin-eslint": "^3.12.1",
+    "@vue/cli-plugin-babel": "^4.5.4",
+    "@vue/cli-plugin-eslint": "^4.5.4",
     "@vue/cli-service": "^4.5.4",
     "babel-eslint": "^10.1.0",
     "concurrently": "^5.2.0",
-    "eslint": "^5.16.0",
-    "eslint-plugin-vue": "^5.0.0",
+    "eslint": "^6.7.2",
+    "eslint-plugin-vue": "^6.2.2",
     "node-sass": "^4.14.1",
     "sass-loader": "^7.1.0",
     "vue": "^2.6.11",
@@ -92,5 +84,13 @@
   "browserslist": [
     "> 1%",
     "last 2 versions"
-  ]
+  ],
+  "bin": {
+    "stack-monitor": "server/bin/www"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/clabroche/stack-monitor.git"
+  }
 }
