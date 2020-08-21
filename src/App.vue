@@ -1,24 +1,72 @@
 <template>
-  <div id="app">
+  <div id="app" v-if="connected">
     <sidebar v-if="$route.name !== 'stack-chooser'"/>
     <router-view/>
+  </div>
+  <div class="not-connected" v-else>
+    Server is not connected or has crashed <br>
+    Try to restart it or fill an issue: <br><br>
+    <a :href="githubIssue" target="_blank">Click here</a>
   </div>
 </template>
 
 <script>
 import Stack from './models/stack'
 import sidebarVue from './components/sidebar.vue'
+import socket from './helpers/socket'
+import newGithubIssueUrl from 'new-github-issue-url'
 export default {
   components: {
     sidebar: sidebarVue
+  },
+  data() {
+    return {
+      connected: false,
+      servicesBackup: []
+    }
+  },
+  computed: {
+    githubIssue() {
+      return newGithubIssueUrl({
+        user: 'clabroche',
+        repo: 'stack-monitor',
+        body: `
+## Issue
+
+### Plateform
+\`\`\`<Windows10, Archlinux, MacOS...>\`\`\`
+
+### Configuration file
+\`\`\` javascript
+<upload your configuration file but without sensitive infos>
+\`\`\`
+
+### Description
+\\<Which part of this application bug...>
+
+
+### Reproduction 
+\\<Step to bug...>
+
+        `
+      });
+    }
   },
   created() {
     this.$set(Stack, 'services', [])
   },
   async mounted() {
-    const enabledServices = await Stack.getEnabledServices()
-    if(!enabledServices.length && this.$route.name !== 'stack-chooser') this.$router.push({name:'stack-chooser'})
-    // if(enabledServices.length && this.$route.name !== 'stack-single') this.$router.push({name:'stack-single', params: {label: enabledServices[0].label}})
+    this.redirect()
+    socket.on('connect',  () => this.redirect());
+    socket.on('disconnect', () => this.redirect());
+  },
+  methods: {
+    async redirect() {
+      this.connected = socket.connected
+      if(!this.connected) Stack.services = []
+      const enabledServices = await Stack.getEnabledServices()
+      if(!enabledServices.length && this.$route.name !== 'stack-chooser') this.$router.push({name:'stack-chooser'})
+    }
   }
 }
 </script>
@@ -84,4 +132,16 @@ button.success {
   }
 }
 
+</style>
+
+<style lang="scss" scoped> 
+.not-connected {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+  height: 100vh;
+  text-align: center;
+}
 </style>
