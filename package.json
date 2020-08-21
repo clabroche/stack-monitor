@@ -29,6 +29,7 @@
     "fast-sort": "^2.2.0",
     "kill-port": "^1.6.0",
     "morgan": "~1.9.1",
+    "new-github-issue-url": "^0.2.1",
     "open": "^6.4.0",
     "os-utils": "0.0.14",
     "pidusage-tree": "^2.0.5",
