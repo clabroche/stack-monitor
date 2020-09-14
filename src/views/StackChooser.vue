@@ -10,7 +10,8 @@
       </li>
     </ul>
     <div class="actions">
-      <button @click="stack = Stack.services">Select all</button>
+      <button v-if="!allEnabled" @click="enableAll">Select all</button>
+      <button v-else @click="disableAll">Unselect all</button>
       <button @click="validate" class="success">Validate</button>
     </div>
   </section-cmp>
@@ -33,11 +34,22 @@ export default {
       System
     }
   },
+  computed: {
+    allEnabled() {
+      return this.Stack.services.every((service) => service.enabled)
+    }
+  },
   methods: {
     async validate() {
       await Stack.launchServices(Stack.services.filter(service => service.enabled))
       const enabledServices = await Stack.getEnabledServices()
       this.$router.push({name: 'stack-single', params: {label: enabledServices[0].label}})
+    },
+    enableAll() {
+      this.Stack.services.map(service => service.enabled = true)
+    },
+    disableAll() {
+      this.Stack.services.map(service => service.enabled = false)
     }
   }
 }
