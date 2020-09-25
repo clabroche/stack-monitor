@@ -1,8 +1,12 @@
 <template>
-  <div class="hello" v-scroll-stop>
-    <div v-if="service" class="logs-container" ref="logsContainer" id="terminal">
+<sections-container header="Logs">
+  <section-cmp header="Logs" :actions="[{label: 'Clear', icon: 'fas fa-trash', click: () => clear()}]">
+    <div v-scroll-stop>
+      <div v-if="service" class="logs-container" ref="logsContainer" id="terminal">
+      </div>
     </div>
-  </div>
+  </section-cmp>
+</sections-container>
 </template>
 
 <script>
@@ -10,9 +14,15 @@ import Stack from '../models/stack'
 import Socket from '../helpers/socket';
 import { Terminal } from 'xterm/lib/xterm';
 import { FitAddon } from 'xterm-addon-fit';
+import SectionVue from './Section.vue';
+import SectionsContainerVue from './SectionsContainer.vue';
 
 export default {
   name: 'Logs',
+  components: {
+    sectionsContainer: SectionsContainerVue,
+    sectionCmp: SectionVue
+  },
   props: {
     service: {default: null}
   },
@@ -61,6 +71,11 @@ export default {
       });
     }
   },
+  methods: {
+    async clear() {
+      this.service.clear()
+    }
+  }
 }
 </script>
 

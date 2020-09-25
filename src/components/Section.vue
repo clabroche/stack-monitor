@@ -30,8 +30,8 @@ export default {
 
 <style lang="scss" scoped>
 .section {
-  width: calc(100% - 20px);
-  margin: 5px 10px;
+  width: calc(100%);
+  margin: 5px 0;
   box-sizing: border-box;
   border: 1px solid #dfdfdf;
   border-radius: 4px;

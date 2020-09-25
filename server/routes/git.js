@@ -3,6 +3,15 @@ const router = express.Router();
 const {findService} = require('../helpers/services')
 const { exec } = require('child_process')
 
+function execAsync(cmd, options) {
+  return new Promise((res, rej) => {
+    exec(cmd, options, (err, stdout, stderr) => {
+      if (stderr || err) return rej(stderr || err)
+      res(stdout)
+    })
+  })
+
+}
 
 router.get('/:service/branches', async function (req, res) {
   const service = findService(req.params.service)
@@ -16,9 +25,10 @@ router.get('/:service/status', async function (req, res) {
 router.post('/:service/branch/:branchName/change', async function (req, res) {
   try {
     const service = findService(req.params.service)
-    exec('git checkout ' + req.params.branchName, { cwd: service.spawnOptions.cwd })
+    await execAsync('git checkout ' + req.params.branchName, { cwd: service.spawnOptions.cwd })
+    res.send('ok')
   } catch (error) {
-    res.status(500).json('ko')
+    res.status(500).json(error)
   }
 })
 
