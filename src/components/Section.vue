@@ -13,7 +13,7 @@
         </button>
       </div>
     </div>
-    <div class="content">
+    <div class="content" :style="{maxHeight}">
       <slot></slot>
     </div>
   </div>
@@ -23,7 +23,8 @@
 export default {
   props: {
     header: {default: ''},
-    actions: {default:() => ([])}
+    actions: {default:() => ([])},
+    maxHeight: {default: 'auto'}
   }
 }
 </script>

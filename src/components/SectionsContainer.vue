@@ -1,6 +1,6 @@
 <template>
   <div class="sections-container-root">
-    <div class="header" @click="isOpen = !isOpen">
+    <div class="header" @click="isOpen = !isOpen; $emit('is-open', isOpen)">
       <h2>{{header}}</h2>
       <div>
         <i class="fas fa-chevron-down" aria-hidden="true"></i>
@@ -18,11 +18,15 @@
 export default {
   props: {
     header: {default: ''},
+    defaultIsOpen: {default: false}
   },
   data() {
     return {
       isOpen: false
     }
+  },
+  mounted() {
+    this.isOpen = this.defaultIsOpen
   }
 }
 </script>
@@ -49,7 +53,7 @@ export default {
   overflow: hidden;
 }
 .appear-enter-active, .appear-leave-active {
-  transition: 0.5s;
+  transition: 0.3s;
 }
 .appear-enter, .appear-leave-to /* .appear-leave-active below version 2.1.8 */ {
   max-height: 0;
