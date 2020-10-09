@@ -5,6 +5,7 @@ require('colors')
 router.use('/system', require('./system'))
 router.use('/stack', require('./stack'))
 router.use('/git', require('./git'))
+router.use('/npm', require('./npm'))
 
 
 router.get('/version', async function (req, res) {

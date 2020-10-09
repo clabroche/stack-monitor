@@ -75,4 +75,19 @@ Service.prototype.checkoutFile = async function (file) {
   await axios.delete('/git/' + this.label + '/checkout/' + file)
 }
 
+Service.prototype.isNpm = async function () {
+  const { data: isNpm } = await axios.get('/npm/' + this.label)
+  return isNpm
+}
+
+Service.prototype.getPackageJSON = async function () {
+  const { data: packageJSON } = await axios.get('/npm/' + this.label + '/packagejson')
+  return packageJSON
+}
+
+Service.prototype.runNpmCommand = async function (command) {
+  const { data: socket } = await axios.get('/npm/' + this.label + '/run/' + encodeURIComponent(command))
+  return socket
+}
+
 export default Service

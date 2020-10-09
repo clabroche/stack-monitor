@@ -30,6 +30,8 @@
         </section-cmp>
 
         <git :currentService="currentService"/>
+        
+        <npm :currentService="currentService"/>
 
         <logs v-if="currentService" :service="currentService" :key="currentService.label"></logs>
       </div>
@@ -48,13 +50,15 @@ import LogsVue from '../components/Logs.vue';
 import ProgressVue from '../components/Progress.vue';
 import SectionVue from '../components/Section.vue'
 import GitVue from '../components/Git.vue';
+import NpmVue from '../components/Npm.vue';
 export default {
   name: 'StackSingle',
   components: {
     logs: LogsVue,
     progressCmp: ProgressVue,
     sectionCmp: SectionVue,
-    git: GitVue
+    git: GitVue,
+    npm: NpmVue
   },
   data() {
     return {
