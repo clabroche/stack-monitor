@@ -1,8 +1,8 @@
 <template>
 <div class="stack-chooser-root">
-  <section-cmp class="stack-chooser" v-if="Stack.services" header="Choose all services to launch">
+  <section-cmp class="stack-chooser" v-if="localServices" header="Choose all services to launch">
     <ul>
-      <li v-for="service of Stack.services" :key="'services-'+service.label">
+      <li v-for="service of localServices" :key="'services-'+service.label">
         <input :id="'input-' + service.label" type="checkbox" v-model="service.enabled" :checked="service.enabled ? 'checked' : null">
         <label :for="'input-' + service.label">
           {{service.label}}
@@ -10,7 +10,7 @@
       </li>
     </ul>
     <div class="actions">
-      <button v-if="!allEnabled" @click="enableAll">Select all</button>
+      <button v-if="!isAllEnabled" @click="enableAll">Select all</button>
       <button v-else @click="disableAll">Unselect all</button>
       <button @click="validate" class="success">Validate</button>
     </div>
@@ -23,33 +23,34 @@
 import Stack from '../models/stack'
 import System from '../models/system'
 import SectionVue from '../components/Section.vue'
+import { computed, onMounted, ref } from 'vue'
+import router from '../router/router'
 export default {
   name: 'StackChooser',
   components: {
     sectionCmp: SectionVue
   },
-  data() {
-    return {
-      Stack,
-      System
-    }
-  },
-  computed: {
-    allEnabled() {
-      return this.Stack.services.every((service) => service.enabled)
-    }
-  },
-  methods: {
-    async validate() {
-      await Stack.launchServices(Stack.services.filter(service => service.enabled))
+  setup() {
+    const localServices = ref([])
+    onMounted(async () => {
+      await Stack.loadServices()
+      localServices.value = Stack.services
+    })
+
+    const validate = async() => {
+      await Stack.launchServices(localServices.value.filter(service => service.enabled))
       const enabledServices = await Stack.getEnabledServices()
-      this.$router.push({name: 'stack-single', params: {label: enabledServices[0].label}})
-    },
-    enableAll() {
-      this.Stack.services.map(service => service.enabled = true)
-    },
-    disableAll() {
-      this.Stack.services.map(service => service.enabled = false)
+      router.push({name: 'stack-single', params: {label: enabledServices[0].label}})
+    }
+    const enableAll = () => localServices.value.map(service => service.enabled = true)
+    const disableAll =() => localServices.value.map(service => service.enabled = false)
+    return {
+      isAllEnabled: computed(() => localServices.value.every(service => service.enabled)),
+      localServices,
+      System,
+      validate, 
+      enableAll,
+      disableAll
     }
   }
 }

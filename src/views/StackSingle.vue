@@ -29,7 +29,7 @@
           </div>
         </section-cmp>
 
-        <git :currentService="currentService"/>
+        <git :currentService="currentService" :key="currentService.label"/>
         
         <npm :currentService="currentService"/>
 
@@ -47,62 +47,64 @@
 import Stack from '../models/stack'
 import System from '../models/system'
 import LogsVue from '../components/Logs.vue';
-import ProgressVue from '../components/Progress.vue';
-import SectionVue from '../components/Section.vue'
+// import ProgressVue from '../components/Progress.vue';
 import GitVue from '../components/Git.vue';
 import NpmVue from '../components/Npm.vue';
+import SectionVue from '../components/Section.vue'
+import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import router from '../router/router'
 export default {
   name: 'StackSingle',
   components: {
     logs: LogsVue,
-    progressCmp: ProgressVue,
-    sectionCmp: SectionVue,
+    // progressCmp: ProgressVue,
     git: GitVue,
-    npm: NpmVue
+    npm: NpmVue,
+    sectionCmp: SectionVue,
   },
-  data() {
+  setup() {
+    /** @type {import('vue').Ref<import('../models/service').default[]>} */
+    const stack = ref([])
+      /** @type {import('vue').Ref<import('../models/service').default>}*/
+    const currentService = ref()
+
+    watch(() => router.currentRoute.value.params.label, async () => {
+      currentService.value = await Stack.getService(router.currentRoute.value.params.label)
+    })
+    let interval
+    onMounted(async () => {
+      currentService.value = await Stack.getService(router.currentRoute.value.params.label)
+      interval = setInterval(async () => {
+        await System.getInfos(currentService.value .label)
+        await System.getGlobalInfos()
+      }, 1000);
+    })
+    onBeforeUnmount(()=> {
+      clearInterval(interval)
+    })
     return {
-      stack: [],
+      stack,
       System,
-      /** @type {import('../models/service').default}*/
-      currentService: null,
-      port:''
+      currentService,
+      async openInVsCode() {
+        currentService.value .openInVsCode()
+      },
+      async openFolder() {
+        currentService.value .openFolder()
+      },
+      async restart() {
+        await currentService.value .restart()
+        Stack.services = [...Stack.services]
+      },
+      async stop() {
+        await currentService.value .stop()
+        Stack.services = [...Stack.services]
+      },
+      async start() {
+        await currentService.value .start()
+        Stack.services = [...Stack.services]
+      },
     }
-  },
-  watch: {
-    async '$route.params.label'() {
-      this.currentService = await Stack.getService(this.$route.params.label)
-    }
-  },
-  async mounted() {
-    this.currentService = await Stack.getService(this.$route.params.label)
-    this.interval = setInterval(async () => {
-      await System.getInfos(this.currentService.label)
-      await System.getGlobalInfos()
-    }, 1000);
-  },
-  beforeDestroy() {
-    clearInterval(this.interval)
-  },
-  methods: {
-    async openInVsCode() {
-      this.currentService.openInVsCode()
-    },
-    async openFolder() {
-      this.currentService.openFolder()
-    },
-    async restart() {
-      await this.currentService.restart()
-      Stack.services = [...Stack.services]
-    },
-    async stop() {
-      await this.currentService.stop()
-      Stack.services = [...Stack.services]
-    },
-    async start() {
-      await this.currentService.start()
-      Stack.services = [...Stack.services]
-    },
   }
 }
 </script>
