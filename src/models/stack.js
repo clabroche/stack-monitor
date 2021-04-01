@@ -2,7 +2,7 @@ import axios from "../helpers/axios"
 import Service from "./service"
 
 function Stack () {
-  /** @type {Service[]} */
+  /** @type {import('./service').default[]} */
   this.services = []
 }
 

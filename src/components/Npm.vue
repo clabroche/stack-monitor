@@ -8,7 +8,7 @@
           </button>
           install
         </div>
-        <div ref="install" v-scroll-stop></div>
+        <div :ref="el => refs.install = el"></div>
       </div>
       <div>
         <div>
@@ -17,7 +17,7 @@
           </button>
           rebuild
         </div>
-        <div ref="rebuild" v-scroll-stop></div>
+        <div :ref="el => refs.rebuild = el"></div>
       </div>
       <div v-for="(script, key) of packageJson.scripts" :key="key" :title="script">
         <div>
@@ -26,7 +26,7 @@
           </button>
           {{key}}
         </div>
-        <div :ref="key" v-scroll-stop>
+        <div :ref="el => refs[key] = el">
           
         </div>
       </div>
@@ -43,6 +43,7 @@ import SectionVue from './Section.vue'
 import SectionsContainerVue from './SectionsContainer.vue'
 import { Terminal } from 'xterm/lib/xterm';
 import { FitAddon } from 'xterm-addon-fit';
+import { onMounted, reactive, ref, watch } from 'vue'
 export default {
   components: {
     sectionsContainer: SectionsContainerVue,
@@ -56,57 +57,66 @@ export default {
       type: Service
     },
   },
-  data() {
-    return {
-      isNpm: false,
-      packageJson: null,
-      launched: {}
-    }
-  },
-  async mounted() {
-    if(this.currentService) {
-      this.isNpm = await this.currentService.isNpm()
-      this.packageJson = await this.currentService.getPackageJSON()
-    }
-  },
-  methods: {
-    async run(command) {
-      if(this.currentService) {
-        const ref = this.$refs[command][0] ? this.$refs[command][0] : this.$refs[command]
-        ref.innerHTML = ''
-        const socketId = await this.currentService.runNpmCommand(command)
-        const terminal = new Terminal({
-          experimentalCharAtlas: 'static',
-          convertEol: true,
-          disableStdin: true,
-          fontSize: 10,
-          theme: {
-            
-          }
-        });
-        const fitAddon = new FitAddon();
-        terminal.loadAddon(fitAddon);
-        console.log()
-        terminal.open(ref);
-        fitAddon.activate(terminal)
-        fitAddon.fit();
-        this.$set(this.launched, command, true)
-        socket.on(socketId, ({msg}) => {
-          this.$set(this.launched, command, true)
-          if(msg.trim() === '!:;end') {
-            this.launched[command] = false
-            return
-          }
-          msg.trim().split('\n').filter(a => a).map(line => {
-            terminal.writeln(line)
-          })
-        })
+  setup(props) {
+    const isNpm = ref(false)
+    const packageJson = ref(null)
+    const launched = reactive({})
+    const refs = ref({})
+    const reload = async () => {
+      if(props.currentService) {
+        isNpm.value = await props.currentService.isNpm()
+        packageJson.value = await props.currentService.getPackageJSON()
       }
     }
-  }
+    onMounted(reload)
+    watch(() => props.currentService,reload)
+    return {
+      isNpm,
+      packageJson,
+      launched,
+      refs,
+      async run(command) {
+        if(props.currentService) {
+          const ref = refs.value[command][0] ? refs.value[command][0] : refs.value[command]
+          ref.innerHTML = ''
+          const socketId = await props.currentService.runNpmCommand(command)
+          const terminal = new Terminal({
+            experimentalCharAtlas: 'static',
+            convertEol: true,
+            disableStdin: true,
+            fontSize: 10,
+            theme: {
+              
+            }
+          });
+          const fitAddon = new FitAddon();
+          terminal.loadAddon(fitAddon);
+          terminal.open(ref);
+          fitAddon.activate(terminal)
+          fitAddon.fit();
+          launched[command] = true
+          socket.on(socketId, ({msg}) => {
+            launched[command] = true
+            if(msg.trim() === '!:;end') {
+              launched[command] = false
+              return
+            }
+            msg.trim().split('\n').filter(a => a).map(line => {
+              terminal.writeln(line)
+            })
+          })
+        }
+      }
+    }
+  },
 }
 </script>
-
+<style>
+.xterm-helpers {
+  /* display: none; */
+  visibility: hidden;
+}
+</style>
 <style lang="scss" scoped>
 .fa-spinner {
   animation-name: spin;

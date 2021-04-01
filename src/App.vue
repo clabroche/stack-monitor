@@ -14,58 +14,32 @@
 import Stack from './models/stack'
 import sidebarVue from './components/sidebar.vue'
 import socket from './helpers/socket'
-import newGithubIssueUrl from 'new-github-issue-url'
+import githubIssue from './helpers/githubIssue'
+import { ref, onMounted } from 'vue'
+import router from './router/router'
 export default {
   components: {
     sidebar: sidebarVue
   },
-  data() {
-    return {
-      connected: false,
-      servicesBackup: []
-    }
-  },
-  computed: {
-    githubIssue() {
-      return newGithubIssueUrl({
-        user: 'clabroche',
-        repo: 'stack-monitor',
-        body: `
-## Issue
-
-### Plateform
-\`\`\`<Windows10, Archlinux, MacOS...>\`\`\`
-
-### Configuration file
-\`\`\` javascript
-<upload your configuration file but without sensitive infos>
-\`\`\`
-
-### Description
-\\<Which part of this application bug...>
-
-
-### Reproduction 
-\\<Step to bug...>
-
-        `
-      });
-    }
-  },
-  created() {
-    this.$set(Stack, 'services', [])
-  },
-  async mounted() {
-    this.redirect()
-    socket.on('connect',  () => this.redirect());
-    socket.on('disconnect', () => this.redirect());
-  },
-  methods: {
-    async redirect() {
-      this.connected = socket.connected
-      if(!this.connected) Stack.services = []
+  setup() {
+    const connected = ref(false)
+    const redirect = async () => {
+      connected.value = socket.connected
+      if(!connected.value) Stack.services = []
       const enabledServices = await Stack.getEnabledServices()
-      if(!enabledServices.length && this.$route.name !== 'stack-chooser') this.$router.push({name:'stack-chooser'})
+      if(!enabledServices.length && router.currentRoute.value.name !== 'stack-chooser') {
+        router.push({name:'stack-chooser'})
+      }
+    }
+    onMounted(()=> {
+      redirect()
+      socket.on('connect',  redirect);
+      socket.on('disconnect', redirect);
+    })
+    return {
+      redirect,
+      connected,
+      githubIssue
     }
   }
 }

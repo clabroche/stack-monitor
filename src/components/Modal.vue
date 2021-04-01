@@ -1,26 +1,30 @@
 <template>
-  <modal :name="uuid" height="auto" :width="width || '60%'" :scrollable="noScroll ? !noScroll : true" class="modal" @closed="cancel()">
-    <div id="modal-content" :style="{height: height || 'auto'}">
-      <div class="close-cross" v-if="closeCross" @click="close()">
-        <i class="fas fa-times" aria-hidden="true"></i>
-      </div>
-      <div class="title-modal" v-if="$slots.header" :style="{'font-size': headerFontSize}">
-        <slot name="header"></slot>
-      </div>
-      <div class="body">
-        <slot name="body" :data="data"></slot>
-      </div>
-      <div class="button-box" v-if="!noActions">
-        <div class="notif-button validate" :class="{colored}" v-if="!noValidate" @click="validate()">{{ validateString || 'Sauvegarder' }}</div>
-        <div class="notif-button cancel" v-if="!noCancel" @click="cancel()">{{ cancelString || 'Annuler' }}</div>
+<teleport to="body">
+  <div  v-if="isOpen" class="modal-root" @click="close()" :class="{right: position==='right'}">
+    <div :name="uuid" height="auto" :style="{width:width || '90%'}" :scrollable="noScroll ? !noScroll : true" class="modal" @closed="cancel()" @click.stop>
+      <div id="modal-content" :style="{height: height || 'auto'}">
+        <div class="close-cross" v-if="closeCross" @click="close()">
+          <i class="fas fa-times" aria-hidden="true"></i>
+        </div>
+        <div class="title-modal" v-if="$slots.header" :style="{'font-size': headerFontSize}">
+          <slot name="header" :data="data"></slot>
+        </div>
+        <div class="body">
+          <slot name="body" :data="data"></slot>
+        </div>
+        <div class="button-box" v-if="!noActions">
+          <div class="notif-button cancel" v-if="!noCancel" @click="cancel()">{{ cancelString || 'Annuler' }}</div>
+          <div class="notif-button validate" :class="{colored}" v-if="!noValidate" @click="validate()">{{ validateString || 'Sauvegarder' }}</div>
+        </div>
       </div>
     </div>
-  </modal>
+  </div>
+</teleport>
 </template>
 
 <script>
-import {Subject} from 'rxjs'
-import uuid from 'uuid/dist/v4'
+import Subject from '../helpers/CustomObservable'
+import { v4 as uuid } from 'uuid';
 export default {
   props: [
     'value',
@@ -34,15 +38,16 @@ export default {
     'headerFontSize',
     'noCancel',
     'noValidate',
-    'colored'
+    'colored',
+    'disabled',
+    'position'
   ],
   data() {
     return {
       result: null,
       uuid: uuid(),
       data: null,
-      isOpen: false,
-      resolve: (data) => data
+      isOpen: false
     }
   },
   watch: {
@@ -50,19 +55,23 @@ export default {
       this.data = newVal
     }
   },
+  beforeUnmount() {
+    this.close(null)
+  },
   methods: {
     cancel() {
       this.close(null)
     },
     validate() {
-      this.close(this.value || true)
+      if(!this.disabled) {
+        this.close(this.value || true)
+      }
     },
     close(data) {
       this.isOpen = false
       if (this.result) {
         this.result.next(data)
-        this.$modal.hide(this.uuid)
-        this.result.unsubscribe()
+        // this.result.unsubscribe()
         this.result = null
       }
       if(this.resolve) {
@@ -77,17 +86,28 @@ export default {
       this.result.promise = new Promise((resolve) => {
         this.resolve = resolve
       });
-      this.$modal.show(this.uuid)
       return this.result
     }
   }
 }
 </script>
 <style scoped lang="scss">
-.modal {
+.modal-root {
   color: #4A5361;
+  z-index: 1299;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background: rgba(0,0,0,0.5);
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   #modal-content {
+    background: white;
     height: auto;
+    margin: auto;
     .close-cross {
       position: absolute;
       right: 20px;
@@ -110,16 +130,10 @@ export default {
       }
     }
 
-    @media screen and (max-width: 1200px) {
-      overflow-y: auto;
-    }
-    @media screen and (max-height: 900px) {
-      overflow-y: auto;
-    }
-
     .title-modal {
       font-size: 1.5rem;
       padding: 20px;
+      padding-bottom: 0;
       font-weight: bold;
     }
     .body {
@@ -131,31 +145,41 @@ export default {
       font-weight: bold;
     }
   }
-  .button-box {
-    display: flex;
-
-    .notif-button {
-
-      color: #4a5361;
-      font-size: 18px;
-      padding: 12px 0px 12px 0px;
-      background-color: #eaebed;
+  &.right {
+    justify-content: flex-end;
+    #modal-content {
+      height: 100vh !important;
       display: flex;
-      justify-content: center;
-      align-items: center;
-      width: 100%;
-      cursor: pointer;
-      transition: 300ms;
-      &.colored {
-        background-color: #26928e;
-        color: white;
+      flex-direction: column;
+      .body {
+        flex-grow: 1;
       }
-      &:hover{
-        background-color: #d1d1d1;
-        &.colored {
-          background-color: #267774;
-          color: white;
-        }
+    }
+  }
+}
+
+.button-box {
+  display: flex;
+  .notif-button {
+    color: #4a5361;
+    font-size: 18px;
+    padding: 12px 0px 12px 0px;
+    background-color: #eaebed;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    cursor: pointer;
+    transition: 300ms;
+    &.colored {
+      background-color: #26928e;
+      color: white;
+    }
+    &:hover {
+      background-color: #d1d1d1;
+      &.colored {
+        background-color: #267774;
+        color: white;
       }
     }
   }

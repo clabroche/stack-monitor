@@ -21,35 +21,37 @@
       </section-cmp>
     </div>
     <modal ref="reset-modal" cancelString="No" validateString="Yes">
-      <div slot="header">
+      <template #header>
         Reset
-      </div>
-      <div slot="body">
+      </template>
+      <template #body>
         Do you really want to launch "git reset --hard" on this repository ?
-      </div>
+      </template>
     </modal>
     <modal ref="checkout-modal" cancelString="No" validateString="Yes">
-      <div slot="header">
+      <template #header>
         Checkout
-      </div>
-      <div slot="body" slot-scope="{data: file}">
+      </template>
+      <template #body="{data: file}">
         Do you really want to launch "git checkout {{file}}" on this repository ?
-      </div>
+      </template>
     </modal>
     <modal ref="branch-modal" cancelString="No" validateString="Yes">
-      <div slot="header">
+      <template #header>
         Branch change
-      </div>
-      <div slot="body" slot-scope="{data: branchName}">
+      </template>
+      <template #body="{data:branchName}">
         Do you really want to change branch to "{{branchName}}" on this repository ?
-      </div>
+      </template>
     </modal>
     <modal ref="error-modal" :noActions="true">
-      <div slot="header">
+      <template #header>
         Erreur
-      </div>
-      <div slot="body" slot-scope="{data: error}" v-html="error ? error.replace(/\n/gi, '<br/>') : ''">
-      </div>
+      </template>
+      <template #body="{data:error}">
+        <div v-html="error ? error.replace(/\n/gi, '<br/>') : ''">
+        </div>
+      </template>
     </modal>
   </sections-container>
   
@@ -57,7 +59,6 @@
 
 <script>
 import Service from '../models/service'
-import stack from '../models/stack'
 import ModalVue from './Modal.vue'
 import SectionVue from './Section.vue'
 import SectionsContainerVue from './SectionsContainer.vue'
@@ -81,11 +82,6 @@ export default {
         branches: [],
         status: [],
       },
-    }
-  },
-  watch: {
-    async '$route.params.label'() {
-      this.currentService = await stack.getService(this.$route.params.label)
     }
   },
   async mounted() {

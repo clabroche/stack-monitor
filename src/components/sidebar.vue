@@ -1,8 +1,7 @@
 <template>
   <div class="sidebar">
-      <ul v-if="Stack.services.length">
-        <sidebar-item v-for="service of sortedStack" :key="service.label" :service="service">
-        </sidebar-item>
+      <ul v-if="sortedStack.length">
+        <sidebar-item v-for="service of sortedStack" :key="service.label" :service="service"/>
       </ul>
       <div class="system">
         <section-cmp header="System" class="system">
@@ -27,6 +26,7 @@ import ProgressVue from './Progress.vue'
 import SectionVue from './Section.vue'
 import sort from 'fast-sort'
 import sidebarItemVue from './sidebarItem.vue'
+import { computed, onMounted, ref, watch } from '@vue/runtime-core'
 export default {
   components: {
     progressCmp: ProgressVue,
@@ -36,18 +36,19 @@ export default {
   props: {
     currentService: {default: null}
   },
-  data() {
+  setup() {
+    /** @type {import('vue').Ref<import('../models/service').default[]>} */
+    const localServices = ref(Stack.services)
+    onMounted(async () => {
+      await Stack.loadServices()
+      localServices.value = Stack.services
+    })
+    watch(() => Stack.services, () => localServices.value = Stack.services, {deep: true})
     return {
+      sortedStack:computed(() => sort(localServices.value).desc((a) => a.enabled)),
       System,
-      Stack,
-      services: Stack.services
     }
-  },
-  computed: {
-    sortedStack() {
-      return sort(this.Stack.services).desc((a) => a.enabled)
-    }
-  },
+  }
 }
 </script>
 
