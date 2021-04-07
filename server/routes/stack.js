@@ -95,7 +95,7 @@ function launch() {
 function launchService(microservice) {
   microservice.spawnOptions = microservice.spawnOptions || {}
   microservice.spawnOptions.shell = true
-  if (microservice.spawnOptions.cwd) {
+  if (microservice.spawnOptions.cwd && microservice.spawnCmd.match(/\/|\\/g)) {
     microservice.spawnCmd = path.resolve(microservice.spawnOptions.cwd, microservice.spawnCmd)
   }
   SpawnStore[microservice.label] = spawn(microservice.spawnCmd, microservice.spawnArgs || [], microservice.spawnOptions)
