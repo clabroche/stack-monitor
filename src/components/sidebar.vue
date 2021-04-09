@@ -7,11 +7,11 @@
         <section-cmp header="System" class="system">
           <div class="progress-container">
             <label>Mem</label>
-            <progress-cmp :percent="+System.globalInfos.memPercentage"></progress-cmp>
+            <progress-cmp :percent="mem"></progress-cmp>
           </div>
           <div class="progress-container">
             <label>CPU</label>
-            <progress-cmp :percent="+System.globalInfos.cpu *100"></progress-cmp>
+            <progress-cmp :percent="cpu * 100"></progress-cmp>
           </div>
           <button @click="System.disconnect()">Disconnect</button>
         </section-cmp>
@@ -26,7 +26,7 @@ import ProgressVue from './Progress.vue'
 import SectionVue from './Section.vue'
 import sort from 'fast-sort'
 import sidebarItemVue from './sidebarItem.vue'
-import { computed, onMounted, ref, watch } from '@vue/runtime-core'
+import { computed, onBeforeUnmount, onMounted, ref, watch } from '@vue/runtime-core'
 export default {
   components: {
     progressCmp: ProgressVue,
@@ -44,8 +44,23 @@ export default {
       localServices.value = Stack.services
     })
     watch(() => Stack.services, () => localServices.value = Stack.services, {deep: true})
+    let interval
+    const cpu = ref(0)
+    const mem = ref(0)
+    onMounted(async () => {
+      interval = setInterval(async () => {
+        const {memPercentage, cpu: _cpu} = await System.getGlobalInfos()
+        cpu.value = _cpu
+        mem.value = memPercentage
+      }, 1000);
+    })
+    onBeforeUnmount(()=> {
+      clearInterval(interval)
+    })
+
     return {
       sortedStack:computed(() => sort(localServices.value).desc((a) => a.enabled)),
+      cpu, mem,
       System,
     }
   }
