@@ -8,6 +8,7 @@ const { exec } = require('child_process');
 const killport = require('kill-port')
 const open = require('open');
 const url = require('url')
+const path = require('path')
 
 router.get('/configuration', function (req, res) {
   res.json(Stack.stack)
@@ -15,7 +16,7 @@ router.get('/configuration', function (req, res) {
 router.post('/choose', function (req, res) {
   const servicesLabelSelected = req.body
   Stack.stack.map(service => {
-    if(servicesLabelSelected.includes(service.label)) {
+    if (servicesLabelSelected.includes(service.label)) {
       service.enabled = true
     }
   })
@@ -84,7 +85,7 @@ async function killService(service) {
 function launch() {
   Stack.stack.forEach(microservice => {
     microservice.store = ''
-    if(microservice.enabled) {
+    if (microservice.enabled) {
       launchService(microservice)
     }
   })
@@ -94,6 +95,9 @@ function launch() {
 function launchService(microservice) {
   microservice.spawnOptions = microservice.spawnOptions || {}
   microservice.spawnOptions.shell = true
+  if (microservice.spawnOptions.cwd && microservice.spawnCmd.match(/\/|\\/g)) {
+    microservice.spawnCmd = path.resolve(microservice.spawnOptions.cwd, microservice.spawnCmd)
+  }
   SpawnStore[microservice.label] = spawn(microservice.spawnCmd, microservice.spawnArgs || [], microservice.spawnOptions)
   SpawnStore[microservice.label].title = microservice.label
   microservice.pid = SpawnStore[microservice.label].pid
