@@ -1,5 +1,5 @@
 <template>
-  <sections-container header="Npm" v-if="isNpm && packageJson">
+  <div header="Npm" v-if="isNpm && packageJson">
     <section-cmp  :key="currentService.label" header="Scripts" maxHeight="400px">
       <div>
         <div>
@@ -32,7 +32,7 @@
       </div>
 
     </section-cmp>
-  </sections-container>
+  </div>
   
 </template>
 
@@ -40,13 +40,11 @@
 import socket from '../helpers/socket'
 import Service from '../models/service'
 import SectionVue from './Section.vue'
-import SectionsContainerVue from './SectionsContainer.vue'
 import { Terminal } from 'xterm/lib/xterm';
 import { FitAddon } from 'xterm-addon-fit';
 import { onMounted, reactive, ref, watch } from 'vue'
 export default {
   components: {
-    sectionsContainer: SectionsContainerVue,
     sectionCmp: SectionVue,
   },
   props: {

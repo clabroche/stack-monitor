@@ -1,16 +1,18 @@
+import { reactive } from '@vue/reactivity'
 import axios from '../helpers/axios'
 
 function System() {
-  this.infos = {
+  this.infos = reactive({
     cpu: 0,
     mem: 0,
-  }
-  this.globalInfos = {
+  })
+  this.globalInfos = reactive({
     nbCpus: 0,
     totalmem: 0,
     freemem: 0,
-    memPercentage: 0
-  }
+    memPercentage: 0,
+    cpu: 0
+  })
   this.version = '0.0.0'
 }
 System.prototype.getInfos = async function (serviceLabel) {

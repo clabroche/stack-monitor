@@ -1,12 +1,12 @@
 <template>
-<sections-container header="Logs" @is-open="isOpen = $event" :defaultIsOpen="isOpen">
+<div header="Logs" @is-open="isOpen = $event" :defaultIsOpen="isOpen">
   <section-cmp v-if="isOpen" header="Logs" :actions="[{label: 'Clear', icon: 'fas fa-trash', click: () => clear()}]">
-    <div v-scroll-stop>
-      <div v-if="service" class="logs-container" ref="logsContainer" id="terminal">
+    <div @scroll.stop="$event.returnValue=false">
+      <div v-if="service" class="logs-container" ref="logsContainer" id="terminal" @scroll="scroll">
       </div>
     </div>
   </section-cmp>
-</sections-container>
+</div>
 </template>
 
 <script>
@@ -15,12 +15,10 @@ import Socket from '../helpers/socket';
 import { Terminal } from 'xterm/lib/xterm';
 import { FitAddon } from 'xterm-addon-fit';
 import SectionVue from './Section.vue';
-import SectionsContainerVue from './SectionsContainer.vue';
 
 export default {
   name: 'Logs',
   components: {
-    sectionsContainer: SectionsContainerVue,
     sectionCmp: SectionVue
   },
   props: {
@@ -41,6 +39,9 @@ export default {
     this.createTerminal()
   },
   methods: {
+    scroll() {
+      console.log('scroll')
+    },
     async createTerminal() {
       await new Promise(resolve=> setTimeout(resolve, 10));
       if(!this.isOpen) return 

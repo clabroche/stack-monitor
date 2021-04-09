@@ -20,20 +20,30 @@
           <div class="systemInfos">
             <div class="progress-container">
               <label>Mem</label>
-              <progress-cmp :percent="System.infos.cpu ? +System.infos.cpu.toFixed(2) : 0"></progress-cmp>
+              <progress-cmp :percent="cpu"></progress-cmp>
             </div>
             <div class="progress-container">
               <label>CPU</label>
-              <progress-cmp :percent="System.infos.mem ? +System.infos.mem.toFixed(2) + '%' : 0"></progress-cmp>
+              <progress-cmp :percent="mem"></progress-cmp>
             </div>
           </div>
         </section-cmp>
-
-        <git :currentService="currentService" :key="currentService.label"/>
-        
-        <npm :currentService="currentService"/>
-
-        <logs v-if="currentService" :service="currentService" :key="currentService.label"></logs>
+        <tabs :tabs="[{label: 'Git', id: 'git'},{label: 'Npm', id: 'npm'}, {label: 'Logs', id: 'logs'}]" 
+          :showLabels="false">
+          <template #default="{tab}">
+            <transition name="slide-fade">
+              <div v-if="tab.id === 'git'" class="tab">
+                <git :currentService="currentService" :key="currentService.label"/>
+              </div>
+              <div v-else-if="tab.id === 'npm'" class="tab">
+                <npm :currentService="currentService"/>
+              </div>
+              <div v-else-if="tab.id === 'logs'" class="tab">
+                <logs v-if="currentService" :service="currentService" :key="currentService.label"></logs>
+              </div>
+            </transition>
+          </template>
+        </tabs>
       </div>
       <div v-else class="sections">
         <section-cmp header="This service is not started" :actions="[{label: 'Start', click: () => start(), icon: 'fas fa-play'}]">
@@ -47,27 +57,30 @@
 import Stack from '../models/stack'
 import System from '../models/system'
 import LogsVue from '../components/Logs.vue';
-// import ProgressVue from '../components/Progress.vue';
+import ProgressVue from '../components/Progress.vue';
 import GitVue from '../components/Git.vue';
 import NpmVue from '../components/Npm.vue';
 import SectionVue from '../components/Section.vue'
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import router from '../router/router'
+import Tabs from '../components/Tabs.vue';
 export default {
   name: 'StackSingle',
   components: {
     logs: LogsVue,
-    // progressCmp: ProgressVue,
+    progressCmp: ProgressVue,
     git: GitVue,
     npm: NpmVue,
     sectionCmp: SectionVue,
+    Tabs,
   },
   setup() {
     /** @type {import('vue').Ref<import('../models/service').default[]>} */
     const stack = ref([])
       /** @type {import('vue').Ref<import('../models/service').default>}*/
     const currentService = ref()
-
+    const cpu = ref(0)
+    const mem = ref(0)
     watch(() => router.currentRoute.value.params.label, async () => {
       currentService.value = await Stack.getService(router.currentRoute.value.params.label)
     })
@@ -75,17 +88,20 @@ export default {
     onMounted(async () => {
       currentService.value = await Stack.getService(router.currentRoute.value.params.label)
       interval = setInterval(async () => {
-        await System.getInfos(currentService.value .label)
-        await System.getGlobalInfos()
+        const {cpu: _cpu, mem: _mem} = await System.getInfos(currentService.value .label)
+        cpu.value = _cpu
+        mem.value = _mem
       }, 1000);
     })
     onBeforeUnmount(()=> {
       clearInterval(interval)
     })
+
     return {
       stack,
       System,
       currentService,
+      cpu, mem,
       async openInVsCode() {
         currentService.value .openInVsCode()
       },
@@ -192,4 +208,17 @@ export default {
   }
 }
 
+.slide-fade-enter-active,.slide-fade-leave-active {
+  transition: all 0.3s ease-out;
+}
+
+.slide-fade-enter-from,
+.slide-fade-leave-to {
+  opacity: 0;
+}
+.slide-fade-enter-active {
+  position: absolute;
+  top: 0;
+  width: 100%;
+}
 </style>

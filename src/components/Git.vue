@@ -1,70 +1,65 @@
 <template>
-  <sections-container header="Git">
-    <div class="git-section" v-if="currentService.git && currentService.git.remote">
-      <section-cmp v-if="git.branches" :key="currentService.label" header="Branches">
-        <ul class="branches">
-          <li v-for="(branch, i) of git.branches" :key="'branch' +i" @click="changeBranch(branch)" :class="{active: branch.includes('*')}">
-            {{branch.replace(/^\* /gm, '')}} <i class="fas fa-chevron-right"  aria-hidden="true"></i>
-          </li>
-        </ul>
-      </section-cmp>
-      <section-cmp v-if="git.status" header="Status" :actions="[{label: 'Reset', click: () => reset(), icon: 'fas fa-eraser'}]">
-        <ul v-if="git.status.filter(a =>a).length">
-          <li v-for="(status, i) of git.status" :key="'status-' + i" @click="checkoutFile(status)">
-            <span v-html="colorStatus(status)"></span>
-            <i class="fas fa-times" aria-hidden="true"></i>
-          </li>
-        </ul>
-        <div v-else class="check">
-          <i class="fas fa-check" aria-hidden="true"></i>
-        </div>
-      </section-cmp>
-    </div>
-    <modal ref="reset-modal" cancelString="No" validateString="Yes">
-      <template #header>
-        Reset
-      </template>
-      <template #body>
-        Do you really want to launch "git reset --hard" on this repository ?
-      </template>
-    </modal>
-    <modal ref="checkout-modal" cancelString="No" validateString="Yes">
-      <template #header>
-        Checkout
-      </template>
-      <template #body="{data: file}">
-        Do you really want to launch "git checkout {{file}}" on this repository ?
-      </template>
-    </modal>
-    <modal ref="branch-modal" cancelString="No" validateString="Yes">
-      <template #header>
-        Branch change
-      </template>
-      <template #body="{data:branchName}">
-        Do you really want to change branch to "{{branchName}}" on this repository ?
-      </template>
-    </modal>
-    <modal ref="error-modal" :noActions="true">
-      <template #header>
-        Erreur
-      </template>
-      <template #body="{data:error}">
-        <div v-html="error ? error.replace(/\n/gi, '<br/>') : ''">
-        </div>
-      </template>
-    </modal>
-  </sections-container>
-  
+  <div class="git-section" v-if="currentService.git && currentService.git.remote">
+    <section-cmp v-if="git.branches" :key="currentService.label" header="Branches">
+      <ul class="branches">
+        <li v-for="(branch, i) of git.branches" :key="'branch' +i" @click="changeBranch(branch)" :class="{active: branch.includes('*')}">
+          {{branch.replace(/^\* /gm, '')}} <i class="fas fa-chevron-right"  aria-hidden="true"></i>
+        </li>
+      </ul>
+    </section-cmp>
+    <section-cmp v-if="git.status" header="Status" :actions="[{label: 'Reset', click: () => reset(), icon: 'fas fa-eraser'}]">
+      <ul v-if="git.status.filter(a =>a).length">
+        <li v-for="(status, i) of git.status" :key="'status-' + i" @click="checkoutFile(status)">
+          <span v-html="colorStatus(status)"></span>
+          <i class="fas fa-times" aria-hidden="true"></i>
+        </li>
+      </ul>
+      <div v-else class="check">
+        <i class="fas fa-check" aria-hidden="true"></i>
+      </div>
+    </section-cmp>
+  </div>
+  <modal ref="reset-modal" cancelString="No" validateString="Yes">
+    <template #header>
+      Reset
+    </template>
+    <template #body>
+      Do you really want to launch "git reset --hard" on this repository ?
+    </template>
+  </modal>
+  <modal ref="checkout-modal" cancelString="No" validateString="Yes">
+    <template #header>
+      Checkout
+    </template>
+    <template #body="{data: file}">
+      Do you really want to launch "git checkout {{file}}" on this repository ?
+    </template>
+  </modal>
+  <modal ref="branch-modal" cancelString="No" validateString="Yes">
+    <template #header>
+      Branch change
+    </template>
+    <template #body="{data:branchName}">
+      Do you really want to change branch to "{{branchName}}" on this repository ?
+    </template>
+  </modal>
+  <modal ref="error-modal" :noActions="true">
+    <template #header>
+      Erreur
+    </template>
+    <template #body="{data:error}">
+      <div v-html="error ? error.replace(/\n/gi, '<br/>') : ''">
+      </div>
+    </template>
+  </modal>
 </template>
 
 <script>
 import Service from '../models/service'
 import ModalVue from './Modal.vue'
 import SectionVue from './Section.vue'
-import SectionsContainerVue from './SectionsContainer.vue'
 export default {
   components: {
-    sectionsContainer: SectionsContainerVue,
     sectionCmp: SectionVue,
     modal: ModalVue
   },
