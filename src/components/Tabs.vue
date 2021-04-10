@@ -2,7 +2,8 @@
   <div class="tabs">
     <div class="buttons" :class="{invert:invertColor}">
       <button @click="currentTab = tab;save()" v-for="tab of tabs" :key="tab.label" :class="{active: tab?.id === currentTab?.id}">
-        {{tab.label}}
+        <div v-if="tab.label && !tab.icon">{{tab.label}}</div>
+        <i v-if="tab.icon" :class="tab.icon"></i>
         <label v-if="showLabels">{{tab?.data?.value?.length || tab?.data?.length || 0}}</label>
       </button>
     </div>
@@ -75,18 +76,26 @@ export default {
     justify-content: center;
     align-items: center;
     background-color: transparent;
+    background: transparent;
     margin: 0 1px;
     font-size: 1em;
     &:hover {
       box-shadow: none;
+      transform: none;
+    }
+    i {
+      font-size: 1.2em;
     }
     &.active {
       border-radius: 5px 5px 0 0;
-      height: 30px;
+      height: 45px;
       color: #000;
       font-size: 1.4em;
       margin-bottom: -1px;
       border-bottom: 3px solid #0076bc;
+      i {
+        font-size: 1.8em;
+      }
     }
     label {
       background-color: #fff;

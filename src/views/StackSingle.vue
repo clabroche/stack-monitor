@@ -16,19 +16,25 @@
         </div>
       </div>
       <div class="sections" v-if="currentService.enabled">
-        <section-cmp header="System load by this service" :actions="[{label: 'Restart', click: () => restart(), icon: 'fas fa-sync'}, {label: 'Stop', click: () => stop(), icon: 'fas fa-stop'}]">
-          <div class="systemInfos">
-            <div class="progress-container">
-              <label>Mem</label>
-              <progress-cmp :percent="cpu"></progress-cmp>
-            </div>
-            <div class="progress-container">
-              <label>CPU</label>
-              <progress-cmp :percent="mem"></progress-cmp>
-            </div>
-          </div>
-        </section-cmp>
-        <tabs :tabs="[{label: 'Git', id: 'git'},{label: 'Npm', id: 'npm'}, {label: 'Logs', id: 'logs'}]" 
+        <div class="system-cards">
+          <card color="blue" class="card">
+            <h2>Memory</h2>
+            <progress-cmp :percent="mem"></progress-cmp>
+          </card>
+          <card color="blue" class="card purple">
+            <h2>CPU</h2>
+            <progress-cmp :percent="cpu"></progress-cmp>
+          </card>
+          <card color="blue" class="card orange">
+            <button @click="restart()"><i class="fas fa-sync"></i> Restart</button>
+            <button @click="stop()"><i class="fas fa-stop"></i> Stop</button>
+          </card>
+        </div>
+        <tabs :tabs="[
+          {label: 'Git', id: 'git', icon:'fab fa-git-alt'},
+          {label: 'Npm', id: 'npm', icon: 'fab fa-npm'},
+          {label: 'Logs', id: 'logs', icon: 'fas fa-terminal'}
+        ]" 
           :showLabels="false">
           <template #default="{tab}">
             <transition name="slide-fade">
@@ -64,6 +70,7 @@ import SectionVue from '../components/Section.vue'
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import router from '../router/router'
 import Tabs from '../components/Tabs.vue';
+import Card from '../components/Card.vue';
 export default {
   name: 'StackSingle',
   components: {
@@ -73,6 +80,7 @@ export default {
     npm: NpmVue,
     sectionCmp: SectionVue,
     Tabs,
+    Card
   },
   setup() {
     /** @type {import('vue').Ref<import('../models/service').default[]>} */
@@ -89,6 +97,7 @@ export default {
       currentService.value = await Stack.getService(router.currentRoute.value.params.label)
       interval = setInterval(async () => {
         const {cpu: _cpu, mem: _mem} = await System.getInfos(currentService.value .label)
+        console.log(cpu.value, mem.value)
         cpu.value = _cpu
         mem.value = _mem
       }, 1000);
@@ -186,9 +195,9 @@ export default {
         left: 0;
         border-bottom: 3px solid #214f6b;
         border-radius: 4px;
-        background-color: #0076bc;
+        background: linear-gradient(93deg, #1d95db 0%, #074971 100%);
         width: 100%;
-        height: calc(100% + 75px);
+        height: calc(100% + 30px);
       }
     }
     .sections {
@@ -198,7 +207,17 @@ export default {
   }
 }
 
-
+.system-cards{
+  display: flex;
+  justify-content: center;
+  .card {
+    margin-right: 10px;
+    button {
+      background: #0000003d;
+      width: 100%;
+    }
+  }
+}
 
 .progress-container {
   display: flex;

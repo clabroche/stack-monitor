@@ -1,5 +1,5 @@
 <template>
-  <div class="stack-single">
+  <div class="stack-multiple">
     <button class="single-button" @click="$router.push({name:'stack-single', params: {label: services[0].label}})"><i class="fas fa-columns"></i></button>
     <tabs :invertColor="true" :tabs="[{label: 'Git', id: 'git'}, {label: 'Logs', id: 'logs'}]" 
       :showLabels="false">
@@ -65,7 +65,7 @@ export default {
   top: 10px;
   left: 10px;
 }
-.stack-single {
+.stack-multiple {
   height: 100vh;
   width: 100%;
   &::before {
@@ -77,6 +77,7 @@ export default {
     border-bottom: 3px solid #214f6b;
     border-radius: 4px;
     background-color: #0076bc;
+    background: linear-gradient(93deg, #1d95db 0%, #074971 100%);
     width: 100%;
     height: 100px;
   }
