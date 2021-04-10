@@ -4,6 +4,7 @@
         <sidebar-item v-for="service of sortedStack" :key="service.label" :service="service"/>
       </ul>
       <div class="system">
+        <button @click="$router.push({name: 'stack-multiple'})"><i class="fas fa-th"></i></button>
         <section-cmp header="System" class="system">
           <div class="progress-container">
             <label>Mem</label>

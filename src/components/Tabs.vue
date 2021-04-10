@@ -1,6 +1,6 @@
 <template>
   <div class="tabs">
-    <div class="buttons">
+    <div class="buttons" :class="{invert:invertColor}">
       <button @click="currentTab = tab;save()" v-for="tab of tabs" :key="tab.label" :class="{active: tab?.id === currentTab?.id}">
         {{tab.label}}
         <label v-if="showLabels">{{tab?.data?.value?.length || tab?.data?.length || 0}}</label>
@@ -17,7 +17,8 @@ import { ref, onMounted } from 'vue'
 export default {
   props: {
     tabs: {default: () => []},
-    showLabels: {default: true}
+    showLabels: {default: true},
+    invertColor: {default: false}
   },
   setup(props) {
     const currentTab = ref()
@@ -53,6 +54,15 @@ export default {
   height: 45px;
   flex-shrink: 0;
   width: 90%;
+  &.invert {
+    button.active {
+      color: #fff;
+      border-bottom-color: #fff;
+    }
+    button {
+      color: #ccc;
+    }
+  }
   button {
     outline: none;
     color: #ccc;
