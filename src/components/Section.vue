@@ -40,7 +40,6 @@ export default {
   margin: 5px 0;
   box-sizing: border-box;
   border: 1px solid #dfdfdf;
-  border-radius: 4px;
   background-color: #fff;
   display: flex;
   flex-direction: column;
