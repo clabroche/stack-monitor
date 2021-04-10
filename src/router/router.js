@@ -1,5 +1,6 @@
 import StackChooserVue from '../views/StackChooser.vue'
 import StackSingle from '../views/StackSingle.vue'
+import StackMultiple from '../views/StackMultiple.vue'
 import { createRouter, createWebHashHistory } from "vue-router";
 const routes = [
   {
@@ -11,6 +12,11 @@ const routes = [
     path: '/stack-single/:label',
     name: 'stack-single',
     component: StackSingle
+  },
+  {
+    path: '/stack-multiple',
+    name: 'stack-multiple',
+    component: StackMultiple
   },
   {
     name: "not-found",

@@ -1,6 +1,6 @@
 <template>
   <div id="app" v-if="connected">
-    <sidebar v-if="$route.name !== 'stack-chooser'"/>
+    <sidebar v-if="$route.name === 'stack-single'"/>
     <router-view/>
   </div>
   <div class="not-connected" v-else>
