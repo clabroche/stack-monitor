@@ -6,7 +6,7 @@ const { exec } = require('child_process')
 function execAsync(cmd, options) {
   return new Promise((res, rej) => {
     exec(cmd, options, (err, stdout, stderr) => {
-      if (stderr || err) return rej(stderr || err)
+      if (err) return rej(stderr || err)
       res(stdout)
     })
   })
@@ -36,6 +36,55 @@ router.delete('/:service/reset', async function (req, res) {
   try {
     const service = findService(req.params.service)
     exec('git reset --hard', { cwd: service.spawnOptions.cwd })
+    res.json('ok')
+  } catch (error) {
+    res.status(500).json('ko')
+  }
+})
+router.post('/:service/pull', async function (req, res) {
+  try {
+    const service = findService(req.params.service)
+    await execAsync('git pull', { cwd: service.spawnOptions.cwd })
+    res.json('ok')
+  } catch (error) {
+    res.status(500).json(error)
+  }
+})
+router.post('/:service/stash', async function (req, res) {
+  try {
+    const service = findService(req.params.service)
+    await execAsync('git add .', { cwd: service.spawnOptions.cwd })
+    await execAsync('git stash', { cwd: service.spawnOptions.cwd })
+    res.json('ok')
+  } catch (error) {
+    res.status(500).json('ko')
+  }
+})
+router.post('/:service/stash-pop', async function (req, res) {
+  try {
+    const service = findService(req.params.service)
+    await execAsync('git stash pop', { cwd: service.spawnOptions.cwd })
+    await execAsync('git reset HEAD', { cwd: service.spawnOptions.cwd })
+    res.json('ok')
+  } catch (error) {
+    res.status(500).json('ko')
+  }
+})
+router.post('/:service/stash-list', async function (req, res) {
+  try {
+    const service = findService(req.params.service)
+    const list = await execAsync('git stash show', { cwd: service.spawnOptions.cwd })
+      .catch(() => null)
+    res.json(list)
+  } catch (error) {
+    console.error(error)
+    res.status(500).json('ko')
+  }
+})
+router.post('/:service/pull', async function (req, res) {
+  try {
+    const service = findService(req.params.service)
+    await execAsync('git pull', { cwd: service.spawnOptions.cwd })
     res.json('ok')
   } catch (error) {
     res.status(500).json('ko')

@@ -1,13 +1,17 @@
 <template>
   <div class="git-section" v-if="currentService.git && currentService.git.remote">
-    <section-cmp v-if="git.branches" :key="currentService.label" header="Branches">
+    <section-cmp v-if="git.branches" :key="currentService.label" header="Branches" :actions="[{label: 'Pull', click: () => pull(), icon: 'fas fa-download'}]">
       <ul class="branches">
         <li v-for="(branch, i) of git.branches" :key="'branch' +i" @click="changeBranch(branch)" :class="{active: branch.includes('*')}">
           {{branch.replace(/^\* /gm, '')}} <i class="fas fa-chevron-right"  aria-hidden="true"></i>
         </li>
       </ul>
     </section-cmp>
-    <section-cmp v-if="git.status" header="Status" :actions="[{label: 'Reset', click: () => reset(), icon: 'fas fa-eraser'}]">
+    <section-cmp v-if="git.status" header="Status" :actions="[
+      {label: 'Stash', click: () => stash(), icon: 'fas fa-sun',hidden: git.stash || !git.status.filter(a =>a).length},
+      {label: 'Unstash', click: () => stashPop(), icon: 'far fa-sun', hidden: !git.stash},
+      {label: 'Reset', click: () => reset(), icon: 'fas fa-eraser'}
+      ]">
       <ul v-if="git.status.filter(a =>a).length">
         <li v-for="(status, i) of git.status" :key="'status-' + i" @click="checkoutFile(status)">
           <span v-html="colorStatus(status)"></span>
@@ -76,11 +80,16 @@ export default {
       git: {
         branches: [],
         status: [],
+        stash: null
       },
     }
   },
   async mounted() {
-    await this.updateGit()
+    this.updateGit()
+    this.interval = setInterval(this.updateGit, 1000)
+  },
+  beforeUnmount() {
+    clearInterval(this.interval)
   },
   methods: {
     colorStatus(status) {
@@ -100,15 +109,15 @@ export default {
     async updateGit() {
       this.git.branches = await this.currentService.getBranches(this.currentService.label)
       this.git.status = await this.currentService.getStatus(this.currentService.label)
+      this.stashList()
     },
     async changeBranch(branchName) {
       branchName = branchName.trim()
       const res = await this.$refs['branch-modal'].open(branchName).promise
       if(res) {
         await this.currentService.changeBranch(branchName)
-          .catch(err => {
-            return this.$refs['error-modal'].open(err.response.data).promise
-          })
+          .catch(err=> this.$refs['error-modal'].open(err.response.data).promise)
+        await this.updateGit()
       }
     },
     async checkoutFile(fileStatus) {
@@ -116,13 +125,34 @@ export default {
       const res = await this.$refs['checkout-modal'].open(file).promise
       if(res) {
         return this.currentService.checkoutFile(file)
+          .catch(err=> this.$refs['error-modal'].open(err.response.data).promise)
       }
     },
     async reset() {
       const res = await this.$refs['reset-modal'].open().promise
       if(res) {
         return this.currentService.reset()
+          .catch(err=> this.$refs['error-modal'].open(err.response.data).promise)
       }
+    },
+    async stash() {
+      await this.currentService.stash()
+        .catch(err=> this.$refs['error-modal'].open(err.response.data).promise)
+      return this.updateGit()
+    },
+    async stashPop() {
+      await this.currentService.stashPop()
+        .catch(err=> this.$refs['error-modal'].open(err.response.data).promise)
+      return this.updateGit()
+    },
+    async pull() {
+      await this.currentService.pull()
+        .catch(err=> this.$refs['error-modal'].open(err.response.data).promise)
+      return this.updateGit()
+    },
+    async stashList() {
+      const list = await this.currentService.stashList()
+      this.git.stash = list
     },
   }
 }
