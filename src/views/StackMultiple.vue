@@ -10,7 +10,7 @@
               class="service-container"
               :header="service.label"
               >
-              <git :currentService="service" :key="service.label"/>
+              <git :currentService="service" :key="service.label" :noStyle="true"/>
             </section-cmp>
           </div>
           <div v-else-if="tab.id === 'logs'" class="tab">
@@ -19,7 +19,7 @@
               :header="service.label"
               :actions="[{label: 'Restart', click: () => restart(service), icon: 'fas fa-sync'}, {label: 'Stop', click: () => stop(service), icon: 'fas fa-stop'}]"
               >
-              <logs :service="service" :key="service.label"></logs>
+              <logs :service="service" :key="service.label" :noStyle="true"></logs>
             </section-cmp>
           </div>
         </transition>
@@ -89,6 +89,8 @@ export default {
   align-items: stretch;
   overflow: auto;
   height: calc(100vh - 65px);
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
 }
 .service-container {
   min-width: 300px;

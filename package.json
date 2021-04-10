@@ -42,8 +42,8 @@
     "vue-js-modal": "^2.0.0-rc.3",
     "vue-router": "^4.0.5",
     "vue-scroll-stop": "^0.1.5",
-    "xterm": "^4.7.0",
-    "xterm-addon-fit": "^0.4.0"
+    "xterm": "^4.11.0",
+    "xterm-addon-fit": "^0.5.0"
   },
   "devDependencies": {
     "@iryu54/badge-audit": "^1.0.1",

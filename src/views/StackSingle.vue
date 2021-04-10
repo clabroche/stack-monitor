@@ -97,7 +97,6 @@ export default {
       currentService.value = await Stack.getService(router.currentRoute.value.params.label)
       interval = setInterval(async () => {
         const {cpu: _cpu, mem: _mem} = await System.getInfos(currentService.value .label)
-        console.log(cpu.value, mem.value)
         cpu.value = _cpu
         mem.value = _mem
       }, 1000);

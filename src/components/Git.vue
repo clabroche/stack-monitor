@@ -1,13 +1,17 @@
 <template>
   <div class="git-section" v-if="currentService.git && currentService.git.remote">
-    <section-cmp v-if="git.branches" :key="currentService.label" header="Branches" :actions="[{label: 'Pull', click: () => pull(), icon: 'fas fa-download'}]">
+    <section-cmp v-if="git.branches"
+      :key="currentService.label"
+      header="Branches"
+      :noStyle="noStyle"
+      :actions="[{label: 'Pull', click: () => pull(), icon: 'fas fa-download'}]">
       <ul class="branches">
         <li v-for="(branch, i) of git.branches" :key="'branch' +i" @click="changeBranch(branch)" :class="{active: branch.includes('*')}">
           {{branch.replace(/^\* /gm, '')}} <i class="fas fa-chevron-right"  aria-hidden="true"></i>
         </li>
       </ul>
     </section-cmp>
-    <section-cmp v-if="git.status" header="Status" :actions="[
+    <section-cmp v-if="git.status" header="Status" :noStyle="noStyle" :actions="[
       {label: 'Stash', click: () => stash(), icon: 'fas fa-sun',hidden: git.stash || !git.status.filter(a =>a).length},
       {label: 'Unstash', click: () => stashPop(), icon: 'far fa-sun', hidden: !git.stash},
       {label: 'Reset', click: () => reset(), icon: 'fas fa-eraser'}
@@ -68,6 +72,7 @@ export default {
     modal: ModalVue
   },
   props: {
+    noStyle: {dedault: false},
     currentService: {
       /** @type {import('../models/service').default}*/
       default: null,
@@ -164,8 +169,10 @@ export default {
   justify-content: space-between;
   align-items: stretch;
   margin: auto;
+  height: 100%;
   max-height: 240px;
   overflow: hidden;
+  
   &>div {
     &:first-of-type {
       margin-right: 5px

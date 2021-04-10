@@ -1,9 +1,7 @@
 <template>
 <div header="Logs" @is-open="isOpen = $event" :defaultIsOpen="isOpen">
-  <section-cmp v-if="isOpen" header="Logs" :actions="[{label: 'Clear', icon: 'fas fa-trash', click: () => clear()}]">
-    <div @scroll.stop="$event.returnValue=false">
-      <div v-if="service" class="logs-container" ref="logsContainer" id="terminal" @scroll="scroll">
-      </div>
+  <section-cmp v-if="isOpen" header="Logs" :noStyle="noStyle" :actions="[{label: 'Clear', icon: 'fas fa-trash', click: () => clear()}]">
+    <div v-if="service" class="logs-container" ref="logsContainer" id="terminal">
     </div>
   </section-cmp>
 </div>
@@ -22,7 +20,8 @@ export default {
     sectionCmp: SectionVue
   },
   props: {
-    service: {default: null}
+    service: {default: null},
+    noStyle: {default: false},
   },
   watch: {
     async isOpen() {
@@ -39,9 +38,6 @@ export default {
     this.createTerminal()
   },
   methods: {
-    scroll() {
-      console.log('scroll')
-    },
     async createTerminal() {
       await new Promise(resolve=> setTimeout(resolve, 10));
       if(!this.isOpen) return 
@@ -50,8 +46,9 @@ export default {
         convertEol: true,
         disableStdin: true,
         fontSize: 13,
+        allowTransparency: true,
         theme: {
-          background: '#ffffff',
+          background: '#ffffff00',
           foreground: '#4c4c4c',
         }
       });
@@ -61,6 +58,10 @@ export default {
       terminal.open(this.$refs.logsContainer);
       fitAddon.activate(terminal)
       fitAddon.fit();
+      window.onresize = function() {
+      fitAddon.activate(terminal)
+        fitAddon.fit();
+      }
       const logs = await this.service.getLogs()
       logs.split('\n').map(line => terminal.writeln(line))
       Socket.on('logs:update', data => {
