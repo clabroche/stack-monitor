@@ -45,7 +45,6 @@ export default {
   flex-direction: column;
   box-shadow: 1px 1px 2px 0px rgba(0, 0, 0, 0.2);
   .title {
-    border-bottom: 1px solid #dfdfdf;
     font-size: 1.2em;
     display: flex;
     justify-content: space-between;
