@@ -66,8 +66,21 @@ class Service {
     await axios.post('/git/' + this.label + '/branch/' + branchName + '/change')
   }
   
-  async reset () {
+  async reset() {
     await axios.delete('/git/' + this.label + '/reset')
+  }
+  async stash() {
+    await axios.post('/git/' + this.label + '/stash')
+  }
+  async stashPop() {
+    await axios.post('/git/' + this.label + '/stash-pop')
+  }
+  async pull() {
+    await axios.post('/git/' + this.label + '/pull')
+  }
+  async stashList() {
+    const { data: stash } = await axios.post('/git/' + this.label + '/stash-list')
+    return stash
   }
   
   async checkoutFile(file) {

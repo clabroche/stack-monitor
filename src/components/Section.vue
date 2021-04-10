@@ -5,7 +5,7 @@
       <div class="actions">
         <button
           @click="action.click()"
-          v-for="action of actions"
+          v-for="action of activeActions"
           :key="action.label"
           class="action small">
           <i :class="action.icon" v-if="action.icon"  aria-hidden="true"></i>
@@ -25,6 +25,11 @@ export default {
     header: {default: ''},
     actions: {default:() => ([])},
     maxHeight: {default: 'auto'}
+  },
+  computed: {
+    activeActions() {
+      return this.actions.filter(action => !action.hidden)
+    }
   }
 }
 </script>
