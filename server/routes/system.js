@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { findService } = require('../helpers/services')
+const { findService } = require('../models/stack')
 const SpawnStore = require('../models/SpawnStore')
 const { exec } = require('child_process')
 const osutils = require('os-utils');

@@ -1,14 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const Stack = require('../models/stack')
-const { spawn } = require('child_process')
-const SpawnStore = require('../models/SpawnStore')
+const {launch, findService} = require('../models/stack')
 const Socket = require('../models/socket')
 const { exec } = require('child_process');
-const killport = require('kill-port')
 const open = require('open');
-const url = require('url')
-const path = require('path')
+const{killService, launchService} =require('../helpers/services')
 
 router.get('/configuration', function (req, res) {
   res.json(Stack.stack)
@@ -70,52 +67,5 @@ router.get('/:service/stop', async function (req, res) {
   res.send()
 });
 
-async function killService(service) {
-  SpawnStore[service.label].kill('SIGKILL')
-  if (service.url) {
-    const port = url.parse(service.url).port
-    await killport(port)
-  }
-  Socket.socket.emit('logs:clear', { label: service.label })
-  service.store = ''
-  await new Promise(resolve => setTimeout(resolve, 100))
-  service.enabled = false
-}
-
-function launch() {
-  Stack.stack.forEach(microservice => {
-    microservice.store = ''
-    if (microservice.enabled) {
-      launchService(microservice)
-    }
-  })
-}
-
-
-function launchService(microservice) {
-  microservice.spawnOptions = microservice.spawnOptions || {}
-  microservice.spawnOptions.shell = true
-  if (microservice.spawnOptions.cwd && microservice.spawnCmd.match(/\/|\\/g)) {
-    microservice.spawnCmd = path.resolve(microservice.spawnOptions.cwd, microservice.spawnCmd)
-  }
-  SpawnStore[microservice.label] = spawn(microservice.spawnCmd, microservice.spawnArgs || [], microservice.spawnOptions)
-  SpawnStore[microservice.label].title = microservice.label
-  microservice.pid = SpawnStore[microservice.label].pid
-  SpawnStore[microservice.label].stdout.on('data', data => {
-    const line = data.toString()
-    microservice.store += line
-    Socket.socket.emit('logs:update', { msg: line, label: microservice.label })
-  })
-  SpawnStore[microservice.label].stderr.on('data', data => {
-    const line = data.toString()
-    microservice.store += line
-    Socket.socket.emit('logs:update', { msg: line, label: microservice.label })
-  })
-  microservice.enabled = true
-}
-
-function findService(serviceLabel) {
-  return Stack.stack.filter(s => s.label === serviceLabel)[0]
-}
 
 module.exports = router
