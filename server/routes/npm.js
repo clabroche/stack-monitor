@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const {findService} = require('../helpers/services')
-const { exec } = require('child_process');
+const {findService} = require('../models/stack')
 const Npm = require('../models/Npm');
 const Socket = require('../models/socket');
 const {v4} = require('uuid');

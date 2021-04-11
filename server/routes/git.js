@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const {findService} = require('../helpers/services')
+const {findService} = require('../models/stack')
 const { exec } = require('child_process')
 
 function execAsync(cmd, options) {

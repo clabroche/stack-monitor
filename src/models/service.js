@@ -20,6 +20,13 @@ class Service {
     }
     this.enabled = service.enabled || false
   }
+
+  async fetch() {
+    const {data: service} = await axios.get('/stack/' + this.label + '/')
+    this.updateFields(service)
+    if(this.enabled) return this.restart()
+    return this
+  }
   
   async getLogs() {
     const {data: logs} = await axios.get('/stack/'+this.label+'/logs')
