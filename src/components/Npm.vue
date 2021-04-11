@@ -75,8 +75,8 @@ export default {
       refs,
       async run(command) {
         if(props.currentService) {
-          const ref = refs.value[command][0] ? refs.value[command][0] : refs.value[command]
-          ref.innerHTML = ''
+          const commandRef = refs.value[command][0] ? refs.value[command][0] : refs.value[command]
+          commandRef.innerHTML = ''
           const socketId = await props.currentService.runNpmCommand(command)
           const terminal = new Terminal({
             experimentalCharAtlas: 'static',
@@ -89,7 +89,7 @@ export default {
           });
           const fitAddon = new FitAddon();
           terminal.loadAddon(fitAddon);
-          terminal.open(ref);
+          terminal.open(commandRef);
           fitAddon.activate(terminal)
           fitAddon.fit();
           launched[command] = true
