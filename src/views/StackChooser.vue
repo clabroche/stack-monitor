@@ -1,5 +1,6 @@
 <template>
 <div class="stack-chooser-root">
+  <background-stack-chooser></background-stack-chooser>
   <section-cmp class="stack-chooser" v-if="localServices" header="Choose all services to launch">
     <ul>
       <li v-for="service of localServices" :key="'services-'+service.label">
@@ -25,10 +26,12 @@ import System from '../models/system'
 import SectionVue from '../components/Section.vue'
 import { computed, onMounted, ref } from 'vue'
 import router from '../router/router'
+import BackgroundStackChooser from '../components/BackgroundStackChooser.vue'
 export default {
   name: 'StackChooser',
   components: {
-    sectionCmp: SectionVue
+    sectionCmp: SectionVue,
+    BackgroundStackChooser
   },
   setup() {
     const localServices = ref([])
@@ -61,16 +64,13 @@ export default {
 .stack-chooser-root {
   width: 100vw;
   height: 100vh;
-  background: url(../assets/background2.jpg) no-repeat center fixed;
-  background-size: cover;
   display: flex;
   justify-content: center;
   align-items: center;
+  position: relative;
   .stack-chooser {
     display: flex;
     flex-direction: column;
-    border-radius: 4px;
-    background-color: #fff;
     border: 1px solid darkgrey;
     box-shadow: 0px 0px 12px 0px #000000;
     max-width: 400px;
