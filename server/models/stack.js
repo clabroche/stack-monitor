@@ -75,19 +75,19 @@ module.exports = {
 function difference(fromObject, toObject) {
   const changes = {};
 
-  const buildPath = (_path, obj, key) =>
+  const buildPath = (_path, key) =>
     _.isUndefined(_path) ? key : `${_path}.${key}`;
 
   const walk = (_fromObject, _toObject, _path) => {
     for (const key of _.keys(_fromObject)) {
-      const currentPath = buildPath(_path, _fromObject, key);
+      const currentPath = buildPath(_path, key);
       if (!_.has(_toObject, key)) {
         changes[currentPath] = { from: _.get(_fromObject, key) };
       }
     }
 
     for (const [key, to] of _.entries(_toObject)) {
-      const currentPath = buildPath(path, _toObject, key);
+      const currentPath = buildPath(path, key);
       if (!_.has(_fromObject, key)) {
         changes[currentPath] = { to };
       } else {
