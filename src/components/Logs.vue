@@ -54,7 +54,7 @@ export default {
       });
       const fitAddon = new FitAddon();
       terminal.loadAddon(fitAddon);
-      this.terminal = terminal
+      this.terminal = terminal 
       terminal.open(this.$refs.logsContainer);
       fitAddon.activate(terminal)
       fitAddon.fit();
