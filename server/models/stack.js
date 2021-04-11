@@ -28,7 +28,7 @@ try {
         if(!keys.includes(serviceName)) keys.push(serviceName)
         return keys
       }, [])
-      updatedServices.map(label => {
+      updatedServices.forEach(label => {
         const index = stack.findIndex((service) => service.label === label)
         const oldService = stack.find((service) => service.label === label)
         const newService = newConf.find((service) => service.label === label)
@@ -75,23 +75,23 @@ module.exports = {
 function difference(fromObject, toObject) {
   const changes = {};
 
-  const buildPath = (path, obj, key) =>
-    _.isUndefined(path) ? key : `${path}.${key}`;
+  const buildPath = (_path, obj, key) =>
+    _.isUndefined(_path) ? key : `${_path}.${key}`;
 
-  const walk = (fromObject, toObject, path) => {
-    for (const key of _.keys(fromObject)) {
-      const currentPath = buildPath(path, fromObject, key);
-      if (!_.has(toObject, key)) {
-        changes[currentPath] = { from: _.get(fromObject, key) };
+  const walk = (_fromObject, _toObject, _path) => {
+    for (const key of _.keys(_fromObject)) {
+      const currentPath = buildPath(_path, _fromObject, key);
+      if (!_.has(_toObject, key)) {
+        changes[currentPath] = { from: _.get(_fromObject, key) };
       }
     }
 
-    for (const [key, to] of _.entries(toObject)) {
-      const currentPath = buildPath(path, toObject, key);
-      if (!_.has(fromObject, key)) {
+    for (const [key, to] of _.entries(_toObject)) {
+      const currentPath = buildPath(path, _toObject, key);
+      if (!_.has(_fromObject, key)) {
         changes[currentPath] = { to };
       } else {
-        const from = _.get(fromObject, key);
+        const from = _.get(_fromObject, key);
         if (!_.isEqual(from, to)) {
           if (_.isObjectLike(to) && _.isObjectLike(from)) {
             walk(from, to, currentPath);

@@ -70,7 +70,6 @@ button {
   padding: 10px;
   margin: 3px;
   border-radius: 4px;
-  background-color: #0054bc;
   $gradient: 50deg, #1d95db 0%, #074971 100%;
   background: -webkit-linear-gradient($gradient);
   background: linear-gradient($gradient);
