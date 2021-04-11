@@ -72,7 +72,7 @@ export default {
     modal: ModalVue
   },
   props: {
-    noStyle: {dedault: false},
+    noStyle: {default: false},
     currentService: {
       /** @type {import('../models/service').default}*/
       default: null,
