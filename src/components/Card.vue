@@ -36,7 +36,6 @@ export default {
   height: 100px;
   display: flex;
   align-items: center;
-  
   position: relative;
   overflow: hidden;
   &::before, &::after {
@@ -54,7 +53,6 @@ export default {
   &::after {
     height: 45%;
   }
-  position: relative;
   .card-container {
     position: absolute;
     top: 0;

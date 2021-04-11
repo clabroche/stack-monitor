@@ -1,6 +1,6 @@
 <template>
   <div class="stack-multiple">
-    <button class="single-button" @click="$router.push({name:'stack-single', params: {label: services[0].label}})"><i class="fas fa-columns"></i></button>
+    <button class="single-button" @click="$router.push({name:'stack-single', params: {label: services[0].label}})"><i class="fas fa-columns" aria-hidden="true"></i></button>
     <tabs :invertColor="true" :tabs="[{label: 'Git', id: 'git'}, {label: 'Logs', id: 'logs'}]" 
       :showLabels="false">
       <template #default="{tab}">
@@ -76,7 +76,6 @@ export default {
     left: 0;
     border-bottom: 3px solid #214f6b;
     border-radius: 4px;
-    background-color: #0076bc;
     background: linear-gradient(93deg, #1d95db 0%, #074971 100%);
     width: 100%;
     height: 100px;

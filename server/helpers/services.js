@@ -26,16 +26,13 @@ module.exports = {
     SpawnStore[microservice.label] = spawn(microservice.spawnCmd, microservice.spawnArgs || [], microservice.spawnOptions)
     SpawnStore[microservice.label].title = microservice.label
     microservice.pid = SpawnStore[microservice.label].pid
-    SpawnStore[microservice.label].stdout.on('data', data => {
+    const add = data => {
       const line = data.toString()
       microservice.store += line
       Socket.socket.emit('logs:update', { msg: line, label: microservice.label })
-    })
-    SpawnStore[microservice.label].stderr.on('data', data => {
-      const line = data.toString()
-      microservice.store += line
-      Socket.socket.emit('logs:update', { msg: line, label: microservice.label })
-    })
+    }
+    SpawnStore[microservice.label].stdout.on('data', add)
+    SpawnStore[microservice.label].stderr.on('data', add)
     microservice.enabled = true
   }
 }

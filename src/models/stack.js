@@ -8,7 +8,7 @@ function Stack () {
   Socket.on('conf:update', data => {
     if(data.length) {
       data.map(label => {
-        const service = this.services.find(service => service.label === label)
+        const service = this.services.find(_service => _service.label === label)
         if(service) service.fetch()
       })
     }

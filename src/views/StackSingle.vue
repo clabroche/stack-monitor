@@ -26,8 +26,8 @@
             <progress-cmp :percent="cpu"></progress-cmp>
           </card>
           <card color="blue" class="card orange">
-            <button @click="restart()"><i class="fas fa-sync"></i> Restart</button>
-            <button @click="stop()"><i class="fas fa-stop"></i> Stop</button>
+            <button @click="restart()"><i class="fas fa-sync" aria-hidden="true"></i> Restart</button>
+            <button @click="stop()"><i class="fas fa-stop" aria-hidden="true"></i> Stop</button>
           </card>
         </div>
         <tabs :tabs="[

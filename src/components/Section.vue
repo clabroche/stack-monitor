@@ -75,18 +75,15 @@ $shadow: rgb(165, 177, 179);
       right: -100%;
       transform: rotate(20deg);
       transform-origin: top;
-
-    }
-    &::after {
-      height: 45%;
-    }
-    &::before, &::after {
       box-shadow:
         inset 0 0 50px $mainColor,
         inset -20px 0 300px $mainColor,
         0 0 50px #fff,
         -10px 0 80px $mainColor,
         10px 0 80px $mainColor;
+    }
+    &::after {
+      height: 45%;
     }
   }
   .title {

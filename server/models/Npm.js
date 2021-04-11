@@ -28,11 +28,9 @@ Npm.prototype.run = async function (command) {
     const path = this.service.spawnOptions.cwd
     const cmd = command.split(' ')
     const args = defaultCommand[command]
-    ? defaultCommand[command]
-    : ['run', ...cmd]
-    
-    const process =  spawn('npm', args, { cwd: path})
-    return process
+      ? defaultCommand[command]
+      : ['run', ...cmd]
+    return spawn('npm', args, { cwd: path })
   }
 }
 
