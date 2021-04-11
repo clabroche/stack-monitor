@@ -1,5 +1,5 @@
 <template>
-  <div class="git-section" v-if="currentService.git && currentService.git.remote">
+  <div class="git-section" v-if="currentService.git">
     <section-cmp v-if="git.branches"
       :key="currentService.label"
       header="Branches"
