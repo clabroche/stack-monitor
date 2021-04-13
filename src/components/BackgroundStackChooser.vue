@@ -44,7 +44,6 @@ export default {
     }
     const getBarRightPosition = (i) => {
       const top =  i*100/nbBars
-      // const random = Math.floor(Math.random() * 40)
       const randomizedLeft = top
       return {right: 0, top: randomizedLeft + '%', width: (Math.random() * 50) + '%' }
     }
@@ -77,8 +76,6 @@ export default {
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: black;
-  // background: linear-gradient(93deg, #1d95db 0%, #074971 100%);
   background: 
     radial-gradient(circle at 74.02% 88.01%, #382d92, transparent 41%),
     radial-gradient(circle at 68.03% 89.02%, #382d92, transparent 9%),

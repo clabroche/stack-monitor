@@ -102,7 +102,7 @@ export default {
   },
   methods: {
     getCurrentBranch() {
-      const branch = this.git.branches.filter(branch => branch.includes('*')).pop()
+      const branch = this.git.branches.filter(_branch => _branch.includes('*')).pop()
       return branch ? branch.replace(/^\* /gm, '') : null
     },
     colorStatus(status) {
