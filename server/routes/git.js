@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const {findService} = require('../models/stack')
 const { exec } = require('child_process')
+var isWindows = process.platform === "win32";
 
 function execAsync(cmd, options) {
   return new Promise((res, rej) => {
@@ -27,6 +28,22 @@ router.post('/:service/branch/:branchName/change', async function (req, res) {
     const service = findService(req.params.service)
     await execAsync('git checkout ' + req.params.branchName, { cwd: service.spawnOptions.cwd })
     res.send('ok')
+  } catch (error) {
+    res.status(500).json(error)
+  }
+})
+
+router.get('/:service/branch/:branchName/remote-delta', async function (req, res) {
+  try {
+    const service = findService(req.params.service)
+    const nbLocalCommit = isWindows
+      ? await execAsync(`git log --oneline ${req.params.branchName} | find /c /v ""`, { cwd: service.spawnOptions.cwd })
+      : await execAsync(`git log --oneline ${req.params.branchName} | wc -l`, { cwd: service.spawnOptions.cwd })
+    const nbRemoteCommit = isWindows
+      ? await execAsync(`git log --oneline origin/${req.params.branchName} | find /c /v ""`, { cwd: service.spawnOptions.cwd })
+      : await execAsync(`git log --oneline origin/${req.params.branchName} | wc -l`, { cwd: service.spawnOptions.cwd })
+    const delta = (+nbLocalCommit.trim()) - (+nbRemoteCommit.trim())
+    res.json(delta)
   } catch (error) {
     res.status(500).json(error)
   }
