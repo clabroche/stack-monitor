@@ -49,6 +49,16 @@ router.get('/:service/branch/:branchName/remote-delta', async function (req, res
   }
 })
 
+router.post('/:service/fetch', async function (req, res) {
+  try {
+    const service = findService(req.params.service)
+    await execAsync(`git fetch`, { cwd: service.spawnOptions.cwd })
+    res.json('ok')
+  } catch (error) {
+    res.status(500).json(error)
+  }
+})
+
 router.delete('/:service/reset', async function (req, res) {
   try {
     const service = findService(req.params.service)
