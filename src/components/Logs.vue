@@ -47,6 +47,7 @@ export default {
         disableStdin: true,
         fontSize: 13,
         allowTransparency: true,
+        minimumContrastRatio: 7,
         theme: {
           background: '#ffffff00',
           foreground: '#4c4c4c',
