@@ -4,7 +4,7 @@
       :key="currentService.label"
       header="Branches"
       :noStyle="noStyle"
-      :actions="[{label: 'Pull', click: () => pull(), icon: 'fas fa-download'}]">
+      :actions="[{label: 'Pull ' +'('+delta+')', hidden: delta >= 0, click: () => pull(), icon: 'fas fa-download'}]">
       <ul class="branches">
         <li v-for="(branch, i) of git.branches" :key="'branch' +i" @click="changeBranch(branch)" :class="{active: branch.includes('*')}">
           {{branch.replace(/^\* /gm, '')}} <i class="fas fa-chevron-right"  aria-hidden="true"></i>
@@ -87,6 +87,7 @@ export default {
         status: [],
         stash: null
       },
+      delta: 0
     }
   },
   async mounted() {
@@ -97,6 +98,10 @@ export default {
     clearInterval(this.interval)
   },
   methods: {
+    getCurrentBranch() {
+      const branch = this.git.branches.filter(branch => branch.includes('*')).pop()
+      return branch ? branch.replace(/^\* /gm, '') : null
+    },
     colorStatus(status) {
       status = status.trim()
       if(status.charAt(0) === 'D') {
@@ -114,6 +119,10 @@ export default {
     async updateGit() {
       this.git.branches = await this.currentService.getBranches(this.currentService.label)
       this.git.status = await this.currentService.getStatus(this.currentService.label)
+      const branch = this.getCurrentBranch()
+      if(branch) {
+        this.delta = await this.currentService.gitRemoteDelta(branch)
+      }
       this.stashList()
     },
     async changeBranch(branchName) {
