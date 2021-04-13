@@ -92,10 +92,13 @@ export default {
   },
   async mounted() {
     this.updateGit()
+    this.currentService.gitFetch()
     this.interval = setInterval(this.updateGit, 1000)
+    this.longInterval = setInterval(() => this.currentService.gitFetch(), 1000 * 60)
   },
   beforeUnmount() {
     clearInterval(this.interval)
+    clearInterval(this.longInterval)
   },
   methods: {
     getCurrentBranch() {

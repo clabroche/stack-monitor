@@ -73,8 +73,11 @@ class Service {
     await axios.post('/git/' + this.label + '/branch/' + branchName + '/change')
   }
   async gitRemoteDelta(branchName) {
-    const {data: delta} = await axios.get(`/git/${this.label}/branch/${branchName}/remote-delta`)
+    const { data: delta } = await axios.get(`/git/${this.label}/branch/${branchName}/remote-delta`)
     return delta
+  }
+  async gitFetch() {
+    await axios.post(`/git/${this.label}/fetch`)
   }
   
   async reset() {
