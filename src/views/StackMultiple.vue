@@ -9,7 +9,12 @@
             <section-cmp v-for="service of services" :key="service.label"
               class="service-container"
               :header="service.label"
-              >
+              :actions="[
+                {click: () => goTo(service.git.home), icon: 'fab fa-github'},
+                {click: () => goTo(service.url), icon: 'fas fa-globe'},
+                {click: () => openInVsCode(service), icon: 'fas fa-file-code'},
+                {click: () => openFolder(service), icon: 'fas fa-folder'},
+              ]">
               <git :currentService="service" :key="service.label" :noStyle="true"/>
             </section-cmp>
           </div>
@@ -17,8 +22,14 @@
             <section-cmp v-for="service of services" :key="service.label"
               class="service-container"
               :header="service.label"
-              :actions="[{label: 'Restart', click: () => restart(service), icon: 'fas fa-sync'}, {label: 'Stop', click: () => stop(service), icon: 'fas fa-stop'}]"
-              >
+              :actions="[
+                {click: () => goTo(service.git.home), icon: 'fab fa-github'},
+                {click: () => goTo(service.url), icon: 'fas fa-globe'},
+                {click: () => openInVsCode(service), icon: 'fas fa-file-code'},
+                {click: () => openFolder(service), icon: 'fas fa-folder'},
+                {click: () => restart(service), icon: 'fas fa-sync'},
+                {click: () => stop(service), icon: 'fas fa-stop'}
+              ]">
               <logs :service="service" :key="service.label" :noStyle="true"></logs>
             </section-cmp>
           </div>
@@ -52,6 +63,16 @@ export default {
       async stop(service) {
         await service.stop()
         stack.services = [...stack.services]
+      },
+      goTo(url) {
+        console.log(url)
+        window.open(url, '_blank').focus();
+      },
+      async openInVsCode(service) {
+        service.openInVsCode()
+      },
+      async openFolder(service) {
+        service.openFolder()
       },
     }
   }

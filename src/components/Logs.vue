@@ -1,6 +1,6 @@
 <template>
 <div header="Logs" @is-open="isOpen = $event" :defaultIsOpen="isOpen">
-  <section-cmp v-if="isOpen" header="Logs" :noStyle="noStyle" :actions="[{label: 'Clear', icon: 'fas fa-trash', click: () => clear()}]">
+  <section-cmp v-if="isOpen" header="Logs" :noStyle="noStyle" :actions="[{icon: 'fas fa-trash', click: () => clear()}]">
     <div v-if="service" class="logs-container" ref="logsContainer" id="terminal">
     </div>
   </section-cmp>

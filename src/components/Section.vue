@@ -9,7 +9,7 @@
           @click="action.click()"
           v-for="action of activeActions"
           :key="action.label"
-          class="action small">
+          class="action small" :class="{mini: !action.label && action.icon}">
           <i :class="action.icon" v-if="action.icon"  aria-hidden="true"></i>
           <span class="text">{{action.label}}</span>
         </button>
@@ -98,6 +98,12 @@ $shadow: rgb(165, 177, 179);
   }
   .actions {
     display: flex;
+    .action.mini {
+      width: max-content;
+      i {
+        margin: 0;
+      }
+    }
   }
   .content {
     overflow: auto;
