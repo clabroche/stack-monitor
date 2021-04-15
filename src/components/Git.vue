@@ -12,7 +12,7 @@
       </ul>
     </section-cmp>
     <section-cmp v-if="git.status" header="Status" :noStyle="noStyle" :actions="[
-      {label: 'Stash', click: () => stash(), icon: 'fas fa-sun',hidden: git.stash || !git.status.filter(a =>a).length},
+      {label: 'Stash', click: () => stash(), icon: 'fas fa-sun',hidden: !git.status.filter(a =>a).length},
       {label: 'Unstash', click: () => stashPop(), icon: 'far fa-sun', hidden: !git.stash},
       {label: 'Reset', click: () => reset(), icon: 'fas fa-eraser'}
       ]">
@@ -51,18 +51,10 @@
       Do you really want to change branch to "{{branchName}}" on this repository ?
     </template>
   </modal>
-  <modal ref="error-modal" :noActions="true">
-    <template #header>
-      Erreur
-    </template>
-    <template #body="{data:error}">
-      <div v-html="error ? error.replace(/\n/gi, '<br/>') : ''">
-      </div>
-    </template>
-  </modal>
 </template>
 
 <script>
+import notification from '../helpers/notification'
 import Service from '../models/service'
 import ModalVue from './Modal.vue'
 import SectionVue from './Section.vue'
@@ -92,15 +84,19 @@ export default {
   },
   async mounted() {
     this.updateGit()
-    this.currentService.gitFetch()
+    this.gitFetch()
     this.interval = setInterval(this.updateGit, 1000)
-    this.longInterval = setInterval(() => this.currentService.gitFetch(), 1000 * 60)
+    this.longInterval = setInterval(() => this.gitFetch(), 1000 * 60)
   },
   beforeUnmount() {
     clearInterval(this.interval)
     clearInterval(this.longInterval)
   },
   methods: {
+    gitFetch() {
+      this.currentService.gitFetch()
+        .catch((err) => notification.next('error', err?.response?.data || err?.message || err))
+    },
     getCurrentBranch() {
       const branch = this.git.branches.filter(_branch => _branch.includes('*')).pop()
       return branch ? branch.replace(/^\* /gm, '') : null
@@ -133,7 +129,8 @@ export default {
       const res = await this.$refs['branch-modal'].open(branchName).promise
       if(res) {
         await this.currentService.changeBranch(branchName)
-          .catch(err=> this.$refs['error-modal'].open(err.response.data).promise)
+          .then(() => notification.next('success', `Branch is now on ${branchName}`))
+          .catch(err=> notification.next('error', err.response.data))
         await this.updateGit()
       }
     },
@@ -142,29 +139,34 @@ export default {
       const res = await this.$refs['checkout-modal'].open(file).promise
       if(res) {
         return this.currentService.checkoutFile(file)
-          .catch(err=> this.$refs['error-modal'].open(err.response.data).promise)
+          .then(() => notification.next('success', `Changes on ${file} are deleted`))
+          .catch(err=> notification.next('error', err.response.data))
       }
     },
     async reset() {
       const res = await this.$refs['reset-modal'].open().promise
       if(res) {
         return this.currentService.reset()
-          .catch(err=> this.$refs['error-modal'].open(err.response.data).promise)
+          .then(() => notification.next('success', `All changes are lost`))
+          .catch(err=> notification.next('error', err.response.data))
       }
     },
     async stash() {
       await this.currentService.stash()
-        .catch(err=> this.$refs['error-modal'].open(err.response.data).promise)
+          .then(() => notification.next('success', `All changes is in stash`))
+        .catch(err=> notification.next('error', err.response.data))
       return this.updateGit()
     },
     async stashPop() {
       await this.currentService.stashPop()
-        .catch(err=> this.$refs['error-modal'].open(err.response.data).promise)
+          .then(() => notification.next('success', `All changes unstashed`))
+        .catch(err=> notification.next('error', err.response.data))
       return this.updateGit()
     },
     async pull() {
       await this.currentService.pull()
-        .catch(err=> this.$refs['error-modal'].open(err.response.data).promise)
+          .then(() => notification.next('success', `Branch is now up to date`))
+        .catch(err=> notification.next('error', err.response.data))
       return this.updateGit()
     },
     async stashList() {
