@@ -8,6 +8,7 @@
     Try to restart it or fill an issue: <br><br>
     <a :href="githubIssue" target="_blank">Click here</a>
   </div>
+  <notification/>
 </template>
 
 <script>
@@ -17,9 +18,14 @@ import socket from './helpers/socket'
 import githubIssue from './helpers/githubIssue'
 import { ref, onMounted } from 'vue'
 import router from './router/router'
+import system from './models/system'
+import notif from './helpers/notification'
+import Notification from "./components/Notification"
+
 export default {
   components: {
-    sidebar: sidebarVue
+    sidebar: sidebarVue,
+    Notification
   },
   setup() {
     const connected = ref(false)
@@ -36,10 +42,20 @@ export default {
       socket.on('connect',  redirect);
       socket.on('disconnect', redirect);
     })
+
+    // Check versions
+    let versions = ref({ local: null, remote: null, hasUpdate: null })
+    onMounted(async () => {
+      versions.value = await system.hasUpdate()
+      versions.value.hasUpdate
+        ? notif.next('error', `Update available: ${versions.value.local} => ${versions.value.remote}`)
+        : notif.next('success', 'Stack monitor is up to date')
+    })
     return {
       redirect,
       connected,
-      githubIssue
+      githubIssue,
+      versions
     }
   }
 }
