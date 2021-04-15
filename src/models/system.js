@@ -1,5 +1,6 @@
 import { reactive } from '@vue/reactivity'
 import axios from '../helpers/axios'
+import Axios from 'axios'
 
 function System() {
   this.infos = reactive({
@@ -33,5 +34,14 @@ System.prototype.getGlobalInfos = async function() {
 System.prototype.disconnect = async function() {
   return axios.get('/system/disconnect')
 }
-
+System.prototype.hasUpdate = async function () {
+  const localVersion = await this.getVersion()
+  const {data: remoteVersions} = await Axios.get('https://api.github.com/repos/clabroche/stack-monitor/tags')
+  const remoteVersion = remoteVersions.map(version => version.name)[0].substr(1)
+  return {
+    local: localVersion,
+    remote: remoteVersion,
+    hasUpdate: localVersion !== remoteVersion
+  }
+}
 export default new System()
