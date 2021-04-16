@@ -6,32 +6,50 @@
       <template #default="{tab}">
         <transition name="slide-fade">
           <div v-if="tab.id === 'git'" class="tab">
-            <section-cmp v-for="service of services" :key="service.label"
-              class="service-container"
-              :header="service.label"
-              :actions="[
-                {click: () => goTo(service.git.home), icon: 'fab fa-github'},
-                {click: () => goTo(service.url), icon: 'fas fa-globe'},
-                {click: () => openInVsCode(service), icon: 'fas fa-file-code'},
-                {click: () => openFolder(service), icon: 'fas fa-folder'},
-              ]">
-              <git :currentService="service" :key="service.label" :noStyle="true"/>
-            </section-cmp>
+            <draggable v-model="services"
+              v-bind="{animation: 200,}"
+              ghost-class="ghost"
+              item-key="label"
+              :setData="modifyDragItem"
+              class="services">
+              <template #item="{element: service}">
+                <section-cmp
+                  class="service-container"
+                  :header="service.label"
+                  :actions="[
+                    {click: () => goTo(service.git.home), icon: 'fab fa-github'},
+                    {click: () => goTo(service.url), icon: 'fas fa-globe'},
+                    {click: () => openInVsCode(service), icon: 'fas fa-file-code'},
+                    {click: () => openFolder(service), icon: 'fas fa-folder'},
+                  ]">
+                  <git :currentService="service" :key="service.label" :noStyle="true"/>
+                </section-cmp>
+              </template>
+            </draggable>
           </div>
           <div v-else-if="tab.id === 'logs'" class="tab">
-            <section-cmp v-for="service of services" :key="service.label"
-              class="service-container"
-              :header="service.label"
-              :actions="[
-                {click: () => goTo(service.git.home), icon: 'fab fa-github'},
-                {click: () => goTo(service.url), icon: 'fas fa-globe'},
-                {click: () => openInVsCode(service), icon: 'fas fa-file-code'},
-                {click: () => openFolder(service), icon: 'fas fa-folder'},
-                {click: () => restart(service), icon: 'fas fa-sync'},
-                {click: () => stop(service), icon: 'fas fa-stop'}
-              ]">
-              <logs :service="service" :key="service.label" :noStyle="true"></logs>
-            </section-cmp>
+            <draggable v-model="services"
+              v-bind="{animation: 200,}"
+              ghost-class="ghost"
+              item-key="label"
+              :setData="modifyDragItem"
+              class="services">
+              <template #item="{element: service}">
+                <section-cmp
+                  class="service-container"
+                  :header="service.label"
+                  :actions="[
+                    {click: () => goTo(service.git.home), icon: 'fab fa-github'},
+                    {click: () => goTo(service.url), icon: 'fas fa-globe'},
+                    {click: () => openInVsCode(service), icon: 'fas fa-file-code'},
+                    {click: () => openFolder(service), icon: 'fas fa-folder'},
+                    {click: () => restart(service), icon: 'fas fa-sync'},
+                    {click: () => stop(service), icon: 'fas fa-stop'}
+                  ]">
+                  <logs :service="service" :key="service.label" :noStyle="true"></logs>
+                </section-cmp>
+              </template>
+            </draggable>
           </div>
         </transition>
       </template>
@@ -46,8 +64,15 @@ import stack from '../models/stack'
 import Logs from '../components/Logs.vue'
 import Tabs from '../components/Tabs.vue'
 import Git from '../components/Git.vue'
+import draggable from 'vuedraggable'
 export default {
-  components: { SectionCmp: Section, Logs, Tabs, Git },
+  components: {
+    SectionCmp: Section,
+    Logs,
+    Tabs,
+    Git,
+    draggable
+  },
   name: 'StackSingle',
   setup() {
     const services = ref([])
@@ -56,6 +81,11 @@ export default {
     }, 1000);
     return {
       services,
+      modifyDragItem(dataTransfer) {
+        let img = new Image()
+        img.src = ''
+        dataTransfer.setDragImage(img, 0, 0)
+      },
       async restart(service) {
         await service.restart()
         stack.services = [...stack.services]
@@ -112,9 +142,13 @@ export default {
   transform: translateZ(0);
   -webkit-transform: translateZ(0);
 }
-.service-container {
-  min-width: 300px;
-  width: 45%;
-  margin: 10px;
+.services {
+  display: flex;
+  flex-wrap: wrap;
+  .service-container {
+    min-width: 300px;
+    width: 45%;
+    margin: 10px;
+  }
 }
 </style>
