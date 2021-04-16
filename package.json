@@ -43,6 +43,7 @@
     "vue-js-modal": "^2.0.0-rc.6",
     "vue-router": "^4.0.6",
     "vue-scroll-stop": "^0.1.5",
+    "vuedraggable": "^4.0.1",
     "xterm": "^4.11.0",
     "xterm-addon-fit": "^0.5.0"
   },
