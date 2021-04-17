@@ -1,7 +1,7 @@
 <template>
   <span class="container">    
     <div class="progress progress-moved">
-      <div class="progress-bar" :style="{width: percent + '%'}">
+      <div class="progress-bar" :style="{transform: 'scaleX(' + (percent/ 100) + ')'}">
       </div>                       
     </div> 
   </span>
@@ -32,11 +32,13 @@ export default {
 
 .progress-bar {
   height: 10px;
+  width: 100%;
   border-radius: 4px;
   background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.05));
   transform: translateZ(0);
+  transform-origin: left;
   transition: 0.4s linear;  
-  transition-property: width, background-color;    
+  transition-property: transform;    
   background-color: #0054bc;
 }
 
