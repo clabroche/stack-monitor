@@ -12,6 +12,10 @@ class Service {
     this.git = service.git || {
       home: '',
       remote: '',
+      branches: [],
+      stash: [],
+      delta: 0,
+      status: []
     }
     this.spawnCommand = service.spawnCommand || ''
     this.spawnOptions = service.spawnOptions || {
@@ -19,6 +23,21 @@ class Service {
       env: ''
     }
     this.enabled = service.enabled || false
+  }
+  async updateGit() {
+    this.git.branches = await this.getBranches()
+    this.git.status = await this.getStatus()
+    const branch = this.getCurrentBranch()
+    if (branch) {
+      this.git.delta = await this.gitRemoteDelta(branch)
+    }
+    const list = await this.stashList()
+    this.git.stash = list
+  }
+
+  getCurrentBranch() {
+    const branch = this.git.branches.filter(_branch => _branch.includes('*')).pop()
+    return branch ? branch.replace(/^\* /gm, '') : null
   }
 
   async fetch() {
@@ -85,6 +104,7 @@ class Service {
   }
   async stash() {
     await axios.post('/git/' + this.label + '/stash')
+    return this.updateGit()
   }
   async stashPop() {
     await axios.post('/git/' + this.label + '/stash-pop')

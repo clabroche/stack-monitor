@@ -4,7 +4,7 @@
       :key="currentService.label"
       header="Branches"
       :noStyle="noStyle"
-      :actions="[{label: 'Pull ' +'('+delta+')', hidden: delta >= 0, click: () => pull(), icon: 'fas fa-download'}]">
+      :actions="[{label: 'Pull ' +'('+git.delta+')', hidden: git.delta >= 0, click: () => pull(), icon: 'fas fa-download'}]">
       <ul class="branches">
         <li v-for="(branch, i) of git.branches" :key="'branch' +i" @click="changeBranch(branch)" :class="{active: branch.includes('*')}">
           {{branch.replace(/^\* /gm, '')}} <i class="fas fa-chevron-right"  aria-hidden="true"></i>
@@ -65,6 +65,7 @@ export default {
   },
   props: {
     noStyle: {default: false},
+    customGit: {default: null},
     currentService: {
       /** @type {import('../models/service').default}*/
       default: null,
@@ -72,20 +73,16 @@ export default {
       type: Service
     },
   },
-  data() {
-    return {
-      git: {
-        branches: [],
-        status: [],
-        stash: null
-      },
-      delta: 0
+  computed: {
+    git() {
+      return this.currentService.git
     }
   },
   async mounted() {
-    this.updateGit()
+    if(this.customGit) return 
+    this.currentService.updateGit()
     this.gitFetch()
-    this.interval = setInterval(this.updateGit, 1000)
+    this.interval = setInterval(() => this.currentService.updateGit(), 1000)
     this.longInterval = setInterval(() => this.gitFetch(), 1000 * 60)
   },
   beforeUnmount() {
@@ -96,10 +93,6 @@ export default {
     gitFetch() {
       this.currentService.gitFetch()
         .catch((err) => notification.next('error', err?.response?.data || err?.message || err))
-    },
-    getCurrentBranch() {
-      const branch = this.git.branches.filter(_branch => _branch.includes('*')).pop()
-      return branch ? branch.replace(/^\* /gm, '') : null
     },
     colorStatus(status) {
       status = status.trim()
@@ -115,15 +108,6 @@ export default {
       }
       return status
     },
-    async updateGit() {
-      this.git.branches = await this.currentService.getBranches(this.currentService.label)
-      this.git.status = await this.currentService.getStatus(this.currentService.label)
-      const branch = this.getCurrentBranch()
-      if(branch) {
-        this.delta = await this.currentService.gitRemoteDelta(branch)
-      }
-      this.stashList()
-    },
     async changeBranch(branchName) {
       branchName = branchName.trim()
       const res = await this.$refs['branch-modal'].open(branchName).promise
@@ -131,7 +115,7 @@ export default {
         await this.currentService.changeBranch(branchName)
           .then(() => notification.next('success', `Branch is now on ${branchName}`))
           .catch(err=> notification.next('error', err.response.data))
-        await this.updateGit()
+        await this.currentService.updateGit()
       }
     },
     async checkoutFile(fileStatus) {
@@ -155,23 +139,19 @@ export default {
       await this.currentService.stash()
           .then(() => notification.next('success', `All changes is in stash`))
         .catch(err=> notification.next('error', err.response.data))
-      return this.updateGit()
+      return this.currentService.updateGit()
     },
     async stashPop() {
       await this.currentService.stashPop()
           .then(() => notification.next('success', `All changes unstashed`))
         .catch(err=> notification.next('error', err.response.data))
-      return this.updateGit()
+      return this.currentService.updateGit()
     },
     async pull() {
       await this.currentService.pull()
           .then(() => notification.next('success', `Branch is now up to date`))
         .catch(err=> notification.next('error', err.response.data))
-      return this.updateGit()
-    },
-    async stashList() {
-      const list = await this.currentService.stashList()
-      this.git.stash = list
+      return this.currentService.updateGit()
     },
   }
 }
