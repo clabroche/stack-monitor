@@ -7,8 +7,7 @@
         <transition name="slide-fade">
           <div v-if="tab.id === 'git'" class="tab">
             <draggable v-model="services"
-              v-bind="{animation: 200,}"
-              ghost-class="ghost"
+              v-bind="{animation: 800,}"
               item-key="label"
               :setData="modifyDragItem"
               class="services">
@@ -143,12 +142,13 @@ export default {
   -webkit-transform: translateZ(0);
 }
 .services {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  gap: 20px;
+  width: calc(100vw - 60px);
+  grid-template-columns: repeat(2, 1fr);
   .service-container {
     min-width: 300px;
-    width: 45%;
-    margin: 10px;
+    width: 100%;
   }
 }
 </style>
