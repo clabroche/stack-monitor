@@ -32,7 +32,10 @@ module.exports = {
       Socket.socket.emit('logs:update', { msg: line, label: microservice.label })
     }
     SpawnStore[microservice.label].stdout.on('data', add)
-    SpawnStore[microservice.label].stderr.on('data', add)
+    SpawnStore[microservice.label].stderr.on('data', (message)=> {
+      Socket.socket.emit('alert', { label: microservice.label, message: message.toString(), type: 'error' })
+      add(message)
+    })
     microservice.enabled = true
   }
 }

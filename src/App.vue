@@ -21,7 +21,7 @@ import router from './router/router'
 import system from './models/system'
 import notif from './helpers/notification'
 import Notification from "./components/Notification"
-
+import './helpers/ServiceError'
 export default {
   components: {
     sidebar: sidebarVue,
@@ -64,6 +64,27 @@ export default {
 <style lang="scss">
 @import '~@fortawesome/fontawesome-free/css/all.min.css';
 @import './assets/fonts/Jost/Jost.css';
+/* width */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #e1e1e1;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #aaa;
+  border-radius: 5px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #666;
+}
 body {
   margin: 0;
   width: 100vw;

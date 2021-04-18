@@ -94,7 +94,6 @@ export default {
         stack.services = [...stack.services]
       },
       goTo(url) {
-        console.log(url)
         window.open(url, '_blank').focus();
       },
       async openInVsCode(service) {
