@@ -7,7 +7,7 @@
     "lint": "vue-cli-service lint",
     "launchExamples": "cd example/front/ && npm ci && cd ../server && npm ci && cd .. && node ../server/bin/www ./stack.js",
     "serve:front": "vue-cli-service serve",
-    "serve:server": "NODE_ENV=DEV nodemon server/bin/www $STACKFILE",
+    "serve:server": "cd server && NODE_ENV=DEV nodemon bin/www $STACKFILE",
     "start": "server/bin/www"
   },
   "main": "server/bin/www",
