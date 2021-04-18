@@ -8,7 +8,8 @@
     Try to restart it or fill an issue: <br><br>
     <a :href="githubIssue" target="_blank">Click here</a>
   </div>
-  <notification/>
+  <notif-history/>
+  <notifications/>
 </template>
 
 <script>
@@ -20,12 +21,14 @@ import { ref, onMounted } from 'vue'
 import router from './router/router'
 import system from './models/system'
 import notif from './helpers/notification'
-import Notification from "./components/Notification"
+import Notifications from "./components/Notifications"
 import './helpers/ServiceError'
+import NotifHistory from './components/NotifHistory.vue'
 export default {
   components: {
     sidebar: sidebarVue,
-    Notification
+    Notifications,
+    NotifHistory
   },
   setup() {
     const connected = ref(false)
