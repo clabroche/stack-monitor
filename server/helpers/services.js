@@ -29,6 +29,7 @@ module.exports = {
     const add = data => {
       const line = data.toString()
       microservice.store += line
+      if(line.includes('webpack.Progress')) return
       Socket.socket.emit('logs:update', { msg: line, label: microservice.label })
     }
     SpawnStore[microservice.label].stdout.on('data', add)
