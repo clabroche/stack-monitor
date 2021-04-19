@@ -1,24 +1,26 @@
 <template>
 <teleport to="body">
-  <div  v-if="isOpen" class="modal-root" @click="close()" :class="{right: position==='right'}">
-    <div :name="uuid" height="auto" :style="{width:width || '90%'}" :scrollable="noScroll ? !noScroll : true" class="modal" @closed="cancel()" @click.stop>
-      <div id="modal-content" :style="{height: height || 'auto'}">
-        <div class="close-cross" v-if="closeCross" @click="close()">
-          <i class="fas fa-times" aria-hidden="true"></i>
-        </div>
-        <div class="title-modal" v-if="$slots.header" :style="{'font-size': headerFontSize}">
-          <slot name="header" :data="data"></slot>
-        </div>
-        <div class="body">
-          <slot name="body" :data="data"></slot>
-        </div>
-        <div class="button-box" v-if="!noActions">
-          <div class="notif-button cancel" v-if="!noCancel" @click="cancel()">{{ cancelString || 'Annuler' }}</div>
-          <div class="notif-button validate" :class="{colored}" v-if="!noValidate" @click="validate()">{{ validateString || 'Sauvegarder' }}</div>
+  <transition name="fade">
+    <div  v-if="isOpen" class="modal-root" @click="close()" :class="{right: position==='right'}">
+      <div :name="uuid" height="auto" :style="{width:width || '90%'}" :scrollable="noScroll ? !noScroll : true" class="modal" @closed="cancel()" @click.stop>
+        <div id="modal-content" :style="{height: height || 'auto'}">
+          <div class="close-cross" v-if="closeCross" @click="close()">
+            <i class="fas fa-times" aria-hidden="true"></i>
+          </div>
+          <div class="title-modal" v-if="$slots.header" :style="{'font-size': headerFontSize}">
+            <slot name="header" :data="data"></slot>
+          </div>
+          <div class="body">
+            <slot name="body" :data="data"></slot>
+          </div>
+          <div class="button-box" v-if="!noActions">
+            <div class="notif-button cancel" v-if="!noCancel" @click="cancel()">{{ cancelString || 'Annuler' }}</div>
+            <div class="notif-button validate" :class="{colored}" v-if="!noValidate" @click="validate()">{{ validateString || 'Sauvegarder' }}</div>
+          </div>
         </div>
       </div>
     </div>
-  </div>
+  </transition>
 </teleport>
 </template>
 
@@ -104,6 +106,7 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+  transition: 300ms;
   #modal-content {
     background: white;
     height: auto;
@@ -138,6 +141,7 @@ export default {
     }
     .body {
       padding: 20px;
+      overflow: auto;
     }
     .subtitle {
       font-size: 24px;
@@ -183,5 +187,19 @@ export default {
       }
     }
   }
+}
+
+.fade-enter-active,.fade-leave-active {
+  transition: all 0.3s ease-out;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+  transform: translate(10px);
+}
+.fade-enter-active {
+  top: 0;
+  width: 100%;
 }
 </style>
