@@ -6,6 +6,7 @@ router.use('/system', require('./system'))
 router.use('/stack', require('./stack'))
 router.use('/git', require('./git'))
 router.use('/npm', require('./npm'))
+router.use('/bugs', require('./bugs'))
 
 
 router.get('/version', async function (req, res) {

@@ -1,18 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const {findService} = require('../models/stack')
-const { exec } = require('child_process')
-var isWindows = process.platform === "win32";
-
-function execAsync(cmd, options) {
-  return new Promise((res, rej) => {
-    exec(cmd, options, (err, stdout, stderr) => {
-      if (err) return rej(stderr || err)
-      res(stdout)
-    })
-  })
-
-}
+const {execAsync, execAsyncWithoutErr} = require('../helpers/exec')
+const isWindows = require('../helpers/isWindows');
 
 router.get('/:service/branches', async function (req, res) {
   const service = findService(req.params.service)
@@ -62,7 +52,7 @@ router.post('/:service/fetch', async function (req, res) {
 router.delete('/:service/reset', async function (req, res) {
   try {
     const service = findService(req.params.service)
-    exec('git reset --hard', { cwd: service.spawnOptions.cwd })
+    await execAsync('git reset --hard', { cwd: service.spawnOptions.cwd })
     res.json('ok')
   } catch (error) {
     res.status(500).json('ko')
@@ -121,34 +111,23 @@ router.post('/:service/pull', async function (req, res) {
 router.delete('/:service/checkout/:file', async function (req, res) {
   try {
     const service = findService(req.params.service)
-    exec('git checkout ' + req.params.file.trim(), { cwd: service.spawnOptions.cwd })
+    await execAsync('git checkout ' + req.params.file.trim(), { cwd: service.spawnOptions.cwd })
     res.json('ok')
   } catch (error) {
     res.status(500).json('ko')
   }
 })
 
-function getBranches(project) {
+async function getBranches(project) {
   if (!project) return []
-  return new Promise(resolve => {
-    exec('git branch', {
-      cwd: project.spawnOptions.cwd
-    }, (err, stdout) => {
-      resolve(stdout.toString().trim().split('\n'))
-    })
-  });
+  return execAsyncWithoutErr('git branch', {cwd: project.spawnOptions.cwd}) 
+    .then((res) => res.toString().trim().split('\n'))
 }
 
-function getStatus(project) {
-  return new Promise(resolve => {
-    if (!project) return resolve([])
-    exec('git status -s', {
-      cwd: project.spawnOptions.cwd
-    }, (err, stdout) => {
-      resolve(stdout.toString().trim().split('\n'))
-    })
-  });
+async function getStatus(project) {
+  if (!project) return []
+  return execAsyncWithoutErr('git status -s', { cwd: project.spawnOptions.cwd })
+    .then((res) => res.toString().trim().split('\n'))
 }
-
 
 module.exports = router
