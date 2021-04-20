@@ -34,21 +34,23 @@
         <tabs :tabs="[
           {label: 'Git', id: 'git', icon:'fab fa-git-alt'},
           {label: 'Npm', id: 'npm', icon: 'fab fa-npm'},
-          {label: 'Logs', id: 'logs', icon: 'fas fa-terminal'}
+          {label: 'Logs', id: 'logs', icon: 'fas fa-terminal'},
+          {label: 'Bugs', id: 'bugs', icon: 'fas fa-bug'}
         ]" 
           :showLabels="false">
           <template #default="{tab}">
-            <transition name="slide-fade">
-              <div v-if="tab.id === 'git'" class="tab">
-                <git :currentService="currentService" :key="currentService.label"/>
-              </div>
-              <div v-else-if="tab.id === 'npm'" class="tab">
-                <npm :currentService="currentService"/>
-              </div>
-              <div v-else-if="tab.id === 'logs'" class="tab">
-                <logs v-if="currentService" :service="currentService" :key="currentService.label"></logs>
-              </div>
-            </transition>
+            <div v-if="tab.id === 'git'" class="tab">
+              <git :currentService="currentService" :key="currentService.label"/>
+            </div>
+            <div v-else-if="tab.id === 'npm'" class="tab">
+              <npm :currentService="currentService" :key="currentService.label"/>
+            </div>
+            <div v-else-if="tab.id === 'logs'" class="tab">
+              <logs :service="currentService" :key="currentService.label"></logs>
+            </div>
+            <div v-else-if="tab.id === 'bugs'" class="tab">
+              <bugs :service="currentService" :key="currentService.label"></bugs>
+            </div>
           </template>
         </tabs>
       </div>
@@ -73,6 +75,7 @@ import router from '../router/router'
 import Tabs from '../components/Tabs.vue';
 import Card from '../components/Card.vue';
 import NotificationBell from '../components/NotificationBell.vue';
+import BugsVue from '../components/Bugs.vue';
 export default {
   name: 'StackSingle',
   components: {
@@ -80,6 +83,7 @@ export default {
     progressCmp: ProgressVue,
     git: GitVue,
     npm: NpmVue,
+    bugs: BugsVue,
     sectionCmp: SectionVue,
     Tabs,
     Card,
@@ -229,18 +233,8 @@ export default {
     width: 60px;
   }
 }
-
-.slide-fade-enter-active,.slide-fade-leave-active {
-  transition: all 0.3s ease-out;
+.tab {
+  transform: translateZ(0);
 }
 
-.slide-fade-enter-from,
-.slide-fade-leave-to {
-  opacity: 0;
-}
-.slide-fade-enter-active {
-  position: absolute;
-  top: 0;
-  width: 100%;
-}
 </style>

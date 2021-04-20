@@ -1,0 +1,89 @@
+<template>
+  <section-cmp
+    v-if="isNpm && service" :key="service.label"
+    header="Bugs"
+    maxHeight="400px"
+    :actions="[{label: 'Reload', icon: 'fas fa-sync', click: () => reload(), hidden: loading}]"
+    >
+    <div v-if="loading" class="loading">
+      <spinner  :size="40"></spinner>
+      Analyse en cours
+    </div>
+    <div v-else class="bugs">
+      <div class="bug" v-for="bug of bugs" :key="bug">
+        {{bug}}
+      </div>
+    </div>
+  </section-cmp>
+</template>
+
+<script>
+import Service from '../models/service'
+import SectionVue from './Section.vue'
+import { onMounted, ref, watch } from 'vue'
+import SpinnerVue from './Spinner.vue'
+import notification from '../helpers/notification'
+export default {
+  components: {
+    sectionCmp: SectionVue,
+    spinner:SpinnerVue
+  },
+  props: {
+    service: {
+      /** @type {import('../models/service').default}*/
+      default: null,
+      required: true,
+      type: Service
+    },
+  },
+  setup(props) {
+    const isNpm = ref(false)
+    const bugs = ref([])
+    const loading = ref(true)
+    const reload = (() => (async () => {
+      bugs.value = []
+      loading.value = true
+      if(props.service) {
+        isNpm.value = await props.service.isNpm()
+      }
+      if(isNpm.value) {
+        bugs.value = await props.service.getBugs()
+          .catch((err) => {
+            if(err?.response?.data?.code === 'TSC_NOT_FOUND') {
+              notification.next('error', 'Please "npm i -g typescript"')
+            }
+            if(err?.response?.data?.code === 'JSCONFIG_NOT_FOUND') {
+              notification.next('error', 'Please create a jsconfig.json in project')
+            }
+            return []
+          })
+      }
+    })()
+      .then(() => loading.value = false)
+      .catch(() => loading.value = false))
+    onMounted(reload)
+    watch(() => props.service,reload)
+    
+    return {
+      reload,
+      loading,
+      isNpm,
+      bugs
+    }
+  },
+}
+</script>
+<style lang="scss" scoped>
+.loading {
+  display: flex;
+  align-items: center;
+  .spinner {
+    margin-right: 10px;
+  }
+}
+.bug {
+  margin-top: 10px;
+  border-left: 2px solid red;
+  padding-left: 10px;
+}
+</style>

@@ -136,6 +136,10 @@ class Service {
     const { data: socket } = await axios.get('/npm/' + this.label + '/run/' + encodeURIComponent(command))
     return socket
   }
+  async getBugs() {
+    const { data: bugs } = await axios.get('/bugs/' + this.label)
+    return bugs || []
+  }
 }
 
 
