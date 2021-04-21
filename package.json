@@ -1,6 +1,12 @@
 {
   "name": "@iryu54/stack-monitor",
+  "author": {
+    "name": "clabroche",
+    "email": "corentinlabroche@gmail.com",
+    "url": "https://corentinlabroche.fr/"
+  },
   "version": "1.6.17",
+  "description": "Monitor processes as a stack",
   "scripts": {
     "serve": "concurrently --kill-others \"npm run serve:front\" \"npm run serve:server\"",
     "build": "vue-cli-service build --dest server/public",
@@ -9,9 +15,26 @@
     "serve:front": "vue-cli-service serve",
     "serve:server": "cd server && NODE_ENV=DEV nodemon bin/www $STACKFILE",
     "start": "server/bin/www",
-    "electron": "electron ./electron/main.js"
+    "electron": "electron ./",
+    "electron:build": "electron-builder"
   },
-  "main": "server/bin/www",
+  "build": {
+    "appId": "com.electron.stackmonitor",
+    "productName": "Stack Monitor",
+    "mac": {
+      "category": "your.app.category.type"
+    },
+    "linux": {
+      "icon": "./electron/512x512.png",
+      "executableName": "StackMonitor",
+      "artifactName": "${productName}-${version}.${ext}",
+      "category": "Utility"
+    },
+    "win": {
+      "icon": "./electron/512x512.png"
+    }
+  },
+  "main": "./electron/main.js",
   "files": [
     "server/**/*",
     ".env.production",
@@ -20,6 +43,7 @@
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.15.3",
     "axios": "^0.21.1",
+    "bluebird": "^3.7.2",
     "colors": "^1.3.3",
     "command-exists": "^1.2.9",
     "consola": "^2.15.3",
@@ -28,7 +52,6 @@
     "cors": "^2.8.5",
     "debounce": "^1.2.1",
     "debug": "^4.3.1",
-    "electron": "^12.0.5",
     "express": "^4.17.1",
     "fast-sort": "^2.2.0",
     "fs-extra": "^9.1.0",
@@ -60,6 +83,8 @@
     "@vue/compiler-sfc": "^3.0.11",
     "babel-eslint": "^10.1.0",
     "concurrently": "^5.3.0",
+    "electron": "^12.0.5",
+    "electron-builder": "^22.10.5",
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^7.9.0",
     "node-sass": "^4.14.1",
