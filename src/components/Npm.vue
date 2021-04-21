@@ -109,12 +109,6 @@ export default {
   },
 }
 </script>
-<style>
-.xterm-helpers {
-  /* display: none; */
-  visibility: hidden;
-}
-</style>
 <style lang="scss" scoped>
 .fa-spinner {
   animation-name: spin;
