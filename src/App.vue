@@ -34,9 +34,12 @@ export default {
     const connected = ref(false)
     const redirect = async () => {
       connected.value = socket.connected
+
       if(!connected.value) Stack.services = []
       const enabledServices = await Stack.getEnabledServices()
-      if(!enabledServices.length && router.currentRoute.value.name !== 'stack-chooser') {
+      if(connected.value && !Stack.services.length) {
+        router.push({name:'import-create'})
+      } else if(!enabledServices.length && router.currentRoute.value.name !== 'stack-chooser') {
         router.push({name:'stack-chooser'})
       }
     }
@@ -96,7 +99,6 @@ body {
   color: #4c4c4c;
   font-size: 0.9em;
   font-family: JOST, sans-serif;
-  
   #app {
     width: 100vw;
     height: 100vh;

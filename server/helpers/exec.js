@@ -12,7 +12,6 @@ module.exports = {
   execAsyncWithoutErr: function (cmd, options) {
     return new Promise(res => {
       exec(cmd, options, (err, stdout) => {
-        console.log(err)
         res(stdout)
       })
     })

@@ -10,7 +10,6 @@ router.get('/:service', async (req, res) => {
   const tscExists = await commandExists('tsc')
     .then(() => true)
     .catch(() => false);
-    console.log(tscExists)
   if (!tscExists) {
     return res.status(500).json({code: 'TSC_NOT_FOUND'})
   }

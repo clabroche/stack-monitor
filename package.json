@@ -8,7 +8,8 @@
     "launchExamples": "cd example/front/ && npm ci && cd ../server && npm ci && cd .. && node ../server/bin/www ./stack.js",
     "serve:front": "vue-cli-service serve",
     "serve:server": "cd server && NODE_ENV=DEV nodemon bin/www $STACKFILE",
-    "start": "server/bin/www"
+    "start": "server/bin/www",
+    "electron": "electron ./electron/main.js"
   },
   "main": "server/bin/www",
   "files": [
@@ -27,6 +28,7 @@
     "cors": "^2.8.5",
     "debounce": "^1.2.1",
     "debug": "^4.3.1",
+    "electron": "^12.0.5",
     "express": "^4.17.1",
     "fast-sort": "^2.2.0",
     "fs-extra": "^9.1.0",
