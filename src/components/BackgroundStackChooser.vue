@@ -16,7 +16,10 @@
 import { ref } from '@vue/reactivity'
 import { onBeforeUnmount, onMounted } from '@vue/runtime-core'
 export default {
-  setup() {
+  props: {
+    lowResources: {default: false}
+  },
+  setup(props) {
     const stars = ref([])
     const getStarPosition = (i) => {
       const line = Math.floor((i * 100 / 5) / 100)
@@ -51,13 +54,15 @@ export default {
     const barsRight = ref([])
     onMounted(() => barsLeft.value = Array(10).fill().map((_, i) => getBarLeftPosition(i)))
     onMounted(() => barsRight.value = Array(10).fill().map((_, i) => getBarRightPosition(i)))
-
-    const interval = setInterval(() => {
-      stars.value.map(star => {
-        const opacity = (Math.random() / 3) + 1/3
-        star.backgroundColor = `rgba(255, 255, 255, ${opacity})`
-      })
-    }, 300);
+    let interval
+    if(!props.lowResources) {
+      interval = setInterval(() => {
+        stars.value.map(star => {
+          const opacity = (Math.random() / 3) + 1/3
+          star.backgroundColor = `rgba(255, 255, 255, ${opacity})`
+        })
+      }, 300);
+    }
     onBeforeUnmount(()=> clearInterval(interval))
     return {
       barsLeft,

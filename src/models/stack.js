@@ -17,11 +17,20 @@ function Stack () {
 
 Stack.prototype.loadServices = async function () {
   const { data: services } = await axios.get('/stack')
-  this.services = services.filter(s=>s).map(service => new Service(service))
+  this.services = services.filter(s => s).map(service => new Service(service))
   return this.services
 }
 
-
+Stack.prototype.getAllConfsPath = async function () {
+  const { data: paths } = await axios.get('/stack/all-confs-path')
+  return paths
+}
+Stack.prototype.selectConf = async function (path) {
+  await axios.post('/stack/select-conf/', { path })
+}
+Stack.prototype.deleteConf = async function (path) {
+  await axios.post('/stack/delete-conf/', { path })
+}
 
 Stack.prototype.launchServices = async function (stack) {
   await axios.post('/stack/choose', stack.map(service => service.label))

@@ -5,10 +5,24 @@ const {launch, findService} = require('../models/stack')
 const Socket = require('../models/socket')
 const { exec } = require('child_process');
 const open = require('open');
-const{killService, launchService} =require('../helpers/services')
+const{killService, launchService} =require('../helpers/services');
+const myConfs = require('../models/myConfs');
 
 router.get('/configuration', function (req, res) {
   res.json(Stack.stack)
+});
+router.get('/all-confs-path', function (req, res) {
+  res.json(myConfs.confs)
+});
+router.post('/select-conf', async function (req, res) {
+  const { path } = req.body
+  await Stack.selectConf(path)
+  res.json(path)
+});
+router.post('/delete-conf', async function (req, res) {
+  const { path } = req.body
+  await myConfs.remove(path)
+  res.json(path)
 });
 router.post('/choose', function (req, res) {
   const servicesLabelSelected = req.body
@@ -21,7 +35,7 @@ router.post('/choose', function (req, res) {
   res.json(Stack.stack)
 });
 router.get('/', function (req, res) {
-  res.json(Stack.stack)
+  res.json(Stack.getStack())
 });
 router.get('/:service', function (req, res) {
   const service = findService(req.params.service)

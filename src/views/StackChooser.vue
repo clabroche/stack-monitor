@@ -1,12 +1,8 @@
+
 <template>
 <div class="stack-chooser-root">
   <background-stack-chooser></background-stack-chooser>
-  <div class="left">
-    <div class="logo">
-      Stack Monitor
-      <img src="@/assets/rocket.png" alt="">
-    </div>
-  </div>
+  <left-logo/>
   <div class="right">
     <section-cmp class="stack-chooser" v-if="localServices" header="Choose all services to launch">
       <ul>
@@ -35,16 +31,19 @@ import SectionVue from '../components/Section.vue'
 import { computed, onMounted, ref } from 'vue'
 import router from '../router/router'
 import BackgroundStackChooser from '../components/BackgroundStackChooser.vue'
+import LeftLogo from '../components/LeftLogo.vue'
 export default {
   name: 'StackChooser',
   components: {
     sectionCmp: SectionVue,
-    BackgroundStackChooser
+    BackgroundStackChooser,
+    LeftLogo
   },
   setup() {
     const localServices = ref([])
     onMounted(async () => {
       await Stack.loadServices()
+      console.log('load')
       localServices.value = Stack.services
     })
 
@@ -76,30 +75,6 @@ export default {
   justify-content: space-between;
   align-items: center;
   position: relative;
-  .left {
-    background-color: rgba(0,0,0,0.1);
-    height: 100%;
-    flex-grow: 1;
-    backdrop-filter: blur(10px);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-shrink: 0;
-    color: white;
-    flex-basis: 0;
-    box-shadow: 0 0 10px 0 rgba(0,0,0,0.5);
-    .logo {
-      font-size: 4em;
-      display: flex;
-      flex-direction: column;
-      text-align: center;
-      text-shadow:  0 10px 5px rgba(0,0,0,0.5);
-      img {
-        width: 200px;
-        margin: auto;
-      }
-    }
-  }
   .right {
     flex-grow: 2;
     flex-basis: 0;

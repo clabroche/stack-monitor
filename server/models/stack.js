@@ -7,13 +7,19 @@ const { cloneDeep } = require('lodash');
 const Socket = require('./socket');
 const helpers = require('../helpers/services');
 const {killService, launchService} = require('../helpers/services');
+const myConfs = require('./myConfs');
 let originalStack = {value: null}
-try {
-  if(process.argv[2]) {
-    const confPath = path.resolve(process.argv[2]) 
+let currentWatch
+module.exports = {
+  stack,
+  async selectConf(pathToConf) {
+    if(currentWatch) currentWatch.close()
+    const confPath = path.resolve(pathToConf)
+    await myConfs.add(confPath)
     stack = confPath ? require(confPath) : []
+    this.stack = stack
     originalStack.value = cloneDeep(stack)
-    watch(confPath, debounce(async () => {
+    currentWatch = watch(confPath, debounce(async () => {
       delete require.cache[require.resolve(confPath)]
       const newConf = require(confPath)
       const reduce = (conf, service) => {
@@ -22,10 +28,10 @@ try {
       }
       const oldConfObject = originalStack.value.reduce(reduce, {})
       const newConfObject = newConf.reduce(reduce, {})
-      const differenceConf = difference(newConfObject, oldConfObject )
+      const differenceConf = difference(newConfObject, oldConfObject)
       const updatedServices = Object.keys(differenceConf).reduce((keys, key) => {
         const serviceName = key.split('.').shift()
-        if(!keys.includes(serviceName)) keys.push(serviceName)
+        if (!keys.includes(serviceName)) keys.push(serviceName)
         return keys
       }, [])
       updatedServices.forEach(label => {
@@ -33,23 +39,14 @@ try {
         const oldService = stack.find((service) => service.label === label)
         const newService = newConf.find((service) => service.label === label)
         killService(oldService).then(() => launchService(newService))
-        if(index !== -1 && newService) {
+        if (index !== -1 && newService) {
           stack.splice(index, 1, newService)
         }
       })
       Socket.socket.emit('conf:update', updatedServices)
       originalStack.value = cloneDeep(newConf)
     }, 100))
-  } else {
-    console.error('Provide path to config as argument')
-    process.exit(1)
-  }
-} catch (error) {
-  throw new Error(path.resolve(process.argv[2]) + ' not found')
-}
-
-module.exports = {
-  stack,
+  },
   getStack() {
     return stack
   },
@@ -102,8 +99,14 @@ function difference(fromObject, toObject) {
       }
     }
   };
-
   walk(fromObject, toObject);
-
   return changes;
+}
+
+try {
+  if (process.argv[2]) {
+    module.exports.selectConf(process.argv[2])
+  }
+} catch (error) {
+  throw new Error(path.resolve(process.argv[2]) + ' not found')
 }
