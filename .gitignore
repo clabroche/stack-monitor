@@ -23,3 +23,5 @@ yarn-error.log*
 *.sw?
 
 server/public
+#Electron-builder output
+/dist_electron

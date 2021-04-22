@@ -1,40 +1,27 @@
 {
   "name": "@iryu54/stack-monitor",
+  "version": "1.6.18",
+  "description": "Monitor processes as a stack",
   "author": {
     "name": "clabroche",
     "email": "corentinlabroche@gmail.com",
     "url": "https://corentinlabroche.fr/"
   },
-  "version": "1.6.18",
-  "description": "Monitor processes as a stack",
   "scripts": {
     "serve": "concurrently --kill-others \"npm run serve:front\" \"npm run serve:server\"",
     "build": "vue-cli-service build --dest server/public",
     "lint": "vue-cli-service lint",
+    "electron": "electron ./",
+    "electron:build": "vue-cli-service electron:build",
+    "electron:serve": "vue-cli-service electron:serve",
     "launchExamples": "cd example/front/ && npm ci && cd ../server && npm ci && cd .. && node ../server/bin/www ./stack.js",
+    "postinstall": "electron-builder install-app-deps",
+    "postuninstall": "electron-builder install-app-deps",
     "serve:front": "vue-cli-service serve",
     "serve:server": "cd server && NODE_ENV=DEV nodemon bin/www $STACKFILE",
-    "start": "server/bin/www",
-    "electron": "electron ./",
-    "electron:build": "electron-builder"
+    "start": "server/bin/www"
   },
-  "build": {
-    "appId": "com.electron.stackmonitor",
-    "productName": "Stack Monitor",
-    "mac": {
-      "category": "your.app.category.type"
-    },
-    "linux": {
-      "icon": "./electron/512x512.png",
-      "executableName": "StackMonitor",
-      "artifactName": "${productName}-${version}.${ext}",
-      "category": "Utility"
-    },
-    "win": {
-      "icon": "./electron/512x512.png"
-    }
-  },
-  "main": "./electron/main.js",
+  "main": "./background.js",
   "files": [
     "server/**/*",
     ".env.production",
@@ -86,16 +73,20 @@
     "concurrently": "^5.3.0",
     "electron": "^12.0.5",
     "electron-builder": "^22.10.5",
+    "electron-devtools-installer": "^3.1.0",
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^7.9.0",
     "node-sass": "^4.14.1",
     "nodemon": "^2.0.7",
     "sass-loader": "^7.1.0",
+    "shebang-loader": "0.0.1",
     "vue": "^3.0.11",
+    "vue-cli-plugin-electron-builder": "~2.0.0-rc.6",
     "vue-cli-plugin-vue-next": "~0.1.4",
     "vue-loader": "^14.2.4",
     "webpack": "^4.46.0",
-    "webpack-node-externals": "^1.5.4"
+    "webpack-node-externals": "^1.5.4",
+    "webpack-shebang-plugin": "^1.1.4"
   },
   "eslintConfig": {
     "root": true,
