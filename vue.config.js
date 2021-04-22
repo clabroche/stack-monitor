@@ -7,6 +7,9 @@ module.exports = {
           {
             from: "./server",
             to: "./resources/app.asar.unpacked/server",
+          }, {
+            from: "./node_modules",
+            to: "./resources/app.asar.unpacked/server/node_modules",
           },
           {
             from: "./.env.production",
