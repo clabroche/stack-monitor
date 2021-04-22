@@ -5,7 +5,7 @@
     "email": "corentinlabroche@gmail.com",
     "url": "https://corentinlabroche.fr/"
   },
-  "version": "1.6.17",
+  "version": "1.6.18",
   "description": "Monitor processes as a stack",
   "scripts": {
     "serve": "concurrently --kill-others \"npm run serve:front\" \"npm run serve:server\"",
