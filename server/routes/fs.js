@@ -33,30 +33,34 @@ router.get('/ls', async function (req, res) {
   }
   let dirs = [parentDirectory]
   await PromiseB.map(readdir, async entry => {
-    if (entry.charAt(0) === '.') return
-    const absolutePath = pathfs.resolve(path.toString(), entry)
-    const stat = await fse.stat(absolutePath)
-    const entryInfos = {
-      absolutePath,
-      name: entry,
-      isDirectory: stat.isDirectory(),
-      npmInfos: null,
-      isStack: false
-    }
-    if (entryInfos.isDirectory) {
-      entryInfos.npmInfos = await npm.getNpmInfos(entryInfos.absolutePath)
-    } else {
-      if(pathfs.extname(absolutePath) === '.js') {
-        try {
-          const stack = require(absolutePath)
-          if (Array.isArray(stack) && stack.length && stack[0].label && stack[0].spawnCmd) {
-            entryInfos.isStack = true
-          }
-        // eslint-disable-next-line no-empty
-        } catch (error) {}
+    try {
+      if (entry.charAt(0) === '.') return
+      const absolutePath = pathfs.resolve(path.toString(), entry)
+      const stat = await fse.stat(absolutePath)
+      const entryInfos = {
+        absolutePath,
+        name: entry,
+        isDirectory: stat.isDirectory(),
+        npmInfos: null,
+        isStack: false
       }
+      if (entryInfos.isDirectory) {
+        entryInfos.npmInfos = await npm.getNpmInfos(entryInfos.absolutePath)
+      } else {
+        if(pathfs.extname(absolutePath) === '.js') {
+          try {
+            const stack = require(absolutePath)
+            if (Array.isArray(stack) && stack.length && stack[0].label && stack[0].spawnCmd) {
+              entryInfos.isStack = true
+            }
+          // eslint-disable-next-line no-empty
+          } catch (error) {}
+        }
+      }
+      dirs.push(entryInfos)
+    } catch (error) {
+      return null      
     }
-    dirs.push(entryInfos)
   })
   // @ts-ignore
   dirs = sort(dirs).asc(d => d.name.toUpperCase())
