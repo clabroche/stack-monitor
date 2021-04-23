@@ -15,8 +15,8 @@
     "electron:build": "vue-cli-service electron:build",
     "electron:serve": "vue-cli-service electron:serve",
     "launchExamples": "cd example/front/ && npm ci && cd ../server && npm ci && cd .. && node ../server/bin/www ./stack.js",
-    "postinstall": "node postinstall",
-    "postuninstall": "node postinstall",
+    "postinstall": "npx electron-builder install-app-deps || exit 0",
+    "postuninstall": "npx electron-builder install-app-deps || exit 0",
     "serve:front": "vue-cli-service serve",
     "serve:server": "cd server && NODE_ENV=DEV nodemon bin/www $STACKFILE",
     "start": "server/bin/www"
