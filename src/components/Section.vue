@@ -1,5 +1,5 @@
 <template>
-  <div class="section" :class="{noStyle}">
+  <div class="section" :class="{noStyle, noBodyPadding, headerBold,  headerCenter}">
     <div class="background">
     </div>
     <div class="title" v-if="header || actions">
@@ -28,6 +28,9 @@ export default {
     actions: {default:() => ([])},
     maxHeight: {default: 'auto'},
     noStyle: {default: false},
+    noBodyPadding: {default: false},
+    headerBold: {default: false},
+    headerCenter: {default: false},
   },
   computed: {
     activeActions() {
@@ -45,16 +48,17 @@ $shadow: rgb(165, 177, 179);
   width: calc(100%);
   margin: 5px 0;
   box-sizing: border-box;
-  border: 1px solid #dfdfdf;
+  border-right: 0;
   display: flex;
   flex-direction: column;
-  box-shadow: 1px 1px 2px 0px rgba(0, 0, 0, 0.2);
+  border: 1px solid #e8e8e8;
+  box-shadow: 10px 10px 20px rgba(0,0,0,0.1),
+    -10px -10px 20px rgba(255,255,255, 1);
+    border-radius: 2px;
   position: relative;
   .background{
     background: $mainColor;
     background: linear-gradient(93deg, $mainColor 0%, $secondaryColor 100%);
-    box-shadow:
-      0 0 5px 0 $shadow;
     position: absolute;
     width: 100%;
     height: 100%;
@@ -95,9 +99,13 @@ $shadow: rgb(165, 177, 179);
     box-sizing: border-box;
     position: relative;
     text-align: left;
+    font-weight: bold;
+    font-size: 1.4em;
   }
   .actions {
     display: flex;
+    .action {
+    }
     .action.mini {
       width: max-content;
       i {
@@ -118,11 +126,29 @@ $shadow: rgb(165, 177, 179);
   box-shadow: none;
   border: none;
   border-left: 1px solid #999;  
+  box-shadow: 0px 0px transparent;
   &:first-of-type {
     border: none;
   }
   .background {
     display: none;
+  }
+}
+.noBodyPadding {
+  &>.content {
+    padding: 0;
+  }
+}
+.headerCenter {
+  .title {
+    justify-content: center;
+  }
+}
+.content {
+  .content {
+    .title {
+      font-size: 1.2em;
+    }
   }
 }
 </style>

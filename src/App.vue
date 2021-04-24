@@ -95,7 +95,7 @@ body {
   margin: 0;
   width: 100vw;
   height: 100vh;
-  background-color: #f4f4f4;
+  background-color: #eee;
   color: #4c4c4c;
   font-size: 0.9em;
   font-family: JOST, sans-serif;
@@ -121,9 +121,11 @@ button {
   transition: 300ms;
   cursor: pointer;
   box-sizing: border-box;
+  box-shadow:
+    -5px 5px 10px #bdbdbd,
+    5px -5px 10px #ffffff;
   &:hover {
     background-color: #194f91;
-    transform: scale(1.01);
     box-shadow: 1px 1px 1px 1px rgba(0,0,0,0.5);
   }
   &.small {

@@ -18,20 +18,20 @@
       </div>
       <div class="sections" v-if="currentService.enabled">
         <div class="system-cards">
-          <card color="blue" class="card">
+          <card class="card">
             <h2>Memory</h2>
             <progress-cmp :percent="mem"></progress-cmp>
           </card>
-          <card color="blue" class="card purple">
+          <card class="card purple">
             <h2>CPU</h2>
             <progress-cmp :percent="cpu"></progress-cmp>
           </card>
-          <card color="blue" class="card orange">
+          <card class="card orange">
             <button @click="restart()"><i class="fas fa-sync" aria-hidden="true"></i> Restart</button>
             <button @click="stop()"><i class="fas fa-stop" aria-hidden="true"></i> Stop</button>
           </card>
         </div>
-        <tabs :tabs="[
+        <tabs class="tabs" :tabs="[
           {label: 'Git', id: 'git', icon:'fab fa-git-alt'},
           {label: 'Npm', id: 'npm', icon: 'fab fa-npm'},
           {label: 'Logs', id: 'logs', icon: 'fas fa-terminal'},
@@ -55,7 +55,7 @@
         </tabs>
       </div>
       <div v-else class="sections">
-        <section-cmp header="This service is not started" :actions="[{label: 'Start', click: () => start(), icon: 'fas fa-play'}]">
+        <section-cmp header="This service is not started" :actions="[{label: 'Start', click: () => start(), icon: 'fas fa-play'}]" class="section-not-started">
         </section-cmp>
       </div>
     </div>
@@ -142,8 +142,8 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
-.not-started {
-  background-color: white;
+.section-not-started {
+  box-shadow: 10px 10px 20px rgba(0,0,0,0.1);
 }
 .stack-single {
   display: flex;
@@ -222,6 +222,11 @@ export default {
     button {
       background: #0000003d;
       width: 100%;
+      box-shadow: 4px 4px 8px rgba(0,0,0,0.3),
+        -4px -4px 8px rgba(255,255,255,0.2);
+      &:hover {
+        box-shadow: 2px 2px 0px rgba(0,0,0,0.3);
+      }
     }
   }
 }
@@ -233,8 +238,11 @@ export default {
     width: 60px;
   }
 }
-.tab {
-  transform: translateZ(0);
+.tabs {
+  margin-top: 20px;
+  .tab {
+    transform: translateZ(0);
+  }
 }
 
 </style>

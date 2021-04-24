@@ -1,7 +1,7 @@
 
 <template>
 <div class="stack-chooser-root">
-  <background-stack-chooser></background-stack-chooser>
+  <background-stack-chooser :lowResources="true"></background-stack-chooser>
   <left-logo/>
   <div class="right">
     <section-cmp class="stack-chooser" v-if="localServices" header="Choose all services to launch">
