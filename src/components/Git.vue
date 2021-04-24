@@ -1,6 +1,6 @@
 <template>
   <div class="git-section" v-if="currentService.git">
-    <section-cmp v-if="git.branches"
+    <section-cmp v-if="git.branches" class="section-branches"
       :key="currentService.label"
       header="Branches"
       :noStyle="noStyle"
@@ -158,6 +158,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.section-branches {
+  z-index: 1;
+}
 .git-section {
   display: flex;
   justify-content: space-between;
@@ -165,8 +168,6 @@ export default {
   margin: auto;
   height: 100%;
   max-height: 240px;
-  overflow: hidden;
-  
   &>div {
     &:first-of-type {
       margin-right: 5px

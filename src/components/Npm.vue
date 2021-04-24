@@ -110,6 +110,12 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+button {
+  width: 20px;
+  height: 20px;
+  font-size: 0.7em;
+  padding: 0;
+}
 .fa-spinner {
   animation-name: spin;
   animation-duration: 1000ms;

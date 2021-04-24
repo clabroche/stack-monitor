@@ -43,6 +43,7 @@ export default {
     }
   }
   &.active {
+    font-weight: bold;
     border-left: 3px solid #194f91
   }
   &.disabled {

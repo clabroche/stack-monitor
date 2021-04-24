@@ -3,9 +3,9 @@
       <ul v-if="sortedStack.length">
         <sidebar-item v-for="service of sortedStack" :key="service.label" :service="service"/>
       </ul>
-      <div class="system">
+      <div class="system-root">
         <button @click="$router.push({name: 'stack-multiple'})"><i class="fas fa-th" aria-hidden="true"></i></button>
-        <section-cmp header="System" class="system">
+        <section-cmp header="System" class="system" :headerCenter="true">
           <div class="progress-container">
             <label>Mem</label>
             <progress-cmp :percent="mem"></progress-cmp>
@@ -95,9 +95,19 @@ export default {
   }
 }
 
-.system button {
-  width: 100%;
-  margin: 0;
+.system-root {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  &>button {
+    z-index: 1;
+    width: 90%;
+    margin: auto;
+  }
+} 
+.system .title {
+  justify-content: center;
 }
 
 </style>

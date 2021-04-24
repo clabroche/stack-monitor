@@ -87,6 +87,7 @@ export default {
     .section-recent {
       margin-right: 10px;
       width: calc(100% - 50px);
+      max-width: 600px;
       margin: auto;
       .recent {
         margin: 5px 0;

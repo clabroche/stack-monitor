@@ -1,7 +1,7 @@
 <template>
   <div class="stack-multiple">
     <button class="single-button" @click="$router.push({name:'stack-single', params: {label: services[0].label}})"><i class="fas fa-columns" aria-hidden="true"></i></button>
-    <tabs :invertColor="true" :tabs="[{label: 'Git', id: 'git'}, {label: 'Logs', id: 'logs'}]" 
+    <tabs :tabs="[{label: 'Git', id: 'git', icon: 'fab fa-git-alt'}, {label: 'Logs', id: 'logs', icon: 'fas fa-terminal'}]" 
       :showLabels="false">
       <template #default="{tab}">
         <transition name="slide-fade">
@@ -14,6 +14,8 @@
               <template #item="{element: service}">
                 <section-cmp
                   class="service-container"
+                  :headerBold="true"
+                  :noBodyPadding="true"
                   :header="service.label"
                   :actions="[
                     {click: () => goTo(service.git.home), icon: 'fab fa-github'},
@@ -37,6 +39,8 @@
                 <section-cmp
                   class="service-container"
                   :header="service.label"
+                  :headerBold="true"
+                  :noBodyPadding="true"
                   :actions="[
                     {click: () => goTo(service.git.home), icon: 'fab fa-github'},
                     {click: () => goTo(service.url), icon: 'fas fa-globe'},
@@ -113,22 +117,17 @@ export default {
   position: absolute;
   top: 10px;
   left: 10px;
+
+  box-shadow: 2px 2px 5px rgba(0,0,0,0.2),
+    -2px -2px 5px rgba(255,255,255,0.2);
+  &:hover {
+    box-shadow: -2px -2px 5px rgba(0,0,0,0.2),
+    2px 2px 5px rgba(255,255,255,0.2);
+  }
 }
 .stack-multiple {
   height: 100vh;
   width: 100%;
-  &::before {
-    content: '';
-    z-index: -1;
-    position: absolute;
-    top: 0;
-    left: 0;
-    border-bottom: 3px solid #214f6b;
-    border-radius: 4px;
-    background: linear-gradient(93deg, #1d95db 0%, #074971 100%);
-    width: 100%;
-    height: 100px;
-  }
 }
 .tab {
   display: flex;
