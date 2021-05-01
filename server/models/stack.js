@@ -1,13 +1,13 @@
 const path = require('path')
-let stack = [];
-const { watch } = require('fs');
-const debounce = require('debounce');
-const _ = require('lodash');
-const { cloneDeep } = require('lodash');
-const Socket = require('./socket');
-const helpers = require('../helpers/services');
-const {killService, launchService} = require('../helpers/services');
-const myConfs = require('./myConfs');
+let stack = []
+const { watch } = require('fs')
+const debounce = require('debounce')
+const _ = require('lodash')
+const { cloneDeep } = require('lodash')
+const Socket = require('./socket')
+const helpers = require('../helpers/services')
+const {killService, launchService} = require('../helpers/services')
+const myConfs = require('./myConfs')
 let originalStack = {value: null}
 let currentWatch
 module.exports = {
@@ -38,7 +38,10 @@ module.exports = {
         const index = stack.findIndex((service) => service.label === label)
         const oldService = stack.find((service) => service.label === label)
         const newService = newConf.find((service) => service.label === label)
-        killService(oldService).then(() => launchService(newService))
+        if(oldService && oldService.enabled) {
+          console.log('Reload Service', newService.label)
+          killService(oldService).then(() => launchService(newService))
+        }
         if (index !== -1 && newService) {
           stack.splice(index, 1, newService)
         }
@@ -70,37 +73,33 @@ module.exports = {
  * @return {Object}        Return a new object who represent the diff
  */
 function difference(fromObject, toObject) {
-  const changes = {};
-
-  const buildPath = (_path, key) =>
-    _.isUndefined(_path) ? key : `${_path}.${key}`;
-
+  const changes = {}
+  const buildPath = (_path, key) => _.isUndefined(_path) ? key : `${_path}.${key}`
   const walk = (_fromObject, _toObject, _path) => {
     for (const key of _.keys(_fromObject)) {
-      const currentPath = buildPath(_path, key);
+      const currentPath = buildPath(_path, key)
       if (!_.has(_toObject, key)) {
-        changes[currentPath] = { from: _.get(_fromObject, key) };
+        changes[currentPath] = { from: _.get(_fromObject, key) }
       }
     }
-
     for (const [key, to] of _.entries(_toObject)) {
-      const currentPath = buildPath(path, key);
+      const currentPath = buildPath(_path, key)
       if (!_.has(_fromObject, key)) {
-        changes[currentPath] = { to };
+        changes[currentPath] = { to }
       } else {
-        const from = _.get(_fromObject, key);
+        const from = _.get(_fromObject, key)
         if (!_.isEqual(from, to)) {
           if (_.isObjectLike(to) && _.isObjectLike(from)) {
-            walk(from, to, currentPath);
+            walk(from, to, currentPath)
           } else {
-            changes[currentPath] = { from, to };
+            changes[currentPath] = { from, to }
           }
         }
       }
     }
-  };
-  walk(fromObject, toObject);
-  return changes;
+  }
+  walk(fromObject, toObject)
+  return changes
 }
 
 try {
