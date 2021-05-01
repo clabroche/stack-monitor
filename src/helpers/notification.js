@@ -50,32 +50,6 @@ class Notification {
     notif.timeout = setTimeout(() => {
       this.remove(notif)
     }, 5000);
-
-    //! TODO: Make unit test with these:
-    // event.next('error', 'test1', 'service 1')
-    // await new Promise(res => setTimeout(res, 1000))
-    // event.next('error', 'test2', 'service 1')
-    // await new Promise(res => setTimeout(res, 1000))
-    // event.next('error', 'test3', 'service 1')
-    // await new Promise(res => setTimeout(res, 1000))
-
-    // event.next('error', 'test1', 'service 2')
-    // await new Promise(res => setTimeout(res, 1000))
-    // event.next('error', 'test1', 'service 2')
-    // await new Promise(res => setTimeout(res, 1000))
-    // event.next('error', 'test1', 'service 2')
-    // await new Promise(res => setTimeout(res, 1000))
-    // event.next('error', 'test2', 'service 2')
-    // await new Promise(res => setTimeout(res, 1000))
-    // event.next('error', 'test1')
-    // await new Promise(res => setTimeout(res, 1000))
-    // event.next('error', 'test1')
-
-    // await new Promise(res => setTimeout(res, 1000))
-    // event.next('error', 'test2')
-
-    // await new Promise(res => setTimeout(res, 1000))
-    // event.next('success', 'test1')
   }
   remove(notif, hasClicked) {
     const index = this.notifs.value.indexOf(notif)
