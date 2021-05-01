@@ -1,8 +1,8 @@
 <template>
   <div header="Npm" v-if="isNpm && packageJson">
     <section-cmp  :key="currentService.label" header="Scripts" maxHeight="400px">
-      <div>
-        <div>
+      <div class="command-container">
+        <div class=button-container>
           <button @click="run('install')">
             <i :class="launched['install'] ? 'fas fa-spinner' : 'fas fa-play'" aria-hidden="true"></i>
           </button>
@@ -10,8 +10,8 @@
         </div>
         <div :ref="el => refs.install = el"></div>
       </div>
-      <div>
-        <div>
+      <div class="command-container">
+        <div class=button-container>
           <button @click="run('rebuild')">
             <i :class="launched['rebuild'] ? 'fas fa-spinner' : 'fas fa-play'" aria-hidden="true"></i>
           </button>
@@ -27,10 +27,58 @@
           {{key}}
         </div>
         <div :ref="el => refs[key] = el">
-          
         </div>
       </div>
-
+    </section-cmp>
+    <section-cmp  :key="currentService.label" >
+      <div class="categ" v-for="categ of ['dependencies','devDependencies']" :key="categ">
+        <h2 class="dep-header">{{categ.charAt(0).toUpperCase() + categ.slice(1)}}</h2>
+        <div class="dependecies">
+          <table>
+            <caption>{{categ}} Table</caption>
+            <tr>
+              <th scope="name">name</th>
+              <th class="version" scope="version">version</th>
+              <th class="version" scope="wanted">wanted</th>
+              <th class="version" scope="latest">latest</th>
+            </tr>
+            <tr v-for="(version, name) of packageJson[categ]" :key="name">
+              <td>{{name}}</td>
+              <td>{{version}}</td>
+              <td :class="{
+                success: outdated?.[name]?.satisfyVersion && outdated?.[name]?.currentVersionCleaned === outdated?.[name]?.satisfyVersion,
+                error: outdated?.[name]?.satisfyVersion && outdated?.[name]?.currentVersionCleaned !== outdated?.[name]?.satisfyVersion
+              }">
+                <spinner :size="20" v-if="!outdated"/>
+                <template v-if="outdated?.[name]?.satisfyVersion">
+                  <div v-if="outdated?.[name]?.currentVersionCleaned === outdated?.[name]?.satisfyVersion">
+                    <i class="fas fa-check" aria-hidden="true"/>
+                  </div>
+                  <div v-else>
+                    <i class="fas fa-times" aria-hidden="true"/>
+                    {{outdated?.[name]?.satisfyVersion}}
+                  </div>
+                </template>
+              </td>
+              <td :class="{
+                success: outdated?.[name]?.latestVersion && outdated?.[name]?.currentVersionCleaned === outdated?.[name]?.latestVersion,
+                error: outdated?.[name]?.latestVersion && outdated?.[name]?.currentVersionCleaned !== outdated?.[name]?.latestVersion
+              }">
+                <spinner :size="20" v-if="!outdated"/>
+                <template v-if="outdated?.[name]?.latestVersion">
+                  <div v-if="outdated?.[name]?.latestVersion && outdated?.[name]?.currentVersionCleaned === outdated?.[name]?.latestVersion">
+                    <i class="fas fa-check" aria-hidden="true"/>
+                  </div>
+                  <div v-else>
+                    <i class="fas fa-times" aria-hidden="true"/>
+                    {{outdated?.[name]?.latestVersion}}
+                  </div>
+                </template>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
     </section-cmp>
   </div>
   
@@ -43,9 +91,11 @@ import SectionVue from './Section.vue'
 import { Terminal } from 'xterm/lib/xterm';
 import { FitAddon } from 'xterm-addon-fit';
 import { onMounted, reactive, ref, watch } from 'vue'
+import Spinner from './Spinner.vue';
 export default {
   components: {
     sectionCmp: SectionVue,
+    Spinner,
   },
   props: {
     currentService: {
@@ -58,12 +108,14 @@ export default {
   setup(props) {
     const isNpm = ref(false)
     const packageJson = ref(null)
+    const outdated = ref(null)
     const launched = reactive({})
     const refs = ref({})
     const reload = async () => {
       if(props.currentService) {
         isNpm.value = await props.currentService.isNpm()
         packageJson.value = await props.currentService.getPackageJSON()
+        outdated.value = await props.currentService.outdatedNpm()
       }
     }
     onMounted(reload)
@@ -71,6 +123,7 @@ export default {
     return {
       isNpm,
       packageJson,
+      outdated,
       launched,
       refs,
       async run(command) {
@@ -136,5 +189,44 @@ button {
     to {
         transform:rotate(360deg);
     }
+}
+.categ {
+  &:first-of-type{
+    .dep-header {
+      margin-top: 0;
+    }
+  }
+  .dep-header {
+    margin-top: 40px;
+    margin-bottom: 0;
+  }
+  tr {
+    &.success td {
+      color: green;
+    }
+  }
+}
+table caption {
+  display: none;
+}
+table {
+  width: 100%;
+  th {
+    text-align: left;
+    &.version {
+      width: 150px;
+    }
+  }
+  tr {
+    td.error{
+      color: red;
+    }
+    td.success{
+      color: green;
+    }
+    &:hover {
+      background-color: rgba(0,0,0,0.1);
+    }
+  }
 }
 </style>
