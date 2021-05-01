@@ -127,9 +127,14 @@ class Service {
     return isNpm
   }
   
-  async getPackageJSON () {
+  async getPackageJSON() {
     const { data: packageJSON } = await axios.get('/npm/' + this.label + '/packagejson')
     return packageJSON
+  }
+
+  async outdatedNpm() {
+    const { data: outdated } = await axios.get('/npm/' + this.label + '/outdated')
+    return outdated
   }
   
   async runNpmCommand(command) {

@@ -19,6 +19,13 @@ router.get('/:service/packagejson', async function (req, res) {
   res.json(packagejson)
 })
 
+router.get('/:service/outdated', async function (req, res) {
+  const service = findService(req.params.service)
+  const npm = new Npm(service)
+  const packagejson = await npm.outdated()
+  res.json(packagejson)
+})
+
 router.get('/:service/run/:command', async function (req, res) {
   const service = findService(req.params.service)
   const npm = new Npm(service)
