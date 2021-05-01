@@ -149,8 +149,8 @@ export default {
   display: flex;
   width: 100%;
   .main {
+    flex-grow: 1;
     height: calc(100vh);
-    width: calc(100vw - 150px);
     margin: auto;
     overflow: auto;
     scroll-behavior: smooth;
@@ -217,6 +217,7 @@ export default {
 .system-cards{
   display: flex;
   justify-content: center;
+  flex-wrap: wrap;
   .card {
     margin-right: 10px;
     button {

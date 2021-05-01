@@ -142,7 +142,7 @@ export default {
 .services {
   display: grid;
   gap: 20px;
-  width: calc(100vw - 60px);
+  width: calc(100vw - 90px);
   grid-template-columns: repeat(2, 1fr);
   .service-container {
     min-width: 300px;
