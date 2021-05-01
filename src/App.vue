@@ -1,5 +1,6 @@
 <template>
   <div id="app" v-if="connected">
+    <sidebar-view-mode v-if="['stack-single','stack-multiple'].includes($route.name)"/>
     <sidebar v-if="$route.name === 'stack-single'"/>
     <router-view/>
   </div>
@@ -24,11 +25,13 @@ import notif from './helpers/notification'
 import Notifications from "./components/Notifications.vue"
 import './helpers/ServiceError'
 import NotifHistory from './components/NotifHistory.vue'
+import SidebarViewMode from './components/SidebarViewMode.vue'
 export default {
   components: {
     sidebar: sidebarVue,
     Notifications,
-    NotifHistory
+    NotifHistory,
+    SidebarViewMode
   },
   setup() {
     const connected = ref(false)
