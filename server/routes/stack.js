@@ -26,7 +26,7 @@ router.post('/delete-conf', async function (req, res) {
 });
 router.post('/choose', function (req, res) {
   const servicesLabelSelected = req.body
-  Stack.stack.map(service => {
+  Stack.stack.forEach(service => {
     if (servicesLabelSelected.includes(service.label)) {
       service.enabled = true
     }

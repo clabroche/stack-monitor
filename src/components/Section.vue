@@ -91,7 +91,6 @@ $shadow: rgb(165, 177, 179);
     }
   }
   .title {
-    font-size: 1.2em;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -104,8 +103,6 @@ $shadow: rgb(165, 177, 179);
   }
   .actions {
     display: flex;
-    .action {
-    }
     .action.mini {
       width: max-content;
       i {
@@ -123,7 +120,6 @@ $shadow: rgb(165, 177, 179);
   }
 }
 .noStyle {
-  box-shadow: none;
   border: none;
   border-left: 1px solid #999;  
   box-shadow: 0px 0px transparent;

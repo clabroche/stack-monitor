@@ -32,5 +32,6 @@ const routes = [
 
 export default createRouter({
   history: createWebHashHistory(),
+  // @ts-ignore
   routes,
 });

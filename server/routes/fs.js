@@ -8,18 +8,6 @@ const sort = require('fast-sort')
 const npm = require('../lib/npm')
 
 
-// router.get('/import', async function (req, res) {
-//   const infos = await npm.getNpmInfos(req.query.path)
-//   res.json(infos)
-// });
-router.get('/outdated', async function (req, res) {
-  await npm.outdated(req.query.path)
-    .then(infos => res.send(infos))
-    .catch(err => res.status(200).send(err))
-});
-// router.get('/open-dir', async function (req, res) {
-//   res.json(process.argv[2])
-// });
 router.get('/home-dir', async function (req, res) {
   res.send(os.homedir())
 })

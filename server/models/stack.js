@@ -102,10 +102,7 @@ function difference(fromObject, toObject) {
   return changes
 }
 
-try {
-  if (process.argv[2]) {
-    module.exports.selectConf(process.argv[2])
-  }
-} catch (error) {
-  throw new Error(path.resolve(process.argv[2]) + ' not found')
+if (process.argv[2]) {
+  module.exports.selectConf(process.argv[2])
+    .catch(console.error)
 }

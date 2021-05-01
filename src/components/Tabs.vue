@@ -32,7 +32,7 @@ export default {
     return {
       currentTab,
       save() {
-        localStorage.setItem('tab', props.tabs.findIndex(tab => tab.id === currentTab.value.id))
+        localStorage.setItem('tab', props.tabs.findIndex(tab => tab.id === currentTab.value.id).toString())
       }
     }
   }
