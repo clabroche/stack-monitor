@@ -10,6 +10,7 @@
 <script>
 import Stack from '../models/stack'
 import Socket from '../helpers/socket';
+// @ts-ignore
 import { Terminal } from 'xterm/lib/xterm';
 import { FitAddon } from 'xterm-addon-fit';
 import SectionVue from './Section.vue';
@@ -30,6 +31,7 @@ export default {
   },
   data() {
     return {
+      terminal: null,
       Stack,
       isOpen: true
     }
@@ -76,9 +78,11 @@ export default {
         terminal.clear()
       })
       if(this.$refs.logsContainer) {
+        // @ts-ignore
         this.$refs.logsContainer.scrollTo({
           'behavior': 'smooth',
           'left': 0,
+          // @ts-ignore
           'top': this.$refs.logsContainer.offsetHeight + 1000000
         });
       }

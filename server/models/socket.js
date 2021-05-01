@@ -17,6 +17,7 @@ if (process.env.NODE_ENV === "DEV") {
     .split('=')[1]
 }
 
+// @ts-ignore
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
 

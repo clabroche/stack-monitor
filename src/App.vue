@@ -21,7 +21,7 @@ import { ref, onMounted } from 'vue'
 import router from './router/router'
 import system from './models/system'
 import notif from './helpers/notification'
-import Notifications from "./components/Notifications"
+import Notifications from "./components/Notifications.vue"
 import './helpers/ServiceError'
 import NotifHistory from './components/NotifHistory.vue'
 export default {

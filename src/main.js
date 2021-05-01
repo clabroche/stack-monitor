@@ -4,8 +4,6 @@ import router from './router/router'
 import system from './models/system'
 system.getVersion()
 
-
-
 createApp(App)
   .use(router)
   .mount('#app')

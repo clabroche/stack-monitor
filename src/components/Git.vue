@@ -78,6 +78,12 @@ export default {
       return this.currentService.git
     }
   },
+  data() {
+    return {
+      interval:null,
+      longInterval:null,
+    }
+  },
   async mounted() {
     if(this.customGit) return 
     this.currentService.updateGit()
@@ -110,6 +116,7 @@ export default {
     },
     async changeBranch(branchName) {
       branchName = branchName.trim()
+      // @ts-ignore
       const res = await this.$refs['branch-modal'].open(branchName).promise
       if(res) {
         await this.currentService.changeBranch(branchName)
@@ -120,6 +127,7 @@ export default {
     },
     async checkoutFile(fileStatus) {
       const file = fileStatus.split(' ').slice(1).join(' ')
+      // @ts-ignore
       const res = await this.$refs['checkout-modal'].open(file).promise
       if(res) {
         return this.currentService.checkoutFile(file)
@@ -128,6 +136,7 @@ export default {
       }
     },
     async reset() {
+      // @ts-ignore
       const res = await this.$refs['reset-modal'].open().promise
       if(res) {
         return this.currentService.reset()

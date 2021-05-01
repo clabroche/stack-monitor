@@ -13,7 +13,7 @@ export default {
     service: {default: null}
   },
   methods: {
-    /** @param {import('../models/stack').default} service*/
+    /** @param {import('../models/service').default} service*/
     isActive(service) {
       const url = this.$route.fullPath.split('?')[0]
       const serviceLabel = url.split('/').pop()

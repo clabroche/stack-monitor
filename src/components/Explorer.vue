@@ -57,7 +57,6 @@ export default {
 
 <style scoped lang="scss">
 .explorer-root {
-  overflow: hidden;
   display: flex;
   flex-direction: column;
   max-height: calc(100vh - 75px);

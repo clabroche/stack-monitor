@@ -46,6 +46,7 @@ export default {
   ],
   data() {
     return {
+      resolve: null,
       result: null,
       uuid: uuid(),
       data: null,
