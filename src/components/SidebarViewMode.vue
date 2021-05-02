@@ -38,7 +38,6 @@
 </template>
 
 <script>
-import Stack from '../models/stack'
 import System from '../models/system'
 import { onBeforeUnmount, onMounted, ref, watch } from '@vue/runtime-core'
 import SidebarViewModeItemVue from './SidebarViewModeItem.vue'
@@ -55,12 +54,12 @@ export default {
   },
   setup() {
     /** @type {import('vue').Ref<import('../models/service').default[]>} */
-    const localServices = ref(Stack.services)
+    const localServices = ref(stack.services)
     onMounted(async () => {
-      await Stack.loadServices()
-      localServices.value = Stack.services
+      await stack.loadServices()
+      localServices.value = stack.services
     })
-    watch(() => Stack.services, () => localServices.value = Stack.services, {deep: true})
+    watch(() => stack.services, () => localServices.value = stack.services, {deep: true})
     let interval
     const cpu = ref(0)
     const mem = ref(0)
