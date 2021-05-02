@@ -1,7 +1,7 @@
 <template>
   <div class="tabs">
     <div class="buttons" :class="{invert:invertColor}">
-      <button @click="currentTab = tab;save()" v-for="tab of tabs" :key="tab.label" :class="{active: tab?.id === currentTab?.id}">
+      <button @click="currentTab = tab;save()" v-for="tab of availableTabs" :key="tab.label" :class="{active: tab?.id === currentTab?.id}">
         <div v-if="tab.label && !tab.icon">{{tab.label}}</div>
         <i v-if="tab.icon" :class="tab.icon" aria-hidden="true"></i>
         <label v-if="showLabels">{{tab?.data?.value?.length || tab?.data?.length || 0}}</label>
@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 export default {
   props: {
     tabs: {default: () => []},
@@ -31,6 +31,9 @@ export default {
     })
     return {
       currentTab,
+      availableTabs: computed(() => {
+        return props.tabs.filter((tab) => !tab.hidden)
+      }),
       save() {
         localStorage.setItem('tab', props.tabs.findIndex(tab => tab.id === currentTab.value.id).toString())
       }

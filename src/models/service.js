@@ -17,7 +17,8 @@ class Service {
       delta: 0,
       status: []
     }
-    this.spawnCommand = service.spawnCommand || ''
+    this.spawnCmd = service.spawnCmd || ''
+    this.spawnArgs = service.spawnArgs || []
     this.spawnOptions = service.spawnOptions || {
       cwd: '',
       env: ''
