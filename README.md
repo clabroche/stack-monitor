@@ -48,6 +48,7 @@ Launch multiples command at once. You can monitor projects.(like npm projects, g
  - Show Mem percentage for global system
  - Show CPU percentage for each commands
  - Show Mem percentage for each commands
+
 ## Usage
 Create a config file like: 
 ``` javascript
@@ -67,10 +68,10 @@ module.exports = [
     spawnArgs: ['run', 'serve'],
     spawnOptions: {
       cwd: `${path}/server`,
-      env: Object.assign({
+      env: {
         PORT: "3010",
         mongoDbURL: `mongodb://root:123456@localhost:27017/${BASE}?authSource=admin`,
-      }, process.env)
+      }
     }
   },
   {
@@ -91,9 +92,9 @@ module.exports = [
     spawnArgs: ['run', 'serve'],
     spawnOptions: {
       cwd: `${path}/front`,
-      env: Object.assign({
+      env: {
         VUE_APP_API_URL: "http://localhost:3010"
-      }, process.env)
+      }
     }
   },
 ]
