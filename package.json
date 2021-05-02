@@ -123,5 +123,6 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/clabroche/stack-monitor.git"
-  }
+  },
+  "keywords": ["stack-monitor", "stack", "microservices", "git", "github", "bitbucket", "npm", "process", "command", "cli", "monitor", "monitoring"]
 }

@@ -85,6 +85,8 @@ export default {
     flex-basis: 0;
     flex-shrink: 0;
     .section-recent {
+      box-shadow: none;
+      box-shadow: 0px 0px 12px 0px #000000;
       width: calc(100% - 50px);
       max-width: 600px;
       margin: auto;
