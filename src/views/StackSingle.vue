@@ -33,10 +33,11 @@
         </div>
         <tabs class="tabs" :tabs="[
           {label: 'Git', id: 'git', icon:'fab fa-git-alt'},
-          {label: 'Npm', id: 'npm', icon: 'fab fa-npm'},
           {label: 'Logs', id: 'logs', icon: 'fas fa-terminal'},
-          {label: 'Bugs', id: 'bugs', icon: 'fas fa-bug'}
-        ]" 
+          {label: 'Npm', id: 'npm', icon: 'fab fa-npm', hidden: !isNpm},
+          {label: 'Bugs', id: 'bugs', icon: 'fas fa-bug', hidden: !isNpm},
+          {label: 'Config', id: 'configs', icon: 'fas fa-cog'}
+        ]"
           :showLabels="false">
           <template #default="{tab}">
             <div v-if="tab.id === 'git'" class="tab">
@@ -50,6 +51,9 @@
             </div>
             <div v-else-if="tab.id === 'bugs'" class="tab">
               <bugs :service="currentService" :key="currentService.label"></bugs>
+            </div>
+            <div v-else-if="tab.id === 'configs'" class="tab">
+              <configs :service="currentService" :key="currentService.label"></configs>
             </div>
           </template>
         </tabs>
@@ -76,6 +80,7 @@ import Tabs from '../components/Tabs.vue';
 import Card from '../components/Card.vue';
 import NotificationBell from '../components/NotificationBell.vue';
 import BugsVue from '../components/Bugs.vue';
+import ConfigsVue from '../components/Configs.vue';
 export default {
   name: 'StackSingle',
   components: {
@@ -84,6 +89,7 @@ export default {
     git: GitVue,
     npm: NpmVue,
     bugs: BugsVue,
+    configs: ConfigsVue,
     sectionCmp: SectionVue,
     Tabs,
     Card,
@@ -96,12 +102,16 @@ export default {
     const currentService = ref()
     const cpu = ref(0)
     const mem = ref(0)
+    const isNpm = ref(false)
     watch(() => router.currentRoute.value.params.label, async () => {
       currentService.value = await Stack.getService(router.currentRoute.value.params.label)
+      isNpm.value = await currentService.value.isNpm()
     })
     let interval
     onMounted(async () => {
       currentService.value = await Stack.getService(router.currentRoute.value.params.label)
+      isNpm.value = await currentService.value.isNpm()
+      console.log(isNpm.value)
       interval = setInterval(async () => {
         const {cpu: _cpu, mem: _mem} = await System.getInfos(currentService.value .label)
         cpu.value = _cpu
@@ -117,6 +127,7 @@ export default {
       System,
       currentService,
       cpu, mem,
+      isNpm,
       async openInVsCode() {
         currentService.value .openInVsCode()
       },
@@ -148,6 +159,7 @@ export default {
 .stack-single {
   display: flex;
   width: 100%;
+  overflow: hidden;
   .main {
     flex-grow: 1;
     height: calc(100vh);

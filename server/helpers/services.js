@@ -18,15 +18,16 @@ module.exports = {
     service.enabled = false
   },
   launchService(microservice) {
-    let { spawnOptions, cwd, spawnCmd} = microservice || {}
+    let { spawnOptions = {}, cwd, spawnCmd} = microservice || {}
     spawnOptions.shell = true
     if (cwd && spawnCmd.match(/\/|\\/g)) {
       spawnCmd = path.resolve(cwd, spawnCmd)
     }
+    let envs = spawnOptions.env || {}
     if(spawnOptions && spawnOptions.env) {
-      spawnOptions.env = Object.assign({}, process.env, spawnOptions.env)
+      envs = Object.assign({}, process.env, spawnOptions.env)
     }
-    SpawnStore[microservice.label] = spawn(spawnCmd, microservice.spawnArgs || [], spawnOptions)
+    SpawnStore[microservice.label] = spawn(spawnCmd, microservice.spawnArgs || [], {...spawnOptions, env: envs})
     const store = SpawnStore[microservice.label]
     store.title = microservice.label
     microservice.pid = store.pid

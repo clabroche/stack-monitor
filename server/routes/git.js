@@ -6,16 +6,19 @@ const isWindows = require('../helpers/isWindows');
 
 router.get('/:service/branches', async function (req, res) {
   const service = findService(req.params.service)
+  if (!service || !service.spawnOptions || !service.spawnOptions.cwd) return res.json([])
   res.json(await getBranches(service))
 })
 router.get('/:service/status', async function (req, res) {
   const service = findService(req.params.service)
+  if (!service || !service.spawnOptions || !service.spawnOptions.cwd) return res.json([])
   res.json(await getStatus(service))
 })
 
 router.post('/:service/branch/:branchName/change', async function (req, res) {
   try {
     const service = findService(req.params.service)
+    if (!service || !service.spawnOptions || !service.spawnOptions.cwd) return res.json([])
     await execAsync('git checkout ' + req.params.branchName, { cwd: service.spawnOptions.cwd })
     res.send('ok')
   } catch (error) {
@@ -26,6 +29,7 @@ router.post('/:service/branch/:branchName/change', async function (req, res) {
 router.get('/:service/branch/:branchName/remote-delta', async function (req, res) {
   try {
     const service = findService(req.params.service)
+    if (!service || !service.spawnOptions || !service.spawnOptions.cwd) return res.json([])
     const nbLocalCommit = isWindows
       ? await execAsync(`git log --oneline ${req.params.branchName} | find /c /v ""`, { cwd: service.spawnOptions.cwd })
       : await execAsync(`git log --oneline ${req.params.branchName} | wc -l`, { cwd: service.spawnOptions.cwd })
@@ -42,6 +46,7 @@ router.get('/:service/branch/:branchName/remote-delta', async function (req, res
 router.post('/:service/fetch', async function (req, res) {
   try {
     const service = findService(req.params.service)
+    if (!service || !service.spawnOptions || !service.spawnOptions.cwd) return res.json([])
     await execAsync(`git fetch`, { cwd: service.spawnOptions.cwd })
     res.json('ok')
   } catch (error) {
@@ -52,6 +57,7 @@ router.post('/:service/fetch', async function (req, res) {
 router.delete('/:service/reset', async function (req, res) {
   try {
     const service = findService(req.params.service)
+    if (!service || !service.spawnOptions || !service.spawnOptions.cwd) return res.json([])
     await execAsync('git reset --hard', { cwd: service.spawnOptions.cwd })
     res.json('ok')
   } catch (error) {
@@ -61,6 +67,7 @@ router.delete('/:service/reset', async function (req, res) {
 router.post('/:service/pull', async function (req, res) {
   try {
     const service = findService(req.params.service)
+    if (!service || !service.spawnOptions || !service.spawnOptions.cwd) return res.json([])
     await execAsync('git pull', { cwd: service.spawnOptions.cwd })
     res.json('ok')
   } catch (error) {
@@ -70,6 +77,7 @@ router.post('/:service/pull', async function (req, res) {
 router.post('/:service/stash', async function (req, res) {
   try {
     const service = findService(req.params.service)
+    if (!service || !service.spawnOptions || !service.spawnOptions.cwd) return res.json([])
     await execAsync('git add .', { cwd: service.spawnOptions.cwd })
     await execAsync('git stash', { cwd: service.spawnOptions.cwd })
     res.json('ok')
@@ -80,6 +88,7 @@ router.post('/:service/stash', async function (req, res) {
 router.post('/:service/stash-pop', async function (req, res) {
   try {
     const service = findService(req.params.service)
+    if (!service || !service.spawnOptions || !service.spawnOptions.cwd) return res.json([])
     await execAsync('git stash pop', { cwd: service.spawnOptions.cwd })
     await execAsync('git reset HEAD', { cwd: service.spawnOptions.cwd })
     res.json('ok')
@@ -90,6 +99,7 @@ router.post('/:service/stash-pop', async function (req, res) {
 router.post('/:service/stash-list', async function (req, res) {
   try {
     const service = findService(req.params.service)
+    if (!service || !service.spawnOptions || !service.spawnOptions.cwd) return res.json([])
     const list = await execAsync('git stash show', { cwd: service.spawnOptions.cwd })
       .catch(() => null)
     res.json(list)
@@ -101,6 +111,7 @@ router.post('/:service/stash-list', async function (req, res) {
 router.post('/:service/pull', async function (req, res) {
   try {
     const service = findService(req.params.service)
+    if (!service || !service.spawnOptions || !service.spawnOptions.cwd) return res.json([])
     await execAsync('git pull', { cwd: service.spawnOptions.cwd })
     res.json('ok')
   } catch (error) {
@@ -111,6 +122,7 @@ router.post('/:service/pull', async function (req, res) {
 router.delete('/:service/checkout/:file', async function (req, res) {
   try {
     const service = findService(req.params.service)
+    if (!service || !service.spawnOptions || !service.spawnOptions.cwd) return res.json([])
     await execAsync('git checkout ' + req.params.file.trim(), { cwd: service.spawnOptions.cwd })
     res.json('ok')
   } catch (error) {
@@ -119,13 +131,11 @@ router.delete('/:service/checkout/:file', async function (req, res) {
 })
 
 async function getBranches(project) {
-  if (!project) return []
   return execAsyncWithoutErr('git branch', {cwd: project.spawnOptions.cwd}) 
     .then((res) => res.toString().trim().split('\n'))
 }
 
 async function getStatus(project) {
-  if (!project) return []
   return execAsyncWithoutErr('git status -s', { cwd: project.spawnOptions.cwd })
     .then((res) => res.toString().trim().split('\n'))
 }
