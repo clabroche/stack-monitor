@@ -47,6 +47,7 @@ export default {
     })
     return {
       dir,
+      ls,
       currentPath,
       directories: computed(() => dir.value.filter(entry => entry.isDirectory)),
       files: computed(() => dir.value.filter(entry => !entry.isDirectory && entry.isStack))

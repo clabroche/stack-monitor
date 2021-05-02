@@ -7,12 +7,41 @@
 [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=clabroche_stack-monitor&metric=bugs)](https://sonarcloud.io/dashboard?id=clabroche_stack-monitor)
 [![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=clabroche_stack-monitor&metric=sqale_index)](https://sonarcloud.io/dashboard?id=clabroche_stack-monitor)
 
-Monitor processes as a stack 
+Launch multiples command at once. You can monitor projects.(like npm projects, git projects ...)
 
 ## Install
 ``` npm i -g @iryu54/stack-monitor ```
 
+## Features
+#### Command:
+ - Launch multiple commands at once
+ - Check in realtime logs produced by command
+ - Restart process
 
+#### Git
+ - Stash / Stash pop
+ - Pull if there is update in branch
+ - View branches
+ - Change branch
+ - Reset branch 
+ - Checkout file
+ 
+#### Npm
+ - Launch a script
+ - Install 
+ - Rebuild
+ - Log of script in real time
+ - Show all dependencies
+ - Check if update exist for each dependency
+
+#### Bugs
+ - Check problems with typescript
+
+#### System
+ - Show CPU percentage for global system
+ - Show Mem percentage for global system
+ - Show CPU percentage for each commands
+ - Show Mem percentage for each commands
 ## Usage
 Create a config file like: 
 ``` javascript
@@ -64,12 +93,21 @@ module.exports = [
 ]
 ```
 
-Then, in a terminal:
+Then, in a terminal, type:
 ``` bash
 stack-monitor <path/to/my/config>
 ```
 
-This will show: 
+You can type only ```stack-monitor``` and choose your config file later.
+
+There is an electron too in [Release page](https://github.com/clabroche/stack-monitor/releases/latest) (BETA)
+
+If you change a variable in conf, the corresponding service restart.
+
+## Screenshots
 ![Menu](https://raw.githubusercontent.com/clabroche/stack-monitor/master/README/1.png)
 ![Menu](https://raw.githubusercontent.com/clabroche/stack-monitor/master/README/2.png)
-
+![Menu](https://raw.githubusercontent.com/clabroche/stack-monitor/master/README/3.png)
+![Menu](https://raw.githubusercontent.com/clabroche/stack-monitor/master/README/4.png)
+![Menu](https://raw.githubusercontent.com/clabroche/stack-monitor/master/README/5.png)
+![Menu](https://raw.githubusercontent.com/clabroche/stack-monitor/master/README/6.png)
