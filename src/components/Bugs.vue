@@ -88,7 +88,6 @@ export default {
 }
 .bug {
   margin-top: 10px;
-  padding-left: 10px;
   padding: 5px 10px;
   box-sizing: border-box;
   color: #555;

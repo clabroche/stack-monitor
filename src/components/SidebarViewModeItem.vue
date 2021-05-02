@@ -44,7 +44,6 @@ export default {
 }
 button {
   outline: none;
-  color: #999;
   border-radius: 5px 5px 0 0;
   transition: 200ms;
   transition-property: font-size, box-shadow;
@@ -56,22 +55,19 @@ button {
   background: transparent;
   margin: 0 5px;
   font-size: 1em;
-  box-shadow: 5px 5px 10px rgba(0,0,0,0.2),
-    -5px -5px 10px rgba(255,255,255,0.8);
   border: 1px solid #efefef;
-  &.active {
-    color: #fff;
-    border-bottom-color: #fff;
-    background: transparent;
-    box-shadow: 2px 2px 5px rgba(0,0,0,0.2) inset,
-    -2px -2px 5px rgba(255,255,255,0.2) inset;
-  }
-  & {
-    color: #ccc;
-    border-color: rgba(0,0,0,0.1);
-    border-color: transparent;
-    box-shadow: 2px 2px 5px rgba(0,0,0,0.2),
+  color: #aaa;
+  border-color: transparent;
+  box-shadow: 2px 2px 5px rgba(0,0,0,0.2),
     -2px -2px 5px rgba(255,255,255,0.2);
+  &.active {
+    background: transparent;
+    border-radius: 5px 5px 0 0;
+    color: #777;
+    margin-bottom: -1px;
+    border-bottom: 3px solid #0076bc;
+    box-shadow: 2px 2px 7px rgba(0,0,0,0.2) inset,
+    -5px -5px 7px rgba(255,255,255,0.6) inset;
   }
   &:hover {
     box-shadow: none;
@@ -80,13 +76,5 @@ button {
   i {
     font-size: 1.2em;
   }
-  &.active {
-    border-radius: 5px 5px 0 0;
-    color: #777;
-    margin-bottom: -1px;
-    border-bottom: 3px solid #0076bc;
-    box-shadow: 2px 2px 7px rgba(0,0,0,0.2) inset,
-    -5px -5px 7px rgba(255,255,255,0.6) inset;
-  }
-  }
+}
 </style>
