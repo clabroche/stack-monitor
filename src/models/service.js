@@ -56,9 +56,13 @@ class Service {
     const {data: logs} = await axios.delete('/stack/'+this.label+'/logs')
     return logs
   }
-  
-  async openInVsCode () {
+
+  async openInVsCode() {
     return axios.get('/stack/' + this.label + '/open-in-vs-code')
+  }
+
+  async openLinkInVsCode(link) {
+    return axios.get('/stack/' + this.label + '/open-link-in-vs-code', {params: {link}})
   }
   
   async openFolder () {

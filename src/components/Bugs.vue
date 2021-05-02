@@ -10,8 +10,9 @@
       Analyse en cours
     </div>
     <div v-else class="bugs">
-      <div class="bug" v-for="bug of bugs" :key="bug">
-        {{bug}}
+      <div class="bug" :class="bug.category" v-for="bug of bugs" :key="bug">
+        <div class="path" @click="openInVsCode(bug)">{{bug.fileName}}({{bug.line}},{{bug.column}})</div>
+        <div class="message">{{bug.messageText}}</div>
       </div>
     </div>
   </section-cmp>
@@ -68,7 +69,11 @@ export default {
       reload,
       loading,
       isNpm,
-      bugs
+      bugs,
+      openInVsCode(bug) {
+        console.log('click')
+        props.service.openLinkInVsCode(bug.path)
+      }
     }
   },
 }
@@ -83,7 +88,28 @@ export default {
 }
 .bug {
   margin-top: 10px;
-  border-left: 2px solid red;
   padding-left: 10px;
+  padding: 5px 10px;
+  box-sizing: border-box;
+  color: #555;
+  &.error {
+    border-left: 2px solid #d62b2b;
+    .path {color: #d62b2b }
+  }
+  &.info {
+    border-left: 2px solid #1d93d9;
+    .path {color: #1d93d9 }
+  }
+  &.warning {
+    border-left: 2px solid #f27601;
+    .path {color: #f27601 }
+  }
+  .path {
+    font-size: 0.8em;
+    cursor: pointer;
+    &:hover {
+      text-decoration: underline;
+    }
+  }
 }
 </style>

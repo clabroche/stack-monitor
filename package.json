@@ -55,6 +55,7 @@
     "semver": "^7.3.5",
     "socket.io": "^2.4.1",
     "socket.io-client": "^2.4.0",
+    "typescript": "^4.2.4",
     "uuid": "^8.3.2",
     "vue-js-modal": "^2.0.0-rc.6",
     "vue-router": "^4.0.6",

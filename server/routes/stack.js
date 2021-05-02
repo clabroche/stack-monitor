@@ -56,6 +56,11 @@ router.get('/:service/open-in-vs-code', function (req, res) {
   exec('code .', { cwd: service.spawnOptions.cwd })
   res.send()
 });
+router.get('/:service/open-link-in-vs-code', function (req, res) {
+  const service = findService(req.params.service)
+  exec(`code --goto "${req.query.link}" .`, { cwd: service.spawnOptions.cwd })
+  res.send()
+});
 
 router.get('/:service/open-folder', function (req, res) {
   const service = findService(req.params.service)

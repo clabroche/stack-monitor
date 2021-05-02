@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "target": "es2017",
+    "checkJs": true,
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "lib": ["es6"],
+    "baseUrl": "./"
+  },
+  "exclude": ["node_modules", "dist"],
+  "include": ["./src/**/*", "tests/**/*", "./typings"]
+}
