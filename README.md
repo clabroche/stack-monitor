@@ -37,6 +37,12 @@ Launch multiples command at once. You can monitor projects.(like npm projects, g
 #### Bugs
  - Check problems with typescript
 
+#### Misc
+ - Open folder in vscode
+ - Open folder in explorer
+ - Open Url for micro service
+ - Open remote url of git
+
 #### System
  - Show CPU percentage for global system
  - Show Mem percentage for global system
@@ -102,7 +108,7 @@ You can type only ```stack-monitor``` and choose your config file later.
 
 There is an electron too in [Release page](https://github.com/clabroche/stack-monitor/releases/latest) (BETA)
 
-If you change a variable in conf, the corresponding service restart.
+If you change a variable in conf after execution, the corresponding service restart.
 
 ## Screenshots
 ![Menu](https://raw.githubusercontent.com/clabroche/stack-monitor/master/README/1.png)
