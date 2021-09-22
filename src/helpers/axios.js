@@ -1,7 +1,8 @@
 import Axios from 'axios'
+import ports from './ports'
 
 const axios = Axios.create({
-  baseURL: process.env.VUE_APP_SERVER_URL + ':' + process.env.VUE_APP_SERVER_PORT
+  baseURL: 'http://localhost:' + ports.http
 })
 
 export default axios
