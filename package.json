@@ -17,8 +17,8 @@
     "launchExamples": "cd example/front/ && npm ci && cd ../server && npm ci && cd .. && node ../server/bin/www ./stack.js",
     "postinstall": "npx electron-builder install-app-deps || exit 0",
     "postuninstall": "npx electron-builder install-app-deps || exit 0",
-    "serve:front": "NODE_ENV=DEV VUE_APP_HTTP_PORT=5456  VUE_APP_SOCKET_PORT=5457 vue-cli-service serve",
-    "serve:server": "cd server && NODE_ENV=DEV HTTP_PORT=5456  SOCKET_PORT=5457 nodemon bin/www $STACKFILE",
+    "serve:front": "cross-env NODE_ENV=DEV VUE_APP_HTTP_PORT=5456  VUE_APP_SOCKET_PORT=5457 vue-cli-service serve",
+    "serve:server": "cd server && cross-env NODE_ENV=DEV HTTP_PORT=5456  SOCKET_PORT=5457 nodemon bin/www $STACKFILE",
     "start": "server/bin/www"
   },
   "main": "./background.js",
@@ -74,6 +74,7 @@
     "@vue/compiler-sfc": "^3.0.11",
     "babel-eslint": "^10.1.0",
     "concurrently": "^5.3.0",
+    "cross-env": "^7.0.3",
     "electron": "^12.0.5",
     "electron-builder": "^22.10.5",
     "electron-devtools-installer": "^3.1.0",
