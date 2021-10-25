@@ -9,6 +9,7 @@ class Service {
     this.label = service.label
     this.description = service.description || ''
     this.url = service.url || ''
+    this.urls = service.urls || []
     this.git = service.git || {
       home: '',
       remote: '',
@@ -42,19 +43,19 @@ class Service {
   }
 
   async fetch() {
-    const {data: service} = await axios.get('/stack/' + this.label + '/')
+    const { data: service } = await axios.get('/stack/' + this.label + '/')
     this.updateFields(service)
-    if(this.enabled) return this.restart()
+    if (this.enabled) return this.restart()
     return this
   }
-  
+
   async getLogs() {
-    const {data: logs} = await axios.get('/stack/'+this.label+'/logs')
+    const { data: logs } = await axios.get('/stack/' + this.label + '/logs')
     return logs
   }
-  
+
   async clear() {
-    const {data: logs} = await axios.delete('/stack/'+this.label+'/logs')
+    const { data: logs } = await axios.delete('/stack/' + this.label + '/logs')
     return logs
   }
 
@@ -63,36 +64,36 @@ class Service {
   }
 
   async openLinkInVsCode(link) {
-    return axios.get('/stack/' + this.label + '/open-link-in-vs-code', {params: {link}})
+    return axios.get('/stack/' + this.label + '/open-link-in-vs-code', { params: { link } })
   }
-  
-  async openFolder () {
+
+  async openFolder() {
     return axios.get('/stack/' + this.label + '/open-folder')
   }
-  
-  async restart () {
+
+  async restart() {
     this.enabled = true
     return axios.get('/stack/' + this.label + '/restart')
   }
-  async start () {
+  async start() {
     this.enabled = true
     return axios.get('/stack/' + this.label + '/start')
   }
-  async stop () {
+  async stop() {
     this.enabled = false
     return axios.get('/stack/' + this.label + '/stop')
   }
-  
-  async getBranches () {
+
+  async getBranches() {
     const { data: branches } = await axios.get('/git/' + this.label + '/branches')
     return branches
   }
-  
-  async getStatus () {
+
+  async getStatus() {
     const { data: status } = await axios.get('/git/' + this.label + '/status')
     return status
   }
-  
+
   async changeBranch(branchName) {
     await axios.post('/git/' + this.label + '/branch/' + branchName + '/change')
   }
@@ -103,7 +104,7 @@ class Service {
   async gitFetch() {
     await axios.post(`/git/${this.label}/fetch`)
   }
-  
+
   async reset() {
     await axios.delete('/git/' + this.label + '/reset')
   }
@@ -121,17 +122,17 @@ class Service {
     const { data: stash } = await axios.post('/git/' + this.label + '/stash-list')
     return stash
   }
-  
+
   async checkoutFile(file) {
     file = encodeURIComponent(file)
     await axios.delete('/git/' + this.label + '/checkout/' + file)
   }
-  
-  async isNpm () {
+
+  async isNpm() {
     const { data: isNpm } = await axios.get('/npm/' + this.label)
     return isNpm
   }
-  
+
   async getPackageJSON() {
     const { data: packageJSON } = await axios.get('/npm/' + this.label + '/packagejson')
     return packageJSON
@@ -141,7 +142,7 @@ class Service {
     const { data: outdated } = await axios.get('/npm/' + this.label + '/outdated')
     return outdated
   }
-  
+
   async runNpmCommand(command) {
     const { data: socket } = await axios.get('/npm/' + this.label + '/run/' + encodeURIComponent(command))
     return socket
