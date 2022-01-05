@@ -19,8 +19,19 @@ const stack = [
         mongoDbURL: `mongodb://root:123456@localhost:27017/${BASE}?authSource=admin`,
       }, process.env)
     }
-  },
-  {
+  }, {
+    label: 'Hello',
+    description: 'Just Hello',
+    groups: ["Hello", "Hello World"],
+    spawnCmd: 'echo',
+    spawnArgs: ['hello'],
+  }, {
+    label: 'World',
+    description: 'All the world',
+    groups: ["World", "Hello World"],
+    spawnCmd: 'echo',
+    spawnArgs: ['world'],
+  }, {
     label: 'Mongo',
     description: 'Just start the mongodb in docker',
     spawnCmd: 'docker',

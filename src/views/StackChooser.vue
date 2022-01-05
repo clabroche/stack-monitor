@@ -5,14 +5,20 @@
   <left-logo/>
   <div class="right">
     <section-cmp class="stack-chooser" v-if="localServices" header="Choose all services to launch">
-      <ul>
-        <li v-for="service of localServices" :key="'services-'+service.label">
-          <input :id="'input-' + service.label" type="checkbox" v-model="service.enabled" :checked="service.enabled ? 'checked' : null">
-          <label :for="'input-' + service.label">
-            {{service.label}}
-          </label>
-        </li>
-      </ul>
+      <div v-for="(group) of groups" :key="group.label">
+        <div class="group-header" @click="group.show = !group.show">
+          <i class="fas fa-chevron-down" v-if="group.label !== 'All'"></i>
+          <h3>{{group.label}} ({{group.services?.length}})</h3>
+        </div>
+        <ul v-if="group.show || group.label === 'All'">
+          <li v-for="service of group.services" :key="'services-'+service.label">
+            <input :id="'input-' + service.label" type="checkbox" v-model="service.enabled" :checked="service.enabled ? 'checked' : null">
+            <label :for="'input-' + service.label">
+              {{service.label}}
+            </label>
+          </li>
+        </ul>
+      </div>
       <div class="actions">
         <button v-if="!isAllEnabled" @click="enableAll">Select all</button>
         <button v-else @click="disableAll">Unselect all</button>
@@ -28,7 +34,7 @@
 import Stack from '../models/stack'
 import System from '../models/system'
 import SectionVue from '../components/Section.vue'
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, reactive, ref } from 'vue'
 import router from '../router/router'
 import BackgroundStackChooser from '../components/BackgroundStackChooser.vue'
 import LeftLogo from '../components/LeftLogo.vue'
@@ -56,6 +62,21 @@ export default {
     const disableAll =() => localServices.value.map(service => service.enabled = false)
     return {
       isAllEnabled: computed(() => localServices.value.every(service => service.enabled)),
+      groups: computed(() => {
+        return localServices.value.reduce((groups, service) => {
+          if(service.groups) {
+            service.groups.forEach(group => {
+              if(!groups[group]) groups[group] = reactive({services: [], label: group})
+              groups[group].services.push(service)
+            });
+          }
+
+          if(!groups['All']) groups['All'] = reactive({services: [], label: "All"})
+          groups['All'].services.push(service)
+
+          return groups
+        }, {})
+      }),
       localServices,
       System,
       validate, 
@@ -75,6 +96,25 @@ export default {
   justify-content: space-between;
   align-items: center;
   position: relative;
+  h3 {
+    margin: 0;
+  }
+  .group-header {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+    cursor: pointer;
+    border-radius: 10px;
+    transition: 300ms background-color linear;
+    &:hover {
+      background-color: rgba(0,0,0,0.05);
+    }
+    i {
+      margin: 0;
+      padding: 0;
+      margin: 0 5px
+    }
+  }
   .right {
     flex-grow: 2;
     flex-basis: 0;

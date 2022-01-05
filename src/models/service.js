@@ -9,6 +9,7 @@ class Service {
     this.label = service.label
     this.description = service.description || ''
     this.url = service.url || ''
+    this.groups = service.groups || []
     this.urls = service.urls || []
     this.git = service.git || {
       home: '',
