@@ -107,8 +107,6 @@ stack-monitor <path/to/my/config>
 
 You can type only ```stack-monitor``` and choose your config file later.
 
-There is an electron too in [Release page](https://github.com/clabroche/stack-monitor/releases/latest) (BETA)
-
 If you change a variable in conf after execution, the corresponding service restart.
 
 ## Screenshots

@@ -1,10 +1,14 @@
 const express = require('express');
-const app = express.Router;
+const app = express();
 const ports = require('./ports')
-
+app.use(require('cors')())
 // @ts-ignore
-const server = require('http').Server(app);
-const io = require('socket.io')(server);
+const server = require('http').createServer(app);
+const {Server} = require('socket.io');
+const io = new Server(server, {cors: {
+    origin: '*',
+  }
+});
 
 server.listen(process.env.SOCKET_PORT || 0);
 ports.setSocketPort(server.address().port)
