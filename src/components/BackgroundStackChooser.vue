@@ -1,13 +1,19 @@
 <template>
   <div class="background-root">
     <div class="stars">
-      <div class="star" v-for="(star, i) in stars" :key="'star-'+i" :style="{...star}"></div>
+      <transition-group name="appear">
+        <div class="star" v-for="(star, i) in stars" :key="'star-'+i" :style="{...star}"></div>
+      </transition-group>
     </div>
     <div class="bars left">
-      <div class="bar" v-for="(bar, i) in barsLeft" :key="'bar-left'+i" :style="{...bar}"></div>
+      <transition-group name="appear">
+        <div class="bar" v-for="(bar, i) in barsLeft" :key="'bar-left'+i" :style="{...bar}"></div>
+      </transition-group>
     </div>
     <div class="bars right">
-      <div class="bar" v-for="(bar, i) in barsRight" :key="'bar-right'+i" :style="{...bar}"></div>
+      <transition-group name="appear">
+        <div class="bar" v-for="(bar, i) in barsRight" :key="'bar-right'+i" :style="{...bar}"></div>
+      </transition-group>
     </div>
   </div>
 </template>
@@ -52,8 +58,8 @@ export default {
     }
     const barsLeft = ref([])
     const barsRight = ref([])
-    onMounted(() => barsLeft.value = Array(10).fill().map((_, i) => getBarLeftPosition(i)))
-    onMounted(() => barsRight.value = Array(10).fill().map((_, i) => getBarRightPosition(i)))
+    onMounted(() => setTimeout(() => barsLeft.value = Array(10).fill().map((_, i) => getBarLeftPosition(i))))
+    onMounted(() => setTimeout(() => barsRight.value = Array(10).fill().map((_, i) => getBarRightPosition(i))))
     let interval
     if(!props.lowResources) {
       interval = setInterval(() => {
@@ -104,6 +110,7 @@ export default {
       background-color: #ffffff1a;
       filter: blur(10);
       position: absolute;
+      transition: 300ms;
     }
   }
   .bars.left {
@@ -120,5 +127,16 @@ export default {
       border-top-right-radius: 0;
     }
   }
+}
+
+.appear-enter-active,
+.appear-leave-active {
+  transition: 300ms;
+}
+
+.appear-enter-from,
+.appear-leave-to {
+  opacity: 0;
+  width: 0;
 }
 </style>
