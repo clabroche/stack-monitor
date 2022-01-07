@@ -63,7 +63,7 @@
     "nodemon": "^2.0.7",
     "vite-plugin-html": "^2.1.2",
     "vue": "^3.2.26",
-    "vue-loader": "^14.2.4",
+    "vue-loader": "^15.9.8",
     "webpack": "^5.65.0"
   },
   "eslintConfig": {
