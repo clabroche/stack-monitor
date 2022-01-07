@@ -21,7 +21,7 @@ module.exports = {
     let { spawnOptions = {}, spawnCmd } = microservice || {}
     let cwd = spawnOptions.cwd
     spawnOptions.shell = true
-    if (cwd && spawnCmd.match(/\/|\\/g)) {
+    if (cwd && spawnCmd.match(/[\/\\]/g)) {
       spawnCmd = path.resolve(cwd, spawnCmd)
     }
     let envs = spawnOptions.env || {}
