@@ -5,24 +5,34 @@
   <left-logo/>
   <div class="right">
     <section-cmp class="stack-chooser" v-if="localServices" header="Choose all services to launch">
-      <div v-for="(group) of groups" :key="group.label">
-        <div class="group-header" @click="group.show = !group.show">
-          <i class="fas fa-chevron-down" v-if="group.label !== 'All'"></i>
-          <h3>{{group.label}} ({{group.services?.length}})</h3>
+      <div class="groups">
+        <div v-for="(group) of groups" :key="group.label">
+          <div class="group-header" @click="group.show = !group.show">
+            <div class="left-header">
+              <i class="fas fa-chevron-down" v-if="group.label !== 'All'"></i>
+              <h3>{{group.label}} <span>({{group.services?.length}})</span></h3>
+            </div>
+            <div class="right-header" >
+              <button @click.stop="selectGroup(group.label)" class="mini">
+                <i class="far fa-check-square" v-if="isGroupSelected(group.label)"></i>
+                <i class="far fa-square" v-else></i>
+              </button>
+            </div>
+          </div>
+          <ul v-if="group.show || group.label === 'All'">
+            <li v-for="service of group.services" :key="'services-'+service.label">
+              <input :id="'input-' + service.label" type="checkbox" v-model="service.enabled" :checked="service.enabled ? 'checked' : null">
+              <label :for="'input-' + service.label">
+                {{service.label}}
+              </label>
+            </li>
+          </ul>
         </div>
-        <ul v-if="group.show || group.label === 'All'">
-          <li v-for="service of group.services" :key="'services-'+service.label">
-            <input :id="'input-' + service.label" type="checkbox" v-model="service.enabled" :checked="service.enabled ? 'checked' : null">
-            <label :for="'input-' + service.label">
-              {{service.label}}
-            </label>
-          </li>
-        </ul>
       </div>
       <div class="actions">
         <button v-if="!isAllEnabled" @click="enableAll">Select all</button>
         <button v-else @click="disableAll">Unselect all</button>
-        <button @click="validate" class="success">Validate</button>
+        <button @click="validate" class="success"><i class="fas fa-play" aria-hidden="true"></i> Launch</button>
       </div>
     </section-cmp>
   </div>
@@ -49,7 +59,6 @@ export default {
     const localServices = ref([])
     onMounted(async () => {
       await Stack.loadServices()
-      console.log('load')
       localServices.value = Stack.services
     })
 
@@ -60,6 +69,8 @@ export default {
     }
     const enableAll = () => localServices.value.map(service => service.enabled = true)
     const disableAll =() => localServices.value.map(service => service.enabled = false)
+    const getServicesFromGroup = group => localServices.value.filter(service => service.groups.includes(group)||group === 'All')
+    const isGroupSelected = group => getServicesFromGroup(group).every(service => service.enabled)
     return {
       isAllEnabled: computed(() => localServices.value.every(service => service.enabled)),
       groups: computed(() => {
@@ -77,6 +88,11 @@ export default {
           return groups
         }, {})
       }),
+      selectGroup(group) {
+        const groupSelected = isGroupSelected(group)
+        getServicesFromGroup(group).map(service => service.enabled = !groupSelected)
+      },
+      isGroupSelected,
       localServices,
       System,
       validate, 
@@ -98,14 +114,24 @@ export default {
   position: relative;
   h3 {
     margin: 0;
+    span {
+      color: #8e8e8e;
+      font-weight: normal;
+    }
   }
   .group-header {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     margin-top: 10px;
     cursor: pointer;
     border-radius: 10px;
     transition: 300ms background-color linear;
+    .left-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
     &:hover {
       background-color: rgba(0,0,0,0.05);
     }
@@ -119,6 +145,10 @@ export default {
     flex-grow: 2;
     flex-basis: 0;
     flex-shrink: 0;
+    .groups {
+      overflow: auto;
+      max-height: calc(100vh - 150px);
+    }
   }
   .stack-chooser {
     display: flex;
@@ -138,6 +168,7 @@ export default {
         font-size: 1.1em;
       }
       .actions {
+        margin-top: 20px;
         display: flex;
         justify-content: flex-end;
       }
@@ -157,5 +188,8 @@ export default {
     bottom: 10px;
     right: 10px;
   }
+}
+button.mini {
+  padding: 5px 10px;
 }
 </style>
