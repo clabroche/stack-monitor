@@ -33,7 +33,7 @@
           </card>
         </div>
         <tabs class="tabs" :tabs="[
-          {label: 'Git', id: 'git', icon:'fab fa-git-alt'},
+          {label: 'Git', id: 'git', icon:'fab fa-git-alt', hidden: !isGitEnable},
           {label: 'Logs', id: 'logs', icon: 'fas fa-terminal'},
           {label: 'Npm', id: 'npm', icon: 'fab fa-npm', hidden: !isNpm},
           {label: 'Bugs', id: 'bugs', icon: 'fas fa-bug', hidden: !isNpm},
@@ -82,6 +82,7 @@ import Card from '../components/Card.vue';
 import NotificationBell from '../components/NotificationBell.vue';
 import BugsVue from '../components/Bugs.vue';
 import ConfigsVue from '../components/Configs.vue';
+import git from '@/models/git';
 export default {
   name: 'StackSingle',
   components: {
@@ -122,6 +123,8 @@ export default {
     onBeforeUnmount(()=> {
       clearInterval(interval)
     })
+    const isGitEnable = ref(false)
+    onMounted(async() => isGitEnable.value = await git.isEnabled())
 
     return {
       stack,
@@ -129,6 +132,7 @@ export default {
       currentService,
       cpu, mem,
       isNpm,
+      isGitEnable,
       async openInVsCode() {
         currentService.value .openInVsCode()
       },

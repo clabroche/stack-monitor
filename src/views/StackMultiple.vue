@@ -1,7 +1,7 @@
 <template>
   <div class="stack-multiple">
     <button class="single-button" @click="$router.push({name:'stack-single', params: {label: services[0].label}})"><i class="fas fa-columns" aria-hidden="true"></i></button>
-    <tabs :tabs="[{label: 'Git', id: 'git', icon: 'fab fa-git-alt'}, {label: 'Logs', id: 'logs', icon: 'fas fa-terminal'}]" 
+    <tabs :tabs="[{label: 'Git', id: 'git', icon: 'fab fa-git-alt', hidden: !isGitEnable}, {label: 'Logs', id: 'logs', icon: 'fas fa-terminal'}]" 
       :showLabels="false">
       <template #default="{tab}">
         <transition name="slide-fade">
@@ -68,6 +68,8 @@ import Logs from '../components/Logs.vue'
 import Tabs from '../components/Tabs.vue'
 import Git from '../components/Git.vue'
 import draggable from 'vuedraggable'
+import { onMounted } from '@vue/runtime-core'
+import git from '@/models/git'
 export default {
   components: {
     SectionCmp: Section,
@@ -82,8 +84,13 @@ export default {
     setTimeout(() => {
       services.value = stack.services
     }, 1000);
+    
+    const isGitEnable = ref(false)
+    onMounted(async() => isGitEnable.value = await git.isEnabled())
+
     return {
       services,
+      isGitEnable,
       modifyDragItem(dataTransfer) {
         let img = new Image()
         img.src = ''

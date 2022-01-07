@@ -3,6 +3,12 @@ const router = express.Router();
 const {findService} = require('../models/stack')
 const {execAsync, execAsyncWithoutErr} = require('../helpers/exec')
 const isWindows = require('../helpers/isWindows');
+const commandExists = require('command-exists')
+
+router.get('/is-enabled', async function (req, res) {
+  const isEnabled = await commandExists('git').then(() => true).catch(() => false)
+  res.json(isEnabled)
+})
 
 router.get('/:service/branches', async function (req, res) {
   const service = findService(req.params.service)
