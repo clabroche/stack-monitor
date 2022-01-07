@@ -9,13 +9,13 @@
         <div v-for="(group) of groups" :key="group.label">
           <div class="group-header" @click="group.show = !group.show">
             <div class="left-header">
-              <i class="fas fa-chevron-down" v-if="group.label !== 'All'"></i>
+              <i class="fas fa-chevron-down" v-if="group.label !== 'All'" aria-hidden="true"></i>
               <h3>{{group.label}} <span>({{group.services?.length}})</span></h3>
             </div>
             <div class="right-header" >
               <button @click.stop="selectGroup(group.label)" class="mini">
-                <i class="far fa-check-square" v-if="isGroupSelected(group.label)"></i>
-                <i class="far fa-square" v-else></i>
+                <i class="far fa-check-square" v-if="isGroupSelected(group.label)" aria-hidden="true"></i>
+                <i class="far fa-square" v-else aria-hidden="true"></i>
               </button>
             </div>
           </div>
@@ -136,7 +136,6 @@ export default {
       background-color: rgba(0,0,0,0.05);
     }
     i {
-      margin: 0;
       padding: 0;
       margin: 0 5px
     }
