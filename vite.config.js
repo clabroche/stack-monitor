@@ -2,17 +2,18 @@ import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import path from 'path'
 import { minifyHtml } from 'vite-plugin-html'
-import legacy from '@vitejs/plugin-legacy'
+import analyze from 'rollup-plugin-analyzer'
+import { visualizer } from 'rollup-plugin-visualizer';
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  rollupInputOptions: {
+    plugins: [analyze]
+  },
   plugins: [
     vue(),
+    visualizer(),
     minifyHtml(),
-    legacy({
-      targets: ['ie >= 11'],
-      additionalLegacyPolyfills: ['regenerator-runtime/runtime']
-    })
   ],
   build: {
     outDir: path.resolve(__dirname, 'server','public')
