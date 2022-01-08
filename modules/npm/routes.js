@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const {findService} = require('../models/stack')
-const Npm = require('../models/Npm');
-const Socket = require('../models/socket');
+const {findService} = require('../../server/models/stack')
+const Npm = require('./Npm');
+const Socket = require('../../server/models/socket');
 const {v4} = require('uuid');
 
 router.get('/:service', async function (req, res) {

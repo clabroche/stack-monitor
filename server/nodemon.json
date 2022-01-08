@@ -1,0 +1,4 @@
+{
+  "watch": [".", "../modules"],
+  "ext": "js, css"
+}

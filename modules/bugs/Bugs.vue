@@ -1,6 +1,6 @@
 <template>
   <section-cmp
-    v-if="isNpm && service" :key="service.label"
+    v-if="service" :key="service.label"
     header="Bugs"
     maxHeight="400px"
     :actions="[{label: 'Reload', icon: 'fas fa-sync', click: () => reload(), hidden: loading}]"
@@ -19,11 +19,11 @@
 </template>
 
 <script>
-import Service from '../models/service'
-import SectionVue from './Section.vue'
+import Service from '@/models/service'
+import SectionVue from '@/components/Section.vue'
 import { onMounted, ref, watch } from 'vue'
-import SpinnerVue from './Spinner.vue'
-import notification from '../helpers/notification'
+import SpinnerVue from '@/components/Spinner.vue'
+import notification from '@/helpers/notification'
 export default {
   components: {
     sectionCmp: SectionVue,
@@ -31,34 +31,28 @@ export default {
   },
   props: {
     service: {
-      /** @type {import('../models/service').default}*/
+      /** @type {import('../../src/models/service').default}*/
       default: null,
       required: true,
       type: Service
     },
   },
   setup(props) {
-    const isNpm = ref(false)
     const bugs = ref([])
     const loading = ref(true)
     const reload = (() => (async () => {
       bugs.value = []
       loading.value = true
-      if(props.service) {
-        isNpm.value = await props.service.isNpm()
-      }
-      if(isNpm.value) {
-        bugs.value = await props.service.getBugs()
-          .catch((err) => {
-            if(err?.response?.data?.code === 'TSC_NOT_FOUND') {
-              notification.next('error', 'Please "npm i -g typescript"')
-            }
-            if(err?.response?.data?.code === 'JSCONFIG_NOT_FOUND') {
-              notification.next('error', 'Please create a jsconfig.json in project')
-            }
-            return []
-          })
-      }
+      bugs.value = await props.service.getBugs()
+        .catch((err) => {
+          if(err?.response?.data?.code === 'TSC_NOT_FOUND') {
+            notification.next('error', 'Please "npm i -g typescript"')
+          }
+          if(err?.response?.data?.code === 'JSCONFIG_NOT_FOUND') {
+            notification.next('error', 'Please create a jsconfig.json in project')
+          }
+          return []
+        })
     })()
       .then(() => loading.value = false)
       .catch(() => loading.value = false))
@@ -68,10 +62,8 @@ export default {
     return {
       reload,
       loading,
-      isNpm,
       bugs,
       openInVsCode(bug) {
-        console.log('click')
         props.service.openLinkInVsCode(bug.path)
       }
     }

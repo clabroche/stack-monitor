@@ -8,13 +8,13 @@
       </button>
     </div>
     <div class="content">
-      <slot :data="currentTab?.data?.value || currentTab?.data" :tab="currentTab" v-if="currentTab"/>
+      <slot :key="currentTab?.id" :data="currentTab?.data?.value || currentTab?.data" :tab="currentTab" v-if="currentTab"/>
     </div>
   </div>
 </template>
 
 <script>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue'
 export default {
   props: {
     tabs: {default: () => []},
@@ -23,20 +23,26 @@ export default {
   },
   setup(props) {
     const currentTab = ref()
-    onMounted(() => {
+    const load = () => {
       if(props.tabs) {
         const tabId = localStorage.getItem('tab')
-        currentTab.value = props.tabs[+tabId || 0]
+        currentTab.value = props.tabs.find(tab => tab.id === tabId) || props.tabs[0]
+      }
+    }
+    onMounted(load)
+    watch(() => props.tabs, ()=> {
+      if(!currentTab.value && props.tabs?.[0]) {
+        load()
       }
     })
+    const save = () => localStorage.setItem('tab', currentTab?.value?.id)
+
     return {
       currentTab,
       availableTabs: computed(() => {
         return props.tabs.filter((tab) => !tab.hidden)
       }),
-      save() {
-        localStorage.setItem('tab', props.tabs.findIndex(tab => tab.id === currentTab.value.id).toString())
-      }
+      save
     }
   }
 }

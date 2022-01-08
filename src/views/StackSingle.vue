@@ -32,29 +32,10 @@
             <button @click="stop()"><i class="fas fa-stop" aria-hidden="true"></i> Stop</button>
           </card>
         </div>
-        <tabs class="tabs" :tabs="[
-          {label: 'Git', id: 'git', icon:'fab fa-git-alt', hidden: !isGitEnable},
-          {label: 'Logs', id: 'logs', icon: 'fas fa-terminal'},
-          {label: 'Npm', id: 'npm', icon: 'fab fa-npm', hidden: !isNpm},
-          {label: 'Bugs', id: 'bugs', icon: 'fas fa-bug', hidden: !isNpm},
-          {label: 'Config', id: 'configs', icon: 'fas fa-cog'}
-        ]"
-          :showLabels="false">
+        <tabs class="tabs" :tabs="tabs" :showLabels="false">
           <template #default="{tab}">
-            <div v-if="tab.id === 'git'" class="tab">
-              <git :currentService="currentService" :key="currentService.label"/>
-            </div>
-            <div v-else-if="tab.id === 'npm'" class="tab">
-              <npm :currentService="currentService" :key="currentService.label"/>
-            </div>
-            <div v-else-if="tab.id === 'logs'" class="tab">
-              <logs :service="currentService" :key="currentService.label"></logs>
-            </div>
-            <div v-else-if="tab.id === 'bugs'" class="tab">
-              <bugs :service="currentService" :key="currentService.label"></bugs>
-            </div>
-            <div v-else-if="tab.id === 'configs'" class="tab">
-              <configs :service="currentService" :key="currentService.label"></configs>
+            <div class="tab">
+              <component :is="tab.id" :service="currentService" :key="currentService.label"></component>
             </div>
           </template>
         </tabs>
@@ -70,32 +51,37 @@
 <script>
 import Stack from '../models/stack'
 import System from '../models/system'
-import LogsVue from '../components/Logs.vue';
+import LogsVue from '../../modules/logs/Logs.vue';
 import ProgressVue from '../components/Progress.vue';
-import GitVue from '../components/Git.vue';
-import NpmVue from '../components/Npm.vue';
+import GitVue from '../../modules/git/Git.vue';
+import NpmVue from '../../modules/npm/Npm.vue';
 import SectionVue from '../components/Section.vue'
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import router from '../router/router'
 import Tabs from '../components/Tabs.vue';
 import Card from '../components/Card.vue';
 import NotificationBell from '../components/NotificationBell.vue';
-import BugsVue from '../components/Bugs.vue';
-import ConfigsVue from '../components/Configs.vue';
-import git from '@/models/git';
+import BugsVue from '../../modules/bugs/Bugs.vue';
+import ConfigsVue from '../../modules/configuration/Configs.vue';
+import axios from '../helpers/axios'
+
+const moduleComponents = {
+    Logs: LogsVue,
+    Git: GitVue,
+    Npm: NpmVue,
+    Bugs: BugsVue,
+    Configuration: ConfigsVue,
+}
+
 export default {
   name: 'StackSingle',
   components: {
-    logs: LogsVue,
     progressCmp: ProgressVue,
-    git: GitVue,
-    npm: NpmVue,
-    bugs: BugsVue,
-    configs: ConfigsVue,
     sectionCmp: SectionVue,
     Tabs,
     Card,
-    NotificationBell
+    NotificationBell,
+    ...moduleComponents
   },
   setup() {
     /** @type {import('vue').Ref<import('../models/service').default[]>} */
@@ -104,16 +90,18 @@ export default {
     const currentService = ref()
     const cpu = ref(0)
     const mem = ref(0)
-    const isNpm = ref(false)
     watch(() => router.currentRoute.value.params.label, async () => {
-      currentService.value = await Stack.getService(router.currentRoute.value.params.label)
-      isNpm.value = await currentService.value.isNpm()
+      reload()
     })
     let interval
-    onMounted(async () => {
+    const tabs = ref([])
+    async function reload() {
       currentService.value = await Stack.getService(router.currentRoute.value.params.label)
-      isNpm.value = await currentService.value.isNpm()
-      console.log(isNpm.value)
+      const {data: services} = await axios.get('/plugins/services/' + currentService.value.label)
+      tabs.value = services.sort((a,b) =>a.order - b.order).map(service => ({label: service.name, id: service.name, icon:service.icon, hidden: service.hidden}))
+    }
+    onMounted(async () => {
+      await reload()
       interval = setInterval(async () => {
         const {cpu: _cpu, mem: _mem} = await System.getInfos(currentService.value .label)
         cpu.value = _cpu
@@ -123,16 +111,16 @@ export default {
     onBeforeUnmount(()=> {
       clearInterval(interval)
     })
-    const isGitEnable = ref(false)
-    onMounted(async() => isGitEnable.value = await git.isEnabled())
 
+    onMounted(async () => {
+      
+    } )
     return {
       stack,
       System,
       currentService,
       cpu, mem,
-      isNpm,
-      isGitEnable,
+      tabs,
       async openInVsCode() {
         currentService.value .openInVsCode()
       },

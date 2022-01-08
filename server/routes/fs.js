@@ -5,7 +5,6 @@ const pathfs = require('path')
 const PromiseB = require('bluebird')
 const os = require('os')
 const sort = require('fast-sort')
-const npm = require('../lib/npm')
 
 
 router.get('/home-dir', async function (req, res) {
@@ -33,7 +32,7 @@ router.get('/ls', async function (req, res) {
         isStack: false
       }
       if (entryInfos.isDirectory) {
-        entryInfos.npmInfos = await npm.getNpmInfos(entryInfos.absolutePath)
+        entryInfos.npmInfos = await getNpmInfos(entryInfos.absolutePath)
       } else {
         if(pathfs.extname(absolutePath) === '.js') {
           try {
@@ -55,4 +54,18 @@ router.get('/ls', async function (req, res) {
   res.json(dirs)
 });
 
+
+async function getNpmInfos(path) {
+  const readdir = await fs.readdir(path)
+  if (readdir.includes('package.json')) {
+    const packageJSON = await fs.readJSON(pathfs.resolve(path, 'package.json'))
+    return {
+      path,
+      packageJSON,
+      version: packageJSON.version,
+      name: packageJSON.name,
+      author: packageJSON.author
+    }
+  }
+}
 module.exports = router;

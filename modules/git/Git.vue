@@ -1,7 +1,7 @@
 <template>
-  <div class="git-section" v-if="currentService.git">
+  <div class="git-section" v-if="service.git">
     <section-cmp v-if="git.branches" class="section-branches"
-      :key="currentService.label"
+      :key="service.label"
       header="Branches"
       :noStyle="noStyle"
       :actions="[{label: 'Pull ' +'('+git.delta+')', hidden: git.delta >= 0, click: () => pull(), icon: 'fas fa-download'}]">
@@ -54,10 +54,10 @@
 </template>
 
 <script>
-import notification from '../helpers/notification'
-import Service from '../models/service'
-import ModalVue from './Modal.vue'
-import SectionVue from './Section.vue'
+import notification from '@/helpers/notification'
+import Service from '@/models/service'
+import ModalVue from '@/components/Modal.vue'
+import SectionVue from '@/components/Section.vue'
 export default {
   components: {
     sectionCmp: SectionVue,
@@ -66,8 +66,8 @@ export default {
   props: {
     noStyle: {default: false},
     customGit: {default: null},
-    currentService: {
-      /** @type {import('../models/service').default}*/
+    service: {
+      /** @type {import('@/models/service').default}*/
       default: null,
       required: true,
       type: Service
@@ -75,7 +75,7 @@ export default {
   },
   computed: {
     git() {
-      return this.currentService.git
+      return this.service.git
     }
   },
   data() {
@@ -86,9 +86,9 @@ export default {
   },
   async mounted() {
     if(this.customGit) return 
-    this.currentService.updateGit()
+    this.service.updateGit()
     this.gitFetch()
-    this.interval = setInterval(() => this.currentService.updateGit(), 1000)
+    this.interval = setInterval(() => this.service.updateGit(), 1000)
     this.longInterval = setInterval(() => this.gitFetch(), 1000 * 60)
   },
   beforeUnmount() {
@@ -97,7 +97,7 @@ export default {
   },
   methods: {
     gitFetch() {
-      this.currentService.gitFetch()
+      this.service.gitFetch()
         .catch((err) => notification.next('error', err?.response?.data || err?.message || err))
     },
     colorStatus(status) {
@@ -119,10 +119,10 @@ export default {
       // @ts-ignore
       const res = await this.$refs['branch-modal'].open(branchName).promise
       if(res) {
-        await this.currentService.changeBranch(branchName)
+        await this.service.changeBranch(branchName)
           .then(() => notification.next('success', `Branch is now on ${branchName}`))
           .catch(err=> notification.next('error', err.response.data))
-        await this.currentService.updateGit()
+        await this.service.updateGit()
       }
     },
     async checkoutFile(fileStatus) {
@@ -130,7 +130,7 @@ export default {
       // @ts-ignore
       const res = await this.$refs['checkout-modal'].open(file).promise
       if(res) {
-        return this.currentService.checkoutFile(file)
+        return this.service.checkoutFile(file)
           .then(() => notification.next('success', `Changes on ${file} are deleted`))
           .catch(err=> notification.next('error', err.response.data))
       }
@@ -139,28 +139,28 @@ export default {
       // @ts-ignore
       const res = await this.$refs['reset-modal'].open().promise
       if(res) {
-        return this.currentService.reset()
+        return this.service.reset()
           .then(() => notification.next('success', `All changes are lost`))
           .catch(err=> notification.next('error', err.response.data))
       }
     },
     async stash() {
-      await this.currentService.stash()
+      await this.service.stash()
           .then(() => notification.next('success', `All changes is in stash`))
         .catch(err=> notification.next('error', err.response.data))
-      return this.currentService.updateGit()
+      return this.service.updateGit()
     },
     async stashPop() {
-      await this.currentService.stashPop()
+      await this.service.stashPop()
           .then(() => notification.next('success', `All changes unstashed`))
         .catch(err=> notification.next('error', err.response.data))
-      return this.currentService.updateGit()
+      return this.service.updateGit()
     },
     async pull() {
-      await this.currentService.pull()
+      await this.service.pull()
           .then(() => notification.next('success', `Branch is now up to date`))
         .catch(err=> notification.next('error', err.response.data))
-      return this.currentService.updateGit()
+      return this.service.updateGit()
     },
   }
 }

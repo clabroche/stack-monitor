@@ -8,12 +8,12 @@
 </template>
 
 <script>
-import Stack from '../models/stack'
-import Socket from '../helpers/socket';
+import Stack from '@/models/stack'
+import Socket from '@/helpers/socket';
 // @ts-ignore
 import { Terminal } from 'xterm/lib/xterm';
 import { FitAddon } from 'xterm-addon-fit';
-import SectionVue from './Section.vue';
+import SectionVue from '@/components/Section.vue';
 
 export default {
   name: 'Logs',

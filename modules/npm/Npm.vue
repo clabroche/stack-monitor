@@ -1,6 +1,6 @@
 <template>
   <div header="Npm" v-if="isNpm && packageJson">
-    <section-cmp  :key="currentService.label" header="Scripts" maxHeight="400px">
+    <section-cmp  :key="service.label" header="Scripts" maxHeight="400px">
       <div class="command-container">
         <div class=button-container>
           <button @click="run('install')">
@@ -30,7 +30,7 @@
         </div>
       </div>
     </section-cmp>
-    <section-cmp  :key="currentService.label" >
+    <section-cmp  :key="service.label" >
       <div class="categ" v-for="categ of ['dependencies','devDependencies']" :key="categ">
         <h2 class="dep-header">{{categ.charAt(0).toUpperCase() + categ.slice(1)}}</h2>
         <div class="dependecies">
@@ -85,22 +85,22 @@
 </template>
 
 <script>
-import socket from '../helpers/socket'
-import Service from '../models/service'
-import SectionVue from './Section.vue'
+import socket from '@/helpers/socket'
+import Service from '@/models/service'
+import SectionVue from '@/components/Section.vue'
 // @ts-ignore
 import { Terminal } from 'xterm/lib/xterm';
 import { FitAddon } from 'xterm-addon-fit';
 import { onMounted, reactive, ref, watch } from 'vue'
-import Spinner from './Spinner.vue';
+import Spinner from '@/components/Spinner.vue';
 export default {
   components: {
     sectionCmp: SectionVue,
     Spinner,
   },
   props: {
-    currentService: {
-      /** @type {import('../models/service').default}*/
+    service: {
+      /** @type {import('@/models/service').default}*/
       default: null,
       required: true,
       type: Service
@@ -113,14 +113,14 @@ export default {
     const launched = reactive({})
     const refs = ref({})
     const reload = async () => {
-      if(props.currentService) {
-        isNpm.value = await props.currentService.isNpm()
-        packageJson.value = await props.currentService.getPackageJSON()
-        outdated.value = await props.currentService.outdatedNpm()
+      if(props.service) {
+        isNpm.value = await props.service.isNpm()
+        packageJson.value = await props.service.getPackageJSON()
+        outdated.value = await props.service.outdatedNpm()
       }
     }
     onMounted(reload)
-    watch(() => props.currentService,reload)
+    watch(() => props.service,reload)
     return {
       isNpm,
       packageJson,
@@ -128,10 +128,10 @@ export default {
       launched,
       refs,
       async run(command) {
-        if(props.currentService) {
+        if(props.service) {
           const commandRef = refs.value[command][0] ? refs.value[command][0] : refs.value[command]
           commandRef.innerHTML = ''
-          const socketId = await props.currentService.runNpmCommand(command)
+          const socketId = await props.service.runNpmCommand(command)
           const terminal = new Terminal({
             experimentalCharAtlas: 'static',
             convertEol: true,

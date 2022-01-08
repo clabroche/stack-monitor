@@ -67,15 +67,15 @@
 </template>
 
 <script>
-import Service from '../models/service'
-import SectionVue from './Section.vue'
+import Service from '@/models/service'
+import SectionVue from '@/components/Section.vue'
 export default {
   components: {
     sectionCmp: SectionVue,
   },
   props: {
     service: {
-      /** @type {import('../models/service').default}*/
+      /** @type {import('@/models/service').default}*/
       default: null,
       required: true,
       type: Service
