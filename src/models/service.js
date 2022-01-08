@@ -51,12 +51,12 @@ class Service {
   }
 
   async getLogs() {
-    const { data: logs } = await axios.get('/stack/' + this.label + '/logs')
+    const { data: logs } = await axios.get('/logs/' + this.label + '/logs')
     return logs
   }
 
   async clear() {
-    const { data: logs } = await axios.delete('/stack/' + this.label + '/logs')
+    const { data: logs } = await axios.delete('/logs/' + this.label + '/logs')
     return logs
   }
 

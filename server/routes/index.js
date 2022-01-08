@@ -1,13 +1,17 @@
 const express = require('express');
 const router = express.Router();
+const fse = require('fs-extra')
+const pathfs = require('path')
+const plugins = require('../helpers/plugins')
 require('colors')
 
+plugins.routes.forEach(route => router.use(route));
+
+router.use('/plugins', require('./plugins'))
 router.use('/system', require('./system'))
 router.use('/stack', require('./stack'))
-router.use('/git', require('./git'))
-router.use('/npm', require('./npm'))
-router.use('/bugs', require('./bugs'))
 router.use('/fs', require('./fs'))
+
 
 
 router.get('/version', async function (req, res) {

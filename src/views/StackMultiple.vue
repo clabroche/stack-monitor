@@ -1,11 +1,10 @@
 <template>
   <div class="stack-multiple">
     <button class="single-button" @click="$router.push({name:'stack-single', params: {label: services[0].label}})"><i class="fas fa-columns" aria-hidden="true"></i></button>
-    <tabs :tabs="[{label: 'Git', id: 'git', icon: 'fab fa-git-alt', hidden: !isGitEnable}, {label: 'Logs', id: 'logs', icon: 'fas fa-terminal'}]" 
-      :showLabels="false">
+    <tabs :tabs="tabs" :showLabels="false" ref="tabRef">
       <template #default="{tab}">
         <transition name="slide-fade">
-          <div v-if="tab.id === 'git'" class="tab">
+          <div class="tab">
             <draggable v-model="services"
               v-bind="{animation: 800,}"
               item-key="label"
@@ -23,33 +22,7 @@
                     {click: () => openInVsCode(service), icon: 'fas fa-file-code'},
                     {click: () => openFolder(service), icon: 'fas fa-folder'},
                   ]">
-                  <git :currentService="service" :key="service.label" :noStyle="true"/>
-                </section-cmp>
-              </template>
-            </draggable>
-          </div>
-          <div v-else-if="tab.id === 'logs'" class="tab">
-            <draggable v-model="services"
-              v-bind="{animation: 200,}"
-              ghost-class="ghost"
-              item-key="label"
-              :setData="modifyDragItem"
-              class="services">
-              <template #item="{element: service}">
-                <section-cmp
-                  class="service-container"
-                  :header="service.label"
-                  :headerBold="true"
-                  :noBodyPadding="true"
-                  :actions="[
-                    {click: () => goTo(service.git.home), icon: 'fab fa-github'},
-                    {click: () => goTo(service.url), icon: 'fas fa-globe'},
-                    {click: () => openInVsCode(service), icon: 'fas fa-file-code'},
-                    {click: () => openFolder(service), icon: 'fas fa-folder'},
-                    {click: () => restart(service), icon: 'fas fa-sync'},
-                    {click: () => stop(service), icon: 'fas fa-stop'}
-                  ]">
-                  <logs :service="service" :key="service.label" :noStyle="true"></logs>
+                  <component :is="tab.id" :service="service" :key="service.label"  :noStyle="true"></component>
                 </section-cmp>
               </template>
             </draggable>
@@ -64,33 +37,59 @@
 import { ref } from '@vue/reactivity'
 import Section from '../components/Section.vue'
 import stack from '../models/stack'
-import Logs from '../components/Logs.vue'
+import Logs from '../../modules/logs/Logs.vue'
 import Tabs from '../components/Tabs.vue'
-import Git from '../components/Git.vue'
+import Git from '../../modules/git/Git.vue'
+import NpmVue from '../../modules/npm/Npm.vue';
+import BugsVue from '../../modules/bugs/Bugs.vue';
+import ConfigsVue from '../../modules/configuration/Configs.vue';
+
 import draggable from 'vuedraggable'
-import { onMounted } from '@vue/runtime-core'
-import git from '@/models/git'
+import { onMounted, watch } from '@vue/runtime-core'
+import PromiseB from 'bluebird'
+import axios from '../helpers/axios'
+
+const moduleComponents = {
+    Logs: Logs,
+    Git: Git,
+    Npm: NpmVue,
+    Bugs: BugsVue,
+    Configuration: ConfigsVue,
+}
 export default {
   components: {
     SectionCmp: Section,
-    Logs,
     Tabs,
-    Git,
-    draggable
+    draggable,
+    ...moduleComponents
   },
   name: 'StackSingle',
   setup() {
     const services = ref([])
-    setTimeout(() => {
-      services.value = stack.services
-    }, 1000);
+    const tabs = ref([])
+    const tabRef = ref(null)
+    onMounted(async () => {
+      const {data: plugins} = await axios.get('/plugins/services')
+      tabs.value = plugins.sort((a,b) =>a.order - b.order).map(service => ({label: service.name, id: service.name, icon:service.icon, hidden: service.hidden}))
+      watch(() => tabRef.value?.currentTab?.id , async ()=> {
+        if(!tabRef.value?.currentTab?.id) return 
+        services.value = await PromiseB.filter(stack.services, async service => {
+        const currentPlugin = tabRef.value.currentTab.id
+        if(!service.enabled) return 
+        const {data: plugins} = await axios.get('/plugins/services/'+ service.label)
+        const availablePlugins = plugins.map(a => a.name)
+        const plugin = availablePlugins.find(plugin => plugin === currentPlugin)
+        if(!plugin) return 
+        return !plugin.hidden
+      })
+      })
+    })
     
-    const isGitEnable = ref(false)
-    onMounted(async() => isGitEnable.value = await git.isEnabled())
-
+    
     return {
+      tabRef,
       services,
-      isGitEnable,
+      tabs,
       modifyDragItem(dataTransfer) {
         let img = new Image()
         img.src = ''

@@ -54,7 +54,6 @@ export default {
       openModal() {
         modalRef.value.open().subscribe((res) => {
           if(!res) return 
-          console.log('end')
         })
       },
       async openPath(recent) {

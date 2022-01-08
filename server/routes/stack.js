@@ -41,16 +41,6 @@ router.get('/:service', function (req, res) {
   const service = findService(req.params.service)
   res.send(service)
 });
-router.get('/:service/logs', function (req, res) {
-  const service = findService(req.params.service)
-  res.send(service ? service.store : '')
-});
-router.delete('/:service/logs', function (req, res) {
-  const service = findService(req.params.service)
-  service.store = ''
-  Socket.socket.emit('logs:clear', { label: service.label })
-  res.send(service.store)
-});
 router.get('/:service/open-in-vs-code', function (req, res) {
   const service = findService(req.params.service)
   exec('code .', { cwd: service.spawnOptions.cwd })
