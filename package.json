@@ -18,6 +18,7 @@
   "main": "./background.js",
   "files": [
     "server/**/*",
+    "modules/**/*",
     ".env.production",
     "package.json"
   ],
