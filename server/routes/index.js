@@ -3,7 +3,6 @@ const router = express.Router();
 const fse = require('fs-extra')
 const pathfs = require('path')
 const plugins = require('../helpers/plugins')
-require('colors')
 
 plugins.routes.forEach(route => router.use(route));
 
