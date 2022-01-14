@@ -24,7 +24,7 @@ router.get('/global-infos', async function (req, res) {
 router.get('/:service/infos', async function (req, res) {
   try {
     const service = findService(req.params.service)
-    res.json(await getCPU(SpawnStore[service.label].pid))
+    res.json(await getCPU(SpawnStore[service.label][0]?.pid))
   } catch (e) {
     res.json({ cpu: null, mem: null })
   }
