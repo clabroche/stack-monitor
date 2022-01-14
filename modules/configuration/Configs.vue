@@ -38,6 +38,7 @@
         <i class="fas fa-terminal" aria-hidden="true"></i>
         <h3>Command</h3>
       </div>
+      <template v-if="service.spawnCmd">
       <div class="section-configs">
         <div class="key-value">
           <div class="key">Executable</div>
@@ -52,6 +53,23 @@
           <div class="value">{{service.spawnOptions.cwd}}</div>
         </div>
       </div>
+      </template>
+      <template v-if="service.commands?.length">
+      <div class="section-configs" v-for="command of service.commands" :key="command.spawCmd">
+        <div class="key-value">
+          <div class="key">Executable</div>
+          <div class="value">{{command?.spawnCmd}}</div>
+        </div>
+        <div class="key-value">
+          <div class="key">Command args</div>
+          <div class="value" v-for="(arg, i ) of command.spawnArgs" :key="arg">{{command?.spawnArgs?.[i]}}</div>
+        </div>
+        <div class="key-value">
+          <div class="key">Path</div>
+          <div class="value">{{command?.spawnOptions?.cwd}}</div>
+        </div>
+      </div>
+      </template>
       <div class="header-configs">
         <i class="fas fa-cog" aria-hidden="true"></i>
         <h3>Envs</h3>

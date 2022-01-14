@@ -25,6 +25,7 @@ class Service {
       cwd: '',
       env: ''
     }
+    this.commands = service.commands || []
     this.enabled = service.enabled || false
   }
   async updateGit() {

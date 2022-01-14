@@ -36,6 +36,16 @@ const stack = [
     description: 'Just start the mongodb in docker',
     spawnCmd: 'docker',
     spawnArgs: ['start', 'mongo'],
+  }, {
+    label: 'Multiple Commands',
+    description: 'Launch multiple commands at once',
+    commands: [{
+      spawnCmd: 'echo',
+      spawnArgs: ['coucou1'],
+    }, {
+        spawnCmd: 'echo',
+        spawnArgs: ['coucou2'],
+      }]
   },
   {
     label: 'Front',

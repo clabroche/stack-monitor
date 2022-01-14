@@ -7,7 +7,7 @@ const Socket = require('../models/socket')
 
 module.exports = {
   async  killService(service) {
-    SpawnStore[service.label].kill('SIGKILL')
+    SpawnStore[service.label].map(process => process.kill('SIGKILL'))
     if (service.url) {
       const port = url.parse(service.url).port
       await killport(port)
@@ -17,33 +17,57 @@ module.exports = {
     await new Promise(resolve => setTimeout(resolve, 100))
     service.enabled = false
   },
-  launchService(microservice) {
-    let { spawnOptions = {}, spawnCmd } = microservice || {}
-    let cwd = spawnOptions.cwd
-    spawnOptions.shell = true
-    if (cwd && spawnCmd.match(/[\/\\]/g)) {
-      spawnCmd = path.resolve(cwd, spawnCmd)
+  launchService(microservice = {}) {
+    if (microservice?.spawnCmd) {
+      launchProcess(
+        microservice,
+        microservice?.spawnCmd,
+        microservice?.spawnArgs || [],
+        microservice?.spawnOptions
+      )
     }
-    let envs = spawnOptions.env || {}
-    if(spawnOptions && spawnOptions.env) {
-      envs = Object.assign({}, process.env, spawnOptions.env)
+    if(microservice?.commands) {
+      microservice.commands.forEach(command => {
+        if(command?.spawnCmd) {
+          launchProcess(
+            microservice,
+            command?.spawnCmd,
+            command?.spawnArgs || [],
+            command?.spawnOptions
+          )
+        }
+      });
     }
-    SpawnStore[microservice.label] = spawn(spawnCmd, microservice.spawnArgs || [], {...spawnOptions, env: envs})
-    const store = SpawnStore[microservice.label]
-    store.title = microservice.label
-    microservice.pid = store.pid
-    const add = data => {
-      const line = data.toString()
-      microservice.store += line
-      Socket.socket.emit('logs:update', { msg: line, label: microservice.label })
-    }
-    store.stdout.on('data', add)
-    store.stderr.on('data', (message)=> {
-      if (!message.toString().includes('webpack.Progress')) {
-        Socket.socket.emit('alert', { label: microservice.label, message: message.toString(), type: 'error' })
-      }
-      add(message)
-    })
     microservice.enabled = true
   }
+}
+
+function launchProcess(microservice, spawnCmd, spawnArgs = [], spawnOptions = {}) {
+  let cwd = spawnOptions.cwd
+  spawnOptions.shell = true
+  if (cwd && spawnCmd.match(/[\/\\]/g)) {
+    spawnCmd = path.resolve(cwd, spawnCmd)
+  }
+  let envs = spawnOptions.env || {}
+  if (spawnOptions && spawnOptions.env) {
+    envs = Object.assign({}, process.env, spawnOptions.env)
+  }
+  const spawnProcess = spawn(spawnCmd, spawnArgs, { ...spawnOptions, env: envs })
+  if (!SpawnStore[microservice.label]) SpawnStore[microservice.label] = []
+  if (!microservice.pids) microservice.pids = []
+  SpawnStore[microservice.label].push(spawnProcess)
+  spawnProcess.title = microservice.label
+  microservice.pids.push(spawnProcess.pid)
+  const add = data => {
+    const line = data.toString()
+    microservice.store += line
+    Socket.socket.emit('logs:update', { msg: line, label: microservice.label })
+  }
+  spawnProcess.stdout.on('data', add)
+  spawnProcess.stderr.on('data', (message) => {
+    if (!message.toString().includes('webpack.Progress')) {
+      Socket.socket.emit('alert', { label: microservice.label, message: message.toString(), type: 'error' })
+    }
+    add(message)
+  })
 }
