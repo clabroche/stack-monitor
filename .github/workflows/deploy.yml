@@ -18,7 +18,7 @@ jobs:
         path: |
           node_modules
           */*/node_modules
-        key: ${{ runner.os }}-${{ hashFiles('**/yarn.lock') }}
+        key: ${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
     - run: npm install
     - run: npm run build
     - run: npm publish
