@@ -32,6 +32,7 @@ router.get('/:service/branch/:branchName/remote-delta', async function (req, res
   try {
     const service = findService(req.params.service)
     if (!service || !service.spawnOptions || !service.spawnOptions.cwd) return res.json([])
+    await execAsync(`git branch --set-upstream-to=origin/${req.params.branchName} ${req.params.branchName}`, { cwd: service.spawnOptions.cwd })
     await execAsync(`git fetch`, { cwd: service.spawnOptions.cwd })
     const localCommit = await execAsync(`git log --oneline ${req.params.branchName}`, { cwd: service.spawnOptions.cwd })
     const remoteCommit = await execAsync(`git log --oneline origin/${req.params.branchName}`, { cwd: service.spawnOptions.cwd })
