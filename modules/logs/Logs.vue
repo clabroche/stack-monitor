@@ -190,9 +190,13 @@ const jsonsToDisplay = computed(() => {
   scroll()
   return jsonPathSearch.value ?
     jsons.value.map(json => {
-      const res = jsonpath.query(json, jsonPathSearch.value)
-      if (res.length === 1) return res['0']
-      else res
+      try {
+        const res = jsonpath.query(json, jsonPathSearch.value)
+        if (res.length === 1) return res['0']
+        else res
+      } catch (error) {
+        console.error(error)
+      }
     })
     : jsons.value
 })
