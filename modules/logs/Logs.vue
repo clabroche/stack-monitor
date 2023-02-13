@@ -31,7 +31,7 @@
     <div class="main-content">
       <section-cmp v-if="isOpen" header="Logs" :noStyle="noStyle"
         :actions="[{ icon: 'fas fa-trash', click: () => clear() }]">
-        <div v-if="service" class="logs-container" ref="logsContainer" id="terminal">
+        <div v-if="service" class="logs-container" ref="logsContainer" id="terminal" style="box-sizing: content-box">
         </div>
       </section-cmp>
       <section-cmp v-if="isOpen && jsons?.length" :header="'Objects: (' + jsons.length +')'" :noStyle="noStyle" class="right">
@@ -86,29 +86,33 @@ watch(() => search.value, () => {
     terminalSearch.value.findNext(search.value)
   }
 })
-watch(() => `${isInclude.value}|${filterSearch.value}`, () => filter(filterSearch.value))
+watch(() => `${isInclude.value}|${filterSearch.value}`, () => filter())
 watch(() => isOpen.value, () => createTerminal()) 
-const filter = debounce(async function (message) {
+const isLineFiltered=(line) => {
+  const message = filterSearch.value
+  if (!message) return true
+  const filters = message.includes(' | ')
+    ? message.split(' | ')
+    : [message]
+  return filters.filter(a => a).every((filter => {
+    const res = line.toUpperCase().match(new RegExp(escapeRegExp(filter), 'gi'))
+    return isInclude.value ? res : !res
+  }))
+}
+const filterWithoutDebounce = function (message) {
   terminal.value.clear()
   jsons.value = []
-  logs.value
+  const lines = logs.value
     ?.split('\n')
-    ?.filter(line => {
-      if (!message) return true
-      const filters = message.includes(' | ')
-        ? message.split(' | ')
-        : [message]
-      return filters.filter(a => a).every((filter => {
-        const res = line.toUpperCase().match(new RegExp(escapeRegExp(filter), 'gi'))
-        return isInclude.value ? res : !res
-      }))
-    })
+    ?.filter(isLineFiltered)
     ?.map(line => {
       write(line)
       return line
-    }).join('\n');
-  await scroll()
-}, 100)
+    });
+  scroll()
+  return lines
+}
+const filter = debounce(filterWithoutDebounce, 300)
 
 onMounted(() => createTerminal())
 async function createTerminal() {
@@ -149,13 +153,12 @@ async function createTerminal() {
   const searchAddon = new SearchAddon();
   terminalSearch.value = searchAddon
   terminal.value.loadAddon(searchAddon);
-  fitAddon.activate(terminal)
+  fitAddon.activate(terminal.value)
   fitAddon.fit();
   setTimeout(() => {
     fitAddon.fit();
   }, 100);
   window.onresize = function () {
-    fitAddon.activate(terminal)
     fitAddon.fit();
   }
   logs.value = await props.service.getLogs()
@@ -204,6 +207,7 @@ const jsonsToDisplay = computed(() => {
 
 
 function write(line) {
+  if(!isLineFiltered(line)) return
   try { line = JSON.parse(line) } catch (error) { }
   if (typeof line !== 'string') {
     terminal.value.writeln(JSON.stringify(line))
