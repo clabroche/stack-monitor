@@ -5,13 +5,24 @@ const url = require('url')
 const path = require('path')
 const Socket = require('../models/socket')
 
+
 module.exports = {
   async  killService(service) {
-    SpawnStore[service.label].map(process => process.kill('SIGKILL'))
+    SpawnStore[service.label].forEach(process => process.kill('SIGKILL'))
+
+    const psList = (...args) => import('ps-list').then(({ default: fetch }) => fetch(...args));
+    const list = await psList()
+
+    const toKill = list.filter(({ cmd }) => cmd?.includes(service.spawnOptions.cwd) && cmd?.includes('nodemon'))
+    toKill.forEach(({pid}) => process.kill(pid, 'SIGKILL'))
+
     if (service.url) {
       const port = url.parse(service.url).port
-      await killport(port)
+      if(!Number.isNaN(+port)) {
+        await killport(port)
+      }
     }
+
     Socket.socket.emit('logs:clear', { label: service.label })
     service.store = ''
     await new Promise(resolve => setTimeout(resolve, 100))
@@ -60,8 +71,10 @@ function launchProcess(microservice, spawnCmd, spawnArgs = [], spawnOptions = {}
   microservice.pids.push(spawnProcess.pid)
   const add = data => {
     const line = data.toString()
-    microservice.store += line
-    Socket.socket.emit('logs:update', { msg: line, label: microservice.label })
+    if (line) {
+      microservice.store += line
+      Socket.socket.emit('logs:update', { msg: line, label: microservice.label })
+    }
   }
   spawnProcess.stdout.on('data', add)
   spawnProcess.stderr.on('data', (message) => {

@@ -7,6 +7,7 @@ const { exec } = require('child_process');
 const open = require('open');
 const{killService, launchService} =require('../helpers/services');
 const myConfs = require('../models/myConfs');
+const commandExists = require('command-exists').sync;
 
 router.get('/configuration', function (req, res) {
   res.json(Stack.stack)
@@ -43,13 +44,19 @@ router.get('/:service', function (req, res) {
 });
 router.get('/:service/open-in-vs-code', function (req, res) {
   const service = findService(req.params.service)
-  exec('code .', { cwd: service.spawnOptions.cwd })
-  res.send()
+  let command = (commandExists('code') ? 'code' : null) || (commandExists('code-insiders') ? 'code-insiders' : null)
+  if (command) {
+    exec(`${command} .`, { cwd: service.spawnOptions.cwd })
+  }
+  res.send(command)
 });
 router.get('/:service/open-link-in-vs-code', function (req, res) {
   const service = findService(req.params.service)
-  exec(`code --goto "${req.query.link}" .`, { cwd: service.spawnOptions.cwd })
-  res.send()
+  let command = (commandExists('code') ? 'code' : null) || (commandExists('code-insiders') ? 'code-insiders' : null)
+  if(command) {
+    exec(`${command} --goto "${req.query.link}" .`, { cwd: service.spawnOptions.cwd, env: process.env })
+  }
+  res.send(command)
 });
 
 router.get('/:service/open-folder', function (req, res) {

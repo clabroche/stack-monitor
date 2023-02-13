@@ -17,7 +17,7 @@ export default {
     isActive(service) {
       const url = this.$route.fullPath.split('?')[0]
       const serviceLabel = url.split('/').pop()
-      return service.label === serviceLabel
+      return encodeURIComponent(service.label) === serviceLabel
     }
   }
 }

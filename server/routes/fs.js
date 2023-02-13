@@ -41,11 +41,14 @@ router.get('/ls', async function (req, res) {
               entryInfos.isStack = true
             }
           // eslint-disable-next-line no-empty
-          } catch (error) {}
+          } catch (error) {
+            console.error(error)
+          }
         }
       }
       dirs.push(entryInfos)
     } catch (error) {
+      console.error(error)
       return null      
     }
   })
@@ -56,9 +59,9 @@ router.get('/ls', async function (req, res) {
 
 
 async function getNpmInfos(path) {
-  const readdir = await fs.readdir(path)
+  const readdir = await fse.readdir(path)
   if (readdir.includes('package.json')) {
-    const packageJSON = await fs.readJSON(pathfs.resolve(path, 'package.json'))
+    const packageJSON = await fse.readJSON(pathfs.resolve(path, 'package.json'))
     return {
       path,
       packageJSON,

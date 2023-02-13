@@ -74,7 +74,7 @@ export default {
     return {
       isAllEnabled: computed(() => localServices.value.every(service => service.enabled)),
       groups: computed(() => {
-        return localServices.value.reduce((groups, service) => {
+        const groupsById = localServices.value.reduce((groups, service) => {
           if(service.groups) {
             service.groups.forEach(group => {
               if(!groups[group]) groups[group] = reactive({services: [], label: group})
@@ -87,6 +87,7 @@ export default {
 
           return groups
         }, {})
+        return Object.keys(groupsById).map(key => groupsById[key]).sort((a, b) => a.label.localeCompare(b.label))
       }),
       selectGroup(group) {
         const groupSelected = isGroupSelected(group)
