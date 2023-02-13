@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import path from 'path'
-import { minifyHtml } from 'vite-plugin-html'
+import { createHtmlPlugin } from 'vite-plugin-html'
 import analyze from 'rollup-plugin-analyzer'
 import { visualizer } from 'rollup-plugin-visualizer';
 
@@ -13,7 +13,11 @@ export default defineConfig({
   plugins: [
     vue(),
     visualizer(),
-    minifyHtml(),
+    createHtmlPlugin({
+      minify: true,
+      entry: 'src/main.js',
+      template: './index.html',
+    })
   ],
   build: {
     outDir: path.resolve(__dirname, 'server','public')

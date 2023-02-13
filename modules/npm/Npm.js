@@ -3,7 +3,6 @@ const {spawn} = require('child_process')
 const pathfs = require('path')
 const PromiseB = require('bluebird')
 const semver = require('semver')
-const packageJSONLib = require('package-json')
 
 function Npm(service) {
   this.service = service
@@ -46,6 +45,7 @@ Npm.prototype.outdated = async function () {
     const resolved = packageLock.dependencies[packageName].resolved
     if(!resolved) return
     const registryUrl = resolved.split(packageName)[0]
+    const packageJSONLib = (...args) => import('package-json').then(({ default: fetch }) => fetch(...args));
     const infos = await packageJSONLib(packageName, { allVersions: true, registryUrl })
       .catch(() => { })
     if (infos) {

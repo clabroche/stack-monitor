@@ -9,7 +9,7 @@
 <script>
 import Stack from '../models/stack'
 import System from '../models/system'
-import sort from 'fast-sort'
+import { sort } from 'fast-sort'
 import sidebarItemVue from './sidebarItem.vue'
 import { computed, onMounted, ref, watch } from '@vue/runtime-core'
 export default {

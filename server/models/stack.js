@@ -6,49 +6,71 @@ const _ = require('lodash')
 const { cloneDeep } = require('lodash')
 const Socket = require('./socket')
 const helpers = require('../helpers/services')
-const {killService, launchService} = require('../helpers/services')
+const { killService, launchService } = require('../helpers/services')
 const myConfs = require('./myConfs')
-let originalStack = {value: null}
-let currentWatch
+const fs = require('fs')
+const pathfs = require('path')
+let originalStack = { value: null }
+let currentWatches = []
+
+const checkConf = debounce(async (originalStack, confPath, path) => {
+  delete require.cache[require.resolve(confPath)]
+  if(path && path.endsWith('.js')) delete require.cache[require.resolve(path)]
+
+  const newConf = require(confPath)
+  const reduce = (conf, service) => {
+    conf[service.label] = service
+    return conf
+  }
+  const oldConfObject = originalStack.value.reduce(reduce, {})
+  const newConfObject = newConf.reduce(reduce, {})
+  const differenceConf = difference(newConfObject, oldConfObject)
+  const updatedServices = Object.keys(differenceConf).reduce((keys, key) => {
+    const serviceName = key.split('.').shift()
+    if (!keys.includes(serviceName)) keys.push(serviceName)
+    return keys
+  }, [])
+  updatedServices.forEach(label => {
+    const index = stack.findIndex((service) => service.label === label)
+    const oldService = stack.find((service) => service.label === label)
+    const newService = newConf.find((service) => service.label === label)
+    if (oldService && oldService.enabled) {
+      console.log('Reload Service', newService.label)
+      killService(oldService).then(() => launchService(newService))
+    }
+    if (index !== -1 && newService) {
+      stack.splice(index, 1, newService)
+    }
+  })
+  Socket.socket.emit('conf:update', updatedServices)
+  originalStack.value = cloneDeep(newConf)
+}, 100)
+
 module.exports = {
   stack,
   async selectConf(pathToConf) {
-    if(currentWatch) currentWatch.close()
+    if (currentWatches?.length) currentWatches.forEach(currentWatch => currentWatch.close())
     const confPath = path.resolve(pathToConf)
     await myConfs.add(confPath)
     stack = confPath ? require(confPath) : []
     this.stack = stack
     originalStack.value = cloneDeep(stack)
-    currentWatch = watch(confPath, debounce(async () => {
-      delete require.cache[require.resolve(confPath)]
-      const newConf = require(confPath)
-      const reduce = (conf, service) => {
-        conf[service.label] = service
-        return conf
-      }
-      const oldConfObject = originalStack.value.reduce(reduce, {})
-      const newConfObject = newConf.reduce(reduce, {})
-      const differenceConf = difference(newConfObject, oldConfObject)
-      const updatedServices = Object.keys(differenceConf).reduce((keys, key) => {
-        const serviceName = key.split('.').shift()
-        if (!keys.includes(serviceName)) keys.push(serviceName)
-        return keys
-      }, [])
-      updatedServices.forEach(label => {
-        const index = stack.findIndex((service) => service.label === label)
-        const oldService = stack.find((service) => service.label === label)
-        const newService = newConf.find((service) => service.label === label)
-        if(oldService && oldService.enabled) {
-          console.log('Reload Service', newService.label)
-          killService(oldService).then(() => launchService(newService))
-        }
-        if (index !== -1 && newService) {
-          stack.splice(index, 1, newService)
-        }
+    const file = fs.readFileSync(confPath, 'utf-8')
+    const filesToWatch = [
+      ...file.matchAll(new RegExp(`require\\((.*)\\)`, 'gi'))
+    ].map(a => a[1])
+      .filter(path => path.charAt(1) === '.')
+      .map(file => {
+        return pathfs.resolve(confPath, '..', file.replaceAll(`'`, '').replaceAll(`"`, ''))
       })
-      Socket.socket.emit('conf:update', updatedServices)
-      originalStack.value = cloneDeep(newConf)
-    }, 100))
+
+    ;[
+      ...filesToWatch,
+      confPath
+    ].forEach(file => {
+      if (fs.existsSync(file)) currentWatches.push(watch(file, () => checkConf(originalStack, confPath, file)))
+      else console.error(file, 'not exists')
+    })
   },
   getStack() {
     return stack

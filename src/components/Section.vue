@@ -45,6 +45,7 @@ $mainColor: rgb(235, 235, 235);
 $secondaryColor: rgb(238, 238, 238);
 $shadow: rgb(165, 177, 179);
 .section {
+  min-width: 0;
   width: calc(100%);
   margin: 5px 0;
   box-sizing: border-box;
