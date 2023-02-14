@@ -9,19 +9,24 @@ const Socket = require('../models/socket')
 module.exports = {
   async  killService(service) {
     SpawnStore[service.label].forEach(process => process.kill('SIGKILL'))
-
-    const psList = (...args) => import('ps-list').then(({ default: fetch }) => fetch(...args));
-    const list = await psList()
-
-    const toKill = list.filter(({ cmd }) => cmd?.includes(service.spawnOptions.cwd) && cmd?.includes('nodemon'))
-    toKill.forEach(({pid}) => process.kill(pid, 'SIGKILL'))
-
     if (service.url) {
       const port = url.parse(service.url).port
-      if(!Number.isNaN(+port)) {
-        await killport(port)
+      if (port && !Number.isNaN(+port)) {
+        await killport(+port)
       }
     }
+    const psList = (...args) => import('ps-list').then(({ default: fetch }) => fetch(...args));
+    const list = await psList()
+    const toKill = list.filter(({ cmd }) => 
+      (
+        (cmd?.includes('nodemon') || cmd?.includes('php')) && 
+        cmd?.includes(service.spawnOptions.cwd)
+      ) || (
+        cmd === "php artisan serve" && 
+        service.spawnCmd === 'php' && service.spawnArgs.includes('artisan') && service.spawnArgs.includes('serve')
+      )
+    )
+    toKill.forEach(({pid}) => process.kill(pid, 'SIGKILL'))
 
     Socket.socket.emit('logs:clear', { label: service.label })
     service.store = ''
