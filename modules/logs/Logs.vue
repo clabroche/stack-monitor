@@ -196,7 +196,7 @@ const jsonsToDisplay = computed(() => {
       try {
         const res = jsonpath.query(json, jsonPathSearch.value)
         if (res.length === 1) return res['0']
-        else res
+        else return res
       } catch (error) {
         console.error(error)
       }
