@@ -82,7 +82,7 @@ Npm.prototype.run = async function (command) {
     const args = defaultCommand[command]
       ? defaultCommand[command]
       : ['run', ...cmd]
-    return spawn('npm', args, { cwd: path, env: Object.assign({}, process.env), shell: true })
+    return spawn('npm', args, { cwd: path, env: Object.assign({}, process.env, this.service.spawnOptions.env), shell: true })
   }
 }
 
