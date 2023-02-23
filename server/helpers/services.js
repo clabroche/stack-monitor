@@ -12,7 +12,7 @@ module.exports = {
     if (service.url) {
       const port = url.parse(service.url).port
       if (port && !Number.isNaN(+port)) {
-        await killport(+port)
+        await killport(+port).catch(console.error)
       }
     }
     const psList = (...args) => import('ps-list').then(({ default: fetch }) => fetch(...args));
