@@ -13,7 +13,7 @@
               <h3>{{group.label}} <span>({{group.services?.length}})</span></h3>
             </div>
             <div class="right-header" >
-              <button @click.stop="selectGroup(group.label)" class="mini">
+              <button @click.stop="toggleGroup(group.label)" class="mini">
                 <i class="far fa-check-square" v-if="isGroupSelected(group.label)" aria-hidden="true"></i>
                 <i class="far fa-square" v-else aria-hidden="true"></i>
               </button>
@@ -21,7 +21,7 @@
           </div>
           <ul v-if="group.show || group.label === 'All'">
             <li v-for="service of group.services" :key="'services-'+service.label">
-              <input :id="'input-' + service.label" type="checkbox" v-model="service.enabled" :checked="service.enabled ? 'checked' : null">
+              <input :id="'input-' + service.label" type="checkbox" v-model="service.enabled" :checked="service.enabled ? 'checked' : null" @change="save(service)">
               <label :for="'input-' + service.label">
                 {{service.label}}
               </label>
@@ -44,7 +44,7 @@
 import Stack from '../models/stack'
 import System from '../models/system'
 import SectionVue from '../components/Section.vue'
-import { computed, onMounted, reactive, ref } from 'vue'
+import { computed, nextTick, onMounted, reactive, ref } from 'vue'
 import router from '../router/router'
 import BackgroundStackChooser from '../components/BackgroundStackChooser.vue'
 import LeftLogo from '../components/LeftLogo.vue'
@@ -60,6 +60,11 @@ export default {
     onMounted(async () => {
       await Stack.loadServices()
       localServices.value = Stack.services
+      localServices.value.forEach(service => {
+        console.log(localStorage.getItem(`automatic-toggle-${service.label}`) || false) 
+        service.enabled = localStorage.getItem(`automatic-toggle-${service.label}`) || false
+
+      })
     })
 
     const validate = async() => {
@@ -89,9 +94,13 @@ export default {
         }, {})
         return Object.keys(groupsById).map(key => groupsById[key]).sort((a, b) => a.label.localeCompare(b.label))
       }),
-      selectGroup(group) {
+      toggleGroup(group) {
         const groupSelected = isGroupSelected(group)
         getServicesFromGroup(group).map(service => service.enabled = !groupSelected)
+      },
+      async save(service) {
+        localStorage.setItem(`automatic-toggle-${service.label}`, service.enabled)
+        console.log(service.enabled)
       },
       isGroupSelected,
       localServices,
