@@ -44,7 +44,7 @@ const checkConf = debounce(async (originalStack, confPath, path) => {
   })
   Socket.socket.emit('conf:update', updatedServices)
   originalStack.value = cloneDeep(newConf)
-}, 100)
+}, 100, false)
 
 module.exports = {
   stack,

@@ -4,6 +4,7 @@ ports.cleanHtml()
 const app = require('../app');
 require('../models/socket')
 const http = require('http');
+const table = require('../helpers/console.table')
 
 const server = http.createServer(app);
 server.listen(process.env.HTTP_PORT || 0);
@@ -19,3 +20,13 @@ server.on('listening', () => {
   }
   console.log('Magic happens on ' + port);
 });
+
+
+// Tips
+(() => {
+  table([
+    { '': 'Port', Value: ports.http, 'Overrided By': 'HTTP_PORT' },
+    { '': 'Socket', Value: ports.socket, 'Overrided By': 'SOCKET_PORT' },
+    { '': 'Url', Value: `http://localhost:${ports.http}`, 'Overrided By': '-' },
+  ])
+})()

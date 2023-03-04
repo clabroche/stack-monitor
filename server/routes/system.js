@@ -21,6 +21,7 @@ router.get('/global-infos', async function (req, res) {
     res.json({ cpu: null, mem: null, memPercentage: null, freemem: null, totalmem: null })
   }
 })
+
 router.get('/:service/infos', async function (req, res) {
   try {
     const service = findService(req.params.service)
@@ -29,6 +30,7 @@ router.get('/:service/infos', async function (req, res) {
     res.json({ cpu: null, mem: null })
   }
 })
+
 router.get('/disconnect', async function () {
   process.exit(0)
 })
