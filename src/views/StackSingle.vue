@@ -11,7 +11,7 @@
           <div class="icons">
             <a v-if="currentService.git && currentService.git.home" :href="currentService.git.home" target="_blank" title="Open git home"><i class="fab fa-github"  aria-hidden="true"></i></a>
             <a v-if="currentService.url" :href="currentService.url" target="_blank" title="Open service URL"><i class="fas fa-globe"  aria-hidden="true"></i></a>
-            <a v-for="url in currentService.urls" :key="url" :href="url.href" target="_blank" :title="url.title"><i class="fas fa-globe"  aria-hidden="true"></i></a>
+            <a v-for="url in currentService.urls" :key="url" :href="url" target="_blank" :title="url.title"><i class="fas fa-globe"  aria-hidden="true"></i></a>
             <img v-if="currentService.spawnOptions && currentService.spawnOptions.cwd" src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Visual_Studio_Code_1.35_icon.svg/240px-Visual_Studio_Code_1.35_icon.svg.png"  aria-hidden="true" title="Open in Visual Studio Code" @click="openInVsCode()"/>
             <i v-if="currentService.spawnOptions && currentService.spawnOptions.cwd" class="fas fa-folder" aria-hidden="true" title="Open folder" @click="openFolder()"></i>
           </div>
