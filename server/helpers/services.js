@@ -1,19 +1,22 @@
 const { spawn } = require('child_process')
 const SpawnStore = require('../models/SpawnStore')
 const killport = require('kill-port')
-const url = require('url')
+const URL = require('url')
 const path = require('path')
 const Socket = require('../models/socket')
-
+const PromiseB = require('bluebird')
 
 module.exports = {
   async  killService(service) {
     SpawnStore[service.label].forEach(process => process.kill('SIGKILL'))
-    if (service.url) {
-      const port = url.parse(service.url).port
-      if (port && !Number.isNaN(+port)) {
-        await killport(+port).catch(console.error)
-      }
+    const urls = [...service.urls, service.url].filter(a => a)
+    if (urls.length) {
+      await PromiseB.mapSeries(urls, async url => {
+        const port = URL.parse(url).port
+        if (port && !Number.isNaN(+port)) {
+          await killport(+port).catch(console.error)
+        }
+      })
     }
     const psList = (...args) => import('ps-list').then(({ default: fetch }) => fetch(...args));
     const list = await psList()
