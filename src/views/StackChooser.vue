@@ -61,9 +61,7 @@ export default {
       await Stack.loadServices()
       localServices.value = Stack.services
       localServices.value.forEach(service => {
-        console.log(localStorage.getItem(`automatic-toggle-${service.label}`) || false) 
         service.enabled = localStorage.getItem(`automatic-toggle-${service.label}`) || false
-
       })
     })
 
