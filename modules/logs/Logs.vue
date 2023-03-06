@@ -254,7 +254,7 @@ const jsonsSMToDisplay = computed(() => {
 })
 
 const toggles = ref([
-  { label: 'Tous', isOpen: jsonContainerOpen, jsons: jsonsToDisplay },
+  { label: 'All', isOpen: jsonContainerOpen, jsons: jsonsToDisplay },
   { label: 'Debug', isOpen: jsonSMContainerOpen, jsons: jsonsSMToDisplay }
 ])
 
@@ -319,7 +319,7 @@ async function scroll(force) {
 
   }
 }
-.logs-container {
+.logs-container, .json-container {
   width: 100%;
   margin: auto;
   height: calc(100vh - 400px);
@@ -358,7 +358,6 @@ async function scroll(force) {
     flex-shrink: 0;
     width: 300px;
     overflow: auto;
-    max-height: 500px;
   }
 }
 
@@ -392,7 +391,6 @@ $jsonHeadermargin: 10px;
   top: 0;
   width: calc(100% - 6px);
   box-shadow: 0 0 10px 0 rgba(0,0,0,0.2);
-  height: calc(100% - 3px);
   margin: 0;
   z-index: 100;
 }
