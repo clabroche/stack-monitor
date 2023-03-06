@@ -237,7 +237,9 @@ const jsonsToDisplay = computed(() => {
 
 const jsonsSMToDisplay = computed(() => {
   scroll()
-  const filteredJSON = jsons.value.filter(json => json?.[0] === 'stack-monitor').map(j => j.slice(1))
+  const filteredJSON = jsons.value
+    .filter(json => json?.[0] === 'stack-monitor')
+    .map(j => j.length === 2  ? j[1] : j.slice(1))
   return jsonPathSearch.value ?
     filteredJSON.map(json => {
       try {
