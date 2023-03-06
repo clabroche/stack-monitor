@@ -322,8 +322,14 @@ async function scroll(force) {
 .logs-container {
   width: 100%;
   margin: auto;
-  height: 400px;
-  // height: 1000px;
+  height: calc(100vh - 400px);
+
+  @media (max-width: 1200px) { 
+    height: calc(100vh - 500px);
+  }
+  @media (max-width: 800px) { 
+    height: calc(100vh - 650px);
+  }
   box-sizing: border-box;
 }
 
