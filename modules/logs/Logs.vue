@@ -62,7 +62,7 @@
       <div class="open-buttons">
 
           <button v-for="(toggle, i) of toggles" :key="toggle.label" @click="toggleIsOpen(i)" :class="{ bordered: toggle.isOpen }">
-            <span style="font-weight: bold;">Tous ({{ toggle?.jsons?.length }})</span>
+            <span style="font-weight: bold;">{{toggle.label}} ({{ toggle?.jsons?.length }})</span>
           </button>
 
       </div>
