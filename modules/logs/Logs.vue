@@ -31,19 +31,41 @@
     <div class="main-content">
       <section-cmp v-if="isOpen" header="Logs" :noStyle="noStyle"
         :actions="[{ icon: 'fas fa-trash', click: () => clear() }]">
-        <div v-if="service" class="logs-container" ref="logsContainer" id="terminal" style="box-sizing: content-box">
+          <div v-if="service" class="logs-container" ref="logsContainer" id="terminal" style="box-sizing: content-box">
         </div>
+        <transition name="appear">
+          <section-cmp v-if="isOpen && jsonContainerOpen" :header="'Objects: (' + jsonsToDisplay.length + ')'" :noStyle="true" class="right json-container" style="background-color: white; border: none">
+            <div class="jsons-header input-container">
+              <input type="text" placeholder="Ex: src.result[0]" v-model="jsonPathSearch">
+            </div>
+            <div class="jsons" ref="jsonsRef">
+              <div v-for="json of jsonsToDisplay" :key="json">
+                <json-viewer :value="json" :copyable="true" :expand-depth="1" :show-double-quotes="true" />
+              </div>
+            </div>
+          </section-cmp>
+        </transition>
+        <transition name="appear">
+          <section-cmp v-if="isOpen && jsonSMContainerOpen" :header="'Debug Objects: (' + jsonsSMToDisplay.length + ')'" :noStyle="true" class="right json-container" style="background-color: white; border: none">
+            <div class="jsons-header input-container">
+              <input type="text" placeholder="Ex: src.result[0]" v-model="jsonPathSearch">
+            </div>
+            <div class="jsons" ref="jsonsRef">
+              <div v-for="json of jsonsSMToDisplay" :key="json">
+                <json-viewer :value="json" :copyable="true" :expand-depth="1" :show-double-quotes="true" />
+              </div>
+            </div>
+          </section-cmp>
+        </transition>
       </section-cmp>
-      <section-cmp v-if="isOpen && jsons?.length" :header="'Objects: (' + jsons.length +')'" :noStyle="noStyle" class="right">
-        <div class="jsons-header input-container">
-          <input type="text" placeholder="Ex: src.result[0]" v-model="jsonPathSearch">
-        </div>
-        <div class="jsons" ref="jsonsRef">
-          <div v-for="json of jsonsToDisplay" :key="json">
-            <json-viewer :value="json" :copyable="true" :expand-depth="1" :show-double-quotes="true" />
-          </div>
-        </div>
-      </section-cmp>
+      
+      <div class="open-buttons">
+
+          <button v-for="(toggle, i) of toggles" :key="toggle.label" @click="toggleIsOpen(i)" :class="{ bordered: toggle.isOpen }">
+            <span style="font-weight: bold;">Tous ({{ toggle?.jsons?.length }})</span>
+          </button>
+
+      </div>
     </div>
   </div>
 </template>
@@ -80,6 +102,10 @@ const logs = ref('')
 const json = ref('')
 const search = ref('')
 
+const jsonContainerOpen = ref(false)
+const jsonSMContainerOpen = ref(false)
+
+
 
 watch(() => search.value, () => {
   if (terminalSearch.value) {
@@ -98,6 +124,11 @@ const isLineFiltered=(line) => {
     const res = line.toUpperCase().match(new RegExp(escapeRegExp(filter), 'gi'))
     return isInclude.value ? res : !res
   }))
+}
+const toggleIsOpen = (val) => {
+  const shouldOpen = !toggles.value[val].isOpen
+  toggles.value.forEach(t => t.isOpen = false)
+  toggles.value[val].isOpen = shouldOpen
 }
 const filterWithoutDebounce = function (message) {
   terminal.value.clear()
@@ -204,7 +235,26 @@ const jsonsToDisplay = computed(() => {
     : jsons.value
 })
 
+const jsonsSMToDisplay = computed(() => {
+  scroll()
+  const filteredJSON = jsons.value.filter(json => json?.[0] === 'stack-monitor').map(j => j.slice(1))
+  return jsonPathSearch.value ?
+    filteredJSON.map(json => {
+      try {
+        const res = jsonpath.query(json, jsonPathSearch.value)
+        if (res.length === 1) return res['0']
+        else return res
+      } catch (error) {
+        console.error(error)
+      }
+    })
+    : filteredJSON
+})
 
+const toggles = ref([
+  { label: 'Tous', isOpen: jsonContainerOpen, jsons: jsonsToDisplay },
+  { label: 'Debug', isOpen: jsonSMContainerOpen, jsons: jsonsSMToDisplay }
+])
 
 function write(line) {
   if(!isLineFiltered(line)) return
@@ -254,6 +304,7 @@ async function scroll(force) {
 <style scoped lang="scss">
 #terminal {
   width: 100%;
+  position: relative;
 }
 
 .header {
@@ -326,6 +377,30 @@ $jsonHeadermargin: 10px;
   overflow: auto;
   height: calc(100% - ($jsonHeaderHeight + $jsonHeadermargin));
 }
+.main-content .json-container {
+  position: absolute;
+  background: none;
+  right: 3px;
+  top: 0;
+  width: calc(100% - 6px);
+  box-shadow: 0 0 10px 0 rgba(0,0,0,0.2);
+  height: calc(100% - 3px);
+  margin: 0;
+  z-index: 100;
+}
+.open-buttons {
+  width: 140px;
+}
+
+.appear-enter-active,
+.appear-leave-active {
+  transition:  .3s;
+  transform-origin: right 
+}
+.appear-enter-from,
+.appear-leave-to {
+  opacity: 0
+}
 </style>
 
 <style lang="scss">
@@ -343,4 +418,5 @@ $jsonHeadermargin: 10px;
     border-bottom: 1px solid lightgrey;
   }
 }
+
 </style>

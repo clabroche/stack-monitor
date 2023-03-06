@@ -131,6 +131,11 @@ button {
     background-color: #194f91;
     box-shadow: 1px 1px 1px 1px rgba(0,0,0,0.5);
   }
+  &.bordered {
+    border: 1px solid #074971;
+    color: #074971;
+    background: none;
+  }
   &.small {
     padding: 5px;
     font-size: 0.7em;
