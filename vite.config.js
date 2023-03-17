@@ -35,12 +35,12 @@ export default defineConfig({
   ],
   build: {
     outDir: path.resolve(__dirname, 'server','public'),
-    watch: {
-      include: [
-        'src/**',
-        '../modules/**'
-      ]
-    }
+    // watch: {
+    //   include: [
+    //     'src/**',
+    //     '../modules/**'
+    //   ]
+    // }
   },
   resolve: {
     alias:[{
