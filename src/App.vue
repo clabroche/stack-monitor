@@ -1,6 +1,6 @@
 <template>
   <div id="app" v-if="connected">
-    <sidebar-view-mode v-if="!['stack-chooser'].includes($route.name)"/>
+    <sidebar-view-mode v-if="!['stack-chooser', 'import-create'].includes($route.name)"/>
     <sidebar v-if="$route.name === 'stack-single'"/>
     <div class="main">
       <router-view/>

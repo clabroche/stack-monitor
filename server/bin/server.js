@@ -1,6 +1,6 @@
 process.title = "stack-monitor"
 const ports = require('../models/ports');
-const ViteExpress = require("vite-express");
+// const ViteExpress = require("vite-express");
 ports.cleanHtml()
 const app = require('../app');
 require('../models/socket')
@@ -9,9 +9,9 @@ const table = require('../helpers/console.table')
 
 
 // server.listen(process.env.HTTP_PORT || 0);
-ViteExpress.config({ mode: "production" })
+// ViteExpress.config({ mode: "production" })
 const server = http.createServer(app)
-ViteExpress.bind(app, server);
+// ViteExpress.bind(app, server);
 
 
 server.listen(process.env.HTTP_PORT || 0);
