@@ -3,6 +3,11 @@ import StackSingle from '../views/StackSingle.vue'
 import StackMultiple from '../views/StackMultiple.vue'
 import ImportCreate from '../views/ImportCreate.vue'
 import { createRouter, createWebHashHistory } from "vue-router";
+import plugins from '../../modules/views'
+
+const pluginsRoutes = plugins.map(p => p.routes).filter(f => f).flat()
+console.log(pluginsRoutes)
+
 const routes = [
   {
     path: '/stack-chooser',
@@ -23,6 +28,7 @@ const routes = [
     name: 'import-create',
     component: ImportCreate
   },
+  ...pluginsRoutes,
   {
     name: "not-found",
     path: "/:pathMatch(.*)*",

@@ -1,8 +1,10 @@
 <template>
   <div id="app" v-if="connected">
-    <sidebar-view-mode v-if="['stack-single','stack-multiple'].includes($route.name)"/>
+    <sidebar-view-mode v-if="!['stack-chooser'].includes($route.name)"/>
     <sidebar v-if="$route.name === 'stack-single'"/>
-    <router-view/>
+    <div class="main">
+      <router-view/>
+    </div>
   </div>
   <div class="not-connected" v-else>
     Server is not connected or has crashed <br>
@@ -26,12 +28,13 @@ import Notifications from "./components/Notifications.vue"
 import './helpers/ServiceError'
 import NotifHistory from './components/NotifHistory.vue'
 import SidebarViewMode from './components/SidebarViewMode.vue'
+
 export default {
   components: {
     sidebar: sidebarVue,
     Notifications,
     NotifHistory,
-    SidebarViewMode
+    SidebarViewMode,
   },
   setup() {
     const connected = ref(false)
@@ -163,6 +166,11 @@ button.success {
 </style>
 
 <style lang="scss" scoped> 
+.main {
+  display: flex;
+  width: 100%;
+  overflow: hidden;
+}
 .not-connected {
   display: flex;
   flex-direction: column;

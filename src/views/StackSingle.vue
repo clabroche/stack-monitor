@@ -51,27 +51,14 @@
 <script>
 import Stack from '../models/stack'
 import System from '../models/system'
-import LogsVue from '../../modules/logs/Logs.vue';
 import ProgressVue from '../components/Progress.vue';
-import GitVue from '../../modules/git/Git.vue';
-import NpmVue from '../../modules/npm/Npm.vue';
 import SectionVue from '../components/Section.vue'
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import router from '../router/router'
 import Tabs from '../components/Tabs.vue';
 import Card from '../components/Card.vue';
 import NotificationBell from '../components/NotificationBell.vue';
-import BugsVue from '../../modules/bugs/Bugs.vue';
-import ConfigsVue from '../../modules/configuration/Configs.vue';
 import axios from '../helpers/axios'
-
-const moduleComponents = {
-    Logs: LogsVue,
-    Git: GitVue,
-    Npm: NpmVue,
-    Bugs: BugsVue,
-    Configuration: ConfigsVue,
-}
 
 export default {
   name: 'StackSingle',
@@ -81,7 +68,6 @@ export default {
     Tabs,
     Card,
     NotificationBell,
-    ...moduleComponents
   },
   setup() {
     /** @type {import('vue').Ref<import('../models/service').default[]>} */

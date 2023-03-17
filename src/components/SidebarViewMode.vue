@@ -4,6 +4,7 @@
       <sidebar-view-mode-item v-for="button of buttons" :key="button.label" :button="button"/>
     </ul>
     <ul v-if="buttonsBottom.length">
+      <sidebar-view-mode-item v-for="button of buttonsPlugins" :key="button.label" :button="button"/>
       <doughtnut-chart
         placeholder="CPU"
         :width="'10px'"
@@ -39,11 +40,13 @@
 
 <script>
 import System from '../models/system'
-import { onBeforeUnmount, onMounted, ref, watch } from '@vue/runtime-core'
+import { computed, onBeforeUnmount, onMounted, ref, watch } from '@vue/runtime-core'
 import SidebarViewModeItemVue from './SidebarViewModeItem.vue'
 import stack from '../models/stack'
 import router from '@/router/router'
 import DoughtnutChart from './DoughtnutChart.vue'
+import axios from '@/helpers/axios'
+
 export default {
   components: {
     SidebarViewModeItem: SidebarViewModeItemVue,
@@ -55,9 +58,13 @@ export default {
   setup() {
     /** @type {import('vue').Ref<import('../models/service').default[]>} */
     const localServices = ref(stack.services)
+    const plugins = ref([])
+    
     onMounted(async () => {
       await stack.loadServices()
       localServices.value = stack.services
+      const { data: _plugins } = await axios.get('/plugins/sidebar')
+      plugins.value = _plugins?.flat() || []
     })
     watch(() => stack.services, () => localServices.value = stack.services, {deep: true})
     let interval
@@ -75,7 +82,7 @@ export default {
     })
 
     return {
-      buttons:[
+      buttons:computed(() => ([
         {
           text: 'Single View',
           active: 'single',
@@ -88,14 +95,27 @@ export default {
           icon: 'fas fa-th',
           click: () => router.push({name: 'stack-multiple'})
         }
-      ],
-      buttonsBottom:[
+      ])),
+      buttonsPlugins: computed(() => ([
+        ...plugins.value.map(plugin => {
+          return plugin.placements.map(placement => {
+            console.log(placement)
+            return {
+              text: placement.label,
+              icon: placement.icon,
+              click: placement?.goTo ? () => router.push(placement.goTo) : () => { },
+              active: placement?.active
+            }
+          })
+        }).flat().filter(f => f),
+      ])),
+      buttonsBottom: computed(() => ([
         {
           text: 'Disconnect',
           icon: 'fas fa-unlink',
           click: () => System.disconnect()
         }
-      ],
+      ])),
       cpu, mem,
       System,
     }

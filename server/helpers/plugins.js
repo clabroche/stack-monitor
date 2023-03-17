@@ -4,12 +4,14 @@ const pathfs = require('path')
 const modulesRootPath = pathfs.resolve(__dirname, '..','..','modules')
 const routes = []
 const forService = []
+const sidebar = []
 const all = fse.readdirSync(modulesRootPath)
     .map(dirname => pathfs.resolve(modulesRootPath, dirname))
     .map(modulePath => {
       const plugin = loadModule(modulePath)
       if(!plugin) return 
-      if(plugin?.placements && plugin.placements.includes("service")) forService.push(plugin)
+      if (plugin?.placements?.includes("service")) forService.push(plugin)
+      if (plugin?.placements?.includes("sidebar") || plugin?.placements?.find(p => p.position === 'sidebar')) sidebar.push(plugin)
       if(plugin?.routes) {
         routes.push(plugin.routes)
         delete plugin.routes 
@@ -20,6 +22,7 @@ const all = fse.readdirSync(modulesRootPath)
 module.exports = {
   forService,
   all,
+  sidebar,
   routes
 }
 

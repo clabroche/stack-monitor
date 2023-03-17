@@ -37,31 +37,17 @@
 import { ref } from '@vue/reactivity'
 import Section from '../components/Section.vue'
 import stack from '../models/stack'
-import Logs from '../../modules/logs/Logs.vue'
 import Tabs from '../components/Tabs.vue'
-import Git from '../../modules/git/Git.vue'
-import NpmVue from '../../modules/npm/Npm.vue';
-import BugsVue from '../../modules/bugs/Bugs.vue';
-import ConfigsVue from '../../modules/configuration/Configs.vue';
-
 import draggable from 'vuedraggable'
 import { onMounted, watch } from '@vue/runtime-core'
 import PromiseB from 'bluebird'
 import axios from '../helpers/axios'
 
-const moduleComponents = {
-    Logs: Logs,
-    Git: Git,
-    Npm: NpmVue,
-    Bugs: BugsVue,
-    Configuration: ConfigsVue,
-}
 export default {
   components: {
     SectionCmp: Section,
     Tabs,
     draggable,
-    ...moduleComponents
   },
   name: 'StackSingle',
   setup() {
@@ -150,6 +136,7 @@ export default {
   gap: 20px;
   width: calc(100vw - 90px);
   grid-template-columns: repeat(2, 1fr);
+  height: max-content;
   .service-container {
     min-width: 300px;
     width: 100%;

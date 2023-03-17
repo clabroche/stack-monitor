@@ -264,7 +264,7 @@ function write(line) {
   if (typeof line !== 'string') {
     terminal.value.writeln(JSON.stringify(line))
     jsons.value.push(line)
-    jsons.value = jsons.value.slice(-40)
+    jsons.value = jsons.value.slice(-120)
   } else {
     terminal.value.writeln(line)
   }
