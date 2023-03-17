@@ -7,11 +7,14 @@ require('../models/socket')
 const http = require('http');
 const table = require('../helpers/console.table')
 
-const server = http.createServer(app);
 
 // server.listen(process.env.HTTP_PORT || 0);
-ViteExpress.listen(app, process.env.HTTP_PORT || 0, () => console.log("Server is listening..."));
+ViteExpress.config({ mode: "production" })
+const server = http.createServer(app)
+ViteExpress.bind(app, server);
 
+
+server.listen(process.env.HTTP_PORT || 0);
 server.on('listening', () => {
   const addr = server.address();
   const port = typeof addr === 'string'
@@ -21,16 +24,12 @@ server.on('listening', () => {
   if (process.env.NODE_ENV !== "DEV" && !process.versions['electron']) {
     require('open')('http://localhost:' + port)
   }
-  console.log('Magic happens on ' + port);
+  // Tips
+  (() => {
+    table([
+      { '': 'Port', Value: ports.http, 'Overrided By': 'HTTP_PORT' },
+      { '': 'Socket', Value: ports.socket, 'Overrided By': 'SOCKET_PORT' },
+      { '': 'Url', Value: `http://localhost:${ports.http}`, 'Overrided By': '-' },
+    ])
+  })()
 });
-
-
-
-// Tips
-(() => {
-  table([
-    { '': 'Port', Value: ports.http, 'Overrided By': 'HTTP_PORT' },
-    { '': 'Socket', Value: ports.socket, 'Overrided By': 'SOCKET_PORT' },
-    { '': 'Url', Value: `http://localhost:${ports.http}`, 'Overrided By': '-' },
-  ])
-})()
