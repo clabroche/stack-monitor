@@ -2,8 +2,13 @@ import { createApp } from 'vue';
 import App from './App.vue'
 import router from './router/router'
 import system from './models/system'
+import views from '../modules/views'
 system.getVersion()
 
-createApp(App)
+const app = createApp(App)
   .use(router)
+
+views.forEach(cmp => app.component(cmp.name, cmp.cmp));
+
+app
   .mount('#app')

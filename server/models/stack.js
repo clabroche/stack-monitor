@@ -48,7 +48,12 @@ const checkConf = debounce(async (originalStack, confPath, path) => {
 
 module.exports = {
   stack,
-  async selectConf(pathToConf) {
+  async selectConf(pathToConf, _services) {
+    let services = await Promise.resolve().then(() => {
+      return JSON.parse(_services)
+    }).catch((err) => {
+      return []
+    })
     if (currentWatches?.length) currentWatches.forEach(currentWatch => currentWatch.close())
     const confPath = path.resolve(pathToConf)
     await myConfs.add(confPath)
@@ -71,6 +76,15 @@ module.exports = {
       if (fs.existsSync(file)) currentWatches.push(watch(file, () => checkConf(originalStack, confPath, file)))
       else console.error(file, 'not exists')
     })
+    if(services?.length) {
+      stack.forEach(stackService => {
+        if(services.includes(stackService.label)) {
+          stackService.enabled = true
+        } else {
+          stackService.enabled = false
+        }
+      });
+    } 
   },
   getStack() {
     return stack
@@ -125,6 +139,6 @@ function difference(fromObject, toObject) {
 }
 
 if (process.argv[2]) {
-  module.exports.selectConf(process.argv[2])
+  module.exports.selectConf(process.argv[2], process.argv.slice(3).join(' '))
     .catch(console.error)
 }

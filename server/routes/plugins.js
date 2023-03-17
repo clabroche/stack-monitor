@@ -10,8 +10,11 @@ router.get('/services/:service', async function (req, res) {
   res.send(services)
 })
 router.get('/services', async function (req, res) {
-  const service = findService(req.params.service)
   const services = plugins.forService
+  res.send(services)
+})
+router.get('/sidebar', async function (req, res) {
+  const services = plugins.sidebar
   res.send(services)
 })
 module.exports = router;

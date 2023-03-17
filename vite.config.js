@@ -11,8 +11,22 @@ export default defineConfig({
     plugins: [analyze]
   },
   plugins: [
-    vue(),
+    vue({}),
     visualizer(),
+    {
+      name: 'custom-hmr',
+      enforce: 'post',
+      // HMR
+      handleHotUpdate({ file, server }) {
+        const filePath = file.replace(__dirname, '')
+        if (filePath.startsWith('/modules') && filePath.endsWith('.vue')) {
+          server.ws.send({
+            type: 'full-reload',
+            path: '*'
+          });
+        }
+      },
+    },
     createHtmlPlugin({
       minify: true,
       entry: 'src/main.js',
@@ -20,7 +34,13 @@ export default defineConfig({
     })
   ],
   build: {
-    outDir: path.resolve(__dirname, 'server','public')
+    outDir: path.resolve(__dirname, 'server','public'),
+    watch: {
+      include: [
+        'src/**',
+        '../modules/**'
+      ]
+    }
   },
   resolve: {
     alias:[{

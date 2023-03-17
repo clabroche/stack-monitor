@@ -9,7 +9,7 @@ const PromiseB = require('bluebird')
 module.exports = {
   async  killService(service) {
     SpawnStore[service.label].forEach(process => process.kill('SIGKILL'))
-    const urls = [...service.urls, service.url].filter(a => a)
+    const urls = [...service.urls || [], service.url].filter(a => a)
     if (urls.length) {
       await PromiseB.mapSeries(urls, async url => {
         const port = URL.parse(url).port
