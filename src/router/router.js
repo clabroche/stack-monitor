@@ -6,7 +6,6 @@ import { createRouter, createWebHashHistory } from "vue-router";
 import plugins from '../../modules/views'
 
 const pluginsRoutes = plugins.map(p => p.routes).filter(f => f).flat()
-console.log(pluginsRoutes)
 
 const routes = [
   {

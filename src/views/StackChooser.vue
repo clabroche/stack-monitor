@@ -61,7 +61,8 @@ export default {
       await Stack.loadServices()
       localServices.value = Stack.services
       localServices.value.forEach(service => {
-        service.enabled = localStorage.getItem(`automatic-toggle-${service.label}`) || false
+        const state = localStorage.getItem(`automatic-toggle-${service.label}`)
+        service.enabled = state === 'true' || state === true ? true : false
       })
     })
 
@@ -98,7 +99,6 @@ export default {
       },
       async save(service) {
         localStorage.setItem(`automatic-toggle-${service.label}`, service.enabled)
-        console.log(service.enabled)
       },
       isGroupSelected,
       localServices,

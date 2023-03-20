@@ -5,22 +5,8 @@ const SpawnStore = require('../models/SpawnStore')
 const { exec } = require('child_process')
 const osutils = require('os-utils');
 const pidusageTree = require('pidusage-tree')
-const os = require('os')
-
-router.get('/global-infos', async function (req, res) {
-  const ram = await getRam()
-  try {
-    res.json({
-      nbCpus,
-      memPercentage: ram.memPercentage,
-      totalmem: ram.totalmem,
-      freemem: ram.freemem,
-      cpu: cpuUsage
-    })
-  } catch (e) {
-    res.json({ cpu: null, mem: null, memPercentage: null, freemem: null, totalmem: null })
-  }
-})
+const os = require('os');
+const Socket = require('../models/socket');
 
 router.get('/:service/infos', async function (req, res) {
   try {
@@ -37,12 +23,31 @@ router.get('/disconnect', async function () {
 
 
 const nbCpus = os.cpus().length
-let cpuUsage = 0
-setInterval(() => {
-  osutils.cpuUsage(function (v) {
-    cpuUsage = v
+function cpuUsagePromise() {
+  return new Promise(resolve => {
+    osutils.cpuUsage(function (v) {
+      resolve(v)
+    })
   })
-}, 1100);
+}
+async function loopCPU() {
+  try {
+    const ram = await getRam()
+    Socket.socket.emit('infos:global', {
+      nbCpus,
+      memPercentage: ram.memPercentage,
+      totalmem: ram.totalmem,
+      freemem: ram.freemem,
+      cpu: await cpuUsagePromise()
+    })
+    await new Promise(res => setTimeout(res, 500))
+    loopCPU()
+  } catch (error) {
+    await new Promise(res => setTimeout(res, 500))
+    loopCPU()
+  }
+}
+loopCPU()
 
 async function getRam() {
   const line = await new Promise(resolve => {
@@ -81,7 +86,7 @@ async function getCPU(pid) {
     totalMem = os.totalmem()
   }
   return {
-    cpu: Number.isNaN(cpuPerc / 10) ? 0 : cpuPerc / 10,
+    cpu: Number.isNaN(cpuPerc) ? 0 : cpuPerc,
     mem: mem / totalMem
   }
 }

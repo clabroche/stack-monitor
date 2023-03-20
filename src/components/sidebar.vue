@@ -1,9 +1,12 @@
 <template>
   <div class="sidebar">
-      <ul v-if="sortedStack.length">
-        <sidebar-item v-for="service of sortedStack" :key="service.label" :service="service"/>
-      </ul>
-    </div>
+    <ul v-if="sortedStack.length">
+      <li>
+        <input type="text" v-model="search" placeholder="Search ...">
+      </li>
+      <sidebar-item v-for="service of sortedStack" :key="service.label" :service="service"/>
+    </ul>
+  </div>
 </template>
 
 <script>
@@ -22,13 +25,15 @@ export default {
   setup() {
     /** @type {import('vue').Ref<import('../models/service').default[]>} */
     const localServices = ref(Stack.services)
+    const search = ref('')
     onMounted(async () => {
       await Stack.loadServices()
       localServices.value = Stack.services
     })
     watch(() => Stack.services, () => localServices.value = Stack.services, {deep: true})
     return {
-      sortedStack:computed(() => sort(localServices.value).desc((a) => a.enabled)),
+      search,
+      sortedStack:computed(() => sort(localServices.value.filter(a => a.label.toUpperCase().includes(search.value.toUpperCase()))).desc((a) => a.enabled)),
       System,
     }
   }
@@ -36,6 +41,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+input {
+  width: 100%;
+  box-sizing: border-box;
+}
 .sidebar {
     display: flex;
     flex-direction: column;

@@ -11,8 +11,8 @@
     "serve": "concurrently --kill-others \"npm run serve:front\" \"npm run serve:server\"",
     "build": "vite build",
     "launchExamples": "cd example/front/ && npm ci && cd ../server && npm ci && cd .. && node ../server/bin/www ./stack.js",
-    "serve:front": "cross-env NODE_ENV=DEV VITE_HTTP_PORT=5456  VITE_SOCKET_PORT=5457 vite",
-    "serve:server": "cd server && cross-env NODE_ENV=DEV HTTP_PORT=5456  SOCKET_PORT=5457 nodemon bin/www $STACKFILE",
+    "serve:front": "cross-env NODE_ENV=DEV VITE_HTTP_PORT=5456  VITE_SOCKET_PORT=5456 vite",
+    "serve:server": "cd server && cross-env NODE_ENV=DEV HTTP_PORT=5456 nodemon bin/www $STACKFILE",
     "start": "server/bin/www"
   },
   "main": "./background.js",

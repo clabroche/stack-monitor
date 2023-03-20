@@ -29,7 +29,6 @@ router.post('/chat/:room', async (req, res) => {
   ]
   const messages = openaiconf?.chat[req.params.room]?.messages
   messages.push({ "role": "user", "content": message })
-  console.log('call..')
   const result = await openai.createChatCompletion({
     model: "gpt-3.5-turbo",
     messages: messages
@@ -37,7 +36,6 @@ router.post('/chat/:room', async (req, res) => {
       .map(a => ({ role: a.role, content: a.content}))
       .slice(-5)
   }).catch(err => console.error(err.response.data));
-  console.log('end..')
   if (result?.data?.choices?.[0]?.message) {
     const { usage } = result.data
     const { message } = result.data.choices[0]
@@ -53,7 +51,7 @@ router.post('/chat/:room', async (req, res) => {
 
 
 router.get('/rooms', async (req, res) => {
-  res.json(Object.keys(openaiconf?.chat))
+  res.json(Object.keys(openaiconf?.chat || {}))
 })
 router.post('/rooms', async (req, res) => {
   const { room } = req.body
@@ -73,7 +71,7 @@ router.delete('/rooms/:room', async (req, res) => {
 })
 
 router.get('/chat/:room', async (req, res) => {
-  res.json(openaiconf?.chat[req.params.room]?.messages)
+  res.json(openaiconf?.chat?.[req.params.room]?.messages)
 })
 
 

@@ -75,14 +75,17 @@ class Service {
 
   async restart() {
     this.enabled = true
+    localStorage.setItem(`automatic-toggle-${this.label}`, this.enabled)
     return axios.get('/stack/' + this.label + '/restart')
   }
   async start() {
     this.enabled = true
+    localStorage.setItem(`automatic-toggle-${this.label}`, this.enabled)
     return axios.get('/stack/' + this.label + '/start')
   }
   async stop() {
     this.enabled = false
+    localStorage.setItem(`automatic-toggle-${this.label}`, this.enabled)
     return axios.get('/stack/' + this.label + '/stop')
   }
 

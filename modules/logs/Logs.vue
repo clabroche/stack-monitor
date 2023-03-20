@@ -30,7 +30,7 @@
     </div>
     <div class="main-content">
       <section-cmp v-if="isOpen" header="Logs" :noStyle="noStyle"
-        :actions="[{ icon: 'fas fa-trash', click: () => clear() }]">
+        :actions="[{ icon: 'fas fa-chevron-down', click: () => scrollTerminal() }, { icon: 'fas fa-trash', click: () => clear() }]">
           <div v-if="service" class="logs-container" ref="logsContainer" id="terminal" style="box-sizing: content-box">
         </div>
         <transition name="appear">
@@ -60,11 +60,9 @@
       </section-cmp>
       
       <div class="open-buttons">
-
           <button v-for="(toggle, i) of toggles" :key="toggle.label" @click="toggleIsOpen(i)" :class="{ bordered: toggle.isOpen }">
             <span style="font-weight: bold;">{{toggle.label}} ({{ toggle?.jsons?.length }})</span>
           </button>
-
       </div>
     </div>
   </div>
@@ -83,11 +81,14 @@ import debounce from 'debounce'
 import JsonViewer from 'vue-json-viewer'
 import jsonpath from 'jsonpath'
 import 'vue-json-viewer/style.css'
-import { computed, onMounted, ref, watch } from '@vue/runtime-core';
+import { computed, onMounted, ref, watch, watchEffect } from '@vue/runtime-core';
+import router from '@/router/router';
 const props = defineProps({
   service: { default: null },
   noStyle: { default: false },
 })
+const urlSearchParams = new URLSearchParams(window.location.search);
+const params = Object.fromEntries(urlSearchParams.entries());
 
 const terminal = ref(null)
 const terminalSearch = ref(null)
@@ -100,6 +101,10 @@ const isOpen = ref(true)
 const isInclude = ref(false)
 const logs = ref('')
 const json = ref('')
+const lineToKeep = ref(router.currentRoute.value.query.lineToKeep || 120)
+watchEffect(() => {
+  lineToKeep.value = router.currentRoute.value.query.lineToKeep || 120
+})
 const search = ref('')
 
 const jsonContainerOpen = ref(false)
@@ -129,6 +134,7 @@ const toggleIsOpen = (val) => {
   const shouldOpen = !toggles.value[val].isOpen
   toggles.value.forEach(t => t.isOpen = false)
   toggles.value[val].isOpen = shouldOpen
+  setTimeout(() => scroll(true), 0);
 }
 const filterWithoutDebounce = function (message) {
   terminal.value.clear()
@@ -206,18 +212,6 @@ async function createTerminal() {
     if (data.label !== props.service.label) return
     terminal.value.clear()
   })
-  if (logsContainer.value) {
-    // @ts-ignore
-    logsContainer.value.scrollTo({
-      'behavior': 'smooth',
-      'left': 0,
-      // @ts-ignore
-      'top': logsContainer.value.offsetHeight + 1000000
-    });
-  }
-  setTimeout(async () => {
-    await scroll(true)
-  }, 100);
 }
 
 const jsonsToDisplay = computed(() => {
@@ -234,7 +228,13 @@ const jsonsToDisplay = computed(() => {
     })
     : jsons.value
 })
-
+function scrollTerminal() {
+  if (terminal) {
+    // @ts-ignore
+    terminal.value.scrollToBottom()
+    scroll(true)
+  }
+}
 const jsonsSMToDisplay = computed(() => {
   scroll()
   const filteredJSON = jsons.value
@@ -264,7 +264,7 @@ function write(line) {
   if (typeof line !== 'string') {
     terminal.value.writeln(JSON.stringify(line))
     jsons.value.push(line)
-    jsons.value = jsons.value.slice(-120)
+    jsons.value = jsons.value.slice(-lineToKeep.value)
   } else {
     terminal.value.writeln(line)
   }
@@ -292,8 +292,8 @@ async function previousSearch(ev) {
 function escapeRegExp(text) {
   return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
 }
-async function scroll(force) {
-  const container = jsonsRef.value
+async function scroll(force, customElement) {
+  const container = customElement || jsonsRef.value
   if(!container) return
   const shouldScroll = container.scrollTop + container.clientHeight === container.scrollHeight
   await new Promise(res => setTimeout(res, 100))
@@ -396,6 +396,9 @@ $jsonHeadermargin: 10px;
 }
 .open-buttons {
   width: 140px;
+  button {
+    width: 100%;
+  }
 }
 
 .appear-enter-active,

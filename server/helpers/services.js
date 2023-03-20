@@ -30,7 +30,7 @@ module.exports = {
       )
     )
     toKill.forEach(({pid}) => process.kill(pid, 'SIGKILL'))
-
+    SpawnStore[service.label] = []
     Socket.socket.emit('logs:clear', { label: service.label })
     service.store = ''
     await new Promise(resolve => setTimeout(resolve, 100))

@@ -1,6 +1,7 @@
 const pathfs = require('path')
 const fse = require('fs-extra')
 const ts = require('typescript')
+const { existsSync } = require('fs')
 
 process.on('message' , (cwd) => {
   const tsConfigPath = pathfs.resolve(cwd, 'tsconfig.json')
@@ -22,12 +23,17 @@ process.on('message' , (cwd) => {
     },
     cwd,
   );
+  if (existsSync(pathfs.resolve(cwd, 'node_modules', '@types'))) {
+    if (!config.options.typeRoots) config.options.typeRoots = [] 
+    config.options.typeRoots.push(pathfs.resolve(cwd, 'node_modules', '@types'))
+  }
   const typescriptProgram = ts.createProgram(config.fileNames, {
     ...config.options,
     noEmit: true,
     resolveJsonModule: true,
     checkJs: true,
   });
+  
   const errCodeMapping = {
     [ts.DiagnosticCategory.Error]: 'error',
     [ts.DiagnosticCategory.Warning]: 'warning',

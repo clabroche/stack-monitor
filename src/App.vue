@@ -142,7 +142,7 @@ button {
   &.small {
     padding: 5px;
     font-size: 0.7em;
-    width: 80px;
+    width: 100px;
     display: flex;
     justify-content: flex-start;
     align-items: center;

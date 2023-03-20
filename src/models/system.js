@@ -26,11 +26,6 @@ System.prototype.getVersion = async function () {
   this.version = version
   return this.version
 }
-System.prototype.getGlobalInfos = async function() {
-  const {data: globalInfos} = await axios.get('/system/global-infos')
-  this.globalInfos = globalInfos
-  return this.globalInfos
-}
 System.prototype.disconnect = async function() {
   return axios.get('/system/disconnect')
 }

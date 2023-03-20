@@ -46,6 +46,7 @@ import stack from '../models/stack'
 import router from '@/router/router'
 import DoughtnutChart from './DoughtnutChart.vue'
 import axios from '@/helpers/axios'
+import Socket from '@/helpers/socket';
 
 export default {
   components: {
@@ -59,27 +60,24 @@ export default {
     /** @type {import('vue').Ref<import('../models/service').default[]>} */
     const localServices = ref(stack.services)
     const plugins = ref([])
-    
+    const cpu = ref(0)
+    const mem = ref(0)
+
     onMounted(async () => {
       await stack.loadServices()
       localServices.value = stack.services
       const { data: _plugins } = await axios.get('/plugins/sidebar')
       plugins.value = _plugins?.flat() || []
-    })
-    watch(() => stack.services, () => localServices.value = stack.services, {deep: true})
-    let interval
-    const cpu = ref(0)
-    const mem = ref(0)
-    onMounted(async () => {
-      interval = setInterval(async () => {
-        const {memPercentage, cpu: _cpu} = await System.getGlobalInfos()
+      Socket.on('infos:global', data => {
+        const {memPercentage, cpu: _cpu} = data
         cpu.value = _cpu
         mem.value = memPercentage
-      }, 1000);
+      })
     })
-    onBeforeUnmount(()=> {
-      clearInterval(interval)
-    })
+
+    watch(() => stack.services, () => {
+      localServices.value = stack.services
+    }, {deep: true})
 
     return {
       buttons:computed(() => ([
@@ -99,7 +97,6 @@ export default {
       buttonsPlugins: computed(() => ([
         ...plugins.value.map(plugin => {
           return plugin.placements.map(placement => {
-            console.log(placement)
             return {
               text: placement.label,
               icon: placement.icon,

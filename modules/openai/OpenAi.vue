@@ -53,7 +53,6 @@ async function reload() {
 async function newRoom(room, $event) {
   await axios.post('/openai/rooms', {room})
   await reload()
-  console.log($event)
   if($event) $event.target.value = ''
   await changeRoom(room)
 }
@@ -70,7 +69,6 @@ async function changeApikey(apikey, $event) {
   if ($event) $event.target.value = ''
 }
 async function sendMessage(message) {
-  console.log(message)
   if (!messages.value) messages.value = []
   messages.value.push({ role: 'user', content: message })
   loading.value = true

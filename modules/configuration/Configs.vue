@@ -7,8 +7,10 @@
     </div>
     <div class="configs">
       <div class="header-configs">
-        <i class="fas fa-home" aria-hidden="true"></i>
-        <h3>General</h3>
+        <div>
+          <i class="fas fa-home" aria-hidden="true"></i>
+          <h3>General</h3>
+        </div>
       </div>
       <div class="section-configs">
         <div class="key-value">
@@ -21,8 +23,10 @@
         </div>
       </div>
       <div class="header-configs">
-        <i class="fab fa-git-alt" aria-hidden="true"></i>
-        <h3>Git</h3>
+        <div>
+          <i class="fab fa-git-alt" aria-hidden="true"></i>
+          <h3>Git</h3>
+        </div>
       </div>
       <div class="section-configs">
         <div class="key-value">
@@ -35,8 +39,10 @@
         </div>
       </div>
       <div class="header-configs">
-        <i class="fas fa-terminal" aria-hidden="true"></i>
-        <h3>Command</h3>
+        <div>
+          <i class="fas fa-terminal" aria-hidden="true"></i>
+          <h3>Command</h3>
+        </div>
       </div>
       <template v-if="service.spawnCmd">
       <div class="section-configs">
@@ -71,8 +77,11 @@
       </div>
       </template>
       <div class="header-configs">
-        <i class="fas fa-cog" aria-hidden="true"></i>
-        <h3>Envs</h3>
+        <div>
+          <i class="fas fa-cog" aria-hidden="true"></i>
+          <h3>Envs</h3>
+        </div>
+        <button @click="exportEnv">Exporter</button>
       </div>
       <div class="section-configs">
         <div class="key-value" v-for="(value, key) of service.spawnOptions.env" :key="key">
@@ -99,6 +108,25 @@ export default {
       type: Service
     },
   },
+  setup(props) {
+    return {
+      exportEnv() {
+        const envObject = props.service.spawnOptions.env || {}
+        const envString = Object.keys(envObject).map(key => `${key}=${envObject[key]}`).join('\n')
+        const element = document.createElement('a');
+        element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(envString));
+        element.setAttribute('download', '.env');
+
+        element.style.display = 'none';
+        document.body.appendChild(element);
+
+        element.click();
+
+        document.body.removeChild(element);
+
+      }
+    }
+  }
 }
 </script>
 <style lang="scss" scoped>
@@ -216,5 +244,10 @@ export default {
   }
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  &>div{
+    display: flex;
+    align-items: center;
+  }
 }
 </style>

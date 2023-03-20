@@ -1,4 +1,5 @@
 {
   "watch": [".", "../modules"],
-  "ext": "js, css"
+  "ext": "js, css",
+  "delay": "500"
 }

@@ -3,7 +3,9 @@
     <div class="background">
     </div>
     <div class="title" v-if="header || actions">
-      {{header}}
+      <div>
+        {{header}}
+      </div>
       <div class="actions">
         <button
           @click="action.click()"
@@ -92,6 +94,7 @@ $shadow: rgb(165, 177, 179);
     }
   }
   .title {
+    width: 100%;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -104,6 +107,9 @@ $shadow: rgb(165, 177, 179);
   }
   .actions {
     display: flex;
+    flex-wrap: wrap;
+    width: max-content;
+    justify-content: flex-end;
     .action.mini {
       width: max-content;
       i {

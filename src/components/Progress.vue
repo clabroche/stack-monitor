@@ -1,7 +1,7 @@
 <template>
   <span class="container">    
     <div class="progress progress-moved">
-      <div class="progress-bar" :style="{transform: 'scaleX(' + (percent/ 100) + ')'}">
+      <div class="progress-bar" :style="{transform: 'scaleX(' + ((percent > 100 ? 100 : percent)/ 100) + ')'}">
       </div>                       
     </div> 
   </span>
