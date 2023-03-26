@@ -1,5 +1,5 @@
 <template>
-<div :class="notif.type" class="notif" v-if="notif">
+<div :class="notif.type" class="notif" v-if="notif" :style="{maxWidth: width}">
   <template v-if="!notif.hover">
     <h2 v-if="notif.serviceLabel">{{notif.serviceLabel}}</h2>
   </template>
@@ -19,6 +19,7 @@
 <script>
 export default {
   props: {
+    width: {default: '420px'},
     notif: {default: null}
   },
   setup() {
@@ -39,7 +40,6 @@ export default {
   padding: 10px;
   box-sizing: border-box;
   border-radius: 4px;
-  margin-bottom: 20px;
   position: relative;
   display: flex;
   flex-direction: column;
@@ -71,7 +71,7 @@ export default {
   &, label {
     background: #11998e;  /* fallback for old browsers */
     background: -webkit-linear-gradient(right, #38ef7d, #11998e);  /* Chrome 10-25, Safari 5.1-6 */
-    background: linear-gradient(to right, #38ef7d, #11998e); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    background: linear-gradient(to right, #1dcf61, #11998e); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
     box-shadow: 0px 0px 10px 0px #11998e;
   }
   label {

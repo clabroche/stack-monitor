@@ -48,7 +48,7 @@ class Notification {
     }
     clearTimeout(notif.timeout)
     notif.timeout = setTimeout(() => {
-      this.remove(notif)
+      // this.remove(notif)
     }, 5000);
   }
   remove(notif, hasClicked) {
@@ -56,9 +56,10 @@ class Notification {
     if (index > -1) this.notifs.value.splice(index, 1)
     if (hasClicked && notif.serviceLabel) router.push({ name: 'stack-single', params: { label: notif.serviceLabel } })
   }
-  removeHistory(notif) {
+  removeHistory(notif, hasClicked) {
     const index = this.notifsHistory.value.indexOf(notif)
     if (index > -1) this.notifsHistory.value.splice(index, 1)
+    if (hasClicked && notif.serviceLabel) router.push({ name: 'stack-single', params: { label: notif.serviceLabel } })
   }
 }
 export default new Notification()
