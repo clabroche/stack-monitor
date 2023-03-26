@@ -1,12 +1,14 @@
 <template>
   <div class="notif-history-root">
-    <modal position="right" ref="modal" width="300px" :noActions="true">
+    <modal position="right" ref="modal" width="600px" :noActions="true">
       <template #header>
         Mes notifications
       </template>
       <template #body>
-        <notification v-for="notif of notifs" :key="notif.id" :notif="notif" @click="remove(notif)">
-        </notification>
+        <div class="notifications">
+          <notification v-for="notif of notifs" :key="notif.id" width="100%" :notif="notif" @click="remove(notif)">
+          </notification>
+        </div>
       </template>
     </modal>
   </div>
@@ -31,10 +33,19 @@ export default {
     return {
       notifs,
       remove(notif) {
-        notification.removeHistory(notif)
+        notification.removeHistory(notif, true)
       },
       modal
     }
   }
 }
 </script>
+
+<style lang="scss" scoped>
+
+.notifications {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+</style>

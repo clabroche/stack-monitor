@@ -16,12 +16,15 @@ router.get('/', async (req, res) => {
   res.json('hello')
 })
 
-router.get('/', async (req, res) => {
-  res.json('hello')
+router.get('/models', async (req, res) => {
+  const models = await openai.listModels({
+
+  })
+  res.json(models.data)
 })
 
 router.post('/chat/:room', async (req, res) => {
-  const { message } = req.body
+  const { message, model, temperature } = req.body
   if (!openaiconf?.chat) openaiconf.chat = {}
   if (!openaiconf?.chat?.[req.params.room]) openaiconf.chat[req.params.room] = {}
   if (!openaiconf?.chat?.[req.params.room]?.messages) openaiconf.chat[req.params.room].messages = [
@@ -30,12 +33,18 @@ router.post('/chat/:room', async (req, res) => {
   const messages = openaiconf?.chat[req.params.room]?.messages
   messages.push({ "role": "user", "content": message })
   const result = await openai.createChatCompletion({
-    model: "gpt-3.5-turbo",
+    model: model || "gpt-3.5-turbo",
+    temperature: Number.isNaN(+temperature) ? 0 : +temperature,
+    n:1,
+    max_tokens: Infinity,
     messages: messages
       .filter(f => f?.content)
       .map(a => ({ role: a.role, content: a.content}))
       .slice(-5)
-  }).catch(err => console.error(err.response.data));
+  }).catch(err => {
+    console.error(err.response.data)
+    return Promise.reject(err)
+  });
   if (result?.data?.choices?.[0]?.message) {
     const { usage } = result.data
     const { message } = result.data.choices[0]

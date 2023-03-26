@@ -16,7 +16,26 @@
       </div>
     </div>
     <div class="chat-container" v-if="room">
-      <h2>{{ room }}</h2>
+      <div class="header">
+        <h2>{{ room }}</h2>
+        <div class="toolbar">
+          <div>
+            Temperature:
+            <input type="range" min="0" max="2" v-model="temperature" step="0.1">
+          </div>
+          <div>
+            Model:
+            <select v-model="model">
+              <!-- <option name="gpt-4">gpt-4</option>
+              <option name="gpt-4-0314">gpt-4-0314</option>
+              <option name="gpt-4-32k">gpt-4-32k</option>
+              <option name="gpt-4-32k-0314">gpt-4-32k-0314</option> -->
+              <option name="gpt-3.5-turbo">gpt-3.5-turbo</option>
+              <!-- <option name="gpt-3.5-turbo-030">gpt-3.5-turbo-030</option> -->
+            </select>
+          </div>
+        </div>
+      </div>
       <chat :messages="messagesToDisplay" :loading="loading" @send="sendMessage($event)"></chat>
     </div>
   </div>
@@ -29,12 +48,16 @@ import axios from '@/helpers/axios'
 import Chat from './Chat.vue'
 import {computed, ref} from 'vue'
 import { onMounted } from "vue";
+import notification from '@/helpers/notification';
 
 const ready = ref(false)
 const loading = ref(false)
 const messages = ref([])
 const rooms = ref([])
 const room = ref()
+const model = ref('gpt-3.5-turbo')
+const availableModels = ref([])
+const temperature = ref(0)
 
 onMounted(reload)
 
@@ -47,6 +70,7 @@ async function reload() {
     room.value = rooms.value?.[0]
   }
   const { data: _messages } = await axios.get(`/openai/chat/${room.value}`)
+  await getModels()
   messages.value = _messages
 }
 
@@ -68,11 +92,20 @@ async function changeApikey(apikey, $event) {
   await reload()
   if ($event) $event.target.value = ''
 }
+
+async function getModels() {
+  const { data } = await axios.get('/openai/models')
+  availableModels.value = data
+}
 async function sendMessage(message) {
   if (!messages.value) messages.value = []
   messages.value.push({ role: 'user', content: message })
   loading.value = true
-  await axios.post(`/openai/chat/${room.value}`, { message })
+  await axios.post(`/openai/chat/${room.value}`, { message, model: model.value, temperature: temperature.value })
+    .catch((err) => {
+      console.error(err)
+      notification.next('error', 'Une erreur s\'est produite')
+    })
     .finally(() => loading.value = false)
   await reload()
 }
@@ -143,6 +176,18 @@ $leftSize: 200px;
     }
     .chat-container {
       width: calc(100% - $leftSize);
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        .toolbar {
+          display: flex;
+          &>div {
+            display: flex;
+            flex-direction: column;
+          }
+        }
+      }
     }
 
 
