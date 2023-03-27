@@ -4,7 +4,7 @@ const fse = require('fs-extra')
 const pathfs = require('path')
 const PromiseB = require('bluebird')
 const os = require('os')
-const sort = require('fast-sort')
+const {sort} = require('fast-sort')
 
 
 router.get('/home-dir', async function (req, res) {
