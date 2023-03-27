@@ -31,7 +31,6 @@ const all = fse
     return plugin;
   })
   .filter((a) => a);
-console.log(plugins);
 module.exports = {
   forService,
   all,

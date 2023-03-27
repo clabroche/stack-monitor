@@ -6,18 +6,11 @@ module.exports = {
   icon: "fas fa-random",
   placements: [
     {
-      position: "sidebar",
-      label: "UUID",
-      icon: "fas fa-random",
-      goTo: { path: "/UUID" },
-      active: "uuid",
-    },
-    {
       position: "toolbox",
       label: "UUID",
       icon: "fas fa-random",
       goTo: { path: "/UUID" },
-      active: "uuid",
+      active: "UUID",
     },
   ],
   order: 6,
