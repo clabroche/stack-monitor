@@ -50,55 +50,7 @@ Launch multiples command at once. You can monitor projects.(like npm projects, g
  - Show Mem percentage for each commands
 
 ## Usage
-Create a config file like: 
-``` javascript
-const path = __dirname
-let BASE = "database"
-
-module.exports = [
-  {
-    label: 'Server',
-    description: 'This is the backend of an unbelievable project',
-    git: {
-      home: 'https://<an-awesome-url>',
-      remote: 'git@github.com:<your-beautiful-profile>/<your-excellent-project>.git'
-    },
-    url: 'http://localhost:3010',
-    spawnCmd: 'npm',
-    spawnArgs: ['run', 'serve'],
-    spawnOptions: {
-      cwd: `${path}/server`,
-      env: {
-        PORT: "3010",
-        mongoDbURL: `mongodb://root:123456@localhost:27017/${BASE}?authSource=admin`,
-      }
-    }
-  },
-  {
-    label: 'Mongo',
-    description: 'Just start the mongodb in docker',
-    spawnCmd: 'docker',
-    spawnArgs: ['start', 'mongo'],
-  },
-  {
-    label: 'Front',
-    description: 'This is the front of an unbelievable project',
-    git: {
-      home: 'https://<an-awesome-url>',
-      remote: 'git@github.com:<your-beautiful-profile>/<your-excellent-project>.git'
-    },
-    url: 'http://localhost:8080',
-    spawnCmd: 'npm',
-    spawnArgs: ['run', 'serve'],
-    spawnOptions: {
-      cwd: `${path}/front`,
-      env: {
-        VUE_APP_API_URL: "http://localhost:3010"
-      }
-    }
-  },
-]
-```
+Create a config file like [this](./example/stack.js)
 
 Then, in a terminal, type:
 ``` bash
@@ -108,6 +60,38 @@ stack-monitor <path/to/my/config>
 You can type only ```stack-monitor``` and choose your config file later.
 
 If you change a variable in conf after execution, the corresponding service restart.
+
+## Snippet
+
+Add this in your vscode to print easily variables in debug output of service:
+``` json
+	"Print to stack-monitor": {
+		"prefix": "log",
+		"body": [
+			"console.log(JSON.stringify(['stack-monitor', $1]));",
+			"$2"
+		],
+		"description": "Print to stack-monitor"
+	}
+```
+Type ```log``` in vs code, it should produce something like that:
+``` javascript 
+console.log(JSON.stringify(['stack-monitor', <what you want>, <and others>]));
+```
+
+Example:
+
+if you type this somewhere in server service: 
+
+```javascript
+console.log(JSON.stringify(['stack-monitor', "debug:", {port} ]));
+```
+
+Output should appeart in debug section of logs
+
+![debug in action](./README/8.png)
+
+
 
 ## Screenshots
 ![Menu](https://raw.githubusercontent.com/clabroche/stack-monitor/master/README/1.png)

@@ -31,7 +31,7 @@
       </div>
     </section-cmp>
     <section-cmp  :key="service.label" >
-      <div class="categ" v-for="categ of ['dependencies','devDependencies']" :key="categ">
+      <div class="categ" v-for="categ of ['dependencies','devDependencies'].filter(categ => packageJson[categ])" :key="categ" >
         <h2 class="dep-header">{{categ.charAt(0).toUpperCase() + categ.slice(1)}}</h2>
         <div class="dependecies">
           <table>
@@ -46,34 +46,30 @@
               <td>{{name}}</td>
               <td>{{version}}</td>
               <td :class="{
-                success: outdated?.[name]?.satisfyVersion && outdated?.[name]?.currentVersionCleaned === outdated?.[name]?.satisfyVersion,
-                error: outdated?.[name]?.satisfyVersion && outdated?.[name]?.currentVersionCleaned !== outdated?.[name]?.satisfyVersion
+                success: outdated && !outdated?.[name]?.wanted,
+                error: outdated?.[name]?.wanted && outdated?.[name]?.current !== outdated?.[name]?.wanted
               }">
                 <spinner :size="20" v-if="!outdated"/>
-                <template v-if="outdated?.[name]?.satisfyVersion">
-                  <div v-if="outdated?.[name]?.currentVersionCleaned === outdated?.[name]?.satisfyVersion">
-                    <i class="fas fa-check" aria-hidden="true"/>
-                  </div>
-                  <div v-else>
-                    <i class="fas fa-times" aria-hidden="true"/>
-                    {{outdated?.[name]?.satisfyVersion}}
-                  </div>
-                </template>
+                <div v-else-if="!outdated?.[name]">
+                  <i class="fas fa-check" aria-hidden="true"/>
+                </div>
+                <div v-else>
+                  <i class="fas fa-times" aria-hidden="true"/>
+                  {{outdated?.[name]?.wanted}}
+                </div>
               </td>
               <td :class="{
-                success: outdated?.[name]?.latestVersion && outdated?.[name]?.currentVersionCleaned === outdated?.[name]?.latestVersion,
-                error: outdated?.[name]?.latestVersion && outdated?.[name]?.currentVersionCleaned !== outdated?.[name]?.latestVersion
+                success: outdated && !outdated?.[name]?.wanted,
+                error: outdated?.[name]?.latest && outdated?.[name]?.current !== outdated?.[name]?.latest
               }">
                 <spinner :size="20" v-if="!outdated"/>
-                <template v-if="outdated?.[name]?.latestVersion">
-                  <div v-if="outdated?.[name]?.latestVersion && outdated?.[name]?.currentVersionCleaned === outdated?.[name]?.latestVersion">
-                    <i class="fas fa-check" aria-hidden="true"/>
-                  </div>
-                  <div v-else>
-                    <i class="fas fa-times" aria-hidden="true"/>
-                    {{outdated?.[name]?.latestVersion}}
-                  </div>
-                </template>
+                <div v-else-if="!outdated?.[name]">
+                  <i class="fas fa-check" aria-hidden="true"/>
+                </div>
+                <div v-else>
+                  <i class="fas fa-times" aria-hidden="true"/>
+                  {{outdated?.[name]?.latest}}
+                </div>
               </td>
             </tr>
           </table>
@@ -219,6 +215,7 @@ table {
     }
   }
   tr {
+    transition: 300ms;
     td.error{
       color: red;
     }
@@ -226,7 +223,7 @@ table {
       color: green;
     }
     &:hover {
-      background-color: rgba(0,0,0,0.1);
+      background-color: rgba(0,0,0,0.05);
     }
   }
 }

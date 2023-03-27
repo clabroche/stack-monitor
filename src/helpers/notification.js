@@ -48,7 +48,7 @@ class Notification {
     }
     clearTimeout(notif.timeout)
     notif.timeout = setTimeout(() => {
-      // this.remove(notif)
+      this.remove(notif)
     }, 5000);
   }
   remove(notif, hasClicked) {

@@ -17,7 +17,7 @@ const checkConf = debounce(async (originalStack, confPath, path) => {
   delete require.cache[require.resolve(confPath)]
   if(path && path.endsWith('.js')) delete require.cache[require.resolve(path)]
 
-  const newConf = require(confPath)
+  const newConf = require(confPath)?.stack || require(confPath)
   const reduce = (conf, service) => {
     conf[service.label] = service
     return conf
@@ -57,9 +57,10 @@ module.exports = {
     if (currentWatches?.length) currentWatches.forEach(currentWatch => currentWatch.close())
     const confPath = path.resolve(pathToConf)
     await myConfs.add(confPath)
-    stack = confPath ? require(confPath) : []
+    const rawStack = confPath ? require(confPath) : []
+    stack = Array.isArray(rawStack) ? rawStack : rawStack.stack // Support for old stack files
     this.stack = stack
-    originalStack.value = cloneDeep(stack)
+    originalStack.value = cloneDeep(this.stack)
     const file = fs.readFileSync(confPath, 'utf-8')
     const filesToWatch = [
       ...file.matchAll(new RegExp(`require\\((.*)\\)`, 'gi'))
@@ -68,16 +69,15 @@ module.exports = {
       .map(file => {
         return pathfs.resolve(confPath, '..', file.replaceAll(`'`, '').replaceAll(`"`, ''))
       })
-
     ;[
-      ...filesToWatch,
+      ...rawStack.watchFiles || [],
       confPath
     ].forEach(file => {
       if (fs.existsSync(file)) currentWatches.push(watch(file, () => checkConf(originalStack, confPath, file)))
       else console.error(file, 'not exists')
     })
     if(services?.length) {
-      stack.forEach(stackService => {
+      this.stack.forEach(stackService => {
         if(services.includes(stackService.label)) {
           stackService.enabled = true
         } else {

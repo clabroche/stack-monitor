@@ -324,7 +324,7 @@ async function scroll(force, customElement) {
   margin: auto;
   height: calc(100vh - 400px);
 
-  @media (max-width: 1200px) { 
+  @media (max-width: 1300px) { 
     height: calc(100vh - 500px);
   }
   @media (max-width: 800px) { 
