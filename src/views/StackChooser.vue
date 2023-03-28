@@ -36,7 +36,13 @@
       </div>
     </section-cmp>
   </div>
-  <div class="version">{{System.version}}</div>
+  <div class="version">
+    {{System.version}}
+  </div>
+
+  <div class="tools" @click="$router.push({name: 'Toolbox'})">
+    <i class="fas fa-toolbox"></i>
+  </div>
 </div>
 </template>
 
@@ -194,6 +200,15 @@ export default {
     position: fixed;
     bottom: 10px;
     right: 10px;
+  }
+  .tools {
+    background-color: rgb(255, 255, 255);
+    border-radius: 4px;
+    padding: 0px 5px;
+    border: 1px solid darkgrey;
+    position: fixed;
+    bottom: 10px;
+    left: 10px;
   }
 }
 button.mini {

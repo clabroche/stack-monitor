@@ -2,12 +2,13 @@
   <div class="toolbox">
     <div class="sidebar">
       <ul>
-        <input type="text" placeholder="Search tool..." v-model="searchToolTerm">
+        <input type="text" ref="searchToolRef" placeholder="Search tool..." v-model="searchToolTerm" autofocus="true" @keypress.enter="chooseFirst">
         <li v-for="plugin of buttonsPlugins" :key="plugin.name" class="sidebar-item"
           @click="plugin?.click?.()"
           :class="{ active: isActive(plugin) }">
-          <div>
-            <i :class="plugin.icon"></i>
+          <div class="item">
+            <i class="icon" :class="plugin.icon" v-if="plugin.icon"></i>
+            <span class="icon" v-if="plugin.iconText">{{ plugin.iconText }}</span>
             {{ plugin.text }}
           </div>
         </li>
@@ -34,9 +35,11 @@ import router from '@/router/router'
 import { onMounted, ref, computed } from 'vue'
 const plugins = ref([])
 const searchToolTerm = ref('')
+const searchToolRef = ref()
 onMounted(async () => {
   const { data: _plugins } = await axios.get('/plugins/toolbox')
   plugins.value = _plugins?.flat() || []
+  searchToolRef.value?.focus()
 })
 
 const buttonsPlugins = computed(() => ([
@@ -46,6 +49,7 @@ const buttonsPlugins = computed(() => ([
         ...plugin,
         text: placement.label,
         icon: placement.icon,
+        iconText: placement.iconText,
         click: placement?.goTo ? () => {
           router.push({
             ...placement?.goTo || {},
@@ -58,6 +62,9 @@ const buttonsPlugins = computed(() => ([
   }).flat().filter(f => f && f.text?.toUpperCase().includes(searchToolTerm?.value?.toUpperCase())),
 ]))
 
+function chooseFirst() {
+  buttonsPlugins.value?.[0]?.click()
+}
 function isActive(plugin) {
   return router.currentRoute.value.params.plugin === plugin.name
 }
@@ -75,6 +82,7 @@ input {
   display: flex;
   min-width: 0;
   width: 100%;
+  align-items: center;
 }
 .sidebar {
     display: flex;
@@ -114,8 +122,17 @@ input {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  i {
-    transition: 300ms
+  .item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .icon {
+    width: 20px;
+    transition: 300ms;
+    display: flex;
+    justify-content: center;
+
   }
   &:hover {
     background-color: #eee;
@@ -137,6 +154,7 @@ input {
   min-width: 0;
   padding: 5px 10px;
   box-sizing: border-box;
+  height: 100vh;
 }
 .no-tools {
   display: flex;

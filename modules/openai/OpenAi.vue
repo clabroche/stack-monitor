@@ -174,7 +174,8 @@ $leftSize: 200px;
       }
     }
     .chat-container {
-      width: calc(100% - $leftSize);
+      width: 0;
+      flex-grow: 1;
       .header {
         display: flex;
         justify-content: space-between;

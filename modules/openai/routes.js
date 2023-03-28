@@ -62,10 +62,10 @@ router.post('/chat/:room', async (req, res) => {
 
 })
 
-
 router.get('/rooms', async (req, res) => {
   res.json(Object.keys(openaiconf?.chat || {}))
 })
+
 router.post('/rooms', async (req, res) => {
   const { room } = req.body
   if (!openaiconf?.chat?.[room]) {
@@ -86,8 +86,6 @@ router.delete('/rooms/:room', async (req, res) => {
 router.get('/chat/:room', async (req, res) => {
   res.json(openaiconf?.chat?.[req.params.room]?.messages)
 })
-
-
 
 router.post('/apikey', async (req, res) => {
   const {apikey} = req.body

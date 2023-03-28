@@ -10,6 +10,13 @@
       </div>
     </section-cmp>
   </div>
+
+  <div class="version">
+    {{ System.version }}
+  </div>
+  <div class="tools" @click="$router.push({ name: 'Toolbox' })">
+    <i class="fas fa-toolbox"></i>
+  </div>
   <modal ref="modalRef" :noActions="true">
     <template #body>
       <explorer @file="openPath"/>
@@ -28,6 +35,7 @@ import router from '../router/router'
 import Modal from '../components/Modal.vue'
 import Explorer from '../components/Explorer.vue'
 import LeftLogo from '../components/LeftLogo.vue'
+import System from '../models/system'
 export default {
   name: 'StackChooser',
   components: {
@@ -47,6 +55,7 @@ export default {
     return {
       modalRef,
       recents,
+      System,
       async deleteConf(path) {
         await Stack.deleteConf(path)
         recents.value = await Stack.getAllConfsPath()
@@ -101,4 +110,23 @@ export default {
     }
   }
 }
+
+  .version {
+    background-color: rgb(255, 255, 255);
+    border-radius: 4px;
+    padding: 0px 5px;
+    border: 1px solid darkgrey;
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+  }
+  .tools {
+    background-color: rgb(255, 255, 255);
+    border-radius: 4px;
+    padding: 0px 5px;
+    border: 1px solid darkgrey;
+    position: fixed;
+    bottom: 10px;
+    left: 10px;
+  }
 </style>

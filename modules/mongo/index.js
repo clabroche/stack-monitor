@@ -3,12 +3,12 @@ const router = express.Router();
 
 module.exports = {
   name: "Mongo",
-  icon: "fas fa-leaf",
+  icon: "fab fa-envira",
   placements: [
     {
       position: "toolbox",
       label: "Mongo",
-      icon: "fas fa-leaf",
+      icon: "fab fa-envira",
       goTo: { path: "/Mongo" },
       active: "Mongo",
     },
