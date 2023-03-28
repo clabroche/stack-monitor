@@ -32,11 +32,8 @@ import * as monaco from 'monaco-editor';
 const showRaw = ref(false)
 const json = ref({})
 const raw = ref('')
-const regexString = ref('.*(est) (un) .*')
-const code = ref(`Ceci est un test
-Ceci est un test
-Ceci est un test
-Ceci est un test`)
+const regexString = ref('.*')
+const code = ref(`Place your lines to test...`)
 
 const monacoRef = ref()
 /** @type {import('vue').ShallowRef<import('monaco-editor').editor.IStandaloneCodeEditor>} */
