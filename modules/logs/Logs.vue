@@ -341,7 +341,6 @@ async function scroll(force, customElement) {
 
   input {
     border-radius: 10px;
-    border: none;
     padding: 5px;
   }
 

@@ -65,11 +65,11 @@ function isActive(plugin) {
 </script>
 
 <style scoped lang="scss">
-
-
 input {
-  width: 100%;
+  width: 90%;
   box-sizing: border-box;
+  margin: 5px auto;
+  justify-self: center;
 }
 .toolbox {
   display: flex;
@@ -90,6 +90,8 @@ input {
       list-style: none;
       padding: 0;
       margin: 0;
+      display: flex;
+      flex-direction: column;
     }
   }
 
@@ -133,6 +135,8 @@ input {
   display: flex;
   flex-grow: 1;
   min-width: 0;
+  padding: 5px 10px;
+  box-sizing: border-box;
 }
 .no-tools {
   display: flex;

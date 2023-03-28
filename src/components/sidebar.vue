@@ -1,9 +1,7 @@
 <template>
   <div class="sidebar">
     <ul v-if="sortedStack.length">
-      <li>
-        <input type="text" v-model="search" placeholder="Search ...">
-      </li>
+      <input type="text" v-model="search" placeholder="Search service...">
       <sidebar-item v-for="service of sortedStack" :key="service.label" :service="service"/>
     </ul>
   </div>
@@ -42,8 +40,10 @@ export default {
 
 <style lang="scss" scoped>
 input {
-  width: 100%;
+  width: 90%;
   box-sizing: border-box;
+  margin: 5px auto;
+  justify-self: center;
 }
 .sidebar {
     display: flex;
@@ -59,6 +59,8 @@ input {
       list-style: none;
       padding: 0;
       margin: 0;
+      display: flex;
+      flex-direction: column;
     }
   }
 
