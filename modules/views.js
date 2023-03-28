@@ -7,6 +7,7 @@ import OpenAi from "./openai/OpenAi.vue";
 import Toolbox from "./toolbox/Toolbox.vue";
 import DynamicComponent from "./DynamicComponent.vue";
 import UUID from "./uuid/UUID.vue";
+import Mongo from "./mongo/Index.vue";
 
 export default [
   { name: "DynamicComponent", cmp: DynamicComponent },
@@ -18,6 +19,17 @@ export default [
         path: "/uuid",
         name: "uuid",
         component: UUID,
+      },
+    ],
+  },
+  {
+    name: "Mongo",
+    cmp: Mongo,
+    routes: [
+      {
+        path: "/mongo",
+        name: "mongo",
+        component: Mongo,
       },
     ],
   },
