@@ -26,6 +26,7 @@ server.on('listening', () => {
   // Tips
   (() => {
     table([
+      { '': 'Version', Value: require('../../package.json').version, 'Overrided By': '-' },
       { '': 'Port', Value: ports.http, 'Overrided By': 'HTTP_PORT' },
       { '': 'Url', Value: `http://localhost:${ports.http}`, 'Overrided By': '-' },
     ])

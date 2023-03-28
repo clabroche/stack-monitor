@@ -4,6 +4,7 @@ import path from 'path'
 import { createHtmlPlugin } from 'vite-plugin-html'
 import analyze from 'rollup-plugin-analyzer'
 import { visualizer } from 'rollup-plugin-visualizer';
+import monacoEditorPlugin from 'vite-plugin-monaco-editor';
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -13,6 +14,8 @@ export default defineConfig({
   plugins: [
     vue({}),
     visualizer(),
+    monacoEditorPlugin({
+    }),
     {
       name: 'custom-hmr',
       enforce: 'post',

@@ -43,10 +43,12 @@ export default {
 
       if(!connected.value) Stack.services = []
       const enabledServices = await Stack.getEnabledServices()
-      if(connected.value && !Stack.services.length) {
-        router.push({name:'import-create'})
-      } else if(!enabledServices.length && router.currentRoute.value.name !== 'stack-chooser') {
-        router.push({name:'stack-chooser'})
+      if(!router.currentRoute.value.fullPath.startsWith('/toolbox')) {
+        if(connected.value && !Stack.services.length) {
+          router.push({name:'import-create'})
+        } else if(!enabledServices.length && router.currentRoute.value.name !== 'stack-chooser') {
+          router.push({name:'stack-chooser'})
+        }
       }
     }
     onMounted(()=> {
@@ -167,6 +169,7 @@ input {
   padding: 3px 5px;
   border-radius: 10px;
   border: 1px solid #999;
+  box-sizing: border-box;
 }
 </style>
 
