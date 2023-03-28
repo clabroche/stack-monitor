@@ -122,7 +122,6 @@ $leftSize: 200px;
 .openai-root {
   height: 100vh;
   width: 100%;
-  padding: 20px;
   box-sizing: border-box;
   h1 {
     text-align: center;

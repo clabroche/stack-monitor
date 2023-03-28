@@ -163,6 +163,11 @@ button.success {
   }
 }
 
+input {
+  padding: 3px 5px;
+  border-radius: 10px;
+  border: 1px solid #999;
+}
 </style>
 
 <style lang="scss" scoped> 
