@@ -2,9 +2,13 @@ const express = require('express');
 const router = express.Router();
 const fse = require('fs-extra')
 const pathfs = require('path')
-const { Configuration, OpenAIApi } = require('openai')
+const { Configuration, OpenAIApi } = require('openai');
+const { existsSync, mkdirSync } = require('fs');
+const homedir = require('os').homedir();
+const confDir = pathfs.resolve(homedir, '.stack-monitor')
 
-const openaiConfPath = pathfs.resolve(__dirname, 'openaiconf.json')
+if (!existsSync(confDir)) mkdirSync(confDir)
+const openaiConfPath = pathfs.resolve(confDir, 'openaiconf.json')
 if(!fse.existsSync(openaiConfPath)) fse.writeJSONSync(openaiConfPath, {})
 const openaiconf = fse.readJsonSync(openaiConfPath)
 /** @type {OpenAIApi} */
