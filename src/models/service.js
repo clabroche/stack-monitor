@@ -100,10 +100,10 @@ class Service {
   }
 
   async changeBranch(branchName) {
-    await axios.post('/git/' + this.label + '/branch/' + branchName + '/change')
+    await axios.post('/git/' + this.label + '/branch/' + encodeURIComponent(branchName) + '/change')
   }
   async gitRemoteDelta(branchName) {
-    const { data: delta } = await axios.get(`/git/${this.label}/branch/${branchName}/remote-delta`)
+    const { data: delta } = await axios.get(`/git/${this.label}/branch/${encodeURIComponent(branchName)}/remote-delta`)
     return delta
   }
   async gitFetch() {
