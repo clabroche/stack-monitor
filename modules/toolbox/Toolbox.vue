@@ -2,6 +2,7 @@
   <div class="toolbox">
     <div class="sidebar">
       <ul>
+        <input type="text" placeholder="Search tool..." v-model="searchToolTerm">
         <li v-for="plugin of buttonsPlugins" :key="plugin.name" class="sidebar-item"
           @click="plugin?.click?.()"
           :class="{ active: isActive(plugin) }">
@@ -32,6 +33,7 @@ import router from '@/router/router'
 
 import { onMounted, ref, computed } from 'vue'
 const plugins = ref([])
+const searchToolTerm = ref('')
 onMounted(async () => {
   const { data: _plugins } = await axios.get('/plugins/toolbox')
   plugins.value = _plugins?.flat() || []
@@ -53,7 +55,7 @@ const buttonsPlugins = computed(() => ([
         active: placement?.active
       }
     })
-  }).flat().filter(f => f),
+  }).flat().filter(f => f && f.text?.toUpperCase().includes(searchToolTerm?.value?.toUpperCase())),
 ]))
 
 function isActive(plugin) {
