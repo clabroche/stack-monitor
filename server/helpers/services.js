@@ -77,8 +77,16 @@ function launchProcess(microservice, spawnCmd, spawnArgs = [], spawnOptions = {}
   SpawnStore[microservice.label].push(spawnProcess)
   spawnProcess.title = microservice.label
   microservice.pids.push(spawnProcess.pid)
+  let lineNotFinished = ''
   const add = data => {
-    const line = data.toString()
+    let line = data.toString()
+    if (!line.endsWith('\n') && !line.endsWith('\r\n')) {
+      lineNotFinished += line
+      return
+    } else {
+      line = lineNotFinished + line
+      lineNotFinished = ''
+    }
     if (line) {
       microservice.store += line
       Socket.socket.emit('logs:update', { msg: line, label: microservice.label })
