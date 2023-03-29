@@ -99,6 +99,11 @@ class Service {
     return status
   }
 
+  async getDiff() {
+    const { data: diff } = await axios.get('/git/' + this.label + '/diff')
+    return diff
+  }
+
   async changeBranch(branchName) {
     await axios.post('/git/' + this.label + '/branch/' + encodeURIComponent(branchName) + '/change')
   }
@@ -163,6 +168,18 @@ class Service {
   }
   async getBugs() {
     const { data: bugs } = await axios.get('/bugs/' + this.label)
+    return bugs || []
+  }
+  static async getTokens(data) {
+    const { data: bugs } = await axios.post('/openai/tokenize', { data })
+    return bugs || []
+  }
+  static async reviewFromAi(data) {
+    const { data: bugs } = await axios.post('/openai/review', { data })
+    return bugs || []
+  }
+  static async findSolutionFromAi(data) {
+    const { data: bugs } = await axios.post('/openai/error', { data })
     return bugs || []
   }
 }

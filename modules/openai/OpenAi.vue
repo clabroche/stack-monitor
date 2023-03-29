@@ -123,13 +123,6 @@ $leftSize: 200px;
   height: 100vh;
   width: 100%;
   box-sizing: border-box;
-  h1 {
-    text-align: center;
-  }
-  h1, h2 {
-    margin-top: 0;
-    margin-bottom: 5px;
-  }
   .content {
     display: flex;
     gap: 10px;

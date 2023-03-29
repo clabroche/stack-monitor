@@ -6,7 +6,7 @@ const { Configuration, OpenAIApi } = require('openai');
 const { existsSync, mkdirSync } = require('fs');
 const homedir = require('os').homedir();
 const confDir = pathfs.resolve(homedir, '.stack-monitor')
-
+const { encode } = require('gpt-3-encoder')
 if (!existsSync(confDir)) mkdirSync(confDir)
 const openaiConfPath = pathfs.resolve(confDir, 'openaiconf.json')
 if(!fse.existsSync(openaiConfPath)) fse.writeJSONSync(openaiConfPath, {})
@@ -25,6 +25,47 @@ router.get('/models', async (req, res) => {
 
   })
   res.json(models.data)
+})
+
+router.post('/tokenize', async (req, res) => {
+  const encoded = encode(req.body.data)
+  res.json({
+    nbTokens: encoded.length,
+    price: encoded.length * 0.002 / 1000
+  })
+})
+
+router.post('/review', async (req, res) => {
+  const { data: result } = await openai.createChatCompletion({
+    model: "gpt-3.5-turbo",
+    temperature: 0,
+    n: 1,
+    max_tokens: Infinity,
+    messages: [
+      { "role": "system", "content": `You are a developer for 10 years. You are expert in git and you should write a commit. I gave you a git diff after. Write me a resume of this diff and write me a commit for this diff in this format: "<fix|feat|major>: <your message not exceeding 60 characters>"` },
+      { "role": "assistant", "content": req.body.data },
+    ]
+  }).catch(err => {
+    console.error(err.response.data)
+    return Promise.reject(err)
+  });
+  res.json(result.choices[0]?.message?.content || 'Cannot respond')
+})
+router.post('/error', async (req, res) => {
+  const { data: result } = await openai.createChatCompletion({
+    model: "gpt-3.5-turbo",
+    temperature: 0,
+    n: 1,
+    max_tokens: Infinity,
+    messages: [
+      { "role": "system", "content": `You are a developer for 20 years. You are expert in it and you should find a solution to this following error. Resume the following error and try to fix it` },
+      { "role": "assistant", "content": req.body.data },
+    ]
+  }).catch(err => {
+    console.error(err.response.data)
+    return Promise.reject(err)
+  });
+  res.json(result.choices[0]?.message?.content || 'Cannot respond')
 })
 
 router.post('/chat/:room', async (req, res) => {

@@ -52,6 +52,11 @@ router.get('/:service/status', async function (req, res) {
   if (!service?.spawnOptions?.cwd) return res.json([])
   res.json(await getStatus(service))
 })
+router.get('/:service/diff', async function (req, res) {
+  const service = findService(req.params.service)
+  if (!service?.spawnOptions?.cwd) return res.json([])
+  res.json(await execAsync(`git diff --minimal`, { cwd: service.spawnOptions.cwd }))
+})
 
 router.post('/:service/branch/:branchName/change', async function (req, res) {
   try {

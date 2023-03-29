@@ -18,7 +18,7 @@
           <div v-if="showRaw" class="raw"> 
             <pre v-html="raw"></pre>
           </div>
-          <json-viewer v-else :value="json" :copyable="true" :expand-depth="1" :show-double-quotes="true"/>
+          <json-viewer v-else :value="json" :copyable="true" :expand-depth="6" :show-double-quotes="true"/>
         </div>
       </div>
     </section-cmp>
@@ -27,13 +27,15 @@
 
 <script setup>
 import SectionCmp from '@/components/Section.vue'
+import router from '@/router/router'
 import { ref, watchEffect } from 'vue'
 import JsonViewer from 'vue-json-viewer'
 
+const initialJSON = router.currentRoute.value.query.json
 const showRaw = ref(false)
 const json = ref({})
 const raw = ref('')
-const code = ref(`{}`)
+const code = ref(initialJSON || `{}`)
 const isValid = ref(true)
 
 watchEffect(() => {
@@ -51,7 +53,6 @@ watchEffect(() => {
 .json-root,.section-content {
   display: flex;
   flex-direction: column;
-  align-items: center;
   width: 100%;
 }
 .section-content {

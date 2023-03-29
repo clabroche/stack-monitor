@@ -6,7 +6,7 @@ const socketId = v4()
 const pathfs = require('path');
 const { mkdirSync, existsSync } = require("fs");
 const fse = require('fs-extra')
-const { spawn, execSync } = require('child_process')
+const { spawn } = require('child_process')
 
 const homedir = require('os').homedir();
 const confDir = pathfs.resolve(homedir, '.stack-monitor')

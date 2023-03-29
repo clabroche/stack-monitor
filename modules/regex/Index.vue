@@ -3,7 +3,8 @@
     <h1>Regex</h1>
     <section-cmp>
       <div class="section-content">
-        <div>
+        <div class="editor-container">
+          Inert your regex:
           <input type="text" v-model="regexString" placeholder="Regex...">
           <Editor ref="monacoRef" style="height: 400px"
             v-model="code"
@@ -101,11 +102,19 @@ watchEffect(async () => {
 }
 .section-content {
   display: flex;
+  align-items: center;
   gap: 10px;
   height: calc(100vh - 100px);
-  input {
-    margin: 10px 0;
-    width: 100%;
+  .editor-container {
+    flex-grow: 0;
+    input {
+      margin: 0 0;
+      margin-bottom: 10px;
+      width: 100%;
+    }
+  }
+  input[type="checkbox"] {
+    width: auto;
   }
 }
 

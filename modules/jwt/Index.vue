@@ -44,7 +44,6 @@ watchEffect(async () => {
 .json-root,.section-content {
   display: flex;
   flex-direction: column;
-  align-items: center;
   width: 100%;
 }
 .section-content {

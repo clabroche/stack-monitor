@@ -78,6 +78,13 @@ export default {
 <style lang="scss">
 @import '~@fortawesome/fontawesome-free/css/all.min.css';
 @import './assets/fonts/Jost/Jost.css';
+pre {
+    white-space: pre-wrap;       /* Since CSS 2.1 */
+    white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+    white-space: -pre-wrap;      /* Opera 4-6 */
+    white-space: -o-pre-wrap;    /* Opera 7 */
+    word-wrap: break-word;       /* Internet Explorer 5.5+ */
+}
 /* width */
 ::-webkit-scrollbar {
   width: 5px;
@@ -178,6 +185,7 @@ input {
   display: flex;
   width: 100%;
   overflow: hidden;
+  min-height: 100%;
 }
 .not-connected {
   display: flex;

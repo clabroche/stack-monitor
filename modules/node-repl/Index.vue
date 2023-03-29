@@ -13,7 +13,7 @@
       </div>
       <div class="chat-container" v-if="room">
         <section-cmp header="Input">
-          <Editor v-model="code" language="javascript"></Editor>
+          <Editor v-model="code" language="javascript" style="height: 400px" @save="write"></Editor>
           <button @click="write()">Send</button>
         </section-cmp>
         <section-cmp header="Output">
@@ -142,13 +142,6 @@ $leftSize: 200px;
   box-sizing: border-box;
   display: flex;
   gap: 10px;
-  }
-  h1 {
-    text-align: center;
-  }
-  h1, h2 {
-    margin-top: 0;
-    margin-bottom: 5px;
   }
     .rooms {
       width: $leftSize;

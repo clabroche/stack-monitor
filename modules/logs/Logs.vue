@@ -42,7 +42,18 @@
             </div>
             <div class="jsons" ref="jsonsRef">
               <div v-for="json of jsonsToDisplay" :key="json">
-                <json-viewer :value="json" :copyable="true" :expand-depth="1" :show-double-quotes="true" />
+                <json-viewer :value="json" :copyable="true" :expand-depth="1" :show-double-quotes="true">
+                  <template #copy="{ copied }">
+                    <div v-if="copied">Copied</div>
+                    <div v-else>Copy</div>
+                    <router-link :to="{ name: 'JSONFormatter', query: { json: JSON.stringify(json) } }">
+                      Open in json-viewer
+                    </router-link>
+                    <div @click.stop="findSolution(json)">
+                      Find a solution
+                    </div>
+                  </template>
+                </json-viewer>
               </div>
             </div>
           </section-cmp>
@@ -54,7 +65,18 @@
             </div>
             <div class="jsons" ref="jsonsRef">
               <div v-for="json of jsonsSMToDisplay" :key="json">
-                <json-viewer :value="json" :copyable="true" :expand-depth="1" :show-double-quotes="true" />
+                <json-viewer :value="json" :copyable="true" :expand-depth="1" :show-double-quotes="true">
+                  <template #copy="{ copied }">
+                    <div v-if="copied">Copied</div>
+                    <div v-else>Copy</div>
+                    <router-link :to="{ name: 'JSONFormatter', query: { json: JSON.stringify(json) } }">
+                      Open in json-viewer
+                    </router-link>
+                    <div @click.stop="findSolution(json)">
+                      Find a solution
+                    </div>
+                  </template>
+                </json-viewer>
               </div>
             </div>
           </section-cmp>
@@ -68,11 +90,33 @@
       </div>
     </div>
   </div>
-  <section-cmp v-else header="Logs">
+  <section-cmp v-else>
     <div class="not-launch">
+      <i class="fas fa-ban"></i>
       Lancer le service pour voir les logs
     </div>
   </section-cmp>
+
+
+  <modal ref="findSolutionModal" cancelString="No" validateString="Yes">
+    <template #header>
+      Find solution from AI
+    </template>
+    <template #body="{data: tokens}">
+      Are you sure ? This have a cost of ~{{ tokens.price }}$
+    </template>
+  </modal>
+
+  <modal ref="findSolutionResultModal" cancelString="OK" :noValidate="true">
+    <template #header>
+      Find solution from AI
+    </template>
+    <template #body="{data: result}">
+      <pre>
+        {{result?.trim()}}
+      </pre>
+    </template>
+  </modal>
 </template>
 
 <script setup>
@@ -90,6 +134,8 @@ import jsonpath from 'jsonpath'
 import 'vue-json-viewer/style.css'
 import { computed, onMounted, ref, watch, watchEffect } from '@vue/runtime-core';
 import router from '@/router/router';
+import Modal from '@/components/Modal.vue'
+import Service from '@/models/service'
 const props = defineProps({
   service: { default: null },
   noStyle: { default: false },
@@ -109,10 +155,21 @@ const isOpen = ref(true)
 const isInclude = ref(false)
 const logs = ref('')
 const json = ref('')
+const findSolutionModal = ref()
+const findSolutionResultModal = ref()
 const lineToKeep = ref(router.currentRoute.value.query.lineToKeep || 120)
 watchEffect(() => {
   lineToKeep.value = router.currentRoute.value.query.lineToKeep || 120
 })
+
+async function findSolution(data) {
+  const tokens = await Service.getTokens(JSON.stringify(data))
+  const res = await findSolutionModal.value.open(tokens).promise
+  if (res) {
+    const review = await Service.findSolutionFromAi(JSON.stringify(data))
+    const res = await findSolutionResultModal.value.open(review).promise
+  }
+}
 
 watch(() => props.service?.enabled, async() => {
   if(props.service?.enabled && !terminal.value) {
@@ -328,9 +385,11 @@ async function scroll(force, customElement) {
 }
 .not-launch {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   font-size: 2em;
+  color: #777
 }
 .header {
   display: flex;
