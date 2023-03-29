@@ -42,8 +42,8 @@ process.on('message' , (cwd) => {
   const errorTypes = Object.keys(errCodeMapping).map(key => +key)
   const errorFilter = (result) =>
     errorTypes.includes(result.category) &&
-    !result.file.fileName.includes('node_modules') &&
-    !result.file.fileName.includes('.spec.')
+    !result.file?.fileName?.includes('node_modules') &&
+    !result.file?.fileName?.includes('.spec.')
   const results = ts.getPreEmitDiagnostics(typescriptProgram)
     .filter(errorFilter)
     .map(err => {

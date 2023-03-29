@@ -3,12 +3,7 @@
     <h1>JWT</h1>
     <section-cmp>
       <div class="section-content">
-        <vue-monaco-editor
-          v-model:value="code"
-          theme="vs-dark"
-          language="json"
-          height="calc(100vh - 200px)"
-        />
+        <editor v-model="code" language="json" style="height: calc(100vh - 200px)"></editor>
         <div class="json-viewer">
           <div>
             Show Raw

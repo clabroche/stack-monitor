@@ -22,7 +22,7 @@
                     {click: () => openInVsCode(service), icon: 'fas fa-file-code'},
                     {click: () => openFolder(service), icon: 'fas fa-folder'},
                   ]">
-                  <component :is="tab.id" :service="service" :key="service.label"  :noStyle="true"></component>
+                  <component :is="tab.id" :service="service" :key="service.label" :isInMultiMode="true"  :noStyle="true"></component>
                 </section-cmp>
               </template>
             </draggable>

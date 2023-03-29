@@ -1,5 +1,7 @@
 <template>
-  <div header="Logs" @is-open="isOpen = $event" :defaultIsOpen="isOpen">
+  <div header="Logs" @is-open="isOpen = $event" :defaultIsOpen="isOpen" v-if="service.enabled"
+    :style="{ maxHeight: isInMultiMode ? '400px' : 'inherit' }"
+  >
     <div class="header">
       <div class="input-container">
         <i class="fas fa-search"></i>
@@ -66,6 +68,11 @@
       </div>
     </div>
   </div>
+  <section-cmp v-else header="Logs">
+    <div class="not-launch">
+      Lancer le service pour voir les logs
+    </div>
+  </section-cmp>
 </template>
 
 <script setup>
@@ -86,6 +93,7 @@ import router from '@/router/router';
 const props = defineProps({
   service: { default: null },
   noStyle: { default: false },
+  isInMultiMode: {default: false}
 })
 const urlSearchParams = new URLSearchParams(window.location.search);
 const params = Object.fromEntries(urlSearchParams.entries());
@@ -104,6 +112,15 @@ const json = ref('')
 const lineToKeep = ref(router.currentRoute.value.query.lineToKeep || 120)
 watchEffect(() => {
   lineToKeep.value = router.currentRoute.value.query.lineToKeep || 120
+})
+
+watch(() => props.service?.enabled, async() => {
+  if(props.service?.enabled && !terminal.value) {
+    createTerminal()
+  } else if(props.service?.enabled) {
+    await new Promise(resolve => setTimeout(resolve, 10));
+    terminal.value.open(logsContainer.value);
+  }
 })
 const search = ref('')
 
@@ -154,6 +171,7 @@ const filter = debounce(filterWithoutDebounce, 300)
 onMounted(() => createTerminal())
 async function createTerminal() {
   await new Promise(resolve => setTimeout(resolve, 10));
+  if(!logsContainer.value) return
   if (!isOpen.value) return
   terminal.value = new Terminal({
     smoothScrollDuration: 100,
@@ -308,7 +326,12 @@ async function scroll(force, customElement) {
   width: 100%;
   position: relative;
 }
-
+.not-launch {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 2em;
+}
 .header {
   display: flex;
   flex-wrap: wrap;

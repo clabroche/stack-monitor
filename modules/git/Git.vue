@@ -30,6 +30,13 @@
       </div>
     </section-cmp>
   </div>
+  <section-cmp class="section-branches">
+    <div>
+      Afficher toutes les branches: 
+      <input type="checkbox" v-model="graphOnAll" @change="updateGraph">
+    </div>
+    <div ref="terminalRef"></div>
+  </section-cmp>
   <modal ref="reset-modal" cancelString="No" validateString="Yes">
     <template #header>
       Reset
@@ -61,6 +68,11 @@ import notification from '@/helpers/notification'
 import Service from '@/models/service'
 import ModalVue from '@/components/Modal.vue'
 import SectionVue from '@/components/Section.vue'
+// @ts-ignore
+import { Terminal } from 'xterm/lib/xterm';
+import { FitAddon } from 'xterm-addon-fit';
+import { CanvasAddon } from 'xterm-addon-canvas';
+
 export default {
   components: {
     sectionCmp: SectionVue,
@@ -83,12 +95,21 @@ export default {
     pullLabel() {
       if(!this.git.delta) return 'À jour' 
       return 'Pull ' + '(' + (this.git.delta || 0) + ')'
+    },
+    branchesGraph() {
+      if(this.graph) {
+        return this.graph.map(a => a)
+      }
+      return []
     }
   },
   data() {
     return {
       interval:null,
       longInterval:null,
+      graph: null,
+      terminal: null,
+      graphOnAll: false,
     }
   },
   async mounted() {
@@ -97,6 +118,31 @@ export default {
     this.gitFetch()
     this.interval = setInterval(() => this.service.updateGit(), 1000)
     this.longInterval = setInterval(() => this.gitFetch(), 1000 * 60)
+    const commandRef = this.$refs.terminalRef
+    this.$refs.terminalRef.innerHTML = ''
+    this.terminal = new Terminal({
+      smoothScrollDuration: 100,
+      experimentalCarAtlas: 'static',
+      fontFamily: 'MesloLGS NF, monospace',
+      convertEol: true,
+      disableStdin: true,
+      fontSize: 13,
+      allowTransparency: true,
+      minimumContrastRatio: 7,
+      theme: {
+        background: '#ffffff00',
+        foreground: '#4c4c4c',
+        selectionBackground: '#1d95db',
+        selectionForeground: 'white'
+      }
+    });
+    const fitAddon = new FitAddon();
+    this.terminal.loadAddon(fitAddon);
+    this.terminal.loadAddon(new CanvasAddon());
+    this.terminal.open(commandRef);
+    fitAddon.activate(this.terminal)
+    fitAddon.fit();
+    await this.updateGraph()
   },
   beforeUnmount() {
     clearInterval(this.interval)
@@ -110,6 +156,19 @@ export default {
     gitFetch() {
       this.service.gitFetch()
         .catch((err) => notification.next('error', err?.response?.data || err?.message || err))
+    },
+
+    async updateGraph() {
+      const graph = await this.service.getGraph(this.graphOnAll)
+        .catch((err) => notification.next('error', err?.response?.data || err?.message || err))
+      if(graph) {
+        this.terminal.clear()
+        this.terminal.writeln(graph.join('\n'))
+        setTimeout(() => {
+          this.terminal.scrollToTop()
+        });
+        // this.graph = graph
+      }
     },
     colorStatus(status) {
       status = status.trim()
@@ -135,24 +194,27 @@ export default {
           .catch(err=> notification.next('error', err.response.data))
         await this.service.updateGit()
       }
+      this.updateGraph()
     },
     async checkoutFile(fileStatus) {
       const file = fileStatus.split(' ').slice(1).join(' ')
       // @ts-ignore
       const res = await this.$refs['checkout-modal'].open(file).promise
       if(res) {
-        return this.service.checkoutFile(file)
+        await this.service.checkoutFile(file)
           .then(() => notification.next('success', `Changes on ${file} are deleted`))
           .catch(err=> notification.next('error', err.response.data))
+        await this.updateGraph()
       }
     },
     async reset() {
       // @ts-ignore
       const res = await this.$refs['reset-modal'].open().promise
       if(res) {
-        return this.service.reset()
+        await this.service.reset()
           .then(() => notification.next('success', `All changes are lost`))
           .catch(err=> notification.next('error', err.response.data))
+        await this.updateGraph()
       }
     },
     async stash() {
@@ -171,7 +233,8 @@ export default {
       await this.service.pull()
           .then(() => notification.next('success', `Branch is now up to date`))
         .catch(err=> notification.next('error', err.response.data))
-      return this.service.updateGit()
+      await this.service.updateGit()
+      await this.updateGraph()
     },
   }
 }

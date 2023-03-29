@@ -5,7 +5,9 @@
       <div class="section-content">
         <div>
           <input type="text" v-model="regexString" placeholder="Regex...">
-          <div ref="monacoRef" style="height:400px"></div>
+          <Editor ref="monacoRef" style="height: 400px"
+            v-model="code"
+          />
         </div>
         <div class="json-viewer">
           <div>
@@ -27,7 +29,6 @@ import SectionCmp from '@/components/Section.vue'
 import { onMounted, ref, shallowRef, watchEffect } from 'vue'
 import JsonViewer from 'vue-json-viewer'
 import axios from '@/helpers/axios'
-import * as monaco from 'monaco-editor';
 
 const showRaw = ref(false)
 const json = ref({})
@@ -36,30 +37,9 @@ const regexString = ref('.*')
 const code = ref(`Place your lines to test...`)
 
 const monacoRef = ref()
-/** @type {import('vue').ShallowRef<import('monaco-editor').editor.IStandaloneCodeEditor>} */
-let editor = shallowRef()
-
-onMounted(() => {
-  const _editor = monaco.editor.create(monacoRef.value, {
-    theme: 'vs-dark',
-    readOnly: false,
-    automaticLayout: true,
-    autoIndent: 'brackets',
-    formatOnPaste: true,
-    formatOnType: true,
-  })
-  _editor.setModel(monaco.editor.createModel('', 'text/plain'));
-  _editor.updateOptions({ readOnly: false });
-  _editor.setValue(code.value)
-  _editor.onDidChangeModelContent((model) => {
-    code.value = _editor.getValue()
-  })
-  
-  editor.value = _editor
-})
-
 let decorations = []
 watchEffect(async () => {
+  if(!monacoRef.value?.isReady) return
   decorations.forEach(d => d.clear())
   decorations = []
   try {
@@ -80,7 +60,7 @@ watchEffect(async () => {
       results.push(result)
       result.forEach(r => {
         r.indices.forEach((range, groupNumber) => {
-          const decoration = editor.value?.createDecorationsCollection([
+          const decoration = monacoRef.value?.editor?.createDecorationsCollection([
             {
               range: {
                 "startLineNumber": lineNumber+1,
