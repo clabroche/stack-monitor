@@ -1,7 +1,7 @@
 <template>
   <section-cmp
-    v-if="service" :key="service.label"
-    maxHeight="400px">
+    class="configs-root"
+    v-if="service" :key="service.label">
     <div class="header">
       <h2>Configuration</h2>
     </div>
@@ -213,6 +213,19 @@ export default {
       transform: translateX(-41px);
     }
   }
+}
+.configs-root {
+  width: 100%;
+  margin: auto;
+  height: calc(100vh - 300px);
+
+  @media (max-width: 1300px) { 
+    height: calc(100vh - 400px);
+  }
+  @media (max-width: 900px) { 
+    height: calc(100vh - 500px);
+  }
+  box-sizing: border-box;
 }
 .header {
   display: flex;

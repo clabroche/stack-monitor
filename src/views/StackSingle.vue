@@ -17,8 +17,12 @@
           </div>
         </div>
       </div>
-      <div class="sections" v-if="currentService.enabled">
-        <div class="system-cards">
+      <div class="sections" >
+        <div v-if="!currentService.enabled" class="sections">
+          <section-cmp header="This service is not started" :actions="[{ label: 'Start', click: () => start(), icon: 'fas fa-play' }]" class="section-not-started">
+          </section-cmp>
+        </div>
+        <div v-else class="system-cards">
           <card class="card">
             <h2>Memory</h2>
             <progress-cmp :percent="mem"></progress-cmp>
@@ -39,10 +43,6 @@
             </div>
           </template>
         </tabs>
-      </div>
-      <div v-else class="sections">
-        <section-cmp header="This service is not started" :actions="[{label: 'Start', click: () => start(), icon: 'fas fa-play'}]" class="section-not-started">
-        </section-cmp>
       </div>
     </div>
   </div>

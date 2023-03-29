@@ -1,8 +1,9 @@
 <template>
   <section-cmp
     v-if="service" :key="service.label"
-    header="Bugs"
-    maxHeight="400px"
+    :header="'Bugs(' + (bugs?.length || 0) + ')'"
+    class="bug-root"
+    :style="{maxHeight: isInMultiMode ? '400px' : 'inherit' }"
     :actions="[{label: 'Reload', icon: 'fas fa-sync', click: () => reload(), hidden: loading}]"
     >
     <div v-if="loading" class="loading">
@@ -36,6 +37,9 @@ export default {
       required: true,
       type: Service
     },
+    isInMultiMode: {
+      type: Boolean
+    }
   },
   setup(props) {
     const bugs = ref([])
@@ -77,6 +81,19 @@ export default {
   .spinner {
     margin-right: 10px;
   }
+}
+.bug-root {
+  width: 100%;
+  margin: auto;
+  height: calc(100vh - 300px);
+
+  @media (max-width: 1300px) { 
+    height: calc(100vh - 400px);
+  }
+  @media (max-width: 900px) { 
+    height: calc(100vh - 500px);
+  }
+  box-sizing: border-box;
 }
 .bug {
   margin-top: 10px;

@@ -10,6 +10,7 @@ router.get('/:service', async (req, res) => {
   const ts = fork(pathfs.resolve(__dirname, '..', '..', 'server', 'helpers', 'checkJsFork'))
   ts.on('message', results => {
     res.json(results)
+    ts.kill('SIGKILL')
   })
   ts.send(service.spawnOptions.cwd)
 })

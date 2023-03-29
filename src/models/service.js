@@ -110,6 +110,15 @@ class Service {
     await axios.post(`/git/${this.label}/fetch`)
   }
 
+  async getGraph(graphOnAll) {
+    const {data: graph} = await axios.get(`/git/${this.label}/graph`, {
+      params: {
+        graphOnAll
+      }
+    })
+    return graph
+  }
+
   async reset() {
     await axios.delete('/git/' + this.label + '/reset')
   }

@@ -13,14 +13,8 @@
       </div>
       <div class="chat-container" v-if="room">
         <section-cmp header="Input">
-            <vue-monaco-editor
-              v-model:value="code"
-              theme="vs-dark"
-              language="javascript"
-              :onMount="onMountEditor"
-              height="calc(100vh / 3)"
-            />
-            <button @click="write()">Send</button>
+          <Editor v-model="code" language="javascript"></Editor>
+          <button @click="write()">Send</button>
         </section-cmp>
         <section-cmp header="Output">
           <div ref="terminalRef"></div>
@@ -34,19 +28,27 @@
 import axios from '@/helpers/axios'
 import socket from '@/helpers/socket'
 import SectionCmp from '@/components/Section.vue'
-import { nextTick, onMounted, ref } from 'vue'
+import { nextTick, onMounted, ref, shallowRef } from 'vue'
 // @ts-ignore
 import { Terminal } from 'xterm/lib/xterm';
 import { FitAddon } from 'xterm-addon-fit';
+
+const defaultCode = `
+;(async () => {
+  // Code...
+})()
+  .then(console.log)
+  .catch(console.error)
+`
 
 const textareaRef = ref()
 const terminalRef = ref('')
 const rooms = ref([])
 const room = ref()
 const messages = ref({})
-const monacoRef = ref()
 let terminal = ref()
-const code = ref('// some code...')
+const code = ref(defaultCode)
+
 onMounted(async () => {
   socket.on('node-repl:update', ({ msg, clear }) => {
     if (clear) terminal.value.clear()
@@ -93,7 +95,7 @@ async function changeRoom(_room) {
   if(!_room) return
   room.value = _room
   messages.value = {}
-  code.value = '// Code....'
+  code.value = defaultCode
   await reload()
   await nextTick()
   const commandRef = terminalRef.value

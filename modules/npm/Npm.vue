@@ -30,7 +30,7 @@
         </div>
       </div>
     </section-cmp>
-    <section-cmp  :key="service.label" >
+    <section-cmp  :key="service.label" v-if="!isInMultiMode">
       <div class="categ" v-for="categ of ['dependencies','devDependencies'].filter(categ => packageJson[categ])" :key="categ" >
         <h2 class="dep-header">{{categ.charAt(0).toUpperCase() + categ.slice(1)}}</h2>
         <div class="dependecies">
@@ -101,6 +101,9 @@ export default {
       required: true,
       type: Service
     },
+    isInMultiMode: {
+      type: Boolean
+    }
   },
   setup(props) {
     const isNpm = ref(false)

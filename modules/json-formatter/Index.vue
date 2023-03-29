@@ -3,12 +3,10 @@
     <h1>JSON</h1>
     <section-cmp>
       <div class="section-content">
-        <vue-monaco-editor
-          v-model:value="code"
-          theme="vs-dark"
+        <editor
+          v-model="code"
           language="json"
-          :onMount="onMountEditor"
-          height="calc(100vh - 200px)"
+          style="height:calc(100vh - 200px)"
         />
         <div class="json-viewer">
           <div class="valid" v-if="isValid">Valid JSON</div>
