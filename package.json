@@ -1,6 +1,6 @@
 {
   "name": "@iryu54/stack-monitor",
-  "version": "1.9.1",
+  "version": "1.9.2",
   "description": "Monitor processes as a stack",
   "author": {
     "name": "clabroche",
