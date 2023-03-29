@@ -1,4 +1,5 @@
 <template>
+  <button @click="openReview">Review from AI</button>
   <div class="git-section" v-if="service.git">
     <section-cmp v-if="git.branches" class="section-branches"
       :key="service.label"
@@ -59,6 +60,25 @@
     </template>
     <template #body="{data:branchName}">
       Do you really want to change branch to "{{branchName}}" on this repository ?
+    </template>
+  </modal>
+  <modal ref="review-modal" cancelString="No" validateString="Yes">
+    <template #header>
+      Review from AI
+    </template>
+    <template #body="{data: tokens}">
+      Are you sure ? This have a cost of ~{{ tokens.price }}$
+    </template>
+  </modal>
+
+  <modal ref="review-result" cancelString="OK" :noValidate="true">
+    <template #header>
+      Review from AI
+    </template>
+    <template #body="{data: result}">
+      <pre>
+        {{result?.trim()}}
+      </pre>
     </template>
   </modal>
 </template>
@@ -215,6 +235,15 @@ export default {
           .then(() => notification.next('success', `All changes are lost`))
           .catch(err=> notification.next('error', err.response.data))
         await this.updateGraph()
+      }
+    },
+    async openReview() {
+      const diff = await this.service.getDiff()
+      const tokens = await Service.getTokens(diff)
+      const res = await this.$refs['review-modal'].open(tokens).promise
+      if (res) {
+        const review = await Service.reviewFromAi(diff)
+        const res = await this.$refs['review-result'].open(review).promise
       }
     },
     async stash() {

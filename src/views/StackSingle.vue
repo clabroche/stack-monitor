@@ -215,8 +215,8 @@ export default {
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
+  gap: 10px;
   .card {
-    margin-right: 10px;
     button {
       background: #0000003d;
       width: 100%;

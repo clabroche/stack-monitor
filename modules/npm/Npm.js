@@ -1,8 +1,7 @@
 const fse = require('fs-extra')
-const {spawn, execSync} = require('child_process')
+const {spawn} = require('child_process')
 const pathfs = require('path')
-const PromiseB = require('bluebird')
-const semver = require('semver')
+const { execAsync } = require('../../server/helpers/exec')
 
 function Npm(service) {
   this.service = service
@@ -34,16 +33,16 @@ Npm.prototype.packageLock = async function () {
 
 /**
  * 
- * @returns {Record<string, {
+ * @returns {Promise<Record<string, {
  *   "current": string,
  *   "wanted": string,
  *   "latest": string,
  *   "dependent": string,
  *   "location": string,
- * }>}
+ * }>>}
  */
 Npm.prototype.outdated = async function () {
-  const result = execSync('npm outdated --json || true', {encoding: 'utf-8', cwd: this.service?.spawnOptions?.cwd})
+  const result = await execAsync('npm outdated --json || true', {encoding: 'utf-8', cwd: this.service?.spawnOptions?.cwd})
   return JSON.parse(result)
 }
 

@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 module.exports = {
-  name: "JSON-formatter",
+  name: "JSONFormatter",
   icon: "fas fa-random",
   placements: [
     {

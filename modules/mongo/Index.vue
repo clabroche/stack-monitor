@@ -1,5 +1,6 @@
 <template>
   <div class="uuid-root">
+    <h1>MongoDB</h1>
     <section-cmp header="ObjectId">
       <div class="section-content">
         <h2>ObjectId('{{ uuid }}')</h2>
@@ -58,7 +59,9 @@ function decodeObjectId(objectId) {
 .uuid-root,.section-content {
   display: flex;
   flex-direction: column;
-  align-items: center;
   width: 100%;
+}
+.section-content {
+  align-items: center;
 }
 </style>

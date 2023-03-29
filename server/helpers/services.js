@@ -88,7 +88,7 @@ function launchProcess(microservice, spawnCmd, spawnArgs = [], spawnOptions = {}
       lineNotFinished = ''
     }
     if (line) {
-      microservice.store += line
+      microservice.store += line?.slice(0, 10000)
       Socket.socket.emit('logs:update', { msg: line, label: microservice.label })
     }
   }
