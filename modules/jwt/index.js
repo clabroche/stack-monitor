@@ -3,7 +3,7 @@ const router = express.Router();
 
 module.exports = {
   name: "JWT",
-  icon: "fas fa-random",
+  icon: "fas fa-key",
   placements: [
     {
       position: "toolbox",

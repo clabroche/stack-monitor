@@ -5,7 +5,10 @@
       :key="service.label"
       header="Branches"
       :noStyle="noStyle"
-      :actions="[{label: pullLabel, hidden: git.delta >= 0, click: () => pull(), icon: 'fas fa-download'}]">
+      :actions="[
+        { label: '', click: () => gitFetch(), icon: 'fas fa-sync' },
+        { label: pullLabel, hidden: git.delta != null && git.delta >= 0, click: () => pull(), icon: 'fas fa-download' }
+      ]">
       <ul class="branches">
         <li v-for="(branch, i) of git.branches" :key="'branch' +i" @click="changeBranch(branch)" :class="{active: branch.includes('*')}">
           {{branch.replace(/^\* /gm, '')}} <i class="fas fa-chevron-right"  aria-hidden="true"></i>
@@ -30,6 +33,9 @@
         <i class="fas fa-check" aria-hidden="true"></i>
       </div>
     </section-cmp>
+  </div>
+  <div class="loader" v-if="loader">
+    <i class="fas fa-spinner"></i>
   </div>
   <section-cmp class="section-branches">
     <div>
@@ -113,7 +119,7 @@ export default {
       return this.service.git
     },
     pullLabel() {
-      if(!this.git.delta) return 'À jour' 
+      if(this.git.delta == null) return 'Search...' 
       return 'Pull ' + '(' + (this.git.delta || 0) + ')'
     },
     branchesGraph() {
@@ -129,6 +135,7 @@ export default {
       longInterval:null,
       graph: null,
       terminal: null,
+      loader: false,
       graphOnAll: false,
     }
   },
@@ -173,9 +180,12 @@ export default {
       const path = line.trim().split(' ').slice(1).join(' ')
       this.service.openLinkInVsCode(path)
     },
-    gitFetch() {
-      this.service.gitFetch()
+    async gitFetch() {
+      this.service.git.delta = null
+      await this.service.gitFetch()
         .catch((err) => notification.next('error', err?.response?.data || err?.message || err))
+      const currentBranch = await this.service.getCurrentBranch()
+      this.service.git.delta = await this.service.gitRemoteDelta(currentBranch)
     },
 
     async updateGraph() {
@@ -205,16 +215,24 @@ export default {
       return status
     },
     async changeBranch(branchName) {
-      branchName = branchName.trim()
-      // @ts-ignore
-      const res = await this.$refs['branch-modal'].open(branchName).promise
-      if(res) {
-        await this.service.changeBranch(branchName)
-          .then(() => notification.next('success', `Branch is now on ${branchName}`))
-          .catch(err=> notification.next('error', err.response.data))
+      this.loader = true
+      try {
+        branchName = branchName.trim()
+        // @ts-ignore
+        const res = await this.$refs['branch-modal'].open(branchName).promise
+        if(res) {
+          await this.service.changeBranch(branchName)
+            .then(() => notification.next('success', `Branch is now on ${branchName}`))
+            .catch(err=> notification.next('error', err.response.data))
+        }
+        this.updateGraph()
+      } catch (error) {
+        
+      } finally {
+        this.loader = false
         await this.service.updateGit()
+        await this.gitFetch()
       }
-      this.updateGraph()
     },
     async checkoutFile(fileStatus) {
       const file = fileStatus.split(' ').slice(1).join(' ')
@@ -264,6 +282,7 @@ export default {
         .catch(err=> notification.next('error', err.response.data))
       await this.service.updateGit()
       await this.updateGraph()
+      await this.gitFetch()
     },
   }
 }
@@ -330,6 +349,30 @@ export default {
         }
       }
     }
+  }
+}
+.loader {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  z-index: 100000;
+  backdrop-filter: blur(10px);
+  i {
+    font-size: 50px;
+    animation: rotation 2s infinite linear;
+  }
+}
+@keyframes rotation {
+  0% {
+    transform: rotateZ(0);
+  }
+  100% {
+    transform: rotateZ(360deg);
   }
 }
 </style>
