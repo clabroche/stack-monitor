@@ -60,14 +60,14 @@ export default {
       watch(() => tabRef.value?.currentTab?.id , async ()=> {
         if(!tabRef.value?.currentTab?.id) return 
         services.value = await PromiseB.filter(stack.services, async service => {
-        const currentPlugin = tabRef.value.currentTab.id
-        if(!service.enabled) return 
-        const {data: plugins} = await axios.get('/plugins/services/'+ service.label)
-        const availablePlugins = plugins.map(a => a.name)
-        const plugin = availablePlugins.find(plugin => plugin === currentPlugin)
-        if(!plugin) return 
-        return !plugin.hidden
-      })
+          const currentPlugin = tabRef.value.currentTab.id
+          if(!service.enabled) return 
+          const {data: plugins} = await axios.get('/plugins/services/'+ service.label)
+          const availablePlugins = plugins.map(a => a.name)
+          const plugin = availablePlugins.find(plugin => plugin === currentPlugin)
+          if(!plugin) return 
+          return !plugin.hidden
+        })
       })
     })
     

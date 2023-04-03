@@ -17,6 +17,7 @@ class Service {
       branches: [],
       stash: [],
       delta: 0,
+      currentBranch: '',
       status: []
     }
     this.spawnCmd = service.spawnCmd || ''
@@ -30,11 +31,8 @@ class Service {
   }
   async updateGit() {
     this.git.branches = await this.getBranches()
+    this.git.currentBranch = await this.getCurrentBranch()
     this.git.status = await this.getStatus()
-    const branch = this.getCurrentBranch()
-    if (branch) {
-      this.git.delta = await this.gitRemoteDelta(branch)
-    }
     const list = await this.stashList()
     this.git.stash = list
   }

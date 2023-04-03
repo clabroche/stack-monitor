@@ -3,9 +3,11 @@
     <div class="background">
     </div>
     <div class="title" v-if="header || actions">
-      <div>
+      <div v-if="header">
         {{header}}
       </div>
+      <slot v-else name="header">
+      </slot>
       <div class="actions">
         <button
           @click="action.click()"

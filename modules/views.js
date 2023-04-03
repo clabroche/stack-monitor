@@ -1,5 +1,6 @@
 import LogsVue from './logs/Logs.vue'
 import GitVue from './git/Git.vue'
+import NotUpToDate from './git/NotUpToDate.vue'
 import NpmVue from './npm/Npm.vue'
 import BugsVue from './bugs/Bugs.vue'
 import ConfigsVue from './configuration/Configs.vue'
@@ -16,6 +17,7 @@ import JSONFormatter from "./json-formatter/Index.vue";
 
 const toolboxPlugins = [
   { name: 'JWT', component: JWT },
+  { name: 'Git-NotUpToDate', component: NotUpToDate },
   { name: 'Regex', component: Regex },
   { name: 'UUID', component: UUID },
   { name: 'JSONFormatter', component: JSONFormatter },

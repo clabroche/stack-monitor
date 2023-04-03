@@ -172,6 +172,16 @@ button.success {
   }
 }
 
+button[disabled] {
+  background: none;
+  color: #a1a1a1;
+  box-shadow: none;
+  border: 1px solid #a1a1a1;
+  &:hover {
+    box-shadow: none;
+  }
+}
+
 input {
   padding: 3px 5px;
   border-radius: 10px;

@@ -74,7 +74,7 @@ router.get('/:service/branch/:branchName/remote-delta', async function (req, res
     const service = findService(req.params.service)
     if (!service?.spawnOptions?.cwd) return res.json([])
     await execAsync(`git branch --set-upstream-to=origin/${req.params.branchName} ${req.params.branchName}`, { cwd: service.spawnOptions.cwd })
-    await execAsync(`git fetch`, { cwd: service.spawnOptions.cwd })
+    await execAsync(`git fetch origin ${req.params.branchName}`, { cwd: service.spawnOptions.cwd })
     const localCommit = await execAsync(`git log --oneline ${req.params.branchName}`, { cwd: service.spawnOptions.cwd })
     const remoteCommit = await execAsync(`git log --oneline origin/${req.params.branchName}`, { cwd: service.spawnOptions.cwd })
     const delta = localCommit.trim().split("\n").length - remoteCommit.trim().split("\n").length
@@ -110,7 +110,8 @@ router.post('/:service/pull', async function (req, res) {
     const service = findService(req.params.service)
     if (!service?.spawnOptions?.cwd) return res.json([])
     const origin = (await execAsync('git remote -v | grep fetch', { cwd: service.spawnOptions.cwd })).split('\t')[0]?.trim() || ''
-    const currentBranch = (await execAsync('git rev-parse --abbrev-ref HEAD'))?.trim()
+    const currentBranch = (await execAsync('git rev-parse --abbrev-ref HEAD', { cwd: service.spawnOptions.cwd }))?.trim()
+    console.log(currentBranch)
     await execAsync(`git pull ${origin} ${currentBranch}`, { cwd: service.spawnOptions.cwd })
     res.json('ok')
   } catch (error) {
@@ -180,7 +181,7 @@ async function getBranches(project) {
 
 async function getStatus(project) {
   return execAsyncWithoutErr('git status -s', { cwd: project.spawnOptions.cwd })
-    .then((res) => res.toString().trim().split('\n'))
+    .then((res) => res.toString().trim().split('\n')?.filter(a => a))
 }
 
 module.exports = router
