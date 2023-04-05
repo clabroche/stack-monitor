@@ -19,6 +19,7 @@ module.exports = {
       label: 'Server',
       description: 'This is the backend of an unbelievable project',
       groups: [groups.API],
+      documentation: path + '/documentation/server',
       git: {
         home: 'https://<an-awesome-url>',
         remote: 'git@github.com:<your-beautiful-profile>/<your-excellent-project>.git'
