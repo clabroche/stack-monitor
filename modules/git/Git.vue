@@ -310,8 +310,10 @@ export default {
   align-items: stretch;
   margin: auto;
   height: 100%;
-  max-height: 240px;
   gap: 10px;
+  &>* {
+    max-height: 240px;
+  }
   .check {
     display: flex;
     justify-content: center;
