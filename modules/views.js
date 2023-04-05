@@ -14,6 +14,7 @@ import NodeREPL from "./node-repl/Index.vue";
 import Diff from "./diff/Index.vue";
 import Regex from "./regex/Index.vue";
 import JSONFormatter from "./json-formatter/Index.vue";
+import Documentation from "./documentation/Index.vue";
 
 const toolboxPlugins = [
   { name: 'JWT', component: JWT },
@@ -50,6 +51,7 @@ export default [
   })),
   { name: "Logs", cmp: LogsVue },
   { name: "Git", cmp: GitVue },
+  { name: "Documentation", cmp: Documentation },
   { name: "Npm", cmp: NpmVue },
   { name: "Bugs", cmp: BugsVue },
   { name: "Configuration", cmp: ConfigsVue },
