@@ -88,7 +88,7 @@ onBeforeUnmount(() => clearInterval(interval))
   display: flex;
   flex-direction: column;
   width: 100%;
-  height: calc(100vh - 120px);
+  height: calc(100vh - 200px);
   background: white;
 
   border-top-left-radius: 50px;

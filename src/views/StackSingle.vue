@@ -32,7 +32,7 @@
             <progress-cmp :percent="cpu"></progress-cmp>
           </card>
           <card class="card orange">
-            <button @click="restart()"><i class="fas fa-sync" aria-hidden="true"></i> Restart</button>
+            <button @click="restart()" :disabled="restartInProgress"><i class="fas fa-sync" aria-hidden="true" :class="{rotate: restartInProgress}"></i> Restart</button>
             <button @click="stop()"><i class="fas fa-stop" aria-hidden="true"></i> Stop</button>
           </card>
         </div>
@@ -76,16 +76,19 @@ export default {
     const currentService = ref()
     const cpu = ref(0)
     const mem = ref(0)
+    const restartInProgress = ref(false)
     watch(() => router.currentRoute.value.params.label, async () => {
       reload()
     })
     let interval
     const tabs = ref([])
+
     async function reload() {
       currentService.value = await Stack.getService(router.currentRoute.value.params.label)
       const {data: services} = await axios.get('/plugins/services/' + currentService.value.label)
       tabs.value = services.sort((a,b) =>a.order - b.order).map(service => ({label: service.name, id: service.name, icon:service.icon, hidden: service.hidden}))
     }
+
     onMounted(async () => {
       await reload()
       interval = setInterval(async () => {
@@ -97,16 +100,13 @@ export default {
     onBeforeUnmount(()=> {
       clearInterval(interval)
     })
-
-    onMounted(async () => {
-      
-    } )
     return {
       stack,
       System,
       currentService,
       cpu, mem,
       tabs,
+      restartInProgress,
       async openInVsCode() {
         currentService.value .openInVsCode()
       },
@@ -114,7 +114,9 @@ export default {
         currentService.value .openFolder()
       },
       async restart() {
+        restartInProgress.value = true
         await currentService.value .restart()
+          .finally(() => restartInProgress.value = false)
         Stack.services = [...Stack.services]
       },
       async stop() {
@@ -240,6 +242,18 @@ export default {
   margin-top: 20px;
   .tab {
     transform: translateZ(0);
+  }
+}
+
+.rotate {
+  animation: rotation 2s infinite;
+}
+@keyframes rotation {
+  0% {
+    transform: rotateZ(0);
+  }
+  100% {
+    transform: rotateZ(360deg);
   }
 }
 </style>
