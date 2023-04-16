@@ -1,7 +1,5 @@
 process.title = "stack-monitor"
 const ports = require('../models/ports');
-// const ViteExpress = require("vite-express");
-ports.cleanHtml()
 const app = require('../app');
 const http = require('http');
 const table = require('../helpers/console.table');
