@@ -20,10 +20,13 @@
   "main": "./background.js",
   "files": [
     "server/**/*",
+    "typings/**/*",
     "modules/**/*",
     ".env.production",
     "package.json"
   ],
+  "typings": "./typings/index.d.ts",
+  "types": "./typings/index.d.ts",
   "dependencies": {
     "@guolao/vue-monaco-editor": "^1.1.2",
     "bluebird": "^3.7.2",
