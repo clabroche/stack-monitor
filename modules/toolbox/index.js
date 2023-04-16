@@ -1,4 +1,5 @@
-module.exports = {
+/** @type {import('../views').PluginSM} */
+const plugin = {
   name: 'Toolbox',
   icon: 'fas fa-plus',
   placements: [{
@@ -10,3 +11,4 @@ module.exports = {
   }],
   order: 6,
 }
+module.exports = plugin

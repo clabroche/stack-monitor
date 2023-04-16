@@ -6,7 +6,7 @@
       </template>
       <template #body>
         <div class="notifications">
-          <notification v-for="notif of notifs" :key="notif.id" width="100%" :notif="notif" @click="remove(notif)">
+          <notification v-for="notif of notifs" :key="notif.id" width="100%" :notif="notif" @click="remove(notif)" :nolimit="true">
           </notification>
         </div>
       </template>
@@ -26,12 +26,17 @@ export default {
     const modal = ref(null) 
     onMounted(() => {
       notification.openHistory.subscribe(() => {
-        modal.value.open()
+        // @ts-ignore
+        modal.value?.open()
       })
     })
     const notifs = ref(notification.notifsHistory.value)
     return {
       notifs,
+      /**
+       * 
+       * @param {import('../helpers/notification').Notif} notif 
+       */
       remove(notif) {
         notification.removeHistory(notif, true)
       },

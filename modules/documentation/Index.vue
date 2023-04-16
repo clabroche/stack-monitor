@@ -19,7 +19,9 @@ import Service from '@/models/service'
 import SectionCmp from '@/components/Section.vue'
 import axios from '@/helpers/axios'
 import { onMounted, ref } from 'vue'
+// @ts-ignore
 import Tree from './Tree.vue'
+// @ts-ignore
 import Markdown from 'vue3-markdown-it'
 
 const props = defineProps({
@@ -30,8 +32,10 @@ const props = defineProps({
   },
 })
 
+/** @type {import('vue').Ref<Leaf[]>} */
 const tree = ref([])
 const currentPage = ref(null)
+/** @type {import('vue').Ref<Leaf | null>} */
 const activeLeaf = ref(null)
 
 onMounted(async () => {
@@ -45,12 +49,18 @@ onMounted(async () => {
   }
 })
 
+/** @param {Leaf} leaf */
 async function goTo(leaf) {
   activeLeaf.value = leaf
   currentPage.value = null
   const { data } = await axios.get(`/documentation/service/${props.service.label}/${encodeURIComponent(leaf.path)}`)
   currentPage.value = data
 }
+
+
+/**
+ * @typedef {import('./index').Leaf} Leaf
+ */
 </script>
 <style lang="scss" scoped>
 h2 {
@@ -59,13 +69,13 @@ h2 {
 .container {
   width: 100%;
   margin: auto;
-  height: calc(100vh - 400px);
+  height: calc(100vh - 400px - 40px);
 
   @media (max-width: 1300px) { 
-    height: calc(100vh - 500px);
+    height: calc(100vh - 500px - 40px);
   }
   @media (max-width: 800px) { 
-    height: calc(100vh - 650px);
+    height: calc(100vh - 650px - 40px);
   }
   box-sizing: border-box;
 }

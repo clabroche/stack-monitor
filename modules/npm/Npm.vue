@@ -81,7 +81,7 @@
 </template>
 
 <script>
-import socket from '@/helpers/socket'
+import Socket from '@/helpers/Socket'
 import Service from '@/models/service'
 import SectionVue from '@/components/Section.vue'
 // @ts-ignore
@@ -96,7 +96,7 @@ export default {
   },
   props: {
     service: {
-      /** @type {import('@/models/service').default}*/
+      /** @type {import('@/models/service').default | null}*/
       default: null,
       required: true,
       type: Service
@@ -107,9 +107,13 @@ export default {
   },
   setup(props) {
     const isNpm = ref(false)
+    /** @type {import('vue').Ref<Record<string, any> | null>} */
     const packageJson = ref(null)
+    /** @type {import('vue').Ref<import('./index').Outdated | null>} */
     const outdated = ref(null)
+    /** @type {Record<string, boolean>} */
     const launched = reactive({})
+    /** @type {import('vue').Ref<Record<string, Array<HTMLElement> | HTMLElement>>} */
     const refs = ref({})
     const reload = async () => {
       if(props.service) {
@@ -126,9 +130,11 @@ export default {
       outdated,
       launched,
       refs,
+      /** @param {string} command */
       async run(command) {
         if(props.service) {
-          const commandRef = refs.value[command][0] ? refs.value[command][0] : refs.value[command]
+          // @ts-ignore
+          const commandRef = Array.isArray(refs.value[command]) ? refs.value[command][0] : refs.value[command]
           commandRef.innerHTML = ''
           const socketId = await props.service.runNpmCommand(command)
           const terminal = new Terminal({
@@ -146,7 +152,7 @@ export default {
           fitAddon.activate(terminal)
           fitAddon.fit();
           launched[command] = true
-          socket.on(socketId, ({msg}) => {
+          Socket.socket.on(socketId, /**@param {{msg: string}} param0*/({msg}) => {
             launched[command] = true
             if(msg.trim() === '!:;end') {
               launched[command] = false

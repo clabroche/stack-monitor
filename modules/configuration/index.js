@@ -1,9 +1,8 @@
-const express = require('express');
-const router = express.Router();
-
-module.exports = {
+/** @type {import('../views').PluginSM} */
+const plugin = {
   name: 'Configuration',
   icon: 'fas fa-cog',
   placements: ['service'],
   order: 5,
 }
+module.exports = plugin

@@ -3,7 +3,7 @@ const fse = require('fs-extra')
 const ts = require('typescript')
 const { existsSync } = require('fs')
 
-process.on('message' , (cwd) => {
+process.on('message' , (/**@type {string}*/cwd) => {
   const tsConfigPath = pathfs.resolve(cwd, 'tsconfig.json')
   const jsConfigPath = pathfs.resolve(cwd, 'jsconfig.json')
   let configPath = pathfs.resolve(__dirname, 'defaultJsConfig.json');
@@ -40,18 +40,21 @@ process.on('message' , (cwd) => {
     [ts.DiagnosticCategory.Suggestion]: 'info'
   }
   const errorTypes = Object.keys(errCodeMapping).map(key => +key)
-  const errorFilter = (result) =>
+  const errorFilter = (/**@type {ts.Diagnostic}*/result) =>
     errorTypes.includes(result.category) &&
     !result.file?.fileName?.includes('node_modules') &&
     !result.file?.fileName?.includes('.spec.')
   const results = ts.getPreEmitDiagnostics(typescriptProgram)
     .filter(errorFilter)
     .map(err => {
-      const lines = err.file.text.substring(0, err.start).split('\n')
+      if(!err.file) return
+      const start = err.start || 0
+      const lines = err.file.text.substring(0, start).split('\n')
       const line = lines.length
-      const column = err.start - lines.slice(0, lines.length - 1).join().length
+      const column = start - lines.slice(0, lines.length - 1).join().length
       return {
         code: err.code,
+        // @ts-ignore
         category: errCodeMapping[err.category],
         fileName: err.file.fileName.replace(cwd, ''),
         line, column,
@@ -61,5 +64,6 @@ process.on('message' , (cwd) => {
           : err.messageText.messageText
       }
     })
-  process.send(results)
+    .filter(a => a)
+  process.send?.(results)
 })

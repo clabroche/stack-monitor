@@ -7,7 +7,7 @@
     <h2><i class="fas fa-chevron-right" aria-hidden="true"></i></h2>
   </template>
   <div class="messages">
-    <div class="message" v-for="msg of notif?.msgs" :key="msg.label" :class="{glow: notif?.msgs?.length > 1, hover: msg.hover}">
+    <div class="message" v-for="msg of notif?.msgs" :key="msg.label" :class="{glow: notif?.msgs?.length > 1, oneline: !nolimit}">
       {{msg.label}}
       <label class="badge" v-if="notif.msgs.length > 1  && msg?.nb > 1">{{msg?.nb}}</label>
     </div>
@@ -16,18 +16,15 @@
 </div>
 </template>
 
-<script>
-export default {
-  props: {
-    width: {default: '420px'},
-    notif: {default: null}
+<script setup>
+defineProps({
+  width: {default: '420px'},
+  notif: { 
+    /** @type {import('../helpers/notification').Notif | null} */
+    default: null
   },
-  setup() {
-    return {
-      
-    }
-  }
-}
+  nolimit: {default: false}
+})
 </script>
 
 <style lang="scss" scoped>
@@ -59,11 +56,13 @@ export default {
     display: flex;
     flex-direction: column;
     .message {
-      overflow: hidden;
-      text-overflow: ellipsis;
-      display: -webkit-box;
-      -webkit-line-clamp: 1;
-      -webkit-box-orient: vertical;
+      &.oneline {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 1;
+        -webkit-box-orient: vertical;
+      }
       position: relative;
       flex-shrink: 0;
     }

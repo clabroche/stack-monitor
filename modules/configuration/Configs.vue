@@ -102,7 +102,7 @@ export default {
   },
   props: {
     service: {
-      /** @type {import('@/models/service').default}*/
+      /** @type {import('@/models/service').default | null}*/
       default: null,
       required: true,
       type: Service
@@ -111,7 +111,7 @@ export default {
   setup(props) {
     return {
       exportEnv() {
-        const envObject = props.service.spawnOptions.env || {}
+        const envObject = props.service.spawnOptions?.env || {}
         const envString = Object.keys(envObject).map(key => `${key}=${envObject[key]}`).join('\n')
         const element = document.createElement('a');
         element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(envString));
@@ -217,13 +217,13 @@ export default {
 .configs-root {
   width: 100%;
   margin: auto;
-  height: calc(100vh - 300px);
+  height: calc(100vh - 300px - 40px);
 
   @media (max-width: 1300px) { 
-    height: calc(100vh - 400px);
+    height: calc(100vh - 400px - 40px);
   }
   @media (max-width: 900px) { 
-    height: calc(100vh - 500px);
+    height: calc(100vh - 500px - 40px);
   }
   box-sizing: border-box;
 }

@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express.Router();
 
-module.exports = {
+/** @type {import('../views').PluginSM} */
+const plugin = {
   name: "OpenAI",
   icon: "fas fa-brain",
   placements: [
@@ -16,3 +17,15 @@ module.exports = {
   order: 6,
   routes: router.use("/openai", require("./routes")),
 };
+module.exports = plugin
+
+/**
+ * @typedef {Partial<
+ * import('openai').ChatCompletionResponseMessage &
+ * import('openai').CreateCompletionResponseUsage &
+ * {
+ *  created_at: string,
+ * _id: string
+ * }
+ * >} OpenAiChat
+ */

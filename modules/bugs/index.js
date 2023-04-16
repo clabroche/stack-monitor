@@ -3,7 +3,8 @@ const router = express.Router();
 const fse = require('fs-extra')
 const pathfs = require('path')
 
-module.exports = {
+/** @type {import('../views').PluginSM} */
+const plugin = {
   name: 'Bugs',
   icon: 'fas fa-bug',
   placements: ['service'],
@@ -14,10 +15,12 @@ module.exports = {
   },
   routes: router.use('/bugs', require('./routes'))
 }
+module.exports = plugin
 
+/** @param {import('../../server/models/Service')} service*/
 async function isNpm (service) {
   const path = service?.spawnOptions?.cwd
   return path 
-    ? fse.existsSync(pathfs.resolve(path, 'package.json'))
+    ? fse.existsSync(pathfs.resolve(path?.toString(), 'package.json'))
     : false
 }

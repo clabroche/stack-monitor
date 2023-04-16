@@ -31,14 +31,14 @@ router.get('/:service/run/:command', async function (req, res) {
   const npm = new Npm(service)
   const uuid = `npm:${v4()}`
   const process = await npm.run(req.params.command)
-  process.stdout.on('data', msg => {
-    Socket.socket.emit(uuid, { msg: msg.toString(), label: service.label })
+  process?.stdout?.on('data', msg => {
+    Socket.io?.emit(uuid, { msg: msg.toString(), label: service.label })
   })
-  process.stderr.on('data', msg => {
-    Socket.socket.emit(uuid, { msg: msg.toString(), label: service.label, error: true })
+  process?.stderr?.on('data', msg => {
+    Socket.io?.emit(uuid, { msg: msg.toString(), label: service.label, error: true })
   })
-  process.on('close', (code) => {
-    Socket.socket.emit(uuid, { msg: '!:;end', label: service.label, error: code !== 0 })
+  process?.on('close', (code) => {
+    Socket.io?.emit(uuid, { msg: '!:;end', label: service.label, error: code !== 0 })
   });
 
   res.json(uuid)

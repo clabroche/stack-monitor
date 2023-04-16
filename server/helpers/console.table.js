@@ -1,6 +1,7 @@
 const { Transform } = require('stream');
 const { Console } = require('console');
 
+/** @param {Record<string, string | number>[]} input */
 function table(input) {
   // @see https://stackoverflow.com/a/67859384
   const ts = new Transform({ transform(chunk, enc, cb) { cb(null, chunk) } })

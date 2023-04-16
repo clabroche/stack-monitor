@@ -46,7 +46,9 @@ export default {
   ],
   data() {
     return {
+      /** @type {((...args: any[]) => any) | null} */
       resolve: null,
+      /** @type {Subject | null} */
       result: null,
       uuid: uuid(),
       data: null,
@@ -70,7 +72,8 @@ export default {
         this.close(this.value || true)
       }
     },
-    close(data) {
+    /** @param {*} data */
+    close(data = null) {
       this.isOpen = false
       if (this.result) {
         this.result.next(data)
@@ -82,10 +85,12 @@ export default {
         this.resolve(data)
       }
     },
-    open(data) {
+    /** @param {*} data */
+    open(data = null) {
       this.isOpen = true
       this.data = data
       this.result = new Subject()
+      // @ts-ignore
       this.result.promise = new Promise((resolve) => {
         this.resolve = resolve
       });

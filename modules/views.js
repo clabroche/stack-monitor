@@ -35,7 +35,12 @@ const toolboxPlugins = [
   ] },
 ]
 
-export default [
+/** 
+ * @type {{
+ *  name: string, cmp: import('vue').Component, routes?: import('vue-router').RouteRecordRaw[]
+ * }[]}
+ * */
+const plugins = [
   { name: "DynamicComponent", cmp: DynamicComponent },
   ...toolboxPlugins.map(({name, component, children}) => ({
     name,
@@ -56,3 +61,23 @@ export default [
   { name: "Bugs", cmp: BugsVue },
   { name: "Configuration", cmp: ConfigsVue },
 ];
+export default plugins
+
+
+/**
+ * @typedef {{
+ *  name: string,
+ *  icon?: string,
+ *  order?: number,
+ *  hidden?: (service: import('../server/models/Service')) => Promise<boolean> | boolean,
+ *  routes?: import('express').Router,
+ *  placements: ({
+ *    label: string,
+ *    position?: 'toolbox' | 'sidebar',
+ *    icon?: string,
+ *    iconText?: string,
+ *    goTo?: import('vue-router').RouteLocationRaw | string,
+ *    active: string
+ *  } | string)[]
+ * }} PluginSM
+ */

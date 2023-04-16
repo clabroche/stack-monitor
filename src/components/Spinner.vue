@@ -9,18 +9,16 @@
   ></div>
 </template>
 
-<script>
-export default {
-  props: {
-    display: {
-      type: Boolean,
-      default: true,
-    },
-    size: {
-      default: "70",
-    },
+<script setup>
+defineProps({
+  display: {
+    type: Boolean,
+    default: true,
   },
-};
+  size: {
+    default: "70",
+  },
+})
 </script>
 <style lang="scss">
 .spinner {
@@ -62,7 +60,7 @@ export default {
 </style>
 <style scoped lang="scss">
 .spinner {
-  border: 3px solid #194f91;
+  border: 3px solid #0076bc;
   width: 70px;
   height: 70px;
   box-sizing: border-box;
@@ -85,7 +83,7 @@ export default {
     animation-duration: 0.8s;
     animation-fill-mode: forwards;
     animation-iteration-count: infinite;
-    background-color: #194f91;
+    background-color: #0076bc;
     position: absolute;
     border-radius: 100%;
   }
@@ -94,7 +92,7 @@ export default {
     content: " ";
     width: 30%;
     height: 30%;
-    background-color: #194f91;
+    background-color: #0076bc;
     position: absolute;
     border-radius: 100%;
   }

@@ -3,7 +3,8 @@
     <h1>{{ room }}</h1>
     <div class="content">
       <div class="rooms">
-        <input type="text" placeholder="New room..." :style="{ width: '100%' }" @change="newRoom($event.target.value, $event)">
+        <input type="text" placeholder="New room..." :style="{ width: '100%' }" @change="// @ts-ignore
+                                                                                          newRoom($event.target?.value, $event)">
         <div class="room" :class="{ active: room === _room }" v-for="_room of rooms" :key="_room" @click="changeRoom(_room)">
           <div>{{ _room }}</div>
           <button class="small" @click.stop="deleteRoom(_room)">
@@ -26,9 +27,9 @@
 
 <script setup>
 import axios from '@/helpers/axios'
-import socket from '@/helpers/socket'
+import Socket from '@/helpers/Socket'
 import SectionCmp from '@/components/Section.vue'
-import { nextTick, onMounted, ref, shallowRef } from 'vue'
+import { nextTick, onMounted, ref } from 'vue'
 // @ts-ignore
 import { Terminal } from 'xterm/lib/xterm';
 import { FitAddon } from 'xterm-addon-fit';
@@ -41,28 +42,30 @@ const defaultCode = `
   .catch(console.error)
 `
 
-const textareaRef = ref()
-const terminalRef = ref('')
+/** @type {import('vue').Ref<HTMLElement | undefined>} */
+const terminalRef = ref()
+/** @type {import('vue').Ref<string[]>} */
 const rooms = ref([])
-const room = ref()
+/** @type {import('vue').Ref<Room>} */
+const room = ref('')
+/** @type {import('vue').Ref<{result?: string}>} */
 const messages = ref({})
 let terminal = ref()
 const code = ref(defaultCode)
 
 onMounted(async () => {
-  socket.on('node-repl:update', ({ msg, clear }) => {
+  Socket.socket.on('node-repl:update', ({ msg, clear }) => {
     if (clear) terminal.value.clear()
     if (!msg) return
-    msg.trim().split('\n').filter(a => a).map(line => {
-      terminal.value.writeln(line)
-    })
+    msg.trim().split('\n')
+      .filter((/**@type {string}*/a) => a)
+      .map((/**@type {string}*/line) => {
+        terminal.value.writeln(line)
+      })
   })
   reload()
 })
 
-async function writeIfCtrl(ev) {
-  if(ev.ctrlKey) write()
-}
 async function write() {
   await axios.post(`/node-repl/chat/${room.value}`, {
     script: code.value
@@ -79,18 +82,27 @@ async function reload() {
   messages.value = _room
   if(_room.script) code.value = _room.script
 }
+
+/** @param {Room} _room */
 async function deleteRoom(_room) {
   await axios.delete(`/node-repl/rooms/${_room}`)
   await reload()
 }
 
+/**
+ * 
+ * @param {Room} room 
+ * @param {Event} $event 
+ */
 async function newRoom(room, $event) {
   await axios.post('/node-repl/rooms', { room })
   await reload()
+  // @ts-ignore
   if ($event) $event.target.value = ''
   await changeRoom(room)
 }
 
+/** @param {Room} _room */
 async function changeRoom(_room) {
   if(!_room) return
   room.value = _room
@@ -99,7 +111,7 @@ async function changeRoom(_room) {
   await reload()
   await nextTick()
   const commandRef = terminalRef.value
-  terminalRef.value.innerHTML = ''
+  if(terminalRef.value) terminalRef.value.innerHTML = ''
   terminal.value = new Terminal({
     experimentalCharAtlas: 'static',
     convertEol: true,
@@ -122,7 +134,9 @@ async function changeRoom(_room) {
     })
   }
 }
-
+/**
+ * @typedef {{}} Room 
+ */
 </script>
 
 <style scoped lang="scss">
@@ -135,7 +149,7 @@ $leftSize: 200px;
   display: flex;
   flex-direction: column;
   gap: 10px;
-  height: 100vh;
+  height: 100%;
   width: 100%;
   .content {
 

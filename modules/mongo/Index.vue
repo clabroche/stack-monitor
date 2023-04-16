@@ -12,7 +12,7 @@
     </section-cmp>
     <section-cmp header="Decode ObjectId">
       <div class="section-content">
-        <h2>{{ decodedObjectId.date?.format?.('YYYY-MM-DD hh:mm:ss') }}</h2>
+        <h2>{{ decodedObjectId?.date?.format?.('YYYY-MM-DD hh:mm:ss') }}</h2>
         <input type="text" v-model="uuid">
       </div>
     </section-cmp>
@@ -31,10 +31,14 @@ import {ref, onMounted, watchEffect } from 'vue'
 import dayjs from 'dayjs'
 
 const uuid = ref()
+/** @type {import('vue').Ref<{date: import('dayjs').Dayjs} | null>} */
 const decodedObjectId = ref(null)
+/** @type {import('vue').Ref<string | null>} */
 const date = ref(null)
 
+/** @param {string} objectId */
 const dateFromObjectId = (objectId) => (dayjs(parseInt(objectId.substring(0, 8), 16) * 1000))
+/** @param {Date} date */
 const objectIdFromDate = (date) => (Math.floor(date.getTime() / 1000).toString(16) + "0000000000000000")
 
 onMounted(generate)
@@ -48,6 +52,7 @@ async function generate() {
 watchEffect(() => decodeObjectId(uuid.value))
 watchEffect(() => uuid.value = objectIdFromDate(dayjs(date.value).toDate()))
 
+/** @param {string} objectId */
 function decodeObjectId(objectId) {
   decodedObjectId.value = {
     date: dateFromObjectId(objectId || '')

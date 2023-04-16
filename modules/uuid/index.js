@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 
+/** @type {import('../views').PluginSM} */
 module.exports = {
   name: "UUID",
   icon: "fas fa-random",

@@ -27,9 +27,8 @@
 
 <script setup>
 import SectionCmp from '@/components/Section.vue'
-import { onMounted, ref, shallowRef, watchEffect } from 'vue'
+import { ref, watchEffect } from 'vue'
 import JsonViewer from 'vue-json-viewer'
-import axios from '@/helpers/axios'
 
 const showRaw = ref(false)
 const json = ref({})
@@ -38,12 +37,14 @@ const regexString = ref('.*')
 const code = ref(`Place your lines to test...`)
 
 const monacoRef = ref()
+/** @type {import('monaco-editor').editor.IEditorDecorationsCollection[]} */
 let decorations = []
 watchEffect(async () => {
   if(!monacoRef.value?.isReady) return
   decorations.forEach(d => d.clear())
   decorations = []
   try {
+    /** @type {Array<{match: string, groups: string[], input: string | undefined, index: number | undefined, indices: RegExpIndicesArray | undefined}>[]} */
     const results = []
     if(!regexString.value) {
       json.value = [] 
@@ -60,8 +61,8 @@ watchEffect(async () => {
       })
       results.push(result)
       result.forEach(r => {
-        r.indices.forEach((range, groupNumber) => {
-          const decoration = monacoRef.value?.editor?.createDecorationsCollection([
+        r.indices?.forEach((range, groupNumber) => {
+          const decoration = /**@type {import('monaco-editor').editor.IStandaloneCodeEditor}*/(monacoRef.value?.editor)?.createDecorationsCollection([
             {
               range: {
                 "startLineNumber": lineNumber+1,

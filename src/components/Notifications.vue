@@ -20,15 +20,18 @@ import PromiseB from 'bluebird'
 export default {
   components: { Notification },
   setup() {
+    /**
+     * @param {import('../helpers/notification').Notif} notif 
+     * @param {boolean} hasClicked 
+     */
+    const remove = (notif, hasClicked) => notification.remove(notif, hasClicked)
     return {
       notifs: notification.notifs,
-      remove(notif, hasClicked) {
-        notification.remove(notif, hasClicked)
-      },
+      remove,
       trash() {
         PromiseB.map(notification.notifs.value || [], async(n) => {
           await new Promise(resolve => setTimeout(resolve, 50))
-          notification.notifs.value.map(n => this.remove(n, false))
+          notification.notifs.value.map(n => remove(n, false))
         })
       }
     }

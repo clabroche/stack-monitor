@@ -120,7 +120,7 @@
 </template>
 
 <script setup>
-import Socket from '@/helpers/socket';
+import Socket from '@/helpers/Socket';
 // @ts-ignore
 import { Terminal } from 'xterm/lib/xterm';
 import { FitAddon } from 'xterm-addon-fit';
@@ -129,7 +129,9 @@ import { SearchAddon } from 'xterm-addon-search';
 import { WebLinksAddon } from 'xterm-addon-web-links';
 import { CanvasAddon } from 'xterm-addon-canvas';
 import debounce from 'debounce'
+// @ts-ignore
 import JsonViewer from 'vue-json-viewer'
+// @ts-ignore
 import jsonpath from 'jsonpath'
 import 'vue-json-viewer/style.css'
 import { computed, onMounted, ref, watch, watchEffect } from '@vue/runtime-core';
@@ -137,19 +139,28 @@ import router from '@/router/router';
 import Modal from '@/components/Modal.vue'
 import Service from '@/models/service'
 const props = defineProps({
-  service: { default: null },
+  service: { 
+    /** @type {import('@/models/service').default | null}*/
+    default: null
+  },
   noStyle: { default: false },
   isInMultiMode: {default: false}
 })
 const urlSearchParams = new URLSearchParams(window.location.search);
 const params = Object.fromEntries(urlSearchParams.entries());
 
+
+/** @type {import('vue').Ref<import('xterm').Terminal | null>} */
 const terminal = ref(null)
+/** @type {import('vue').Ref<import('xterm-addon-search').SearchAddon | null>} */
 const terminalSearch = ref(null)
-const logsContainer = ref(null)
+/** @type {import('vue').Ref<HTMLElement | null>} */
+  const logsContainer = ref(null)
+  /** @type {import('vue').Ref<HTMLElement | null>} */
 const jsonsRef = ref(null)
 const filterSearch = ref('')
 const jsonPathSearch = ref('')
+  /** @type {import('vue').Ref<Record<string, any>[]>} */
 const jsons = ref([])
 const isOpen = ref(true)
 const isInclude = ref(false)
@@ -162,21 +173,22 @@ watchEffect(() => {
   lineToKeep.value = router.currentRoute.value.query.lineToKeep || 120
 })
 
+/** @param {Record<string, string>} data */
 async function findSolution(data) {
   const tokens = await Service.getTokens(JSON.stringify(data))
   const res = await findSolutionModal.value.open(tokens).promise
   if (res) {
     const review = await Service.findSolutionFromAi(JSON.stringify(data))
-    const res = await findSolutionResultModal.value.open(review).promise
+    await findSolutionResultModal.value.open(review).promise
   }
 }
 
 watch(() => props.service?.enabled, async() => {
   if(props.service?.enabled && !terminal.value) {
     createTerminal()
-  } else if(props.service?.enabled) {
+  } else if(props.service?.enabled && logsContainer.value) {
     await new Promise(resolve => setTimeout(resolve, 10));
-    terminal.value.open(logsContainer.value);
+    terminal.value?.open(logsContainer.value);
   }
 })
 const search = ref('')
@@ -193,7 +205,9 @@ watch(() => search.value, () => {
 })
 watch(() => `${isInclude.value}|${filterSearch.value}`, () => filter())
 watch(() => isOpen.value, () => createTerminal()) 
-const isLineFiltered=(line) => {
+
+/** @param {string} line */
+const isLineFiltered = (line) => {
   const message = filterSearch.value
   if (!message) return true
   const filters = message.includes(' | ')
@@ -204,14 +218,17 @@ const isLineFiltered=(line) => {
     return isInclude.value ? res : !res
   }))
 }
+
+/** @param {number} val */
 const toggleIsOpen = (val) => {
   const shouldOpen = !toggles.value[val].isOpen
   toggles.value.forEach(t => t.isOpen = false)
   toggles.value[val].isOpen = shouldOpen
   setTimeout(() => scroll(true), 0);
 }
-const filterWithoutDebounce = function (message) {
-  terminal.value.clear()
+
+const filterWithoutDebounce = function () {
+  terminal.value?.clear()
   jsons.value = []
   const lines = logs.value
     ?.split('\n')
@@ -247,35 +264,37 @@ async function createTerminal() {
     }
   });
   const fitAddon = new FitAddon();
-  terminal.value.attachCustomKeyEventHandler((arg) => {
-    if (arg.ctrlKey && arg.code === "KeyC" && arg.type === "keydown") {
-      const selection = terminal.value.getSelection();
-      if (selection) {
-        navigator?.clipboard?.writeText(selection)
-        return false;
+  if(terminal.value) {
+    terminal.value.attachCustomKeyEventHandler((arg) => {
+      if (arg.ctrlKey && arg.code === "KeyC" && arg.type === "keydown") {
+        const selection = terminal.value?.getSelection();
+        if (selection) {
+          navigator?.clipboard?.writeText(selection)
+          return false;
+        }
       }
-    }
-    return true;
-  });
-  terminal.value.loadAddon(fitAddon);
-  terminal.value.loadAddon(new WebLinksAddon());
-  terminal.value.loadAddon(new CanvasAddon());
-
-  terminal.value.open(logsContainer.value);
-  const searchAddon = new SearchAddon();
-  terminalSearch.value = searchAddon
-  terminal.value.loadAddon(searchAddon);
-  fitAddon.activate(terminal.value)
-  fitAddon.fit();
-  setTimeout(() => {
+      return true;
+    });
+    terminal.value.loadAddon(fitAddon);
+    terminal.value.loadAddon(new WebLinksAddon());
+    terminal.value.loadAddon(new CanvasAddon());
+  
+    terminal.value.open(logsContainer.value);
+    const searchAddon = new SearchAddon();
+    terminalSearch.value = searchAddon
+    terminal.value.loadAddon(searchAddon);
+    fitAddon.activate(terminal.value)
     fitAddon.fit();
-  }, 100);
+    setTimeout(() => {
+      fitAddon.fit();
+    }, 100);
+  }
   window.onresize = function () {
     fitAddon.fit();
   }
   logs.value = await props.service.getLogs()
   logs.value.split('\n').map(line => write(line))
-  Socket.on('logs:update', data => {
+  Socket.socket.on('logs:update', (/** @type {{label: string, msg: string}}*/data) => {
     if (data.label !== props.service.label || !data.msg) return
     data.msg.trim().split('\n').filter(a => a).map(line => {
       write(line)
@@ -283,9 +302,9 @@ async function createTerminal() {
       scroll()
     })
   })
-  Socket.on('logs:clear', data => {
+  Socket.socket.on('logs:clear', data => {
     if (data.label !== props.service.label) return
-    terminal.value.clear()
+    terminal.value?.clear()
   })
 }
 
@@ -333,24 +352,26 @@ const toggles = ref([
   { label: 'Debug', isOpen: jsonSMContainerOpen, jsons: jsonsSMToDisplay }
 ])
 
+/** @param {string} line */
 function write(line) {
   if(!isLineFiltered(line)) return
   try { line = JSON.parse(line) } catch (error) { }
   if (typeof line !== 'string') {
-    terminal.value.writeln(JSON.stringify(line))
+    terminal.value?.writeln(JSON.stringify(line))
     jsons.value.push(line)
     jsons.value = jsons.value.slice(-lineToKeep.value)
   } else {
-    terminal.value.writeln(line)
+    terminal.value?.writeln(line)
   }
 }
 
 async function clear() {
-  terminal.value.clear()
+  terminal.value?.clear()
   props.service.clear()
   logs.value = ''
   jsons.value = []
 }
+/** @param {MouseEvent | KeyboardEvent} ev */
 async function nextSearch(ev) {
   if (ev.shiftKey) {
     return previousSearch()
@@ -359,15 +380,21 @@ async function nextSearch(ev) {
     terminalSearch.value.findNext(search.value)
   }
 }
-async function previousSearch(ev) {
+async function previousSearch() {
   if (terminalSearch.value) {
     terminalSearch.value.findPrevious(search.value)
   }
 }
+/** @param {string} text */
 function escapeRegExp(text) {
   return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
 }
-async function scroll(force, customElement) {
+/**
+ * 
+ * @param {boolean} force 
+ * @param {HTMLElement | null} customElement 
+ */
+async function scroll(force = false, customElement = null) {
   const container = customElement || jsonsRef.value
   if(!container) return
   const shouldScroll = container.scrollTop + container.clientHeight === container.scrollHeight
@@ -404,13 +431,13 @@ async function scroll(force, customElement) {
 .logs-container, .json-container {
   width: 100%;
   margin: auto;
-  height: calc(100vh - 400px);
+  height: calc(100vh - 400px - 40px);
 
   @media (max-width: 1300px) { 
-    height: calc(100vh - 500px);
+    height: calc(100vh - 500px - 40px);
   }
   @media (max-width: 800px) { 
-    height: calc(100vh - 650px);
+    height: calc(100vh - 650px - 40px);
   }
   box-sizing: border-box;
 }

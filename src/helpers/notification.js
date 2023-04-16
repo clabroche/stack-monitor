@@ -4,11 +4,20 @@ import { v4 as uuid } from 'uuid';
 import router from "../router/router"
 class Notification {
   constructor() {
+    /** @type {import('vue').Ref<Notif[]>} */
     this.notifs = ref([])
+    /** @type {import('vue').Ref<Notif[]>} */
     this.notifsHistory = ref([])
     this.openHistory = new Observable()
   }
-  next(type, msg, serviceLabel, notifAggregator) {
+  /**
+   * 
+   * @param {'error' | 'success'} type 
+   * @param {string} msg 
+   * @param {string | undefined} serviceLabel 
+   * @param {Notif[] | null} notifAggregator 
+   */
+  next(type, msg, serviceLabel = undefined, notifAggregator = null) {
     if(!notifAggregator) {
       this.next(type,msg, serviceLabel, this.notifsHistory.value)
       notifAggregator = this.notifs.value
@@ -48,18 +57,41 @@ class Notification {
     }
     clearTimeout(notif.timeout)
     notif.timeout = setTimeout(() => {
-      this.remove(notif)
+      if(notif) this.remove(notif)
     }, 5000);
   }
-  remove(notif, hasClicked) {
+  /**
+   * @param {Notif} notif 
+   * @param {boolean} hasClicked 
+   */
+  remove(notif, hasClicked = false) {
     const index = this.notifs.value.indexOf(notif)
     if (index > -1) this.notifs.value.splice(index, 1)
     if (hasClicked && notif.serviceLabel) router.push({ name: 'stack-single', params: { label: notif.serviceLabel } })
   }
+  /**
+   * @param {Notif} notif 
+   * @param {boolean} hasClicked 
+   */
   removeHistory(notif, hasClicked) {
     const index = this.notifsHistory.value.indexOf(notif)
     if (index > -1) this.notifsHistory.value.splice(index, 1)
     if (hasClicked && notif.serviceLabel) router.push({ name: 'stack-single', params: { label: notif.serviceLabel } })
   }
 }
+
+/**
+ * @typedef {{
+ *  id: string,
+ *  msgs: {
+ *    label: string,
+ *    nb: number
+ *  }[],
+ *  nb: number,
+ *  type: string,
+ *  hover?: boolean,
+ *  serviceLabel?: string,
+ *  timeout?: NodeJS.Timer
+ * }} Notif
+ */
 export default new Notification()

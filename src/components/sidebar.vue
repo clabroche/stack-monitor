@@ -24,6 +24,7 @@ export default {
     /** @type {import('vue').Ref<import('../models/service').default[]>} */
     const localServices = ref(Stack.services)
     const search = ref('')
+
     onMounted(async () => {
       await Stack.loadServices()
       localServices.value = Stack.services
@@ -31,7 +32,7 @@ export default {
     watch(() => Stack.services, () => localServices.value = Stack.services, {deep: true})
     return {
       search,
-      sortedStack:computed(() => sort(localServices.value.filter(a => a.label.toUpperCase().includes(search.value.toUpperCase()))).desc((a) => a.enabled)),
+      sortedStack:computed(() => sort(localServices.value.filter(a => (a.label || '').toUpperCase().includes(search.value.toUpperCase()))).desc((a) => a.enabled)),
       System,
     }
   }
@@ -52,7 +53,7 @@ input {
     box-shadow: 0px 0px 4px 0px black;
     width: 150px;
     background-color: white;
-    height: 100vh;
+    height: 100%;
     flex-shrink: 0;
     z-index: 3;
     ul {

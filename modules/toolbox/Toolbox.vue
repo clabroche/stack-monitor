@@ -33,10 +33,12 @@ import axios from '@/helpers/axios'
 import router from '@/router/router'
 
 import { onMounted, ref, computed } from 'vue'
+/** @type {import('vue').Ref<import('../views').PluginSM[]>} */
 const plugins = ref([])
 const searchToolTerm = ref('')
 const searchToolRef = ref()
 onMounted(async () => {
+  /** @type {{data: import('../../modules/views').PluginSM[]}} */
   const { data: _plugins } = await axios.get('/plugins/toolbox')
   plugins.value = _plugins?.flat() || []
   searchToolRef.value?.focus()
@@ -45,16 +47,20 @@ onMounted(async () => {
 const buttonsPlugins = computed(() => ([
   ...plugins.value.map(plugin => {
     return plugin.placements.map(placement => {
+      if(typeof placement === 'string') return  
       return {
         ...plugin,
         text: placement.label,
         icon: placement.icon,
         iconText: placement.iconText,
         click: placement?.goTo ? () => {
-          router.push({
-            ...placement?.goTo || {},
-            path: `/toolbox${(placement.goTo?.path || placement.goTo)}`
-          })
+          if(typeof placement.goTo === 'string') router.push({path: placement.goTo})
+          else {
+            router.push({
+              ...placement.goTo,
+              path: `/toolbox${(placement.goTo.path || placement.goTo)}`
+            })
+          }
         } : () => { },
         active: placement?.active
       }
@@ -65,6 +71,7 @@ const buttonsPlugins = computed(() => ([
 function chooseFirst() {
   buttonsPlugins.value?.[0]?.click()
 }
+/**@param {import('../views').PluginSM} plugin */
 function isActive(plugin) {
   return router.currentRoute.value.params.plugin === plugin.name
 }
@@ -91,7 +98,7 @@ input {
     box-shadow: 0px 0px 4px 0px black;
     width: 150px;
     background-color: white;
-    height: 100vh;
+    height: 100%;
     flex-shrink: 0;
     z-index: 3;
     ul {
@@ -154,7 +161,7 @@ input {
   min-width: 0;
   padding: 5px 10px;
   box-sizing: border-box;
-  height: 100vh;
+  height: 100%;
 }
 .no-tools {
   display: flex;

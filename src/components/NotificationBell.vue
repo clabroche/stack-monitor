@@ -4,17 +4,9 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import notification from '../helpers/notification'
-export default {
-  setup() {
-    return {
-      open(){
-        notification.openHistory.next()
-      }
-    }
-  }
-}
+const open = () => notification.openHistory.next()
 </script>
 
 <style lang="scss" scoped>

@@ -1,13 +1,13 @@
 <template>
   <div class="root">
-    <div v-for="leaf of tree" :key="leaf">
+    <div v-for="leaf of tree" :key="leaf.name">
       <div class="label" :class="{active: leaf === activeLeaf, isFile: !leaf.isDir}" @click.stop="leaf.isDir ? '' : $emit('go', leaf)">
         <i class="fas fa-folder" v-if="leaf.isDir"></i>
         <i class="fas fa-file" v-else></i>
         {{ leaf.name || leaf.path }}
       </div>
       <div v-if="leaf?.isDir">
-        <div class="children">
+        <div class="children" v-if="leaf?.children">
           <tree :tree="leaf.children" @go="$emit('go', $event)" :activeLeaf="activeLeaf"></tree>
         </div>
       </div>
@@ -16,8 +16,9 @@
 </template>
 
 <script setup>
-import { ref } from "vue"
+// @ts-ignore
 import Tree from './Tree.vue'
+
 
 const emit = defineEmits([
   'go'
@@ -26,13 +27,14 @@ const emit = defineEmits([
 const props = defineProps({
   tree: {
     required: true,
+    /** @type {import('./index').Leaf[]} */
+    // @ts-ignore
     default: () => ([])
   },
   activeLeaf: {
     
   }
 })
-
 </script>
 
 <style lang="scss" scoped>

@@ -2,10 +2,14 @@ const fse = require("fs-extra");
 const pathfs = require("path");
 
 const modulesRootPath = pathfs.resolve(__dirname, "..", "..", "modules");
+
+/** @type {import('express').Router[]} */
 const routes = [];
+/** @type {PluginSM[]} */
 const forService = [];
-const sidebar = [];
+/** @type {Record<string, PluginSM[]>} */
 const plugins = {};
+
 const all = fse
   .readdirSync(modulesRootPath)
   .map((dirname) => pathfs.resolve(modulesRootPath, dirname))
@@ -18,15 +22,14 @@ const all = fse
       delete plugin.routes;
     }
     (plugin?.placements || []).map((p) => {
-      if (!p.position) return;
-      if (!plugins[p.position]) plugins[p.position] = [];
-      if (!plugins[p.position].includes(plugin))
-        plugins[p.position].push(
-          {
-            ...plugin,
-            placements: (plugin.placements || []).filter(_p => _p.position === p.position)
-          }
-        );
+      const position = typeof p === 'string' ? p : p.position 
+      if (!position) return;
+      if (!plugins[position]) plugins[position] = [];
+      if (!plugins[position].includes(plugin))
+        plugins[position].push({
+          ...plugin,
+          placements: (plugin.placements || []).filter(_p => typeof _p !=='string' && _p.position === position)
+        });
     });
     return plugin;
   })
@@ -38,6 +41,11 @@ module.exports = {
   routes,
 };
 
+/**
+ * 
+ * @param {string} modulePath 
+ * @returns {PluginSM | undefined}
+ */
 function loadModule(modulePath) {
   const indexPath = pathfs.resolve(modulePath, "index.js");
   const plugin = fse.existsSync(indexPath) ? require(indexPath) : null;
@@ -45,3 +53,8 @@ function loadModule(modulePath) {
   if (typeof plugin === "function") return plugin();
   else return plugin;
 }
+
+
+/**
+ * @typedef {import('../../modules/views').PluginSM} PluginSM
+ */
