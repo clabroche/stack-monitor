@@ -9,6 +9,7 @@ const groups = {
 /** @type {import('../server/models/stack.js').StackFile} */
 const stack = (stackMonitor) => {
   // Env definition, you can switch in GUI
+  /** @type {import('./env.local.js')} */
   const env = stackMonitor.setEnvironments({
     LOCAL: {
       label: 'Local',
