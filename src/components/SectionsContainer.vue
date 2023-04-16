@@ -14,21 +14,15 @@
   </div>
 </template>
 
-<script>
-export default {
-  props: {
-    header: {default: ''},
-    defaultIsOpen: {default: false}
-  },
-  data() {
-    return {
-      isOpen: false
-    }
-  },
-  mounted() {
-    this.isOpen = this.defaultIsOpen
-  }
-}
+<script setup>
+import { ref } from 'vue'
+
+const props = defineProps({
+  header: {default: ''},
+  defaultIsOpen: {default: false}
+})
+
+const isOpen = ref(props.defaultIsOpen)
 </script>
 
 <style lang="scss" scoped>

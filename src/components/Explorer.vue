@@ -35,8 +35,10 @@ export default {
   props: {
   },
   setup() {
+    /** @type {import('vue').Ref<import('../../server/routes/fs').Entry[]>} */
     const dir = ref([])
     const currentPath = ref('')
+    /** @param {string} path */
     const ls = async path => {
       currentPath.value = path
       dir.value = await fs.ls(path)

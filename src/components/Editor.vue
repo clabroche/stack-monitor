@@ -5,10 +5,15 @@
 <script setup>
 import { nextTick, onMounted, ref, shallowRef, watchEffect } from 'vue'
 import * as monaco from 'monaco-editor';
+// @ts-ignore
 import editorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker';
+// @ts-ignore
 import jsonWorker from 'monaco-editor/esm/vs/language/json/json.worker?worker';
+// @ts-ignore
 import cssWorker from 'monaco-editor/esm/vs/language/css/css.worker?worker';
+// @ts-ignore
 import htmlWorker from 'monaco-editor/esm/vs/language/html/html.worker?worker';
+// @ts-ignore
 import tsWorker from 'monaco-editor/esm/vs/language/typescript/ts.worker?worker';
 
 const props = defineProps({
@@ -17,14 +22,14 @@ const props = defineProps({
   diff: { default: false }
 })
 const emit = defineEmits([
-  'update:modelValue'
+  'update:modelValue',
+  'save',
 ])
 
 const monacoRef = ref()
 const isReady = ref(false)
-/** @type {import('vue').ShallowRef<import('monaco-editor').editor.IStandaloneCodeEditor>} */
+/** @type {import('vue').ShallowRef<import('monaco-editor').editor.IStandaloneDiffEditor | import('monaco-editor').editor.IStandaloneCodeEditor | undefined>} */
 let editor = shallowRef()
-
 
 self.MonacoEnvironment = {
   getWorker(_, label) {
@@ -45,6 +50,7 @@ self.MonacoEnvironment = {
 };
 
 onMounted(async() => {
+  /** @type {import('monaco-editor/esm/vs/editor/editor.api').editor.IStandaloneDiffEditorConstructionOptions} */
   const options = {
     theme: 'vs-dark',
     readOnly: false,
@@ -54,7 +60,7 @@ onMounted(async() => {
     formatOnType: true,
   }
   if(props.diff) {
-    const _editor = monaco.editor.createDiffEditor(monacoRef.value,options)
+    const _editor = monaco.editor.createDiffEditor(monacoRef.value, options)
     _editor.setModel({
       original: monaco.editor.createModel('', 'text/plain'),
       modified: monaco.editor.createModel('', 'text/plain'),
@@ -62,7 +68,7 @@ onMounted(async() => {
     _editor.updateOptions({ readOnly: false, originalEditable: true });
     editor.value = _editor
   } else {
-    const _editor = monaco.editor.create(monacoRef.value,options)
+    const _editor = monaco.editor.create(monacoRef.value, options)
     _editor.setModel(monaco.editor.createModel('', props.language));
     _editor.updateOptions({ readOnly: false });
     _editor.onDidChangeModelContent((model) => {
@@ -70,7 +76,7 @@ onMounted(async() => {
     })
     var KM = monaco.KeyMod;
     var KC = monaco.KeyCode;
-    _editor.addCommand(KM.chord(KM.CtrlCmd | KC.KeyS), function () {
+    _editor.addCommand(KM.chord(KM.CtrlCmd, KC.KeyS), function () {
       //...
       emit('save', _editor.getValue())
     });
@@ -82,7 +88,9 @@ onMounted(async() => {
 })
 
 watchEffect(() => {
+  // @ts-ignore
   if(editor.value && props.modelValue !== editor.value?.getValue?.()) {
+    // @ts-ignore
     editor.value?.setValue?.(props.modelValue)
   }
 })

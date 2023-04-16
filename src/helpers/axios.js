@@ -1,8 +1,8 @@
 import Axios from 'axios'
-import ports from './ports'
+import config from './config'
 
 const axios = Axios.create({
-  baseURL: 'http://localhost:' + ports.http
+  baseURL: config.baseURL
 })
 
 export default axios

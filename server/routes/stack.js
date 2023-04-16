@@ -1,16 +1,32 @@
 const express = require('express');
 const router = express.Router();
 const Stack = require('../models/stack')
-const {launch, findService} = require('../models/stack')
+const findService = Stack.findService
+// const {launch, findService} = require('../models/stack')
 const Socket = require('../models/socket')
 const { exec } = require('child_process');
 const open = require('open');
-const{killService, launchService} =require('../helpers/services');
 const myConfs = require('../models/myConfs');
 const commandExists = require('command-exists').sync;
 
 router.get('/configuration', function (req, res) {
-  res.json(Stack.stack)
+  res.json(Stack.getStack())
+});
+router.get('/environment', function (req, res) {
+  res.json({
+    id: Object.keys(Stack.environments || {}).find(key => Stack.environments?.[key]?.label === Stack.getCurrentEnvironment()?.label),
+    ...Stack.getCurrentEnvironment()
+  })
+});
+
+router.post('/environment', async function (req, res) {
+  const {environment} = req.body
+  if(!environment) return res.status(400).send('Provide an environment field in body')
+  await Stack.getStack()?.changeEnvironment(environment)
+  res.json(Stack.getCurrentEnvironment())
+});
+router.get('/environments', function (req, res) {
+  res.json(Stack.environments)
 });
 router.get('/all-confs-path', function (req, res) {
   res.json(myConfs.confs)
@@ -26,17 +42,20 @@ router.post('/delete-conf', async function (req, res) {
   res.json(path)
 });
 router.post('/choose', function (req, res) {
+  /** @type {string[]} */
   const servicesLabelSelected = req.body
-  Stack.stack.forEach(service => {
-    if (servicesLabelSelected.includes(service.label)) {
-      service.enabled = true
-    }
-  })
-  launch()
-  res.json(Stack.stack)
+  if(!Array.isArray(servicesLabelSelected)) return res.status(400).send('you should provide an array as body with all service label you want to launch')
+  const stack = Stack.getStack()
+  if(!stack) return res.status(500).send('Stack not configured')
+  stack.enable(servicesLabelSelected)
+  stack.launch()
+  res.json(stack.getServices())
 });
 router.get('/', function (req, res) {
   res.json(Stack.getStack())
+});
+router.get('/services', function (req, res) {
+  res.json(Stack.getServices())
 });
 router.get('/:service', function (req, res) {
   const service = findService(req.params.service)
@@ -61,25 +80,26 @@ router.get('/:service/open-link-in-vs-code', function (req, res) {
 
 router.get('/:service/open-folder', function (req, res) {
   const service = findService(req.params.service)
-  open(service.spawnOptions.cwd)
+  if (service.spawnOptions?.cwd) {
+    open(service.spawnOptions.cwd.toString())
+  }
   res.send()
 });
 
 router.get('/:service/restart', async function (req, res) {
   const service = findService(req.params.service)
-  await killService(service)
-  launchService(service)
+  await service.restart()
   res.send()
 });
 router.get('/:service/start', async function (req, res) {
   const service = findService(req.params.service)
-  launchService(service)
+  service.launch()
   res.send()
 });
 
 router.get('/:service/stop', async function (req, res) {
   const service = findService(req.params.service)
-  killService(service)
+  await service.kill()
   res.send()
 });
 

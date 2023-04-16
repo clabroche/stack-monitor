@@ -1,49 +1,43 @@
 <template>
- <div class="openai-root">
-  <h1>Open ai</h1>
-  <div v-if="!ready">
-    <input type="text" @change="changeApikey($event.target.value, $event)" placeholder="Apikey...">
-    Vous ne pouvez pas encore communiquer avec l'assistant
-  </div>
-  <div v-else class="content">
-    <div class="rooms">
-      <input type="text" placeholder="New room..." :style="{width: '100%'}" @change="newRoom($event.target.value, $event)">
-      <div class="room" :class="{active: room === _room}" v-for="_room of rooms" :key="_room" @click="changeRoom(_room)">
-        <div>{{ _room }}</div>
-        <button class="small" @click.stop="deleteRoom(_room)">
-          <i class="fas fa-trash"></i>
-        </button>
-      </div>
+  <div class="openai-root">
+    <h1>Open ai</h1>
+    <div v-if="!ready">
+      <input type="text" @change="changeApikey(/**@type {HTMLInputElement}*/($event.target)?.value, $event)" placeholder="Apikey...">
+      Vous ne pouvez pas encore communiquer avec l'assistant
     </div>
-    <div class="chat-container" v-if="room">
-      <div class="header">
-        <h2>{{ room }}</h2>
-        <div class="toolbar">
-          <div>
-            Temperature:
-            <input type="range" min="0" max="2" v-model="temperature" step="0.1">
-          </div>
-          <div>
-            Model:
-            <select v-model="model">
-              <!-- <option name="gpt-4">gpt-4</option>
-              <option name="gpt-4-0314">gpt-4-0314</option>
-              <option name="gpt-4-32k">gpt-4-32k</option>
-              <option name="gpt-4-32k-0314">gpt-4-32k-0314</option> -->
-              <option name="gpt-3.5-turbo">gpt-3.5-turbo</option>
-              <!-- <option name="gpt-3.5-turbo-030">gpt-3.5-turbo-030</option> -->
-            </select>
-          </div>
+    <div v-else class="content">
+      <div class="rooms">
+        <input type="text" placeholder="New room..." :style="{width: '100%'}" @change="newRoom(/**@type {HTMLInputElement}*/($event.target)?.value, $event)">
+        <div class="room" :class="{active: room === _room}" v-for="_room of rooms" :key="_room" @click="changeRoom(_room)">
+          <div>{{ _room }}</div>
+          <button class="small" @click.stop="deleteRoom(_room)">
+            <i class="fas fa-trash"></i>
+          </button>
         </div>
       </div>
-      <chat :messages="messagesToDisplay" :loading="loading" @send="sendMessage($event)"></chat>
+      <div class="chat-container" v-if="room">
+        <div class="header">
+          <h2>{{ room }}</h2>
+          <div class="toolbar">
+            <div>
+              Temperature:
+              <input type="range" min="0" max="2" v-model="temperature" step="0.1">
+            </div>
+            <div>
+              Model:
+              <select v-model="model">
+                <option name="gpt-3.5-turbo">gpt-3.5-turbo</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <chat :messages="messagesToDisplay" :loading="loading" @send="sendMessage($event)"></chat>
+      </div>
     </div>
   </div>
- </div>
 </template>
 
 <script setup>
-import Service from '@/models/service'
 import axios from '@/helpers/axios'
 import Chat from './Chat.vue'
 import {computed, ref} from 'vue'
@@ -52,6 +46,7 @@ import notification from '@/helpers/notification';
 
 const ready = ref(false)
 const loading = ref(false)
+/** @type {import('vue').Ref<import('./index').OpenAiChat[]>} */
 const messages = ref([])
 const rooms = ref([])
 const room = ref()
@@ -74,29 +69,37 @@ async function reload() {
   messages.value = _messages
 }
 
+/**
+ * @param {string} room 
+ * @param {Event} $event 
+ */
 async function newRoom(room, $event) {
   await axios.post('/openai/rooms', {room})
   await reload()
-  if($event) $event.target.value = ''
+  if($event) /**@type {HTMLInputElement}*/($event.target).value = ''
   await changeRoom(room)
 }
-
+/** @param {string} _room */
 async function changeRoom(_room) {
   room.value = _room
   messages.value = []
   await reload()
 }
-
+/**
+ * @param {string} apikey 
+ * @param {Event} $event 
+ */
 async function changeApikey(apikey, $event) {
   await axios.post('/openai/apikey', { apikey })
   await reload()
-  if ($event) $event.target.value = ''
+  if ($event) /**@type {HTMLInputElement}*/($event.target).value = ''
 }
 
 async function getModels() {
   const { data } = await axios.get('/openai/models')
   availableModels.value = data
 }
+/** @param {string} message */
 async function sendMessage(message) {
   if (!messages.value) messages.value = []
   messages.value.push({ role: 'user', content: message })
@@ -109,6 +112,8 @@ async function sendMessage(message) {
     .finally(() => loading.value = false)
   await reload()
 }
+
+/** @param {Room} _room */
 async function deleteRoom(_room) {
   await axios.delete(`/openai/rooms/${_room}`)
   await reload()
@@ -116,11 +121,15 @@ async function deleteRoom(_room) {
 const messagesToDisplay = computed(() => {
   return messages.value?.filter?.(f => f.role !=='system')
 })
+
+/**
+ * @typedef {{dada:string}} Room
+ */
 </script>
 <style lang="scss" scoped>
 $leftSize: 200px;
 .openai-root {
-  height: 100vh;
+  height: 100%;
   width: 100%;
   box-sizing: border-box;
   .content {

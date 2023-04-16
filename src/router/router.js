@@ -5,8 +5,13 @@ import ImportCreate from '../views/ImportCreate.vue'
 import { createRouter, createWebHashHistory } from "vue-router";
 import plugins from '../../modules/views'
 
+/**
+ * @type {import('vue-router').RouteRecordRaw[]}
+ */
+// @ts-ignore
 const pluginsRoutes = plugins.map(p => p.routes).filter(f => f).flat()
 
+/** @type {import('vue-router').RouteRecordRaw[]} */
 const routes = [
   {
     path: '/stack-chooser',

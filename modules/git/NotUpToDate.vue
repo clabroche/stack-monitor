@@ -2,38 +2,40 @@
   <div class="git-section">
     <h1>Git</h1>
     <section-cmp class="section" v-if="servicesToPull?.length || checkUpdatePending" :actions="[
-      {id: 'pull-all', label: 'Pull all', click: pullAll, hidden: checkUpdatePending}
+      {label: 'Pull all', icon:'fas fa-download', click: pullAll, hidden: checkUpdatePending}
     ]">
       <template #header>
         <div class="custom-header">
+          <div class="loader" v-if="checkUpdatePending">
+            <Spinner size="15"></Spinner>
+          </div>
           Services to pull
           <div class="loader" v-if="checkUpdatePending">
-            <i class="fas fa-spinner"></i>
-            {{nbServiceChecked}}/{{ services?.length }}
+            ({{nbServiceChecked}}/{{ services?.length }})
           </div>
         </div>
       </template>
       <table>
         <tr v-for="service of servicesToPull" :key="service?.label">
           <td><h3>{{ service.label }}</h3></td>
-          <td><div class="badge">{{ service.git.currentBranch }}</div></td>
+          <td><div class="badge">{{ service.git?.currentBranch }}</div></td>
           <td>
-            <button @click="pull(service)" :disabled="checkUpdatePending || service.git.status?.length">
+            <button @click="pull(service)" :disabled="checkUpdatePending || !!service.git?.status?.length">
               <i class="fas fa-download"></i>
-              {{ 'Pull ' + '(' + (service.git.delta || 0) + ')' }}
+              {{ 'Pull ' + '(' + (service.git?.delta || 0) + ')' }}
             </button>
           </td>
           <td>
-            <div class="line">
+            <div class="line" v-if="service.git">
               <div v-if="service.git.status?.length">
                 <i class="fas fa-exclamation-triangle"></i>
                 Pending changes... Pull may not work. Stash or reset your changes before.
               </div>
-              <button class="small" :disabled="checkUpdatePending || service.git?.status?.filter(a => a).length" @click="stash(service)">
+              <button class="small" :disabled="checkUpdatePending || !!service.git?.status?.filter(a => a).length" @click="stash(service)">
                 <i class="fas fa-sun"></i>
                 Stash
               </button>
-              <button class="small" :disabled="checkUpdatePending || service.git.stash" @click="stashPop(service)">
+              <button class="small" :disabled="checkUpdatePending || !!service.git.stash" @click="stashPop(service)">
                 <i class="far fa-sun"></i>
                 Unstash
               </button>
@@ -46,19 +48,21 @@
     <section-cmp class="section" v-if="servicesToPush?.length || checkUpdatePending">
       <template #header>
         <div class="custom-header">
+          <div class="loader" v-if="checkUpdatePending">
+            <Spinner size="15"></Spinner>
+          </div>
           Services to push
           <div class="loader" v-if="checkUpdatePending">
-            <i class="fas fa-spinner"></i>
-            {{nbServiceChecked }}/{{ services?.length }}
+            ({{nbServiceChecked }}/{{ services?.length }})
           </div>
         </div>
       </template>
       <table>
         <tr v-for="service of servicesToPush" :key="service?.label">
           <td><h3>{{ service.label }}</h3></td>
-          <td><div class="badge">{{ service.git.currentBranch }}</div></td>
+          <td><div class="badge">{{ service.git?.currentBranch }}</div></td>
           <td>
-            {{ service.git.delta }} commits to push
+            {{ service.git?.delta }} commits to push
           </td>
         </tr>
       </table>
@@ -66,9 +70,10 @@
 
     <section-cmp header="Services">
       Change all branches to:  
-      <select @input="changeAllBranches($event.target.value)" :disabled="checkUpdatePending">
+      <select @input="// @ts-ignore
+                      changeAllBranches($event?.target?.value ||'')" :disabled="checkUpdatePending">
         <option default></option>
-        <option v-for="branch of allBranches" :key="branch" :value="branch">{{ branch }}</option>
+        <option v-for="branch of allBranches" :key="branch?.name" :value="branch?.name">{{ branch?.name }}</option>
       </select>
       <table>
         <tr v-for="service of services" :key="service?.label">
@@ -78,11 +83,13 @@
               <i class="fas fa-external-link-alt" @click="$router.push({name: 'stack-single', params: {label: service.label}})"></i>
             </h3>
           </td>
-          <td><div class="badge">{{ service.git.currentBranch }}</div></td>
+          <td><div class="badge">{{ service.git?.currentBranch }}</div></td>
           <td>
-            <select @input="changeBranch(service, $event.target.value)" v-if="service.git?.branches?.filter(a => !a.startsWith('*'))?.length" :disabled="checkUpdatePending">
+            <select @input="changeBranch(// @ts-ignore
+                            service, $event.target.value)"
+              v-if="service.git?.branches?.filter(a => a?.name !== service.git?.currentBranch)?.length" :disabled="checkUpdatePending">
               <option default></option>
-              <option v-for="branch of service.git?.branches?.filter(a => !a.startsWith('*'))" :key="branch" :value="branch">{{ branch }}</option>
+              <option v-for="branch of service.git?.branches?.filter(a => a?.name !== service.git?.currentBranch)" :key="branch?.name" :value="branch?.name">{{ branch?.name }}</option>
             </select>
             <div v-else>
               Unique branch, cannot change branch for this service
@@ -90,11 +97,11 @@
           </td>
           <td>
             <div class="line">
-              <button class="small" :disabled="checkUpdatePending || service.git?.status?.filter(a => a).length" @click="stash(service)">
+              <button class="small" :disabled="checkUpdatePending || !!service.git?.status?.filter(a => a).length" @click="stash(service)">
                 <i class="fas fa-sun"></i>
                 Stash
               </button>
-              <button class="small" :disabled="checkUpdatePending || service.git.stash" @click="stashPop(service)">
+              <button class="small" :disabled="checkUpdatePending || !!service.git?.stash" @click="stashPop(service)">
                 <i class="far fa-sun"></i>
                 Unstash
               </button>
@@ -108,29 +115,45 @@
 
 <script setup>
 import stack from "@/models/stack"
-import { computed, onMounted, ref, watch, watchEffect } from "vue"
+import { computed, onMounted, ref, watch } from "vue"
 import SectionCmp from '@/components/Section.vue'
 import PromiseB from 'bluebird'
 import notification from "@/helpers/notification"
+import Spinner from "@/components/Spinner.vue"
 
-const services = ref(stack.services.sort((a, b) => a.label.localeCompare(b.label)))
+/** @type {import('vue').Ref<import('@/models/service').default[]>}*/
+const services = ref(stack.services.sort((a, b) => a.label?.localeCompare(b?.label || '') || 0))
+/** @type {import('vue').Ref<import('@/models/service').default[]>}*/
 const servicesToPull = ref([])
+/** @type {import('vue').Ref<import('@/models/service').default[]>}*/
 const servicesToPush = ref([])
 async function updateGit() {
   const result = await PromiseB.map(stack.services, async(service) => {
     await service.updateGit()
     return service
   }, { concurrency: 6 })
-  services.value = result.sort((a,b) => a.label.localeCompare(b.label))
+  console.log(result)
+  services.value = result.sort((a,b) =>  a.label?.localeCompare(b?.label || '') || 0)
 }
-onMounted(() => updateGit())
+onMounted(async() => {
+  await stack.loadServices()
+  await updateGit()
+  await checkUpdates()
+})
 watch(() => stack.services, async() => {
   await updateGit()
 }, {deep: true})
 
+/**
+ * @param {*[]} arr 
+ * @param {string[]} properties 
+ */
+const getUniqueItemsByProperties = (arr, properties) => arr.filter((v, i, a) => a.findIndex(v2 => properties.every(k => v2[k] === v[k])) === i)
+
+
 const allBranches = computed(() => {
-  const array = services.value.flatMap(service => service.git?.branches?.map(branch => branch.replace('*', '').trim()))
-  return [...new Set(array)].sort((a,b) => a.localeCompare(b) )
+  const array = services.value.flatMap(service => service.git?.branches).filter(a => a)
+  return getUniqueItemsByProperties(array, ['name']).sort((a,b) => a?.name?.localeCompare(b?.name) )
 })
 
 const checkUpdatePending = ref(false)
@@ -145,12 +168,14 @@ const checkUpdates = async () => {
     try {
       await service.updateGit()
       const currentBranch = await service.getCurrentBranch()
-      service.git.delta = await service.gitRemoteDelta(currentBranch)
-      if (service.git.delta < 0) {
-        servicesToPull.value.push(service)
-      }
-      if (service.git.delta > 0) {
-        servicesToPush.value.push(service)
+      if(service.git) {
+        service.git.delta = await service.gitRemoteDelta(currentBranch)
+        if (service.git.delta < 0) {
+          servicesToPull.value.push(service)
+        }
+        if (service.git.delta > 0) {
+          servicesToPush.value.push(service)
+        }
       }
       return service
     } catch (error) {
@@ -163,8 +188,8 @@ const checkUpdates = async () => {
     checkUpdatePending.value = false
   })
 }
-onMounted(checkUpdates)
 
+/** @param {import('@/models/service').default} service*/
 async function pull(service) {
   checkUpdatePending.value = true
   await service.pull()
@@ -189,6 +214,7 @@ async function pullAll() {
   }
 }
 
+/** @param {string} branchName*/
 async function changeAllBranches(branchName) {
   if (!branchName) return
   checkUpdatePending.value = true
@@ -200,6 +226,10 @@ async function changeAllBranches(branchName) {
   await checkUpdates()
 }
 
+/** 
+ * @param {import('@/models/service').default} service
+ * @param {string} branchName
+*/
 async function changeBranch(service, branchName) {
   if (!branchName) return
   checkUpdatePending.value = true
@@ -208,12 +238,14 @@ async function changeBranch(service, branchName) {
   await updateGit()
   await checkUpdates()
 }
+/** @param {import('@/models/service').default} service */
 async function stash(service) {
   await service.stash()
     .then(() => notification.next('success', `All changes is in stash`))
     .catch(err => notification.next('error', err.response.data))
   return service.updateGit()
 }
+/** @param {import('@/models/service').default} service */
 async function stashPop(service) {
   await service.stashPop()
     .then(() => notification.next('success', `All changes unstashed`))
@@ -225,7 +257,7 @@ async function stashPop(service) {
 <style lang="scss" scoped>
 .git-section {
   overflow: auto;
-  height: 100vh;
+  height: 100%;
   width: 100%;
   padding: 20px;
   box-sizing: border-box;
@@ -269,16 +301,8 @@ button.small {
   width: max-content;
 }
 .loader {
-  i {
-    animation: rotation 2s infinite;
-  }
-}
-@keyframes rotation {
-  0% {
-    transform: rotateZ(0);
-  }
-  100% {
-    transform: rotateZ(360deg);
-  }
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 </style>

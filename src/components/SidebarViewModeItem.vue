@@ -1,20 +1,26 @@
 <template>
-  <button @click="button.click()" :class="{active: isActive(button)}" class="sidebar-item" :title="button.text">
+  <button @click="button.click()" :class="{active: isActive }" class="sidebar-item" :title="button.text">
     <i :class="{[button.icon]: true}" aria-hidden="true"/>
   </button>
 </template>
 
-<script>
-export default {
-  props: {
-    button: {default: null}
-  },
-  methods: {
-    isActive(button) {
-      return this.$route.fullPath.includes(button.active)
-    }
+<script setup>
+import router from '@/router/router';
+import { computed } from 'vue';
+
+const props = defineProps({
+  button: {
+    /** @type {SideBarButton | null}*/
+    default: null
   }
-}
+})
+const isActive = computed(() => {
+  return router.currentRoute.value.fullPath.includes(props.button.active)
+})
+
+/**
+ * @typedef {{active: string, click: (...args: any[]) => any, icon: string, text: string}} SideBarButton
+ */
 </script>
 
 <style lang="scss" scoped>

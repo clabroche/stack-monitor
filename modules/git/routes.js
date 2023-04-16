@@ -2,43 +2,13 @@ const express = require('express');
 const router = express.Router();
 const { findService } = require('../../server/models/stack')
 const { execAsync, execAsyncWithoutErr } = require('../../server/helpers/exec')
-const isWindows = require('../../server/helpers/isWindows');
-const commandExists = require('command-exists')
 
 router.get('/:service/graph', async function(req, res) {
   const service = findService(req.params.service)
   const graphOnAll = req.query.graphOnAll === 'true'
   if (!service?.spawnOptions?.cwd) return res.json([])
-  // const format = `{
-  //   ^@^commit^@^: ^@^%H^@^, 
-  //   ^@^abbreviated_commit^@^: ^@^%h^@^,
-  //   ^@^tree^@^: ^@^%T^@^,
-  //   ^@^abbreviated_tree^@^: ^@^%t^@^,
-  //   ^@^parent^@^: ^@^%P^@^,
-  //   ^@^abbreviated_parent^@^: ^@^%p^@^,
-  //   ^@^refs^@^: ^@^%D^@^,
-  //   ^@^encoding^@^: ^@^%e^@^,
-  //   ^@^subject^@^: ^@^%s^@^,
-  //   ^@^sanitized_subject_line^@^: ^@^%f^@^,
-  //   ^@^body^@^: ^@^%b^@^,
-  //   ^@^commit_notes^@^: ^@^^@^,
-  //   ^@^verification_flag^@^: ^@^%G?^@^,
-  //   ^@^signer^@^: ^@^%GS^@^,
-  //   ^@^signer_key^@^: ^@^%GK^@^,
-  //   ^@^author^@^: {
-  //     ^@^name^@^: ^@^%aN^@^,
-  //     ^@^email^@^: ^@^%aE^@^,
-  //     ^@^date^@^: ^@^%aD^@^
-  //   },
-  //   ^@^commiter^@^: {
-  //     ^@^name^@^: ^@^%cN^@^,
-  //     ^@^email^@^: ^@^%cE^@^,
-  //     ^@^date^@^: ^@^%cD^@^ 
-  //   }
-  // },`;
   const cmd = `git -c color.ui=always log  --decorate=full --oneline --graph ${(graphOnAll ? '--all' : '')} -500`;
-  const result = await execAsync(cmd, { cwd: service.spawnOptions.cwd, shell: true, stdio: '', env: process.env });
-  // res.json(JSON.parse(`[${(("" + result).replace(/"/gm, '\\"').replace(/\^@\^/gm, '"')).slice(0,-1)}]`))
+  const result = await execAsync(cmd, { cwd: service.spawnOptions.cwd, env: process.env });
   res.json(result.split('\n'))
 })
 
@@ -63,6 +33,16 @@ router.post('/:service/branch/:branchName/change', async function (req, res) {
     const service = findService(req.params.service)
     if (!service?.spawnOptions?.cwd) return res.json([])
     await execAsync('git checkout ' + req.params.branchName, { cwd: service.spawnOptions.cwd })
+    res.send('ok')
+  } catch (error) {
+    res.status(500).json(error)
+  }
+})
+router.delete('/:service/branch/:branchName', async function (req, res) {
+  try {
+    const service = findService(req.params.service)
+    if (!service?.spawnOptions?.cwd) return res.json([])
+    await execAsync('git branch --delete ' + req.params.branchName, { cwd: service.spawnOptions.cwd })
     res.send('ok')
   } catch (error) {
     res.status(500).json(error)
@@ -105,16 +85,24 @@ router.delete('/:service/reset', async function (req, res) {
     res.status(500).json('ko')
   }
 })
+
+router.get('/:service/current-branch', async(req, res) => {
+  const service = findService(req.params.service)
+  if (!service?.spawnOptions?.cwd) return res.json([])
+  const currentBranch = await getCurrentBranch(service)
+  res.json(currentBranch)
+})
+
 router.post('/:service/pull', async function (req, res) {
   try {
     const service = findService(req.params.service)
     if (!service?.spawnOptions?.cwd) return res.json([])
     const origin = (await execAsync('git remote -v | grep fetch', { cwd: service.spawnOptions.cwd })).split('\t')[0]?.trim() || ''
-    const currentBranch = (await execAsync('git rev-parse --abbrev-ref HEAD', { cwd: service.spawnOptions.cwd }))?.trim()
-    console.log(currentBranch)
+    const currentBranch = await getCurrentBranch(service)
     await execAsync(`git pull ${origin} ${currentBranch}`, { cwd: service.spawnOptions.cwd })
     res.json('ok')
   } catch (error) {
+    console.error(error)
     res.status(500).json(error)
   }
 })
@@ -174,14 +162,31 @@ router.delete('/:service/checkout/:file', async function (req, res) {
   }
 })
 
-async function getBranches(project) {
-  return execAsyncWithoutErr('git branch', { cwd: project.spawnOptions.cwd })
-    .then((res) => res.toString().trim().split('\n'))
+/** @param {import('../../server/models/Service')} service */
+async function getBranches(service) {
+  const unmergeableBranches = ['dev','develop', 'main', 'master']
+  const currentBranch = await getCurrentBranch(service)
+  const mergedBranches = await execAsyncWithoutErr(`git branch --merged develop`, { cwd: service.spawnOptions.cwd })
+    .then((branches) => branches.trim().split('\n').map(a => a.replace('*', '').trim()))
+  return execAsyncWithoutErr('git branch', { cwd: service.spawnOptions.cwd })
+    .then((res) => res.toString().trim().split('\n').map(a => {
+      const name = a.replace('*', '').trim()
+      return {
+        name,
+        merged: mergedBranches.includes(name) && !unmergeableBranches.includes(name) && currentBranch !== name
+      }
+    }))
 }
 
-async function getStatus(project) {
-  return execAsyncWithoutErr('git status -s', { cwd: project.spawnOptions.cwd })
+/** @param {import('../../server/models/Service')} service */
+async function getStatus(service) {
+  return execAsyncWithoutErr('git status -s', { cwd: service.spawnOptions.cwd })
     .then((res) => res.toString().trim().split('\n')?.filter(a => a))
+}
+
+/** @param {import('../../server/models/Service')} service */
+async function getCurrentBranch(service) {
+  return (await execAsync('git rev-parse --abbrev-ref HEAD', { cwd: service.spawnOptions.cwd }))?.trim()
 }
 
 module.exports = router

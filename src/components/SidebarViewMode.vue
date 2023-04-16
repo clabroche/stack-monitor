@@ -40,13 +40,13 @@
 
 <script>
 import System from '../models/system'
-import { computed, onBeforeUnmount, onMounted, ref, watch } from '@vue/runtime-core'
+import { computed, onMounted, ref, watch } from '@vue/runtime-core'
 import SidebarViewModeItemVue from './SidebarViewModeItem.vue'
 import stack from '../models/stack'
 import router from '@/router/router'
 import DoughtnutChart from './DoughtnutChart.vue'
 import axios from '@/helpers/axios'
-import Socket from '@/helpers/socket';
+import Socket from '@/helpers/Socket';
 
 export default {
   components: {
@@ -59,6 +59,7 @@ export default {
   setup() {
     /** @type {import('vue').Ref<import('../models/service').default[]>} */
     const localServices = ref(stack.services)
+    /** @type {import('vue').Ref<import('../../modules/views').PluginSM[]>} */
     const plugins = ref([])
     const cpu = ref(0)
     const mem = ref(0)
@@ -68,7 +69,7 @@ export default {
       localServices.value = stack.services
       const { data: _plugins } = await axios.get('/plugins/sidebar')
       plugins.value = _plugins?.flat() || []
-      Socket.on('infos:global', data => {
+      Socket.socket.on('infos:global', data => {
         const {memPercentage, cpu: _cpu} = data
         cpu.value = _cpu
         mem.value = memPercentage
@@ -97,10 +98,11 @@ export default {
       buttonsPlugins: computed(() => ([
         ...plugins.value.map(plugin => {
           return plugin.placements.map(placement => {
+            if(typeof placement === 'string') return
             return {
               text: placement.label,
               icon: placement.icon,
-              click: placement?.goTo ? () => router.push(placement.goTo) : () => { },
+              click: placement?.goTo ? () => router.push(placement.goTo || '/') : () => { },
               active: placement?.active
             }
           })
@@ -128,7 +130,7 @@ export default {
   box-shadow: 0px 0px 4px 0px black;
   width: 50px;
   background-color: white;
-  height: 100vh;
+  height: 100%;
   flex-shrink: 0;
   z-index: 4;
   ul {

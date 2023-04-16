@@ -11,10 +11,6 @@
 
 <script setup>
 import SectionCmp from '@/components/Section.vue'
-import axios from '@/helpers/axios'
-import {ref, onMounted} from 'vue'
-const original = ref('')
-const modified = ref('')
 </script>
 
 <style scoped lang="scss">

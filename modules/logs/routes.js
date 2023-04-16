@@ -10,7 +10,7 @@ router.get('/:service/logs', function (req, res) {
 router.delete('/:service/logs', function (req, res) {
   const service = findService(req.params.service)
   service.store = ''
-  Socket.socket.emit('logs:clear', { label: service.label })
+  Socket.io?.emit('logs:clear', { label: service.label })
   res.send(service.store)
 });
 module.exports = router

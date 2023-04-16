@@ -10,7 +10,7 @@
       </slot>
       <div class="actions">
         <button
-          @click="action.click()"
+          @click="action?.click?.()"
           v-for="action of activeActions"
           :key="action.label"
           class="action small" :class="{mini: !action.label && action.icon}">
@@ -25,23 +25,33 @@
   </div>
 </template>
 
-<script>
-export default {
-  props: {
-    header: {default: ''},
-    actions: {default:() => ([])},
-    maxHeight: {default: 'auto'},
-    noStyle: {default: false},
-    noBodyPadding: {default: false},
-    headerBold: {default: false},
-    headerCenter: {default: false},
+<script setup>
+import { computed } from '@vue/reactivity';
+
+const props = defineProps({
+  header: {default: ''},
+  actions: {
+    default:() => (/**@type {Action[]}*/([]))
   },
-  computed: {
-    activeActions() {
-      return this.actions.filter(action => !action.hidden)
-    }
-  }
-}
+  maxHeight: {default: 'auto'},
+  noStyle: {default: false},
+  noBodyPadding: {default: false},
+  headerBold: {default: false},
+  headerCenter: {default: false},
+})
+
+const activeActions = computed(() => {
+  return props.actions.filter(action => !action.hidden)
+})
+
+/**
+ * @typedef {{
+ *   click?: (...args: any[])=> any,
+ *   icon?: string,
+ *   hidden?: boolean,
+ *   label?: string,
+ * }} Action
+ */
 </script>
 
 <style lang="scss" scoped>

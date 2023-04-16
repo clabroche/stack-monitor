@@ -26,7 +26,12 @@ export default {
     lowResources: {default: false}
   },
   setup(props) {
+    /** @type {import('vue').Ref<StarPosition[]>} */
     const stars = ref([])
+    /**
+     * @param {number} i
+     * @return {StarPosition}
+     */
     const getStarPosition = (i) => {
       const line = Math.floor((i * 100 / 5) / 100)
       const maxLine = Math.floor((100 * 100 / 5) / 100)
@@ -42,24 +47,35 @@ export default {
         boxShadow: '0 0 10px 1px white',
       }
     }
-    onMounted(()=> stars.value = Array(100).fill().map((_, i) => getStarPosition(i)))
+    onMounted(()=> stars.value = Array(100).fill('').map((_, i) => getStarPosition(i)))
 
     // Bars
     const nbBars = 10
+    /**
+     * @param {number} i
+     * @return {BarPosition}
+     */
     const getBarLeftPosition = (i) => {
       const top =  i*100/nbBars
       const randomizedLeft = top
-      return {bottom: 0, top: randomizedLeft + '%', width: (Math.random() * 50) + '%' }
+      return {bottom: '0', top: randomizedLeft + '%', width: (Math.random() * 50) + '%' }
     }
+    /**
+     * @param {number} i
+     * @return {BarPosition}
+     */
     const getBarRightPosition = (i) => {
       const top =  i*100/nbBars
       const randomizedLeft = top
-      return {right: 0, top: randomizedLeft + '%', width: (Math.random() * 50) + '%' }
+      return {right: '0', top: randomizedLeft + '%', width: (Math.random() * 50) + '%' }
     }
+    /**@type {import('vue').Ref<BarPosition[]>} */
     const barsLeft = ref([])
+    /**@type {import('vue').Ref<BarPosition[]>} */
     const barsRight = ref([])
-    onMounted(() => setTimeout(() => barsLeft.value = Array(10).fill().map((_, i) => getBarLeftPosition(i))))
-    onMounted(() => setTimeout(() => barsRight.value = Array(10).fill().map((_, i) => getBarRightPosition(i))))
+    onMounted(() => setTimeout(() => barsLeft.value = Array(10).fill('').map((_, i) => getBarLeftPosition(i))))
+    onMounted(() => setTimeout(() => barsRight.value = Array(10).fill('').map((_, i) => getBarRightPosition(i))))
+    /** @type {NodeJS.Timer} */
     let interval
     if(!props.lowResources) {
       interval = setInterval(() => {
@@ -77,6 +93,24 @@ export default {
     }
   }
 }
+
+/**
+ * @typedef {{
+ *  top: string,
+ *  left: string,
+ *  backgroundColor: string,
+ *  boxShadow: string,
+ * }} StarPosition
+ */
+/**
+ * @typedef {{
+ *  bottom?: string,
+ *  top?: string,
+ *  right?: string,
+ *  left?: string,
+ *  width: string,
+ * }} BarPosition
+ */
 </script>
 
 <style lang="scss" scoped>

@@ -51,20 +51,23 @@ export default {
       recents.value = await Stack.getAllConfsPath()
     })
 
+    /** @type {import('vue').Ref<InstanceType<typeof Modal> | null>} */
     const modalRef = ref(null)
     return {
       modalRef,
       recents,
       System,
+      /** @param {string} path */
       async deleteConf(path) {
         await Stack.deleteConf(path)
         recents.value = await Stack.getAllConfsPath()
       },
       openModal() {
-        modalRef.value.open().subscribe((res) => {
+        modalRef.value?.open().subscribe((res) => {
           if(!res) return 
         })
       },
+      /** @param {string} recent */
       async openPath(recent) {
         await Stack.selectConf(recent)
         setTimeout(() => {
@@ -117,8 +120,8 @@ export default {
     padding: 0px 5px;
     border: 1px solid darkgrey;
     position: fixed;
-    bottom: 10px;
-    right: 10px;
+    bottom: 40px;
+    right: 40px;
   }
   .tools {
     background-color: rgb(255, 255, 255);
@@ -126,7 +129,7 @@ export default {
     padding: 0px 5px;
     border: 1px solid darkgrey;
     position: fixed;
-    bottom: 10px;
-    left: 10px;
+    bottom: 40px;
+    left: 40px;
   }
 </style>

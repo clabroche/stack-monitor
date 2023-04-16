@@ -35,17 +35,17 @@ router.post('/chat/:room', async (req, res) => {
         cwd: pathfs.resolve(__dirname)
     })
     let result = ''
-    Socket.socket.emit('node-repl:update', { clear: true })
+    Socket.io?.emit('node-repl:update', { clear: true })
     spawnCmd.stdout.on('data', (data) => {
-        Socket.socket.emit('node-repl:update', { msg: data.toString('utf-8') })
+        Socket.io?.emit('node-repl:update', { msg: data.toString('utf-8') })
         result += data.toString('utf-8')
     })
     spawnCmd.stderr.on('data', (data) => {
-        Socket.socket.emit('node-repl:update', { msg: data.toString('utf-8') })
+        Socket.io?.emit('node-repl:update', { msg: data.toString('utf-8') })
         result += data.toString('utf-8')
     })
     spawnCmd.on('close', () => {
-        Socket.socket.emit('node-repl:update', { close: true })
+        Socket.io?.emit('node-repl:update', { close: true })
         conf.chat[room].result = result
         fse.unlinkSync(pathfs.resolve(__dirname, socketId))
         save()

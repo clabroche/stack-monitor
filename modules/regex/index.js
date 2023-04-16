@@ -1,7 +1,5 @@
-const express = require("express");
-const router = express.Router();
-
-module.exports = {
+/** @type {import('../views').PluginSM} */
+const plugin = {
   name: "Regex",
   icon: "fas fa-key",
   placements: [
@@ -14,5 +12,5 @@ module.exports = {
     },
   ],
   order: 6,
-  routes: router.use("/Regex", require("./routes")),
 };
+module.exports = plugin

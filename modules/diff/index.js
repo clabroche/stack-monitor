@@ -1,7 +1,8 @@
 const express = require("express");
 const router = express.Router();
 
-module.exports = {
+/** @type {import('../views').PluginSM} */
+const plugin = {
   name: "Diff",
   icon: "fas fa-columns",
   placements: [
@@ -16,3 +17,4 @@ module.exports = {
   order: 6,
   routes: router.use("/diff", require("./routes")),
 };
+module.exports = plugin

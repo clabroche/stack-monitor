@@ -1,106 +1,323 @@
 const path = require('path')
-let stack = []
 const { watch } = require('fs')
 const debounce = require('debounce')
 const _ = require('lodash')
-const { cloneDeep } = require('lodash')
 const Socket = require('./socket')
-const helpers = require('../helpers/services')
-const { killService, launchService } = require('../helpers/services')
 const myConfs = require('./myConfs')
 const fs = require('fs')
+const Service = require('./Service')
+const PromiseB = require('bluebird')
+const dot = require('dot-object')
 const pathfs = require('path')
-let originalStack = { value: null }
-let currentWatches = []
 
-const checkConf = debounce(async (originalStack, confPath, path) => {
-  delete require.cache[require.resolve(confPath)]
-  if(path && path.endsWith('.js')) delete require.cache[require.resolve(path)]
+class Stack {
+  /**@type {Stack | null} */
+  static #currentStack = null
+  /**@type {fs.FSWatcher[]} */
+  static #currentWatches = []
+  /**@type {string} */
+  static #currentEnvironment = ''
+  /**@type {() => undefined} */
+  static #onLaunchCallback = () => { }
+  /**@type {(service: Service) => undefined} */
+  static #onServiceRestart = () => { }
+  /**@type {(service: Service) => undefined} */
+  static #onServiceStart = () => { }
+  /**@type {(service: Service) => undefined} */
+  static #onServiceKill = () => { }
 
-  const newConf = require(confPath)?.stack || require(confPath)
-  const reduce = (conf, service) => {
-    conf[service.label] = service
-    return conf
+  /** @param {Partial<Stack>} stack */
+  constructor(stack) {
+    /** @type {string | undefined} */
+    this.confPath = stack.confPath
+    /** @type {string[]} */
+    this.watchFiles = stack.watchFiles || []
+    /** @type {Service[]} */
+    this.services = (stack?.services || []).map(service => new Service(service))
   }
-  const oldConfObject = originalStack.value.reduce(reduce, {})
-  const newConfObject = newConf.reduce(reduce, {})
-  const differenceConf = difference(newConfObject, oldConfObject)
-  const updatedServices = Object.keys(differenceConf).reduce((keys, key) => {
-    const serviceName = key.split('.').shift()
-    if (!keys.includes(serviceName)) keys.push(serviceName)
-    return keys
-  }, [])
-  updatedServices.forEach(label => {
-    const index = stack.findIndex((service) => service.label === label)
-    const oldService = stack.find((service) => service.label === label)
-    const newService = newConf.find((service) => service.label === label)
-    if (oldService && oldService.enabled) {
-      console.log('Reload Service', newService.label)
-      killService(oldService).then(() => launchService(newService))
-    }
-    if (index !== -1 && newService) {
-      stack.splice(index, 1, newService)
-    }
-  })
-  Socket.socket.emit('conf:update', updatedServices)
-  originalStack.value = cloneDeep(newConf)
-}, 100, false)
 
-module.exports = {
-  stack,
-  async selectConf(pathToConf, _services) {
-    let services = await Promise.resolve().then(() => {
-      return JSON.parse(_services)
-    }).catch((err) => {
-      return []
-    })
-    if (currentWatches?.length) currentWatches.forEach(currentWatch => currentWatch.close())
-    const confPath = path.resolve(pathToConf)
-    await myConfs.add(confPath)
-    const rawStack = confPath ? require(confPath) : []
-    stack = Array.isArray(rawStack) ? rawStack : rawStack.stack // Support for old stack files
-    this.stack = stack
-    originalStack.value = cloneDeep(this.stack)
-    const file = fs.readFileSync(confPath, 'utf-8')
-    const filesToWatch = [
-      ...file.matchAll(new RegExp(`require\\((.*)\\)`, 'gi'))
-    ].map(a => a[1])
-      .filter(path => path.charAt(1) === '.')
-      .map(file => {
-        return pathfs.resolve(confPath, '..', file.replaceAll(`'`, '').replaceAll(`"`, ''))
-      })
-    ;[
-      ...rawStack.watchFiles || [],
-      confPath
-    ].forEach(file => {
-      if (fs.existsSync(file)) currentWatches.push(watch(file, () => checkConf(originalStack, confPath, file)))
-      else console.error(file, 'not exists')
-    })
-    if(services?.length) {
-      this.stack.forEach(stackService => {
-        if(services.includes(stackService.label)) {
-          stackService.enabled = true
-        } else {
-          stackService.enabled = false
-        }
-      });
-    } 
-  },
-  getStack() {
-    return stack
-  },
-  findService(serviceLabel) {
-    return stack.filter(s => s.label === serviceLabel)[0]
-  },
-  launch() {
-    stack.forEach(microservice => {
-      microservice.store = ''
-      if (microservice.enabled) {
-        helpers.launchService(microservice)
+  /** @param {string[]} servicesLabelSelected */
+  enable(servicesLabelSelected) {
+    this.getServices().forEach(service => {
+      if (servicesLabelSelected.includes(service.label)) {
+        service.enable()
       }
     })
-  },
+  }
+
+  async restart() {
+    await PromiseB.map(await this.getEnabledServices(), (service) => {
+      return service.restart()
+    })
+  }
+  async kill() {
+    await PromiseB.map(await this.getEnabledServices(), (service) => {
+      return service.kill()
+    })
+  }
+  static getCurrentEnvironment() {
+    return Stack.environments?.[this.#currentEnvironment]
+  }
+
+  exportForDifference() {
+    return {
+      watchFiles: this.watchFiles,
+      services: this.services.map(s => s.exportForDifference())
+    }
+    
+  }
+  /**
+   * 
+   * @param {string} confPath 
+   * @param {typeof Stack} injection 
+   * @returns 
+   */
+  static async parse(confPath, injection) {
+    delete require.cache[require.resolve(confPath)]
+    let rawStack
+    try {
+      rawStack = confPath ? require(confPath) : []
+    } catch (error) {
+      // Because sometimes require failed on reload
+      rawStack = confPath ? require(confPath) : []
+    }
+      if (Array.isArray(rawStack)) {
+        return new Stack({ services: rawStack, confPath })
+      } else if (typeof rawStack === 'function') {
+        const stack = await rawStack(injection)
+        return new Stack({
+          ...stack,
+          confPath,
+          services: stack.services || stack.stack,
+        })
+      } else {
+        return new Stack({
+          ...rawStack,
+          confPath,
+          services: rawStack.services || rawStack.stack,
+        })
+      }
+  }
+
+
+  launch() {
+    this.getServices().forEach(microservice => {
+      if (microservice.enabled) {
+        microservice.launch()
+      }
+    })
+    Stack.#onLaunchCallback()
+  }
+  static getStack() {
+    return Stack.#currentStack
+  }
+
+  static getServices() {
+    return Stack.#currentStack?.services || []
+  }
+  getServices() {
+    return Stack.getServices()
+  }
+
+  static getEnabledServices() {
+    return Stack.getServices().filter(s => s.enabled)
+  }
+  getEnabledServices() {
+    return Stack.getEnabledServices()
+  }
+
+  /**
+   * 
+   * @param {string} serviceLabel 
+   * @returns 
+   */
+  static findService(serviceLabel) {
+    return Stack.getServices().filter(s => s.label === serviceLabel)[0]
+  }
+  /**
+   * 
+   * @param {string} serviceLabel 
+   * @returns 
+   */
+  findService(serviceLabel) {
+    return Stack.findService(serviceLabel)
+  }
+
+  
+  /**
+   * 
+   * @param {string} confPath 
+   * @param {string[]} _services 
+   */
+  static async selectConf(confPath, _services = []) {
+    confPath = pathfs.resolve(confPath);
+    // let services = await Promise.resolve()
+    //   .then(() => JSON.parse(_services))
+    //   .catch((err) => ([]))
+    if (Stack.#currentWatches?.length) Stack.#currentWatches.forEach(currentWatch => currentWatch.close())
+    confPath = path.resolve(confPath)
+    await myConfs.add(confPath)
+    Stack.#currentStack = await this.parse(confPath, this) 
+    ;[
+      ...(Stack.#currentStack?.watchFiles || []),
+      confPath
+    ].forEach(filePath => {
+      if (fs.existsSync(filePath)) {
+        Stack.#currentWatches.push(
+          watch(filePath, async () => {
+            
+            checkConfDebounce(Stack.getStack(), await Stack.parse(confPath, this), filePath)
+          })
+        )
+      }
+      else console.error(filePath, 'not exists')
+    })
+  }
+  /**
+   * @template {Record<string, Environment>} T 
+   * @param { T | undefined } env 
+   * @param {keyof T & string} defaultEnvironment 
+   * @returns 
+   */
+  static setEnvironments(env, defaultEnvironment) {
+    if(!this.#currentEnvironment) this.#currentEnvironment = defaultEnvironment
+    if (JSON.stringify(this.environments) === JSON.stringify(env)) return this.environments?.[this.#currentEnvironment]?.envs
+    this.environments = env
+    console.log('Environment changed, reload page...')
+    Socket.io?.emit('forceReload')
+    return this.environments?.[this.#currentEnvironment]?.envs
+  }
+
+  /**
+   * 
+   * @param {string} envLabel 
+   */
+  async changeEnvironment(envLabel) {
+    if (Stack.environments?.[envLabel]) {
+      Stack.#currentEnvironment = envLabel
+      const enabledServices = await Stack.getEnabledServices()
+      await Stack.getStack()?.kill()
+      enabledServices.forEach(s => {
+        s.enabled = true
+        s.store = ''
+      })
+      const stack = Stack.getStack()
+      if(stack?.confPath) {
+        await checkConf(stack, await Stack.parse(stack.confPath, Stack), stack.confPath)
+      }
+      await Stack.getStack()?.launch()
+
+    } else {
+      throw new Error('env not found')
+    }
+  }
+
+  /** @param {() => undefined} cb  */
+  static onLaunch(cb) {
+    this.#onLaunchCallback = cb
+  }
+  triggerOnLaunch() {
+    return Stack.#onLaunchCallback()
+  }
+  /** @param {(service: Service) => undefined} cb  */
+  static onServiceRestart(cb) {
+    this.#onServiceRestart = cb
+  }
+  /** @param  {Service} service */
+  triggerOnServiceRestart(service) {
+    return Stack.#onServiceRestart(service)
+  }
+  /** @param {(service: Service) => undefined} cb  */
+  static onServiceStart(cb) {
+    this.#onServiceStart = cb
+  }
+  /** @param  {Service} service */
+  triggerOnServiceStart(service) {
+    return Stack.#onServiceStart(service)
+  }
+  /** @param {(service: Service) => undefined} cb  */
+  static onServiceKill(cb) {
+    this.#onServiceKill = cb
+  }
+  /** @param  {Service} service */
+  triggerOnServiceKill(service) {
+    return Stack.#onServiceKill(service)
+  }
 }
+
+module.exports = Stack
+
+/**
+ * @param {Stack} originalStack
+ * @param {Stack} newStack
+ */
+async function reloadService(originalStack, newStack) {
+  const newData = newStack.exportForDifference()
+  const updatedServices = originalStack.services.filter(originalService => {
+    const newService = newData.services.find(s => s.label === originalService.label)
+    if (newService?.label) {
+      const diffs = difference(originalService.exportForDifference(), newService)
+      if (!Object.keys(diffs)?.length) return false
+      let shouldRestart = false
+      Object.keys(diffs).forEach(key => {
+        if (key.includes('spawnOptions.shell')) return // spawnOptions.shell is set by stack-monitor not user 
+        // @ts-ignore
+        dot.copy('to', key, diffs[key], originalService)
+        shouldRestart = true
+      })
+      return shouldRestart
+    }
+    console.log('Changes not taken. Please restart stack-monitor...')
+    return false
+  })
+
+  Socket.io?.emit('conf:update', updatedServices.map(s => s.label))
+  await PromiseB.map(updatedServices, async service => {
+    if (service.pids?.length) {
+      console.log('Restart', service.label)
+      await service.restart()
+    }
+  })
+}
+/**
+ * @param {Stack} originalStack
+ * @param {Stack} newStack
+ */
+async function reloadGloblalConf(originalStack, newStack) {
+  const diffs = difference(
+    { ...originalStack.exportForDifference(), services: []}, 
+    { ...newStack.exportForDifference(), services: [] }
+  )
+  if (!Object.keys(diffs)?.length) return false
+  Object.keys(diffs).forEach(key => {
+    // @ts-ignore
+    dot.copy('to', key, diffs[key], originalStack)
+  })
+  console.log('Global changes, restart all...')
+  await originalStack.restart()
+  Socket.io?.emit('forceReload')
+}
+
+/**
+ * @param {Stack | null} originalStack
+ * @param {Stack} newStack
+ * @param {string} path
+ */
+const checkConf = async (originalStack, newStack, path) => {
+  try {
+    if (path && path.endsWith('.js')) delete require.cache[require.resolve(path)]
+    if (!originalStack || !newStack) return
+    await reloadService(originalStack, newStack)
+    await reloadGloblalConf(originalStack, newStack)
+  } catch (error) {
+    console.error(error)
+  }
+}
+const checkConfDebounce = debounce(
+  checkConf,
+  1000,
+  false
+)
 
 /**
  * Deep diff between two object, using lodash
@@ -110,17 +327,19 @@ module.exports = {
  */
 function difference(fromObject, toObject) {
   const changes = {}
-  const buildPath = (_path, key) => _.isUndefined(_path) ? key : `${_path}.${key}`
-  const walk = (_fromObject, _toObject, _path) => {
+  const buildPath = (/** @type {any} */ _path, /** @type {string} */ key) => _.isUndefined(_path) ? key : `${_path}.${key}`
+  const walk = (/** @type {Object} */ _fromObject, /** @type {Object | undefined} */ _toObject, /** @type {string | undefined} */ _path) => {
     for (const key of _.keys(_fromObject)) {
       const currentPath = buildPath(_path, key)
       if (!_.has(_toObject, key)) {
+        // @ts-ignore
         changes[currentPath] = { from: _.get(_fromObject, key) }
       }
     }
     for (const [key, to] of _.entries(_toObject)) {
       const currentPath = buildPath(_path, key)
       if (!_.has(_fromObject, key)) {
+        // @ts-ignore
         changes[currentPath] = { to }
       } else {
         const from = _.get(_fromObject, key)
@@ -128,6 +347,7 @@ function difference(fromObject, toObject) {
           if (_.isObjectLike(to) && _.isObjectLike(from)) {
             walk(from, to, currentPath)
           } else {
+            // @ts-ignore
             changes[currentPath] = { from, to }
           }
         }
@@ -138,7 +358,33 @@ function difference(fromObject, toObject) {
   return changes
 }
 
-if (process.argv[2]) {
-  module.exports.selectConf(process.argv[2], process.argv.slice(3).join(' '))
-    .catch(console.error)
-}
+
+/**
+ * @typedef {Omit<import('typings/index').NonFunctionProperties<Service>, 'pids' | 'store' | 'enabled'>[]} StackArray
+ */
+
+/**
+ * @typedef {{
+ * watchFiles?: string[],
+ * stack?: StackArray,
+ * services?: StackArray,
+ * }} StackObject
+ */
+
+
+/**
+ * @typedef {(stackMonitor: typeof Stack) => StackObject | Promise<StackObject>} StackFunction
+ */
+
+/**
+ * @typedef {StackArray | StackObject | StackFunction} StackFile
+ */
+
+/**
+ * @typedef {{
+ *  label: string,
+ *  envs: Record<any, any>,
+ *  color?: string,
+ *  bgColor?: string
+ * }} Environment
+ */

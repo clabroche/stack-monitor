@@ -16,6 +16,7 @@ function System() {
   })
   this.version = '0.0.0'
 }
+/** @param {string} serviceLabel */
 System.prototype.getInfos = async function (serviceLabel) {
   const { data: infos } = await axios.get('/system/' + serviceLabel + '/infos')
   this.infos = infos
@@ -30,13 +31,20 @@ System.prototype.disconnect = async function() {
   return axios.get('/system/disconnect')
 }
 System.prototype.hasUpdate = async function () {
-  const localVersion = await this.getVersion()
-  const {data: remoteVersions} = await Axios.get('https://api.github.com/repos/clabroche/stack-monitor/tags')
-  const remoteVersion = remoteVersions.map(version => version.name)[0].substr(1)
-  return {
-    local: localVersion,
-    remote: remoteVersion,
-    hasUpdate: localVersion !== remoteVersion
+  try {
+    const localVersion = await this.getVersion()
+    /** @type {{data: {name: string}[]}} */
+    const { data: remoteVersions} = await Axios.get('https://api.github.com/repos/clabroche/stack-monitor/tags')
+    const remoteVersion = remoteVersions.map(version => version.name)[0].substring(1)
+    return {
+      local: localVersion,
+      remote: remoteVersion,
+      hasUpdate: localVersion !== remoteVersion
+    }
+  } catch (error) {
+    if(error?.response?.status === 403) return null
+    console.error(error)
   }
+  return null
 }
 export default new System()

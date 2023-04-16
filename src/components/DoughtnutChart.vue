@@ -71,7 +71,10 @@ export default {
     'adjustContainer': {default: 0},
     'subtitle': { default: '' },
     'width': {default: 'auto'},
-    'textAlign': {default: 'left'},
+    'textAlign': {
+      /** @type {import('csstype').TextAlignProperty} */
+      default: 'left'
+    },
     'noSubtitle': {default: false},
     'fontSize': {default: 30},
     'titleSuffix': {default: ''},

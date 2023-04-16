@@ -31,7 +31,7 @@ import router from '@/router/router'
 import { ref, watchEffect } from 'vue'
 import JsonViewer from 'vue-json-viewer'
 
-const initialJSON = router.currentRoute.value.query.json
+const initialJSON = router.currentRoute.value.query.json?.toString()
 const showRaw = ref(false)
 const json = ref({})
 const raw = ref('')

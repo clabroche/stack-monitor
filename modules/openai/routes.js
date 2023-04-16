@@ -6,7 +6,8 @@ const { Configuration, OpenAIApi } = require('openai');
 const { existsSync, mkdirSync } = require('fs');
 const homedir = require('os').homedir();
 const confDir = pathfs.resolve(homedir, '.stack-monitor')
-const { encode } = require('gpt-3-encoder')
+const { encode } = require('gpt-3-encoder');
+const { v4 } = require('uuid');
 if (!existsSync(confDir)) mkdirSync(confDir)
 const openaiConfPath = pathfs.resolve(confDir, 'openaiconf.json')
 if(!fse.existsSync(openaiConfPath)) fse.writeJSONSync(openaiConfPath, {})
@@ -75,8 +76,14 @@ router.post('/chat/:room', async (req, res) => {
   if (!openaiconf?.chat?.[req.params.room]?.messages) openaiconf.chat[req.params.room].messages = [
     { "role": "system", "content": "Tu es un assistant utile." }
   ]
+  /** @type {import('./index').OpenAiChat[]} */
   const messages = openaiconf?.chat[req.params.room]?.messages
-  messages.push({ "role": "user", "content": message })
+  messages.push({ 
+    _id: v4(),
+    role: "user",
+    content: message,
+    created_at: new Date().toISOString()
+  })
   const result = await openai.createChatCompletion({
     model: model || "gpt-3.5-turbo",
     temperature: Number.isNaN(+temperature) ? 0 : +temperature,
@@ -84,8 +91,8 @@ router.post('/chat/:room', async (req, res) => {
     max_tokens: Infinity,
     messages: messages
       .filter(f => f?.content)
-      .map(a => ({ role: a.role, content: a.content}))
-      .slice(-5)
+      .map(a => ({ role: a.role || 'user', content: a.content || ''}))
+      .slice(-15)
   }).catch(err => {
     console.error(err.response.data)
     return Promise.reject(err)
@@ -95,7 +102,9 @@ router.post('/chat/:room', async (req, res) => {
     const { message } = result.data.choices[0]
     messages.push({
       ...message,
-      ...usage
+      ...usage,
+      _id: v4(),
+      created_at: new Date().toISOString()
     })
   }
   save()

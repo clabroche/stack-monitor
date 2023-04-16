@@ -13,39 +13,50 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import { ref, onMounted, computed, watch } from 'vue'
-export default {
-  props: {
-    tabs: {default: () => []},
-    showLabels: {default: true},
-    invertColor: {default: false}
-  },
-  setup(props) {
-    const currentTab = ref()
-    const load = () => {
-      if(props.tabs) {
-        const tabId = localStorage.getItem('tab')
-        currentTab.value = props.tabs.find(tab => tab.id === tabId) || props.tabs[0]
-      }
-    }
-    onMounted(load)
-    watch(() => props.tabs, ()=> {
-      if(!currentTab.value && props.tabs?.[0]) {
-        load()
-      }
-    })
-    const save = () => localStorage.setItem('tab', currentTab?.value?.id)
 
-    return {
-      currentTab,
-      availableTabs: computed(() => {
-        return props.tabs.filter((tab) => !tab.hidden)
-      }),
-      save
-    }
+const props = defineProps({
+  tabs: {
+    /** @type {Tab[]} */
+    default: []
+  },
+  showLabels: {default: true},
+  invertColor: {default: false}
+})
+/** @type {import('vue').Ref<Tab | undefined>} */
+const currentTab = ref()
+const load = () => {
+  if(props.tabs) {
+    const tabId = localStorage.getItem('tab')
+    currentTab.value = props.tabs.find(tab => tab.id === tabId) || props.tabs[0]
   }
 }
+onMounted(load)
+watch(() => props.tabs, ()=> {
+  if(!currentTab.value && props.tabs?.[0]) {
+    load()
+  }
+})
+const save = () => localStorage.setItem('tab', currentTab?.value?.id ? currentTab.value.id : '')
+
+const availableTabs = computed(() => {
+  return props.tabs.filter((tab) => !tab.hidden)
+})
+
+defineExpose({
+  currentTab: currentTab
+})
+
+/**
+ * @typedef {{
+ * id: string,
+ * hidden: boolean,
+ * label: string,
+ * icon: string,
+ * data?: any
+ * }} Tab
+ */
 </script>
 
 <style lang="scss" scoped>

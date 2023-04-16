@@ -32,7 +32,7 @@ export default {
   },
   props: {
     service: {
-      /** @type {import('../../src/models/service').default}*/
+      /** @type {import('../../src/models/service').default | null}*/
       default: null,
       required: true,
       type: Service
@@ -67,6 +67,17 @@ export default {
       reload,
       loading,
       bugs,
+      /**
+       * 
+       * @param {{
+       *  code: string,
+       *  category: string,
+       *  fileName: string,
+       *  line: string,
+       *  path: string,
+       *  messageText: string,
+       * }} bug 
+       */
       openInVsCode(bug) {
         props.service.openLinkInVsCode(bug.path)
       }
@@ -85,13 +96,13 @@ export default {
 .bug-root {
   width: 100%;
   margin: auto;
-  height: calc(100vh - 300px);
+  height: calc(100vh - 300px - 40px);
 
   @media (max-width: 1300px) { 
-    height: calc(100vh - 400px);
+    height: calc(100vh - 400px - 40px);
   }
   @media (max-width: 900px) { 
-    height: calc(100vh - 500px);
+    height: calc(100vh - 500px - 40px);
   }
   box-sizing: border-box;
 }

@@ -11,10 +11,10 @@ router.get('/home-dir', async function (req, res) {
   res.send(os.homedir())
 })
 router.get('/ls', async function (req, res) {
-  const path = req.query.path
-  const readdir = await fse.readdir(req.query.path.toString())
+  const path = req.query.path?.toString() || __dirname
+  const readdir = await fse.readdir(path)
   const parentDirectory = {
-    absolutePath: pathfs.resolve(path.toString(), '..'),
+    absolutePath: pathfs.resolve(path, '..'),
     name: '..',
     isDirectory: true
   }
@@ -22,8 +22,9 @@ router.get('/ls', async function (req, res) {
   await PromiseB.map(readdir, async entry => {
     try {
       if (entry.charAt(0) === '.') return
-      const absolutePath = pathfs.resolve(path.toString(), entry)
+      const absolutePath = pathfs.resolve(path, entry)
       const stat = await fse.stat(absolutePath)
+      /** @type {Entry} */
       const entryInfos = {
         absolutePath,
         name: entry,
@@ -57,11 +58,15 @@ router.get('/ls', async function (req, res) {
   res.json(dirs)
 });
 
-
+/**
+ * 
+ * @param {string} path 
+ */
 async function getNpmInfos(path) {
   const readdir = await fse.readdir(path)
   if (readdir.includes('package.json')) {
     const packageJSON = await fse.readJSON(pathfs.resolve(path, 'package.json'))
+    /** @type {NpmInfos} */
     return {
       path,
       packageJSON,
@@ -70,5 +75,26 @@ async function getNpmInfos(path) {
       author: packageJSON.author
     }
   }
+  return null
 }
 module.exports = router;
+
+/**
+ * @typedef {{
+ * absolutePath: string
+ * name: string
+ * isDirectory: boolean
+ * npmInfos?: NpmInfos | null
+ * isStack: boolean
+ * }} Entry
+ */
+
+/**
+ * @typedef {{
+ * path: string,
+ * packageJSON: Record<string, any>,
+ * version: string,
+ * name: string,
+ * author: string
+ * }} NpmInfos
+ */

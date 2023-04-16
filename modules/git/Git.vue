@@ -1,21 +1,39 @@
 <template>
   <button @click="openReview">Review from AI</button>
   <div class="git-section" v-if="service.git">
-    <section-cmp v-if="git.branches" class="section-branches"
+    <section-cmp v-if="git && git.branches" class="section-branches"
       :key="service.label"
       header="Branches"
       :noStyle="noStyle"
       :actions="[
-        { label: '', click: () => gitFetch(), icon: 'fas fa-sync' },
+        { label: '', hidden: git.delta == null, click: () => gitFetch(), icon: 'fas fa-sync' },
         { label: pullLabel, hidden: git.delta != null && git.delta >= 0, click: () => pull(), icon: 'fas fa-download' }
       ]">
+      <!-- Base branch: 
+      <select v-model="defaultBranch">
+        <option></option>
+        <option v-for="branch of git.branches" :key="branch?.name" :default="defaultBranch === branch?.name">{{ branch?.name }}</option>
+      </select> -->
       <ul class="branches">
-        <li v-for="(branch, i) of git.branches" :key="'branch' +i" @click="changeBranch(branch)" :class="{active: branch.includes('*')}">
-          {{branch.replace(/^\* /gm, '')}} <i class="fas fa-chevron-right"  aria-hidden="true"></i>
+        <li v-for="(branch, i) of git.branches" :key="'branch' +i" @click="changeBranch(branch?.name)" :class="{
+          active: branch?.name === service?.git?.currentBranch,
+          merged: branch?.merged
+        }">
+          <div class="actions">
+            <div v-if="branch?.merged === true" title="Already merged into develop">
+              <i class="fas fa-object-group" aria-hidden="true"></i>
+            </div>
+            {{branch?.name}}
+          </div>
+          <div class="actions">
+            <button class="small" @click.stop="deleteBranch(branch?.name)" v-if="!['dev', 'develop', 'main','master'].includes(branch?.name)">
+              <i class="fas fa-trash" aria-hidden="true"></i>
+            </button>
+          </div>
         </li>
       </ul>
     </section-cmp>
-    <section-cmp v-if="git.status" class="section-status" header="Status" :noStyle="noStyle" :actions="[
+    <section-cmp v-if="git?.status" class="section-status" header="Status" :noStyle="noStyle" :actions="[
       {label: 'Stash', click: () => stash(), icon: 'fas fa-sun',hidden: !git.status.filter(a =>a).length},
       {label: 'Unstash', click: () => stashPop(), icon: 'far fa-sun', hidden: !git.stash},
       {label: 'Reset', click: () => reset(), icon: 'fas fa-eraser'}
@@ -23,7 +41,7 @@
       <ul v-if="git.status.filter(a =>a).length">
         <li v-for="(status, i) of git.status" :key="'status-' + i">
           <span v-html="colorStatus(status)"></span>
-          <div>
+          <div class="actions">
             <i class="fas fa-external-link-alt" aria-hidden="true" @click.stop="openInVsCode(status)"></i>
             <i class="fas fa-times" aria-hidden="true" @click.stop="checkoutFile(status)"></i>
           </div>
@@ -41,6 +59,14 @@
     <div>
       Afficher toutes les branches: 
       <input type="checkbox" v-model="graphOnAll" @change="updateGraph">
+    </div>
+    <div class="input-container">
+      <i class="fas fa-search"></i>
+      <input type="text" v-model="search" placeholder="Search..." @keypress.enter="nextSearch">
+      <div>
+        <button @click="previousSearch"><i class="fas fa-chevron-up"></i></button>
+        <button @click="nextSearch"><i class="fas fa-chevron-down"></i></button>
+      </div>
     </div>
     <div ref="terminalRef"></div>
   </section-cmp>
@@ -66,6 +92,14 @@
     </template>
     <template #body="{data:branchName}">
       Do you really want to change branch to "{{branchName}}" on this repository ?
+    </template>
+  </modal>
+    <modal ref="branch-delete-modal" cancelString="No" validateString="Yes">
+    <template #header>
+      Branch delete
+    </template>
+    <template #body="{data:branchName}">
+      Do you really want to delete branch "{{branchName}}" on this repository ?
     </template>
   </modal>
   <modal ref="review-modal" cancelString="No" validateString="Yes">
@@ -98,6 +132,7 @@ import SectionVue from '@/components/Section.vue'
 import { Terminal } from 'xterm/lib/xterm';
 import { FitAddon } from 'xterm-addon-fit';
 import { CanvasAddon } from 'xterm-addon-canvas';
+import { SearchAddon } from 'xterm-addon-search';
 
 export default {
   components: {
@@ -108,45 +143,56 @@ export default {
     noStyle: {default: false},
     customGit: {default: null},
     service: {
-      /** @type {import('@/models/service').default}*/
+      /** @type {import('@/models/service').default | null}*/
       default: null,
       required: true,
       type: Service
     },
   },
   computed: {
+    /** @return {import('@/models/service').default['git']} */
     git() {
       return this.service.git
     },
+    /** @return {string} */
     pullLabel() {
-      if(this.git.delta == null) return 'Search...' 
+      if(this.git?.delta == null) return 'Search...' 
       return 'Pull ' + '(' + (this.git.delta || 0) + ')'
     },
-    branchesGraph() {
-      if(this.graph) {
-        return this.graph.map(a => a)
-      }
-      return []
-    }
   },
   data() {
     return {
-      interval:null,
+      /** @type {number | null} */
+      interval: null,
+      /** @type {number | null} */
       longInterval:null,
-      graph: null,
+      /** @type {import('xterm').Terminal | null} */
       terminal: null,
       loader: false,
       graphOnAll: false,
+      /** @type {string | null} */
+      defaultBranch: null,
+      search: '',
+      /** @type {import('xterm-addon-search').SearchAddon | null} */
+      terminalSearch: null
     }
   },
   async mounted() {
     if(this.customGit) return 
-    this.service.updateGit()
-    this.gitFetch()
+    await this.service.updateGit()
+    if(!this.defaultBranch) {
+      const branchNames = this.service.git?.branches?.map(a => a.name) || []
+      if (branchNames.includes('develop')) this.defaultBranch = 'develop'
+      else if (branchNames.includes('dev')) this.defaultBranch = 'dev'
+      else if (branchNames.includes('master')) this.defaultBranch = 'master'
+      else if (branchNames.includes('main')) this.defaultBranch = 'main'
+    }
+    // @ts-ignore
     this.interval = setInterval(() => this.service.updateGit(), 1000)
+    // @ts-ignore
     this.longInterval = setInterval(() => this.gitFetch(), 1000 * 60)
-    const commandRef = this.$refs.terminalRef
-    this.$refs.terminalRef.innerHTML = ''
+    const commandRef = /** @type {HTMLElement}*/(this.$refs.terminalRef)
+    commandRef.innerHTML = ''
     this.terminal = new Terminal({
       smoothScrollDuration: 100,
       experimentalCarAtlas: 'static',
@@ -164,24 +210,46 @@ export default {
       }
     });
     const fitAddon = new FitAddon();
-    this.terminal.loadAddon(fitAddon);
-    this.terminal.loadAddon(new CanvasAddon());
-    this.terminal.open(commandRef);
-    fitAddon.activate(this.terminal)
-    fitAddon.fit();
+    if(this.terminal) {
+      this.terminal.loadAddon(fitAddon);
+      this.terminal.loadAddon(new CanvasAddon());
+      const searchAddon = new SearchAddon();
+      this.terminalSearch = searchAddon
+      this.terminal.loadAddon(searchAddon);
+      this.terminal.open(commandRef);
+      fitAddon.activate(this.terminal)
+      fitAddon.fit();
+    }
     await this.updateGraph()
+    await this.gitFetch()
   },
   beforeUnmount() {
-    clearInterval(this.interval)
-    clearInterval(this.longInterval)
+    clearInterval(this.interval || undefined)
+    clearInterval(this.longInterval || undefined)
   },
   methods: {
+    /** @param {KeyboardEvent | MouseEvent} ev */
+    async nextSearch(ev) {
+      if (ev.shiftKey) {
+        return this.previousSearch()
+      }
+      if (this.terminalSearch) {
+        this.terminalSearch.findNext(this.search)
+      }
+    },
+    async previousSearch() {
+      if (this.terminalSearch) {
+        this.terminalSearch.findPrevious(this.search)
+      }
+    },
+    /** @param {string} line */
     openInVsCode(line) {
       const path = line.trim().split(' ').slice(1).join(' ')
       this.service.openLinkInVsCode(path)
     },
     async gitFetch() {
-      this.service.git.delta = null
+      if(!this.service.git) return
+      this.service.git.delta = 0
       await this.service.gitFetch()
         .catch((err) => notification.next('error', err?.response?.data || err?.message || err))
       const currentBranch = await this.service.getCurrentBranch()
@@ -191,15 +259,16 @@ export default {
     async updateGraph() {
       const graph = await this.service.getGraph(this.graphOnAll)
         .catch((err) => notification.next('error', err?.response?.data || err?.message || err))
-      if(graph) {
+      if(graph && this.terminal) {
         this.terminal.clear()
         this.terminal.writeln(graph.join('\n'))
         setTimeout(() => {
+          if(!this.terminal) return
           this.terminal.scrollToTop()
         });
-        // this.graph = graph
       }
     },
+    /** @param {string} status */
     colorStatus(status) {
       status = status.trim()
       if(status.charAt(0) === 'D') {
@@ -214,6 +283,7 @@ export default {
       }
       return status
     },
+    /** @param {string} branchName */
     async changeBranch(branchName) {
       this.loader = true
       try {
@@ -234,6 +304,29 @@ export default {
         await this.gitFetch()
       }
     },
+    /** @param {string} branchName */
+    async deleteBranch(branchName) {
+      this.loader = true
+      try {
+        branchName = branchName.trim()
+        // @ts-ignore
+        const res = await this.$refs['branch-delete-modal'].open(branchName).promise
+        if (res) {
+          await this.service.deleteBranch(branchName)
+            .then(() => notification.next('success', `Branch ${branchName} is deleted`))
+            .catch(err => notification.next('error', err.response.data))
+        }
+        await this.service.updateGit()
+        this.updateGraph()
+      } catch (error) {
+
+      } finally {
+        this.loader = false
+        await this.service.updateGit()
+        await this.gitFetch()
+      }
+    },
+    /** @param {string} fileStatus */
     async checkoutFile(fileStatus) {
       const file = fileStatus.split(' ').slice(1).join(' ')
       // @ts-ignore
@@ -258,9 +351,11 @@ export default {
     async openReview() {
       const diff = await this.service.getDiff()
       const tokens = await Service.getTokens(diff)
+      // @ts-ignore
       const res = await this.$refs['review-modal'].open(tokens).promise
       if (res) {
         const review = await Service.reviewFromAi(diff)
+        // @ts-ignore
         const res = await this.$refs['review-result'].open(review).promise
       }
     },
@@ -289,6 +384,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+button {
+  position: relative;
+  z-index: 2;
+}
 .section-branches {
   z-index: 1;
   flex-grow: 1;
@@ -312,7 +411,7 @@ export default {
   height: 100%;
   gap: 10px;
   &>* {
-    max-height: 240px;
+    max-height: 190px;
   }
   .check {
     display: flex;
@@ -336,17 +435,24 @@ export default {
       list-style: none;
       margin: 0;
       cursor: pointer;
+      .actions {
+        display: flex;
+        gap: 10px;
+      }
       &.active {
         border-left: 3px solid #0076bc;
       }
-      i {
+      button {
+        width: max-content;
+      }
+      button {
         transition: 300ms;
         opacity: 0;
         margin: 0 3px
       }
       &:hover {
         background-color: rgba(0,0,0,0.05);
-        i {
+        button {
           opacity: 1;
         }
       }
@@ -375,6 +481,23 @@ export default {
   }
   100% {
     transform: rotateZ(360deg);
+  }
+}
+
+.input-container {
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  input {
+    border-radius: 10px;
+    padding: 5px;
+  }
+
+  button {
+    height: auto;
+    padding: 5px 10px;
   }
 }
 </style>

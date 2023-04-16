@@ -21,7 +21,7 @@
           </div>
           <ul v-if="group.show || group.label === 'All'">
             <li v-for="service of group.services" :key="'services-'+service.label">
-              <input :id="'input-' + service.label" type="checkbox" v-model="service.enabled" :checked="service.enabled ? 'checked' : null" @change="save(service)">
+              <input :id="'input-' + service.label" type="checkbox" v-model="service.enabled" :checked="service.enabled ? true : false" @change="save(service)">
               <label :for="'input-' + service.label">
                 {{service.label}}
               </label>
@@ -50,7 +50,7 @@
 import Stack from '../models/stack'
 import System from '../models/system'
 import SectionVue from '../components/Section.vue'
-import { computed, nextTick, onMounted, reactive, ref } from 'vue'
+import { computed, onMounted, reactive, ref } from 'vue'
 import router from '../router/router'
 import BackgroundStackChooser from '../components/BackgroundStackChooser.vue'
 import LeftLogo from '../components/LeftLogo.vue'
@@ -62,13 +62,14 @@ export default {
     LeftLogo
   },
   setup() {
+    /** @type {import('vue').Ref<import('@/models/service').default[]>} */
     const localServices = ref([])
     onMounted(async () => {
       await Stack.loadServices()
       localServices.value = Stack.services
       localServices.value.forEach(service => {
         const state = localStorage.getItem(`automatic-toggle-${service.label}`)
-        service.enabled = state === 'true' || state === true ? true : false
+        service.enabled = state === 'true' ? true : false
       })
     })
 
@@ -79,7 +80,9 @@ export default {
     }
     const enableAll = () => localServices.value.map(service => service.enabled = true)
     const disableAll =() => localServices.value.map(service => service.enabled = false)
-    const getServicesFromGroup = group => localServices.value.filter(service => service.groups.includes(group)||group === 'All')
+    /** @param {string} group */
+    const getServicesFromGroup = group => localServices.value.filter(service => service.groups?.includes(group)||group === 'All')
+    /** @param {string} group */
     const isGroupSelected = group => getServicesFromGroup(group).every(service => service.enabled)
     return {
       isAllEnabled: computed(() => localServices.value.every(service => service.enabled)),
@@ -96,15 +99,17 @@ export default {
           groups['All'].services.push(service)
 
           return groups
-        }, {})
+        }, /**@type {Record<string, {label: string, services: import('@/models/service').default[], show?: boolean}>}*/({}))
         return Object.keys(groupsById).map(key => groupsById[key]).sort((a, b) => a.label.localeCompare(b.label))
       }),
+      /** @param {string} group */
       toggleGroup(group) {
         const groupSelected = isGroupSelected(group)
         getServicesFromGroup(group).map(service => service.enabled = !groupSelected)
       },
+      /** @param {import('@/models/service').default} service */
       async save(service) {
-        localStorage.setItem(`automatic-toggle-${service.label}`, service.enabled)
+        localStorage.setItem(`automatic-toggle-${service.label}`, service.enabled == null ? 'false' : service.enabled.toString())
       },
       isGroupSelected,
       localServices,
@@ -198,8 +203,8 @@ export default {
     padding: 0px 5px;
     border: 1px solid darkgrey;
     position: fixed;
-    bottom: 10px;
-    right: 10px;
+    bottom: 40px;
+    right: 40px;
   }
   .tools {
     background-color: rgb(255, 255, 255);
@@ -207,8 +212,8 @@ export default {
     padding: 0px 5px;
     border: 1px solid darkgrey;
     position: fixed;
-    bottom: 10px;
-    left: 10px;
+    bottom: 40px;
+    left: 40px;
   }
 }
 button.mini {

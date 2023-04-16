@@ -10,7 +10,6 @@
             {{ dayjs(message.created_at).fromNow() }}
           </div>
           <div v-if="message.total_tokens">{{ message.total_tokens }} tokens</div>
-          <!-- {{ message.member.name || message.member.email }} -->
         </div>
       </div>
       <div v-if="loading" class="message-container" >
@@ -34,21 +33,28 @@ import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import duration from 'dayjs/plugin/duration';
 import dayjs from 'dayjs';
-import PromiseB from 'bluebird';
 dayjs.extend(relativeTime)
 dayjs.extend(duration)
 dayjs.locale('fr')
+
 const props = defineProps({
-  messages: { type: Array, required: true },
+  messages: { 
+    /** @type {import('./index').OpenAiChat[]} */
+    default: [],
+    required: true
+  },
   loading: { type: Boolean },
 })
+
 const emit = defineEmits([
   'send'
 ])
+
 const messagesRef = ref()
 const messageToSend = ref('')
-onMounted(reload)
+
 let firstMount = true
+onMounted(reload)
 async function reload() {
   const shouldScroll = messagesRef.value.scrollTop + messagesRef.value.clientHeight === messagesRef.value.scrollHeight
   setTimeout(() => {
@@ -59,23 +65,33 @@ async function reload() {
 watch(() => props.messages, () => {
   reload()
 }, {deep:true})
+
+/** @param {KeyboardEvent} ev */
 async function sendEnter(ev) {
   if (ev.ctrlKey) send(ev)
 }
+/** @param {Event} ev */
 async function input(ev) {
-  ev.target.style.height = 'calc(1em + 15px)'
-  ev.target.style.height = (ev.target.scrollHeight + 'px')
+  if(ev.target) {
+    /**@type {HTMLElement}*/(ev.target).style.height = 'calc(1em + 15px)';
+    /**@type {HTMLElement}*/(ev.target).style.height = /**@type {HTMLElement}*/(ev.target).scrollHeight + 'px'
+  }
 }
+/** @param {Event} ev */
 async function send(ev) {
   if (messageToSend.value) {
     await emit('send', messageToSend.value)
-    ev.target.style.height = 'calc(1em + 15px)'
-    ev.target.style.height = (ev.target.scrollHeight + 'px')
+    if(ev.target) {
+      /**@type {HTMLElement}*/(ev.target).style.height = 'calc(1em + 15px)';
+      /**@type {HTMLElement}*/(ev.target).style.height = /**@type {HTMLElement}*/(ev.target).scrollHeight + 'px'
+    }
     messagesRef.value.scrollTop = messagesRef.value.scrollHeight
     messageToSend.value = ''
     await reload()
   }
 }
+
+/** @type {NodeJS.Timer} */
 let interval
 onMounted(() => {
   interval = setInterval(reload, 1000)

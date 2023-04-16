@@ -1,5 +1,5 @@
 <template>
-  <div class="stack-single" v-if="currentService" :key="$route.params.label">
+  <div class="stack-single" v-if="currentService" :key="$route.params.label.toString()">
     <div class="main">
       <div class="header">
         <div class="left">
@@ -11,7 +11,7 @@
           <div class="icons">
             <a v-if="currentService.git && currentService.git.home" :href="currentService.git.home" target="_blank" title="Open git home"><i class="fab fa-github"  aria-hidden="true"></i></a>
             <a v-if="currentService.url" :href="currentService.url" target="_blank" title="Open service URL"><i class="fas fa-globe"  aria-hidden="true"></i></a>
-            <a v-for="url in currentService.urls" :key="url" :href="url" target="_blank" :title="url.title"><i class="fas fa-globe"  aria-hidden="true"></i></a>
+            <a v-for="url in currentService.urls" :key="url" :href="url" target="_blank" :title="url"><i class="fas fa-globe"  aria-hidden="true"></i></a>
             <img v-if="currentService.spawnOptions && currentService.spawnOptions.cwd" src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Visual_Studio_Code_1.35_icon.svg/240px-Visual_Studio_Code_1.35_icon.svg.png"  aria-hidden="true" title="Open in Visual Studio Code" @click="openInVsCode()"/>
             <i v-if="currentService.spawnOptions && currentService.spawnOptions.cwd" class="fas fa-folder" aria-hidden="true" title="Open folder" @click="openFolder()"></i>
           </div>
@@ -72,7 +72,7 @@ export default {
   setup() {
     /** @type {import('vue').Ref<import('../models/service').default[]>} */
     const stack = ref([])
-      /** @type {import('vue').Ref<import('../models/service').default>}*/
+      /** @type {import('vue').Ref<import('../models/service').default | undefined>}*/
     const currentService = ref()
     const cpu = ref(0)
     const mem = ref(0)
@@ -80,19 +80,30 @@ export default {
     watch(() => router.currentRoute.value.params.label, async () => {
       reload()
     })
+    /** @type {NodeJS.Timer} */
     let interval
     const tabs = ref([])
 
     async function reload() {
-      currentService.value = await Stack.getService(router.currentRoute.value.params.label)
-      const {data: services} = await axios.get('/plugins/services/' + currentService.value.label)
-      tabs.value = services.sort((a,b) =>a.order - b.order).map(service => ({label: service.name, id: service.name, icon:service.icon, hidden: service.hidden}))
+      currentService.value = await Stack.getService(router.currentRoute.value.params.label.toString())
+      if(currentService.value) {
+        const {data: plugins} = await axios.get('/plugins/services/' + currentService.value.label)
+        tabs.value = plugins
+          .sort((
+            /** @type {any} */ a,
+            /** @type {any} */ b
+          ) => a.order - b.order)
+          .map((/** @type {{ name: any; icon: any; hidden: any; }} */ service) => (
+            {label: service.name, id: service.name, icon:service.icon, hidden: service.hidden})
+          )
+      }
     }
 
     onMounted(async () => {
       await reload()
       interval = setInterval(async () => {
-        const {cpu: _cpu, mem: _mem} = await System.getInfos(currentService.value .label)
+        if(!currentService.value || !currentService.value.label) return
+        const {cpu: _cpu, mem: _mem} = await System.getInfos(currentService.value.label.toString())
         cpu.value = _cpu
         mem.value = _mem
       }, 1000);
@@ -108,23 +119,23 @@ export default {
       tabs,
       restartInProgress,
       async openInVsCode() {
-        currentService.value .openInVsCode()
+        currentService.value?.openInVsCode()
       },
       async openFolder() {
-        currentService.value .openFolder()
+        currentService.value?.openFolder()
       },
       async restart() {
         restartInProgress.value = true
-        await currentService.value .restart()
+        await currentService.value?.restart()
           .finally(() => restartInProgress.value = false)
         Stack.services = [...Stack.services]
       },
       async stop() {
-        await currentService.value .stop()
+        await currentService.value?.stop()
         Stack.services = [...Stack.services]
       },
       async start() {
-        await currentService.value .start()
+        await currentService.value?.start()
         Stack.services = [...Stack.services]
       },
     }
@@ -143,7 +154,7 @@ export default {
   overflow: hidden;
   .main {
     flex-grow: 1;
-    height: calc(100vh);
+    height: 100%;
     margin: auto;
     overflow: auto;
     scroll-behavior: smooth;
@@ -200,7 +211,8 @@ export default {
         top: 0;
         left: 0;
         border-bottom: 3px solid #214f6b;
-        border-radius: 4px;
+        border-bottom-left-radius: 20px;
+        border-bottom-right-radius: 20px;
         background: linear-gradient(93deg, #1d95db 0%, #074971 100%);
         width: 100%;
         height: calc(100% + 30px);
