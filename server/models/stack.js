@@ -165,8 +165,7 @@ class Stack {
       if (fs.existsSync(filePath)) {
         Stack.#currentWatches.push(
           watch(filePath, async () => {
-            
-            checkConfDebounce(Stack.getStack(), await Stack.parse(confPath, this), filePath)
+            checkConfDebounce(filePath)
           })
         )
       }
@@ -177,15 +176,15 @@ class Stack {
    * @template {Record<string, Environment>} T 
    * @param { T | undefined } env 
    * @param {keyof T & string} defaultEnvironment 
-   * @returns 
+   * @returns {never}
    */
   static setEnvironments(env, defaultEnvironment) {
     if(!this.#currentEnvironment) this.#currentEnvironment = defaultEnvironment
-    if (JSON.stringify(this.environments) === JSON.stringify(env)) return this.environments?.[this.#currentEnvironment]?.envs
+    if (JSON.stringify(this.environments) === JSON.stringify(env)) return /** @type {never}*/(this.environments?.[this.#currentEnvironment]?.envs)
     this.environments = env
     console.log('Environment changed, reload page...')
     Socket.io?.emit('forceReload')
-    return this.environments?.[this.#currentEnvironment]?.envs
+    return /** @type {never}*/(this.environments?.[this.#currentEnvironment]?.envs)
   }
 
   /**
@@ -203,7 +202,7 @@ class Stack {
       })
       const stack = Stack.getStack()
       if(stack?.confPath) {
-        await checkConf(stack, await Stack.parse(stack.confPath, Stack), stack.confPath)
+        await checkConf(stack.confPath)
       }
       await Stack.getStack()?.launch()
 
@@ -299,14 +298,15 @@ async function reloadGloblalConf(originalStack, newStack) {
 }
 
 /**
- * @param {Stack | null} originalStack
- * @param {Stack} newStack
  * @param {string} path
  */
-const checkConf = async (originalStack, newStack, path) => {
+const checkConf = async (path = '') => {
   try {
     if (path && path.endsWith('.js')) delete require.cache[require.resolve(path)]
-    if (!originalStack || !newStack) return
+    const originalStack = Stack.getStack()
+    if (!originalStack?.confPath) return 
+    const newStack = await Stack.parse(originalStack.confPath, Stack)
+    if (!newStack) return
     await reloadService(originalStack, newStack)
     await reloadGloblalConf(originalStack, newStack)
   } catch (error) {
@@ -315,7 +315,7 @@ const checkConf = async (originalStack, newStack, path) => {
 }
 const checkConfDebounce = debounce(
   checkConf,
-  1000,
+  100,
   false
 )
 
@@ -360,7 +360,7 @@ function difference(fromObject, toObject) {
 
 
 /**
- * @typedef {Omit<import('typings/index').NonFunctionProperties<Service>, 'pids' | 'store' | 'enabled'>[]} StackArray
+ * @typedef {Omit<import('../../typings/index').NonFunctionProperties<Service>, 'pids' | 'store' | 'enabled'>[]} StackArray
  */
 
 /**
@@ -383,7 +383,7 @@ function difference(fromObject, toObject) {
 /**
  * @typedef {{
  *  label: string,
- *  envs: Record<any, any>,
+ *  envs: Record<string, any>,
  *  color?: string,
  *  bgColor?: string
  * }} Environment

@@ -1,8 +1,9 @@
-const { cloneDeep } = require('lodash')
 const local = require('./env.local')
-const envs = cloneDeep(local);
 
-envs.SERVER_PORT = 3010
-envs.SERVER_URL = `http://localhost:${envs.SERVER_PORT}`
+const SERVER_PORT = '3010'
 
-module.exports = envs
+module.exports = {
+  ...local,
+  SERVER_PORT,
+  SERVER_URL: `http://localhost:${SERVER_PORT}`
+}
