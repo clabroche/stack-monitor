@@ -4,6 +4,7 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const indexRouter = require('./routes/index');
 const { stopCpu } = require('./helpers/cpu');
+const { stopWatchers } = require('./models/stack');
 
 const app = express();
 
@@ -28,6 +29,7 @@ app.use(/** @type {ExpressMiddlewareError} */ ((err, req, res, next) => {
 // @ts-ignore
 app.stopWorkers = async () => {
   await stopCpu()
+  await stopWatchers()
 }
 module.exports = app;
 

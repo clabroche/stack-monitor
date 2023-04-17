@@ -10,7 +10,7 @@ const myConfs = require('../models/myConfs');
 const commandExists = require('command-exists').sync;
 
 router.get('/configuration', function (req, res) {
-  res.json(Stack.getStack())
+  res.json(Stack.getStack()?.exportInApi())
 });
 router.get('/environment', function (req, res) {
   res.json({
@@ -49,17 +49,18 @@ router.post('/choose', function (req, res) {
   if(!stack) return res.status(500).send('Stack not configured')
   stack.enable(servicesLabelSelected)
   stack.launch()
-  res.json(stack.getServices())
+  res.json(stack.getEnabledServices().map(s => s.exportInApi()))
 });
 router.get('/', function (req, res) {
-  res.json(Stack.getStack())
+  const stack = Stack.getStack()
+  res.json(stack ? stack.exportInApi() : null)
 });
 router.get('/services', function (req, res) {
-  res.json(Stack.getServices())
+  res.json(Stack.getServices().map(s => s.exportInApi()))
 });
 router.get('/:service', function (req, res) {
   const service = findService(req.params.service)
-  res.send(service)
+  res.send(service.exportInApi())
 });
 router.get('/:service/open-in-vs-code', function (req, res) {
   const service = findService(req.params.service)
