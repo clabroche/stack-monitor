@@ -126,6 +126,12 @@ class Stack {
     return Stack.getEnabledServices()
   }
 
+  exportInApi() {
+    const res = {...this}
+    res.services = res.services?.map(s => s.exportInApi())
+    return res
+  }
+
   /**
    * 
    * @param {string} serviceLabel 
@@ -241,6 +247,9 @@ class Stack {
   /** @param  {Service} service */
   triggerOnServiceKill(service) {
     return Stack.#onServiceKill(service)
+  }
+  static stopWatchers() {
+    Stack.#currentWatches.forEach(currentWatch => currentWatch.close())
   }
 }
 

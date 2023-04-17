@@ -2,6 +2,9 @@ const path = require('path')
 module.exports = {
   rootDir: path.resolve(__dirname, 'server'),
   moduleFileExtensions: ['js'],
+  setupFiles: [
+    './tests/setup.js'
+  ],
   testMatch: ['**/src/**/*.spec.(js)', '**/tests/**/*.spec.(js)'],
   collectCoverage: process.env.coverage === 'false' ? false : true,
   collectCoverageFrom: [

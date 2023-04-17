@@ -9,7 +9,7 @@ const isWindows = require('../../server/helpers/isWindows')
 
 
 module.exports = class Service {
-  /** @param {import('typings/index').NonFunctionProperties<Service>} service */
+  /** @param {import('../../typings/index').NonFunctionProperties<Service>} service */
   constructor(service) {
     /** @type {string} */
     this.label = service.label || ''
@@ -58,7 +58,16 @@ module.exports = class Service {
     }
   }
 
-  /** @return {Partial<import('typings/index').NonFunctionProperties<Service>>} */
+  exportInApi() {
+    const res = {...this}
+    // @ts-ignore
+    delete res.pids
+    // @ts-ignore
+    delete res.store
+    return res
+  }
+
+  /** @return {Partial<import('../../typings/index').NonFunctionProperties<Service>>} */
   exportForDifference() {
     return {
       label: this.label,
