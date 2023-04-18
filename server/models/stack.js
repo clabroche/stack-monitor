@@ -25,6 +25,18 @@ class Stack {
   static #onServiceStart = () => { }
   /**@type {(service: Service) => undefined} */
   static #onServiceKill = () => { }
+  /**@type {GlobalScript[]} */
+  static #globalScripts = []
+
+  static devops = {
+    /** @param {GlobalScript} script */
+    addGlobalScript(script) {
+      Stack.#globalScripts.push(script)
+    },
+    getGlobalScripts() {
+      return Stack.#globalScripts
+    }
+  }
 
   /** @param {Partial<Stack>} stack */
   constructor(stack) {
@@ -293,7 +305,7 @@ async function reloadService(originalStack, newStack) {
  */
 async function reloadGloblalConf(originalStack, newStack) {
   const diffs = difference(
-    { ...originalStack.exportForDifference(), services: []}, 
+    { ...originalStack.exportForDifference(), services: []},
     { ...newStack.exportForDifference(), services: [] }
   )
   if (!Object.keys(diffs)?.length) return false
@@ -396,4 +408,22 @@ function difference(fromObject, toObject) {
  *  color?: string,
  *  bgColor?: string
  * }} Environment
+ */
+
+/**
+ * @typedef {{
+ *  label: string,
+ *  pipeline: {
+ *    label: string,
+ *    id: string,
+ *    prompt?:{
+ *      question: string,
+ *      options?: (output: Record<string, any>) => ({label: string, value: string}[]) | Promise<{label: string, value: string}[]>,
+ *      defaultValue?: (output: Record<string, any>) => any,
+ *      type?: 'string' | 'number' | 'boolean' | 'array' | 'select'| 'multi-select',
+*       validation?: (value: any) => (string | null) | Promise<string | null>
+ *    },
+ *    script?: (output: Record<string, any>,prompts: Record<string, any>) => any,
+ *    print?: (output: Record<string, any>, prompts: Record<string, any>) => any,
+ *  }[]}} GlobalScript
  */
