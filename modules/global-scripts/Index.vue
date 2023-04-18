@@ -76,8 +76,13 @@ onMounted(async() => {
 /** @param {GlobalScript} script */
 async function selectScript(script) {
   currentScript.value = script
-  const { data: _track } = await axios.get('/global-scripts/track/' + currentScript.value.label)
-  if (_track) track.value = _track
+  track.value = {
+    currentStep: '',
+    steps: {},
+    output: {},
+    prompts: {},
+    scriptId: '',
+  }
 }
 
 async function launch() {

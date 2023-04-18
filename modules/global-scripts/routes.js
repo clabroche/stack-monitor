@@ -20,20 +20,12 @@ router.get("/:id", async (req, res) => {
   res.json(script);
 });
 
-router.get("/track/:id", async (req, res) => {
-  const scripts = Stack.devops.getGlobalScripts()
-  const script = scripts.find(s => s.label === req.params.id)
-  if (!script) return res.status(404).send(`Script ${req.params.id} not found`)
-  const communicationId = `devop-global-scripts-${req.params.id}`
-  res.json(currentScriptsByCommunicationId[communicationId]);
-});
-
 router.post("/:id", async (req, res) => {
   if (!Socket.io) return res.status(400).send('Socket not ready')
   const scripts = Stack.devops.getGlobalScripts()
   const script = scripts.find(s => s.label === req.params.id)
   if (!script) return res.status(404).send(`Script ${req.params.id} not found`)
-  const communicationId = `devop-global-scripts-${req.params.id}`
+  const communicationId = v4()
 
   /** @type {TrackStep} */
   const track = {
