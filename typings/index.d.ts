@@ -18,6 +18,6 @@ import Stack from '../server/models/stack'
 import GlobalScriptModule from '../modules/global-scripts/routes' 
 export type StackFile = Stack.StackFile
 export type StackArray = Stack.StackArray
-export type StackMonitor = Stack
+export type StackMonitor = typeof Stack
 export type TrackStep = GlobalScriptModule.TrackStep
 export type GlobalScript = Stack.GlobalScript
