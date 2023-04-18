@@ -50,7 +50,10 @@ export default {
       connected.value = Socket.socket.connected
       if(!connected.value) Stack.services = []
       const enabledServices = await Stack.getEnabledServices()
-      if(!router.currentRoute.value.fullPath.startsWith('/toolbox')) {
+      if(
+        router.currentRoute.value.fullPath.startsWith('/stack-single') ||
+        router.currentRoute.value.fullPath.startsWith('/stack-multiple')
+      ) {
         if(connected.value && !Stack.services.length) {
           router.push({name:'import-create'})
         } else if(!enabledServices.length && router.currentRoute.value.name !== 'stack-chooser') {

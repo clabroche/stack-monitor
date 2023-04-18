@@ -14,6 +14,10 @@ export type NonFunctionPropertiesNumber<T> = Modify<NonFunctionProperties<T>, { 
 export type NonFunctionPropertiesString<T> = Modify<NonFunctionProperties<T>, { [K in keyof NonFunctionProperties<T>]: string }>
 export type NonFunctionPropertiesBoolean<T> = Modify<NonFunctionProperties<T>, { [K in keyof NonFunctionProperties<T>]: boolean }>
 export type Modify<T, R> = Partial<Pick<T, Exclude<keyof T, keyof R>> & R>
-import Stack from '../server/models/stack' 
+import Stack from '../server/models/stack'
+import GlobalScriptModule from '../modules/global-scripts/routes' 
 export type StackFile = Stack.StackFile
 export type StackArray = Stack.StackArray
+export type StackMonitor = Stack
+export type TrackStep = GlobalScriptModule.TrackStep
+export type GlobalScript = Stack.GlobalScript

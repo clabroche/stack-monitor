@@ -15,6 +15,8 @@ import Diff from "./diff/Index.vue";
 import Regex from "./regex/Index.vue";
 import JSONFormatter from "./json-formatter/Index.vue";
 import Documentation from "./documentation/Index.vue";
+import DevOps from "./dev-ops/Index.vue";
+import GlobalScripts from "./global-scripts/Index.vue";
 
 const toolboxPlugins = [
   { name: 'JWT', component: JWT },
@@ -26,7 +28,15 @@ const toolboxPlugins = [
   { name: 'NodeREPL', component: NodeREPL },
   { name: 'Mongo', component: Mongo },
   { name: 'OpenAI', component: OpenAI },
+  { name: 'GlobalScripts', component: GlobalScripts },
   { name: 'Toolbox', component: Toolbox ,children: [
+    {
+      path: ":plugin",
+      props: true,
+      component: DynamicComponent,
+    },
+  ] },
+  { name: 'DevOps', component: DevOps ,children: [
     {
       path: ":plugin",
       props: true,
@@ -73,11 +83,11 @@ export default plugins
  *  routes?: import('express').Router,
  *  placements: ({
  *    label: string,
- *    position?: 'toolbox' | 'sidebar',
+ *    position?: 'toolbox' | 'sidebar' | 'dev-ops',
  *    icon?: string,
  *    iconText?: string,
  *    goTo?: import('vue-router').RouteLocationRaw | string,
  *    active: string
- *  } | string)[]
+ *  } | 'toolbox' | 'sidebar' | 'dev-ops')[]
  * }} PluginSM
  */
