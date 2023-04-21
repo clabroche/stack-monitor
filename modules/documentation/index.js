@@ -1,15 +1,13 @@
-const express = require('express');
-const router = express.Router();
-
-/** @type {import('../views').PluginSM} */
+/** @type {import('../views').PluginSM<null>} */
 const plugin = {
   name: 'Documentation',
   icon: 'fas fa-book',
+  export: null,
   placements: ['service'],
   order: 6,
   /** @param {import('../../server/models/Service')} service*/
   hidden: (service) => !service.documentation, 
-  routes: router.use("/documentation", require("./routes")),
+  routes: require('./routes'),
 }
 module.exports = plugin
 

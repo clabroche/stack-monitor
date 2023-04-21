@@ -1,10 +1,8 @@
-const express = require("express");
-const router = express.Router();
-
-/** @type {import('../views').PluginSM} */
+/** @type {import('../views').PluginSM<null>} */
 const plugin = {
   name: "Global scripts",
   icon: "fas fa-columns",
+  export: null,
   placements: [
     {
       position: "dev-ops",
@@ -14,6 +12,6 @@ const plugin = {
       active: "GlobalScripts",
     },
   ],
-  routes: router.use("/global-scripts", require("./routes")),
+  routes: require('./routes'),
 };
 module.exports = plugin

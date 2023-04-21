@@ -1,11 +1,10 @@
-const express = require('express');
-const router = express.Router();
 const commandExists = require('command-exists')
 
-/** @type {import('../views').PluginSM} */
+/** @type {import('../views').PluginSM<import('./Git')>} */
 const plugin = {
   name: 'Git',
   icon: 'fab fa-git-alt',
+  export: require('./Git'),
   placements: ['service', {
     position: "sidebar",
     label: "GIT",
@@ -15,6 +14,6 @@ const plugin = {
   }],
   order: 1,
   hidden: () => commandExists('git').then(() => false).catch(() => true),
-  routes: router.use('/git', require('./routes')),
+  routes: require('./routes'),
 }
 module.exports = plugin

@@ -1,8 +1,5 @@
-const express = require("express");
-const router = express.Router();
-
-/** @type {import('../views').PluginSM} */
-module.exports = {
+/** @type {import('../views').PluginSM<import('./UUID')>} */
+const plugin = {
   name: "UUID",
   icon: "fas fa-random",
   placements: [
@@ -14,6 +11,9 @@ module.exports = {
       active: "UUID",
     },
   ],
+  export: require('./UUID'),
   order: 6,
-  routes: router.use("/uuid", require("./routes")),
+  routes: require('./routes')
 };
+
+module.exports = plugin

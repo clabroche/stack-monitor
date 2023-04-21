@@ -1,5 +1,5 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
 const fse = require('fs-extra')
 const pathfs = require('path')
 const PromiseB = require('bluebird')

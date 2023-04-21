@@ -1,11 +1,10 @@
-const express = require('express');
-const router = express.Router();
 const Npm = require('./Npm')
 
-/** @type {import('../views').PluginSM} */
+/** @type {import('../views').PluginSM<null>} */
 const plugin = {
   name: 'Npm',
   icon: 'fab fa-npm',
+  export: null,
   placements: ['service'],
   order: 3,
   /**
@@ -18,7 +17,7 @@ const plugin = {
     const serviceIsNpm = await project.isNpm()
     return !serviceIsNpm
   },
-  routes: router.use('/npm', require('./routes'))
+  routes: require('./routes')
 }
 module.exports = plugin
 

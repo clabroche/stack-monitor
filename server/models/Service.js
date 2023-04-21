@@ -9,8 +9,12 @@ const isWindows = require('../../server/helpers/isWindows')
 
 
 module.exports = class Service {
-  /** @param {import('../../typings/index').NonFunctionProperties<Service>} service */
-  constructor(service) {
+  /**
+   * @param {import('../../typings/index').NonFunctionProperties<Service>} service
+   * @param {import('./stack')} Stack
+   */
+  constructor(service, Stack) {
+    this.Stack = Stack
     /** @type {string} */
     this.label = service.label || ''
     /** @type {string} */
@@ -22,8 +26,8 @@ module.exports = class Service {
      * }}
      * */
     this.git = {
-      home: service?.git?.home || '',
-      remote: service?.git?.remote || '',
+      home: service.git?.home || '',
+      remote: service.git?.remote || '',
     }
     /** @type {string} */
     this.documentation = service.documentation || ''
@@ -53,9 +57,11 @@ module.exports = class Service {
     this.spawnCmd = service.spawnCmd || ''
     /** @type {SpawnOptions} */
     this.spawnOptions = {
-      cwd: service?.spawnOptions?.cwd,
-      env: service?.spawnOptions?.env,
+      cwd: service.spawnOptions?.cwd,
+      env: service.spawnOptions?.env,
     }
+    /** @type {string} */
+    this.rootPath = service.rootPath || service.spawnOptions?.cwd?.toString?.() || ''
   }
 
   exportInApi() {
@@ -64,6 +70,8 @@ module.exports = class Service {
     delete res.pids
     // @ts-ignore
     delete res.store
+    // @ts-ignore
+    delete res.Stack
     return res
   }
 
@@ -72,6 +80,7 @@ module.exports = class Service {
     return {
       label: this.label,
       commands: this.commands,
+      rootPath: this.rootPath,
       description: this.description,
       git: this.git,
       groups: this.groups,
@@ -84,8 +93,8 @@ module.exports = class Service {
   }
   async restart() {
     await this.kill(false)
-    await this.launch(false)
-    require('./stack').getStack()?.triggerOnServiceRestart(this)
+    this.launch(false)
+    this.Stack.getStack()?.triggerOnServiceRestart(this)
   }
 
   async kill(triggerEvent = true) {
@@ -117,18 +126,18 @@ module.exports = class Service {
     this.store = ''
     await new Promise(resolve => setTimeout(resolve, 100))
     this.enabled = false
-    if(triggerEvent) require('./stack').getStack()?.triggerOnServiceKill(this)
+    if(triggerEvent) this.Stack.getStack()?.triggerOnServiceKill(this)
   }
   launch(triggerEvent = true) {
     this.store = ''
-    if (this?.spawnCmd) {
+    if (this.spawnCmd) {
       this.launchProcess(
-        this?.spawnCmd,
-        this?.spawnArgs || [],
-        this?.spawnOptions
+        this.spawnCmd,
+        this.spawnArgs || [],
+        this.spawnOptions
       )
     }
-    if (this?.commands?.length) {
+    if (this.commands?.length) {
       this.commands.forEach(command => {
         if (command?.spawnCmd) {
           this.launchProcess(
@@ -140,7 +149,7 @@ module.exports = class Service {
       });
     }
     this.enabled = true
-    if(triggerEvent) require('./stack').getStack()?.triggerOnServiceStart(this)
+    if(triggerEvent) this.Stack.getStack()?.triggerOnServiceStart(this)
   }
   
   /**
@@ -152,11 +161,11 @@ module.exports = class Service {
   launchProcess(spawnCmd, spawnArgs = [], spawnOptions = {}) {
     let cwd = spawnOptions.cwd
     spawnOptions.shell = isWindows ? process.env.ComSpec : '/bin/sh'
-    if (cwd && spawnCmd.match(/[\/\\]/g)) {
-      spawnCmd = path.resolve(cwd?.toString(), spawnCmd)
+    if (cwd && spawnCmd.match(/[/\\]/g)) {
+      spawnCmd = path.resolve(cwd.toString(), spawnCmd)
     }
     let envs = spawnOptions.env || {}
-    if (spawnOptions && spawnOptions.env) {
+    if (spawnOptions.env) {
       envs = Object.assign({}, process.env, spawnOptions.env)
     }
     const spawnProcess = spawn(spawnCmd, spawnArgs, { ...spawnOptions, env: envs })
@@ -176,7 +185,7 @@ module.exports = class Service {
         lineNotFinished = ''
       }
       if (line) {
-        this.store += line?.slice(0, 10000)
+        this.store += line.slice(0, 10000)
         Socket.io?.emit('logs:update', { msg: line, label: this.label })
       }
     }

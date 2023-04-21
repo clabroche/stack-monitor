@@ -6,7 +6,7 @@ const confsPathTests = {
   object: pathfs.resolve(__dirname, 'testFiles', 'stackObject.js'),
   function: pathfs.resolve(__dirname, 'testFiles', 'stackFunction.js'),
 }
-const wait = (ms) => new Promise(res => setTimeout(res, ms));
+const wait = (/** @type {number} */ ms) => new Promise(res => setTimeout(res, ms));
 function getModules() {
   jest.resetModules()
   const { stopWorkers } = require('../app')
@@ -38,7 +38,7 @@ describe('Test', () => {
       await Stack.selectConf(confsPathTests.array);
       const { body } = await request(app).get("/stack");
       expect(Stack.getStack()).not.toBeNull()
-      expect(body).toEqual(Stack.getStack()?.exportInApi())
+      expect(body).toEqual(JSON.parse(JSON.stringify(Stack.getStack()?.exportInApi())))
       expect(Stack.getStack()?.confPath).toEqual(confsPathTests.array)
       expect(Stack.getStack()?.services).toHaveLength(require('./testFiles/services').length)
       await stopWorkers()
@@ -48,7 +48,7 @@ describe('Test', () => {
       await Stack.selectConf(confsPathTests.object);
       const { body } = await request(app).get("/stack");
       expect(Stack.getStack()).not.toBeNull()
-      expect(body).toEqual(Stack.getStack()?.exportInApi())
+      expect(body).toEqual(JSON.parse(JSON.stringify(Stack.getStack()?.exportInApi())))
       expect(Stack.getStack()?.confPath).toEqual(confsPathTests.object)
       expect(Stack.getStack()?.services).toHaveLength(require('./testFiles/services').length)
       expect(Stack.getStack()?.watchFiles).toHaveLength(require('./testFiles/stack').watchFiles?.length || 0)
@@ -59,7 +59,7 @@ describe('Test', () => {
       await Stack.selectConf(confsPathTests.function);
       const { body } = await request(app).get("/stack");
       expect(Stack.getStack()).not.toBeNull()
-      expect(body).toEqual(Stack.getStack()?.exportInApi())
+      expect(body).toEqual(JSON.parse(JSON.stringify(Stack.getStack()?.exportInApi())))
       expect(Stack.getStack()?.confPath).toEqual(confsPathTests.function)
       expect(Stack.getStack()?.services).toHaveLength(require('./testFiles/services').length)
       expect(Stack.getStack()?.watchFiles).toHaveLength(require('./testFiles/stack').watchFiles?.length || 0)
@@ -114,7 +114,7 @@ describe('Test', () => {
       expect(chooseApiReturn.body[0]).not.toHaveProperty('store')
     })
     it('should not export pids and store of services in api', async() => {
-      const { app, Stack } = modules
+      const { app } = modules
       const stackFromApi = await request(app).get("/stack")
         .expect(200)
       expect(stackFromApi.body).toHaveProperty('services')

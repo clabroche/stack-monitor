@@ -7,7 +7,7 @@ function Stack () {
   this.services = []
   Socket.socket.on('conf:update', (/**@type {string[]}*/data) => {
     if (data.length) {
-      data.map(label => {
+      data.forEach(label => {
         const service = this.services.find(_service => _service.label === label)
         if (service) service.fetch()
       })
@@ -16,7 +16,6 @@ function Stack () {
 }
 
 Stack.prototype.loadServices = async function () {
-  
   /** @type {{data: import('./service').default[]}} */
   const { data: services } = await axios.get('/stack/services')
   this.services = services.filter(s => s).map(service => new Service(service))

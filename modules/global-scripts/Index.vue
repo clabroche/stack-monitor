@@ -25,8 +25,8 @@
                 <div>{{ step.prompt.question }}</div>
                 <input v-if="step.prompt.type === 'boolean'" type="checkbox" v-model="track.steps[track.currentStep].promptValue">
                 <input v-else-if="step.prompt.type === 'number'" type="number" v-model="track.steps[track.currentStep].promptValue">
-                <select v-else-if="['select', 'multi-select'].includes(step.prompt.type || '')" v-model="track.steps[track.currentStep].promptValue" multiple>
-                  <option v-for="option of track.steps[track.currentStep].promptOptions || []"> {{ option.label }}</option>
+                <select v-else-if="['select', 'multi-select'].includes(step.prompt.type || '')" v-model="track.steps[track.currentStep].promptValue" :multiple="step.prompt.type === 'multi-select'">
+                  <option v-for="option of track.steps[track.currentStep].promptOptions || []" :value="option.value"> {{ option.label }}</option>
                 </select>
                 <input type="text" v-else v-model="track.steps[track.currentStep].promptValue">
                 <button @click="validatePrompt">Validate</button>

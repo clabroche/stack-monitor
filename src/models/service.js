@@ -10,7 +10,7 @@ class Service {
   updateFields(service) {
     if (!service.label) throw new Error('A service should have a label')
     /** @type {string} */
-    this.label = service.label || ''
+    this.label = service.label
     /** @type {string} */
     this.description = service.description || ''
     /** @type {string} */
@@ -154,7 +154,9 @@ class Service {
    * @param {string} branchName 
    */
   async gitRemoteDelta(branchName) {
+    if (this.git) this.git.delta = null
     const { data: delta } = await axios.get(`/git/${this.label}/branch/${encodeURIComponent(branchName)}/remote-delta`)
+    if (this.git) this.git.delta = delta
     return delta
   }
   async gitFetch() {

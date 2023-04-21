@@ -75,12 +75,14 @@ export default plugins
 
 
 /**
+ * @template T
  * @typedef {{
  *  name: string,
  *  icon?: string,
  *  order?: number,
  *  hidden?: (service: import('../server/models/Service')) => Promise<boolean> | boolean,
- *  routes?: import('express').Router,
+ *  routes?: (stackMonitor: typeof import('../server/models/stack')) => import('express').Router,
+ *  export: T,
  *  placements: ({
  *    label: string,
  *    position?: 'toolbox' | 'sidebar' | 'dev-ops',
@@ -88,6 +90,6 @@ export default plugins
  *    iconText?: string,
  *    goTo?: import('vue-router').RouteLocationRaw | string,
  *    active: string
- *  } | 'toolbox' | 'sidebar' | 'dev-ops')[]
+ *  } | 'toolbox' | 'sidebar' | 'dev-ops' | 'service')[]
  * }} PluginSM
  */

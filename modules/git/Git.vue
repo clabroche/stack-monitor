@@ -6,16 +6,11 @@
       header="Branches"
       :noStyle="noStyle"
       :actions="[
-        { label: '', hidden: git.delta == null, click: () => gitFetch(), icon: 'fas fa-sync' },
+        { label: '', click: () => gitFetch(), icon: 'fas fa-sync' },
         { label: pullLabel, hidden: git.delta != null && git.delta >= 0, click: () => pull(), icon: 'fas fa-download' }
       ]">
-      <!-- Base branch: 
-      <select v-model="defaultBranch">
-        <option></option>
-        <option v-for="branch of git.branches" :key="branch?.name" :default="defaultBranch === branch?.name">{{ branch?.name }}</option>
-      </select> -->
       <ul class="branches">
-        <li v-for="(branch, i) of git.branches" :key="'branch' +i" @click="changeBranch(branch?.name)" :class="{
+        <li v-for="(branch, i) of git.branches" :key="'branch' +i" @click="branch?.name ? changeBranch(branch.name) : null" :class="{
           active: branch?.name === service?.git?.currentBranch,
           merged: branch?.merged
         }">
@@ -26,7 +21,7 @@
             {{branch?.name}}
           </div>
           <div class="actions">
-            <button class="small" @click.stop="deleteBranch(branch?.name)" v-if="!['dev', 'develop', 'main','master'].includes(branch?.name)">
+            <button class="small" @click.stop="branch?.name ? deleteBranch(branch.name) : null" v-if="!['dev', 'develop', 'main','master'].includes(branch?.name)">
               <i class="fas fa-trash" aria-hidden="true"></i>
             </button>
           </div>
@@ -179,6 +174,12 @@ export default {
   },
   async mounted() {
     if(this.customGit) return 
+    const commandRef = /** @type {HTMLElement}*/(this.$refs.terminalRef)
+    if(!commandRef) return
+    // @ts-ignore
+    this.interval = setInterval(() => this.service.updateGit(), 1000)
+    // @ts-ignore
+    this.longInterval = setInterval(() => this.gitFetch(), 1000 * 60)
     await this.service.updateGit()
     if(!this.defaultBranch) {
       const branchNames = this.service.git?.branches?.map(a => a.name) || []
@@ -187,11 +188,6 @@ export default {
       else if (branchNames.includes('master')) this.defaultBranch = 'master'
       else if (branchNames.includes('main')) this.defaultBranch = 'main'
     }
-    // @ts-ignore
-    this.interval = setInterval(() => this.service.updateGit(), 1000)
-    // @ts-ignore
-    this.longInterval = setInterval(() => this.gitFetch(), 1000 * 60)
-    const commandRef = /** @type {HTMLElement}*/(this.$refs.terminalRef)
     commandRef.innerHTML = ''
     this.terminal = new Terminal({
       smoothScrollDuration: 100,
@@ -248,12 +244,19 @@ export default {
       this.service.openLinkInVsCode(path)
     },
     async gitFetch() {
-      if(!this.service.git) return
-      this.service.git.delta = 0
-      await this.service.gitFetch()
-        .catch((err) => notification.next('error', err?.response?.data || err?.message || err))
-      const currentBranch = await this.service.getCurrentBranch()
-      this.service.git.delta = await this.service.gitRemoteDelta(currentBranch)
+      try {
+        if(!this.service.git) return
+        this.service.git.delta = null
+        await this.service.gitFetch()
+          .catch((err) => notification.next('error', err?.response?.data || err?.message || err))
+        const currentBranch = await this.service.getCurrentBranch()
+        if(!currentBranch) return 
+        this.service.git.delta = await this.service.gitRemoteDelta(currentBranch)
+        
+      } catch (error) {
+        console.error(error)
+        this.service.git.delta = 0
+      }
     },
 
     async updateGraph() {
@@ -356,7 +359,7 @@ export default {
       if (res) {
         const review = await Service.reviewFromAi(diff)
         // @ts-ignore
-        const res = await this.$refs['review-result'].open(review).promise
+        await this.$refs['review-result'].open(review).promise
       }
     },
     async stash() {
@@ -444,8 +447,6 @@ button {
       }
       button {
         width: max-content;
-      }
-      button {
         transition: 300ms;
         opacity: 0;
         margin: 0 3px

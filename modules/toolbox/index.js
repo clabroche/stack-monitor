@@ -1,7 +1,8 @@
-/** @type {import('../views').PluginSM} */
+/** @type {import('../views').PluginSM<null>} */
 const plugin = {
   name: 'Toolbox',
   icon: 'fas fa-plus',
+  export: null,
   placements: [{
     position: 'sidebar',
     label: 'Toolbox',
