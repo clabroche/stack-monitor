@@ -102,8 +102,8 @@ export default {
             return {
               text: placement.label,
               icon: placement.icon,
-              click: placement?.goTo ? () => router.push(placement.goTo || '/') : () => { },
-              active: placement?.active
+              click: placement.goTo ? () => router.push(placement.goTo || '/') : () => { },
+              active: placement.active
             }
           })
         }).flat().filter(f => f),

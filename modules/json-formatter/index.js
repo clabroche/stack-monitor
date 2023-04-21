@@ -1,7 +1,8 @@
-/** @type {import('../views').PluginSM} */
+/** @type {import('../views').PluginSM<null>} */
 const plugin = {
   name: "JSONFormatter",
   icon: "fas fa-random",
+  export: null,
   placements: [
     {
       position: "toolbox",

@@ -16,6 +16,7 @@
         </div>
       </template>
       <table>
+        <caption>All services to pull</caption>
         <tr v-for="service of servicesToPull" :key="service?.label">
           <td><h3>{{ service.label }}</h3></td>
           <td><div class="badge">{{ service.git?.currentBranch }}</div></td>
@@ -58,6 +59,8 @@
         </div>
       </template>
       <table>
+
+        <caption>All services to push</caption>
         <tr v-for="service of servicesToPush" :key="service?.label">
           <td><h3>{{ service.label }}</h3></td>
           <td><div class="badge">{{ service.git?.currentBranch }}</div></td>
@@ -76,6 +79,7 @@
         <option v-for="branch of allBranches" :key="branch?.name" :value="branch?.name">{{ branch?.name }}</option>
       </select>
       <table>
+        <caption>Manage all services</caption>
         <tr v-for="service of services" :key="service?.label">
           <td>
             <h3>
@@ -97,11 +101,11 @@
           </td>
           <td>
             <div class="line">
-              <button class="small" :disabled="checkUpdatePending || !!service.git?.status?.filter(a => a).length" @click="stash(service)">
+              <button class="small" :disabled="checkUpdatePending || !service.git?.status?.filter(a => a).length" @click="stash(service)">
                 <i class="fas fa-sun"></i>
                 Stash
               </button>
-              <button class="small" :disabled="checkUpdatePending || !!service.git?.stash" @click="stashPop(service)">
+              <button class="small" :disabled="checkUpdatePending || !service.git?.stash" @click="stashPop(service)">
                 <i class="far fa-sun"></i>
                 Unstash
               </button>
@@ -132,7 +136,6 @@ async function updateGit() {
     await service.updateGit()
     return service
   }, { concurrency: 6 })
-  console.log(result)
   services.value = result.sort((a,b) =>  a.label?.localeCompare(b?.label || '') || 0)
 }
 onMounted(async() => {
@@ -168,7 +171,7 @@ const checkUpdates = async () => {
     try {
       await service.updateGit()
       const currentBranch = await service.getCurrentBranch()
-      if(service.git) {
+      if(service.git && currentBranch) {
         service.git.delta = await service.gitRemoteDelta(currentBranch)
         if (service.git.delta < 0) {
           servicesToPull.value.push(service)
@@ -265,6 +268,11 @@ async function stashPop(service) {
 .custom-header {
   display: flex;
   gap: 10px;
+}
+table {
+  caption {
+    display: none;
+  }
 }
 h3, h1 {
   margin: 0;

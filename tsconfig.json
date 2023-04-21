@@ -30,14 +30,17 @@
   },
   "exclude": [
     "dist",
-    "./built/**/*",
+    "./built",
+    "./coverage",
     "node_modules",
+    "./server/public",
+    "./example"
   ],
   "include": [
     // "node_modules/express-async-errors",
     // "node_modules/vue-json-viewer",
     // "node_modules/vue3-markdown-it",
-    // "node_modules/pidusage-tree",
+    "node_modules/pidusage-tree",
     "./server/**/*",
     "./modules/**/*",
     "./src/**/*",

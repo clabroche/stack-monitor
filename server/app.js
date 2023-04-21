@@ -29,7 +29,7 @@ app.use(/** @type {ExpressMiddlewareError} */ ((err, req, res, next) => {
 // @ts-ignore
 app.stopWorkers = async () => {
   await stopCpu()
-  await stopWatchers()
+  stopWatchers()
 }
 module.exports = app;
 

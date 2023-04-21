@@ -2,8 +2,7 @@
   <div class="stack-multiple">
     <tabs :tabs="tabs" :showLabels="false" ref="tabRef">
       <template #default="{tab}">
-        <transition name="slide-fade">
-          <div class="tab">
+          <div class="tab" >
             <draggable v-model="services"
               v-bind="{animation: 800,}"
               item-key="label"
@@ -25,7 +24,6 @@
               </template>
             </draggable>
           </div>
-        </transition>
       </template>
     </tabs>
   </div>
@@ -71,8 +69,7 @@ export default {
             const {data: plugins} = await axios.get('/plugins/services/'+ service.label)
             const availablePlugins = plugins.map(a => a.name)
             const plugin = availablePlugins.find(plugin => plugin === currentPlugin)
-            if(!plugin) return false
-            return true
+            return plugin
           }
           return false
         })

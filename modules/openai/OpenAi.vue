@@ -26,12 +26,12 @@
             <div>
               Model:
               <select v-model="model">
-                <option name="gpt-3.5-turbo">gpt-3.5-turbo</option>
+                <option value="gpt-3.5-turbo">gpt-3.5-turbo</option>
               </select>
             </div>
           </div>
         </div>
-        <chat :messages="messagesToDisplay" :loading="loading" @send="sendMessage($event)"></chat>
+        <Chat :messages="messagesToDisplay" :loading="loading" @send="sendMessage($event)"></Chat>
       </div>
     </div>
   </div>
@@ -40,8 +40,7 @@
 <script setup>
 import axios from '@/helpers/axios'
 import Chat from './Chat.vue'
-import {computed, ref} from 'vue'
-import { onMounted } from "vue";
+import {computed, ref, onMounted} from 'vue'
 import notification from '@/helpers/notification';
 
 const ready = ref(false)

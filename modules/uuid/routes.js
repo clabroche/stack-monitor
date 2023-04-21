@@ -1,9 +1,12 @@
 const express = require("express");
 const router = express.Router();
-const {v4} = require('uuid')
+const UUID = require('./UUID')
 
-router.get("/", async (req, res) => {
-    res.json(v4());
-});
-
-module.exports = router;
+/** @param {import('../../typings/index').StackMonitor} stackMonitor */
+module.exports = (stackMonitor) => {
+    const uuid = UUID(stackMonitor)
+    router.get("/uuid/", async (req, res) => {
+        res.json(uuid.generate());
+    });
+    return router
+}

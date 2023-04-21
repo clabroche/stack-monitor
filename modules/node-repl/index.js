@@ -1,10 +1,8 @@
-const express = require("express");
-const router = express.Router();
-
-/** @type {import('../views').PluginSM} */
+/** @type {import('../views').PluginSM<null>} */
 const plugin = {
   name: "NodeREPL",
   icon: "fab fa-node",
+  export: null,
   placements: [
     {
       position: "toolbox",
@@ -15,7 +13,7 @@ const plugin = {
     },
   ],
   order: 6,
-  routes: router.use("/node-repl", require("./routes")),
+  routes: require('./routes'),
 };
 module.exports = plugin
 

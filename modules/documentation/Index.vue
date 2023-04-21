@@ -6,7 +6,7 @@
       <h2>Documentation</h2>
     </div>
     <div class="container">
-      <tree :tree="tree" @go="goTo" :activeLeaf="activeLeaf"></tree>
+      <Tree :tree="tree" @go="goTo" :activeLeaf="activeLeaf"></Tree>
       <div class="markdown">
         <Markdown :source="currentPage || ''"/>
       </div>
@@ -67,10 +67,11 @@ h2 {
   margin-top: 0;
 }
 .container {
+  display: flex;
+  gap: 10px;
   width: 100%;
   margin: auto;
   height: calc(100vh - 400px - 40px);
-
   @media (max-width: 1300px) { 
     height: calc(100vh - 500px - 40px);
   }
@@ -87,9 +88,5 @@ h2 {
   height: 100%;
   overflow: auto;
   flex-grow: 1;
-}
-.container {
-  display: flex;
-  gap: 10px;
 }
 </style>

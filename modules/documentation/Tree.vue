@@ -8,7 +8,7 @@
       </div>
       <div v-if="leaf?.isDir">
         <div class="children" v-if="leaf?.children">
-          <tree :tree="leaf.children" @go="$emit('go', $event)" :activeLeaf="activeLeaf"></tree>
+          <Tree :tree="leaf.children" @go="$emit('go', $event)" :activeLeaf="activeLeaf"></Tree>
         </div>
       </div>
     </div>
@@ -19,21 +19,18 @@
 // @ts-ignore
 import Tree from './Tree.vue'
 
-
-const emit = defineEmits([
+defineEmits([
   'go'
 ])
 
-const props = defineProps({
+defineProps({
   tree: {
     required: true,
     /** @type {import('./index').Leaf[]} */
     // @ts-ignore
     default: () => ([])
   },
-  activeLeaf: {
-    
-  }
+  activeLeaf: {}
 })
 </script>
 

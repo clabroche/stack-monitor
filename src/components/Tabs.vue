@@ -38,7 +38,7 @@ watch(() => props.tabs, ()=> {
     load()
   }
 })
-const save = () => localStorage.setItem('tab', currentTab?.value?.id ? currentTab.value.id : '')
+const save = () => localStorage.setItem('tab', currentTab.value?.id ? currentTab.value.id : '')
 
 const availableTabs = computed(() => {
   return props.tabs.filter((tab) => !tab.hidden)

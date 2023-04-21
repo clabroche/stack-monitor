@@ -74,8 +74,8 @@ onMounted(async() => {
     _editor.onDidChangeModelContent((model) => {
       emit('update:modelValue', _editor.getValue())
     })
-    var KM = monaco.KeyMod;
-    var KC = monaco.KeyCode;
+    const KM = monaco.KeyMod;
+    const KC = monaco.KeyCode;
     _editor.addCommand(KM.chord(KM.CtrlCmd, KC.KeyS), function () {
       //...
       emit('save', _editor.getValue())

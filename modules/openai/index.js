@@ -1,10 +1,8 @@
-const express = require('express');
-const router = express.Router();
-
-/** @type {import('../views').PluginSM} */
+/** @type {import('../views').PluginSM<null>} */
 const plugin = {
   name: "OpenAI",
   icon: "fas fa-brain",
+  export: null,
   placements: [
     {
       position: "toolbox",
@@ -15,7 +13,7 @@ const plugin = {
     },
   ],
   order: 6,
-  routes: router.use("/openai", require("./routes")),
+  routes: require('./routes'),
 };
 module.exports = plugin
 

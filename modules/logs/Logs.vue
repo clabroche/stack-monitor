@@ -31,12 +31,12 @@
       </div>
     </div>
     <div class="main-content">
-      <section-cmp v-if="isOpen" header="Logs" :noStyle="noStyle"
+      <sectionCmp v-if="isOpen" header="Logs" :noStyle="noStyle"
         :actions="[{ icon: 'fas fa-chevron-down', click: () => scrollTerminal() }, { icon: 'fas fa-trash', click: () => clear() }]">
           <div v-if="service" class="logs-container" ref="logsContainer" id="terminal" style="box-sizing: content-box">
         </div>
         <transition name="appear">
-          <section-cmp v-if="isOpen && jsonContainerOpen" :header="'Objects: (' + jsonsToDisplay.length + ')'" :noStyle="true" class="right json-container" style="background-color: white; border: none">
+          <sectionCmp v-if="isOpen && jsonContainerOpen" :header="'Objects: (' + jsonsToDisplay.length + ')'" :noStyle="true" class="right json-container" style="background-color: white; border: none">
             <div class="jsons-header input-container">
               <input type="text" placeholder="Ex: src.result[0]" v-model="jsonPathSearch">
             </div>
@@ -56,10 +56,10 @@
                 </json-viewer>
               </div>
             </div>
-          </section-cmp>
+          </sectionCmp>
         </transition>
         <transition name="appear">
-          <section-cmp v-if="isOpen && jsonSMContainerOpen" :header="'Debug Objects: (' + jsonsSMToDisplay.length + ')'" :noStyle="true" class="right json-container" style="background-color: white; border: none">
+          <sectionCmp v-if="isOpen && jsonSMContainerOpen" :header="'Debug Objects: (' + jsonsSMToDisplay.length + ')'" :noStyle="true" class="right json-container" style="background-color: white; border: none">
             <div class="jsons-header input-container">
               <input type="text" placeholder="Ex: src.result[0]" v-model="jsonPathSearch">
             </div>
@@ -79,9 +79,9 @@
                 </json-viewer>
               </div>
             </div>
-          </section-cmp>
+          </sectionCmp>
         </transition>
-      </section-cmp>
+      </sectionCmp>
       
       <div class="open-buttons">
           <button v-for="(toggle, i) of toggles" :key="toggle.label" @click="toggleIsOpen(i)" :class="{ bordered: toggle.isOpen }">
@@ -90,24 +90,24 @@
       </div>
     </div>
   </div>
-  <section-cmp v-else>
+  <sectionCmp v-else>
     <div class="not-launch">
       <i class="fas fa-ban"></i>
       Lancer le service pour voir les logs
     </div>
-  </section-cmp>
+  </sectionCmp>
 
 
-  <modal ref="findSolutionModal" cancelString="No" validateString="Yes">
+  <Modal ref="findSolutionModal" cancelString="No" validateString="Yes">
     <template #header>
       Find solution from AI
     </template>
     <template #body="{data: tokens}">
       Are you sure ? This have a cost of ~{{ tokens.price }}$
     </template>
-  </modal>
+  </Modal>
 
-  <modal ref="findSolutionResultModal" cancelString="OK" :noValidate="true">
+  <Modal ref="findSolutionResultModal" cancelString="OK" :noValidate="true">
     <template #header>
       Find solution from AI
     </template>
@@ -116,7 +116,7 @@
         {{result?.trim()}}
       </pre>
     </template>
-  </modal>
+  </Modal>
 </template>
 
 <script setup>
@@ -146,9 +146,6 @@ const props = defineProps({
   noStyle: { default: false },
   isInMultiMode: {default: false}
 })
-const urlSearchParams = new URLSearchParams(window.location.search);
-const params = Object.fromEntries(urlSearchParams.entries());
-
 
 /** @type {import('vue').Ref<import('xterm').Terminal | null>} */
 const terminal = ref(null)
@@ -165,7 +162,6 @@ const jsons = ref([])
 const isOpen = ref(true)
 const isInclude = ref(false)
 const logs = ref('')
-const json = ref('')
 const findSolutionModal = ref()
 const findSolutionResultModal = ref()
 const lineToKeep = ref(router.currentRoute.value.query.lineToKeep || 120)

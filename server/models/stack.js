@@ -4,6 +4,7 @@ const debounce = require('debounce')
 const _ = require('lodash')
 const Socket = require('./socket')
 const myConfs = require('./myConfs')
+const plugins = require('../../modules/plugins')
 const fs = require('fs')
 const Service = require('./Service')
 const PromiseB = require('bluebird')
@@ -27,11 +28,14 @@ class Stack {
   static #onServiceKill = () => { }
   /**@type {GlobalScript[]} */
   static #globalScripts = []
+  static Socket = Socket
 
   static devops = {
     /** @param {GlobalScript} script */
     addGlobalScript(script) {
-      Stack.#globalScripts.push(script)
+      if (!Stack.#globalScripts.find(s => s.label === script.label)) {
+        Stack.#globalScripts.push(script)
+      }
     },
     getGlobalScripts() {
       return Stack.#globalScripts
@@ -45,7 +49,7 @@ class Stack {
     /** @type {string[]} */
     this.watchFiles = stack.watchFiles || []
     /** @type {Service[]} */
-    this.services = (stack?.services || []).map(service => new Service(service))
+    this.services = (stack.services || []).map(service => new Service(service, /**@type {StackWithPlugins}*/(Stack)))
   }
 
   /** @param {string[]} servicesLabelSelected */
@@ -58,12 +62,12 @@ class Stack {
   }
 
   async restart() {
-    await PromiseB.map(await this.getEnabledServices(), (service) => {
+    await PromiseB.map(this.getEnabledServices(), (service) => {
       return service.restart()
     })
   }
   async kill() {
-    await PromiseB.map(await this.getEnabledServices(), (service) => {
+    await PromiseB.map(this.getEnabledServices(), (service) => {
       return service.kill()
     })
   }
@@ -160,7 +164,6 @@ class Stack {
   findService(serviceLabel) {
     return Stack.findService(serviceLabel)
   }
-
   
   /**
    * 
@@ -169,9 +172,6 @@ class Stack {
    */
   static async selectConf(confPath, _services = []) {
     confPath = pathfs.resolve(confPath);
-    // let services = await Promise.resolve()
-    //   .then(() => JSON.parse(_services))
-    //   .catch((err) => ([]))
     if (Stack.#currentWatches?.length) Stack.#currentWatches.forEach(currentWatch => currentWatch.close())
     confPath = path.resolve(confPath)
     await myConfs.add(confPath)
@@ -212,7 +212,7 @@ class Stack {
   async changeEnvironment(envLabel) {
     if (Stack.environments?.[envLabel]) {
       Stack.#currentEnvironment = envLabel
-      const enabledServices = await Stack.getEnabledServices()
+      const enabledServices = Stack.getEnabledServices()
       await Stack.getStack()?.kill()
       enabledServices.forEach(s => {
         s.enabled = true
@@ -222,7 +222,7 @@ class Stack {
       if(stack?.confPath) {
         await checkConf(stack.confPath)
       }
-      await Stack.getStack()?.launch()
+      Stack.getStack()?.launch()
 
     } else {
       throw new Error('env not found')
@@ -265,8 +265,31 @@ class Stack {
   }
 }
 
-module.exports = Stack
 
+/**
+ * @template {{ [key: string]: {export: any }}} T
+ * @typedef {{
+ *  [K in keyof T]: T[K]['export'] extends Function ? ReturnType<T[K]['export']> : never;
+ * }} KeysMatching
+ */
+/**
+ * @template {{ [key: string]: {export: any }}} T
+ * @typedef {{ [K in keyof T as (
+ *  T[K]['export'] extends undefined|null ? never : K)
+ * ]: T[K]['export'] extends Function ? ReturnType<T[K]['export']> : T[K]['export'] }} OmitNever
+ */
+const pluginsToLoad = /**@type {(keyof typeof plugins)[]}*/(Object.keys(plugins)).reduce((p, key) => {
+  const plugin = plugins[key]
+  if(plugin.export) {
+    // @ts-ignore
+    p[key] = typeof plugin.export === 'function'
+      ? plugin.export(/**@type {StackWithPlugins}*/(Stack))
+      : plugin.export
+  }
+  return p
+}, /** @type {OmitNever<typeof plugins>}*/({}))
+
+module.exports = /**@type {StackWithPlugins}*/(Object.assign(Stack, pluginsToLoad))
 /**
  * @param {Stack} originalStack
  * @param {Stack} newStack
@@ -277,7 +300,7 @@ async function reloadService(originalStack, newStack) {
     const newService = newData.services.find(s => s.label === originalService.label)
     if (newService?.label) {
       const diffs = difference(originalService.exportForDifference(), newService)
-      if (!Object.keys(diffs)?.length) return false
+      if (!Object.keys(diffs).length) return false
       let shouldRestart = false
       Object.keys(diffs).forEach(key => {
         if (key.includes('spawnOptions.shell')) return // spawnOptions.shell is set by stack-monitor not user 
@@ -308,7 +331,7 @@ async function reloadGloblalConf(originalStack, newStack) {
     { ...originalStack.exportForDifference(), services: []},
     { ...newStack.exportForDifference(), services: [] }
   )
-  if (!Object.keys(diffs)?.length) return false
+  if (!Object.keys(diffs).length) return false
   Object.keys(diffs).forEach(key => {
     // @ts-ignore
     dot.copy('to', key, diffs[key], originalStack)
@@ -379,6 +402,9 @@ function difference(fromObject, toObject) {
   return changes
 }
 
+/**
+ * @typedef {typeof Stack & OmitNever<typeof plugins>} StackWithPlugins
+ */
 
 /**
  * @typedef {Omit<import('../../typings/index').NonFunctionProperties<Service>, 'pids' | 'store' | 'enabled'>[]} StackArray
@@ -392,9 +418,8 @@ function difference(fromObject, toObject) {
  * }} StackObject
  */
 
-
 /**
- * @typedef {(stackMonitor: typeof Stack) => StackObject | Promise<StackObject>} StackFunction
+ * @typedef {(stackMonitor: StackWithPlugins) => StackObject | Promise<StackObject>} StackFunction
  */
 
 /**
@@ -412,8 +437,6 @@ function difference(fromObject, toObject) {
 
 /**
  * @typedef {{
- *  label: string,
- *  pipeline: {
  *    label: string,
  *    id: string,
  *    prompt?:{
@@ -425,5 +448,11 @@ function difference(fromObject, toObject) {
  *    },
  *    script?: (output: Record<string, any>,prompts: Record<string, any>) => any,
  *    print?: (output: Record<string, any>, prompts: Record<string, any>) => any,
- *  }[]}} GlobalScript
+ *  }} ScriptStep 
+ */
+
+/**
+ * @typedef {{
+ *  label: string,
+ *  pipeline: ScriptStep[]}} GlobalScript
  */

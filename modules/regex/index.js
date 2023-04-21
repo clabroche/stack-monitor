@@ -1,7 +1,8 @@
-/** @type {import('../views').PluginSM} */
+/** @type {import('../views').PluginSM<null>} */
 const plugin = {
   name: "Regex",
   icon: "fas fa-key",
+  export: null,
   placements: [
     {
       position: "toolbox",

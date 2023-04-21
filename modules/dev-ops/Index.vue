@@ -53,25 +53,25 @@ const buttonsPlugins = computed(() => ([
         text: placement.label,
         icon: placement.icon,
         iconText: placement.iconText,
-        click: placement?.goTo ? () => {
+        click: placement.goTo ? () => {
           if(typeof placement.goTo === 'string') router.push({path: placement.goTo})
           else {
             router.push({
               ...placement.goTo,
-              path: `/DevOps${(placement?.goTo?.path || placement.goTo)}`
+              path: `/DevOps${(placement.goTo?.path || placement.goTo)}`
             })
           }
         } : () => { },
-        active: placement?.active
+        active: placement.active
       }
     })
-  }).flat().filter(f => f && f.text?.toUpperCase().includes(searchToolTerm?.value?.toUpperCase())) || [],
+  }).flat().filter(f => f && f.text?.toUpperCase().includes(searchToolTerm.value?.toUpperCase())) || [],
 ]))
 
 function chooseFirst() {
   buttonsPlugins.value?.[0]?.click()
 }
-/**@param {import('../views').PluginSM} plugin */
+/**@param {import('../views').PluginSM<undefined>} plugin */
 function isActive(plugin) {
   return router.currentRoute.value.params.plugin === plugin.name
 }

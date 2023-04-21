@@ -1,12 +1,10 @@
-const express = require('express');
-const router = express.Router();
-
-/** @type {import('../views').PluginSM} */
+/** @type {import('../views').PluginSM<null>} */
 const plugin = {
   name: 'Logs',
   icon: 'fas fa-terminal',
+  export: null,
   placements: ['service'],
   order: 2,
-  routes: router.use('/logs', require('./routes'))
+  routes: require('./routes')
 }
 module.exports = plugin

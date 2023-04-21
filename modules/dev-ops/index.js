@@ -1,7 +1,8 @@
-/** @type {import('../views').PluginSM} */
+/** @type {import('../views').PluginSM<null>} */
 const plugin = {
   name: 'DevOps',
   icon: 'fas fa-hard-hat',
+  export: null,
   placements: [{
     position: "sidebar",
     label: "DevOps",

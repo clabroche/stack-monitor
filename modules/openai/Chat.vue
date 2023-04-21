@@ -106,9 +106,6 @@ onBeforeUnmount(() => clearInterval(interval))
   width: 100%;
   height: calc(100vh - 200px);
   background: white;
-
-  border-top-left-radius: 50px;
-  border-top-right-radius: 50px;
   border-radius: 10px;
   box-shadow: 0 0 10px 0 rgba(0,0,0,0.1);
 }

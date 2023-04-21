@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Stack = require('../models/stack')
+// @ts-ignore
 const pidusageTree = require('pidusage-tree')
 const os = require('os');
 
