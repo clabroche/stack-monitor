@@ -26,21 +26,7 @@ class Stack {
   static #onServiceStart = () => { }
   /**@type {(service: Service) => undefined} */
   static #onServiceKill = () => { }
-  /**@type {GlobalScript[]} */
-  static #globalScripts = []
   static Socket = Socket
-
-  static devops = {
-    /** @param {GlobalScript} script */
-    addGlobalScript(script) {
-      if (!Stack.#globalScripts.find(s => s.label === script.label)) {
-        Stack.#globalScripts.push(script)
-      }
-    },
-    getGlobalScripts() {
-      return Stack.#globalScripts
-    }
-  }
 
   /** @param {Partial<Stack>} stack */
   constructor(stack) {
@@ -266,18 +252,7 @@ class Stack {
 }
 
 
-/**
- * @template {{ [key: string]: {export: any }}} T
- * @typedef {{
- *  [K in keyof T]: T[K]['export'] extends Function ? ReturnType<T[K]['export']> : never;
- * }} KeysMatching
- */
-/**
- * @template {{ [key: string]: {export: any }}} T
- * @typedef {{ [K in keyof T as (
- *  T[K]['export'] extends undefined|null ? never : K)
- * ]: T[K]['export'] extends Function ? ReturnType<T[K]['export']> : T[K]['export'] }} OmitNever
- */
+
 const pluginsToLoad = /**@type {(keyof typeof plugins)[]}*/(Object.keys(plugins)).reduce((p, key) => {
   const plugin = plugins[key]
   if(plugin.export) {
@@ -436,23 +411,14 @@ function difference(fromObject, toObject) {
  */
 
 /**
+ * @template {{ [key: string]: {export: any }}} T
  * @typedef {{
- *    label: string,
- *    id: string,
- *    prompt?:{
- *      question: string,
- *      options?: (output: Record<string, any>) => ({label: string, value: string}[]) | Promise<{label: string, value: string}[]>,
- *      defaultValue?: (output: Record<string, any>) => any,
- *      type?: 'string' | 'number' | 'boolean' | 'array' | 'select'| 'multi-select',
-*       validation?: (value: any) => (string | null) | Promise<string | null>
- *    },
- *    script?: (output: Record<string, any>,prompts: Record<string, any>) => any,
- *    print?: (output: Record<string, any>, prompts: Record<string, any>) => any,
- *  }} ScriptStep 
+ *  [K in keyof T]: T[K]['export'] extends Function ? ReturnType<T[K]['export']> : never;
+ * }} KeysMatching
  */
-
 /**
- * @typedef {{
- *  label: string,
- *  pipeline: ScriptStep[]}} GlobalScript
+ * @template {{ [key: string]: {export: any }}} T
+ * @typedef {{ [K in keyof T as (
+ *  T[K]['export'] extends undefined|null ? never : K)
+ * ]: T[K]['export'] extends Function ? ReturnType<T[K]['export']> : T[K]['export'] }} OmitNever
  */

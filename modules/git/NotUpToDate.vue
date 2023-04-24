@@ -12,6 +12,7 @@
           Services to pull
           <div class="loader" v-if="checkUpdatePending">
             ({{nbServiceChecked}}/{{ services?.length }})
+            {{ currentServiceChecking }}
           </div>
         </div>
       </template>
@@ -161,14 +162,17 @@ const allBranches = computed(() => {
 
 const checkUpdatePending = ref(false)
 const nbServiceChecked = ref(0)
+const currentServiceChecking = ref('')
 
 const checkUpdates = async () => {
   checkUpdatePending.value = true
   nbServiceChecked.value = 0
+  currentServiceChecking.value = ''
   servicesToPull.value = []
   servicesToPush.value = []
   await PromiseB.map(stack?.services || [], async (service) => {
     try {
+      currentServiceChecking.value = service.label || ''
       await service.updateGit()
       const currentBranch = await service.getCurrentBranch()
       if(service.git && currentBranch) {
@@ -189,6 +193,7 @@ const checkUpdates = async () => {
   }, { concurrency: 6 })
   .finally(() => {
     checkUpdatePending.value = false
+    currentServiceChecking.value = ''
   })
 }
 

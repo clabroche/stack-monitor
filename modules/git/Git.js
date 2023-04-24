@@ -71,7 +71,7 @@ const Git = (stackMonitor) => {
      */
     async changeBranch(serviceName, branchName) {
       const service = findService(serviceName)
-      if (!requirements(service)) return 'ko'
+      if (!requirements(service)) throw new Error('Requirments not met')
       await execAsync('git checkout ' + branchName, { cwd: service.rootPath })
       return 'ok'
     },
@@ -81,7 +81,7 @@ const Git = (stackMonitor) => {
      */
     async deleteBranch(serviceName, branchName) {
       const service = findService(serviceName)
-      if (!requirements(service)) return 'ko'
+      if (!requirements(service)) throw new Error('Requirments not met')
       await execAsync('git branch --delete ' + branchName, { cwd: service.rootPath })
       return 'ok'
     },
@@ -91,7 +91,11 @@ const Git = (stackMonitor) => {
      */
     async remoteDelta(serviceName, branchName) {
       const service = findService(serviceName)
-      if (!requirements(service)) return null
+      if (!requirements(service)) throw new Error('Requirments not met')
+      if (service.git.remote) {
+        const hasRemote = +(await execAsync(`git ls-remote --heads ${service.git.remote} ${branchName} | wc -l`, { cwd: service.rootPath }))
+        if(!hasRemote) return 1
+      }
       await execAsync(`git branch --set-upstream-to=origin/${branchName} ${branchName}`, { cwd: service.rootPath })
       await execAsync(`git fetch origin ${branchName}`, { cwd: service.rootPath })
       const localCommit = await execAsync(`git log --oneline ${branchName}`, { cwd: service.rootPath })
@@ -101,30 +105,39 @@ const Git = (stackMonitor) => {
     /** @param {string} serviceName */
     async fetch(serviceName) {
       const service = findService(serviceName)
-      if (!requirements(service)) return 'ko'
+      if (!requirements(service)) throw new Error('Requirments not met')
       await execAsync(`git fetch`, { cwd: service.rootPath })
       return 'ok'
     },
     /** @param {string} serviceName */
     async reset(serviceName) {
       const service = findService(serviceName)
-      if (!requirements(service)) return 'ko'
+      if (!requirements(service)) throw new Error('Requirments not met')
       await execAsync('git reset --hard', { cwd: service.rootPath })
       return 'ok'
     },
     /** @param {string} serviceName */
     async pull(serviceName) {
       const service = findService(serviceName)
-      if (!requirements(service)) return 'ko'
+      if (!requirements(service)) throw new Error('Requirments not met')
       const origin = (await execAsync('git remote -v | grep fetch', { cwd: service.rootPath })).split('\t')[0]?.trim() || ''
       const currentBranch = await this.getCurrentBranch(service.label)
       await execAsync(`git pull ${origin} ${currentBranch}`, { cwd: service.rootPath })
       return 'ok'
     },
     /** @param {string} serviceName */
+    async push(serviceName) {
+      const service = findService(serviceName)
+      if (!requirements(service)) throw new Error('Requirments not met')
+      const origin = (await execAsync('git remote -v | grep fetch', { cwd: service.rootPath })).split('\t')[0]?.trim() || ''
+      const currentBranch = await this.getCurrentBranch(service.label)
+      await execAsync(`git push ${origin} ${currentBranch}`, { cwd: service.rootPath })
+      return 'ok'
+    },
+    /** @param {string} serviceName */
     async stash(serviceName) {
       const service = findService(serviceName)
-      if (!requirements(service)) return 'ko'
+      if (!requirements(service)) throw new Error('Requirments not met')
       await execAsync('git add .', { cwd: service.rootPath })
       await execAsync('git stash', { cwd: service.rootPath })
       return 'ok'
@@ -132,7 +145,7 @@ const Git = (stackMonitor) => {
     /** @param {string} serviceName */
     async stashPop(serviceName) {
       const service = findService(serviceName)
-      if (!requirements(service)) return 'ko'
+      if (!requirements(service)) throw new Error('Requirments not met')
       await execAsync('git stash pop', { cwd: service.rootPath })
       await execAsync('git reset HEAD', { cwd: service.rootPath })
       return 'ok'
@@ -151,7 +164,7 @@ const Git = (stackMonitor) => {
      */
     async checkoutFile(serviceName, filePath) {
       const service = findService(serviceName)
-      if (!requirements(service)) return 'ko'
+      if (!requirements(service)) throw new Error('Requirments not met')
       await execAsync('git checkout ' + filePath, { cwd: service.rootPath })
       return 'ok'
     },

@@ -31,9 +31,7 @@
                 <input type="text" v-else v-model="track.steps[track.currentStep].promptValue">
                 <button @click="validatePrompt">Validate</button>
               </template>
-              <div v-if="track.steps[step.id]?.error">
-                {{ track.steps[step.id].error }}
-              </div>
+              <div v-if="track.steps[step.id]?.error" v-html="track.steps[step.id].error"></div>
               <div v-if="track.steps[step.id]" v-html="track.steps[step.id].printData"></div>
             </div>
           </div>
@@ -52,7 +50,7 @@ import Socket from '@/helpers/Socket';
 /** @type {import('vue').Ref<GlobalScript[]>} */
 const globalScripts = ref([])
 
-/** @type {import('vue').Ref<import('./routes').TrackStep>} */
+/** @type {import('vue').Ref<import('./GlobalScripts').TrackStep>} */
 const track = ref({
   currentStep: '',
   steps: {},
@@ -66,11 +64,13 @@ const communicationId = ref('')
 /** @type {import('vue').Ref<GlobalScript | null>} */
 const currentScript = ref(null)
 
-onMounted(async() => {
+onMounted(reload)
+Socket.socket.on('reloadScripts', reload);
+async function reload() {
   const { data: scripts } = await axios.get('/global-scripts/')
   globalScripts.value = scripts || []
-  if(!currentScript.value &&globalScripts.value?.length) await selectScript(globalScripts.value[0]) 
-})
+  if (!currentScript.value && globalScripts.value?.length) await selectScript(globalScripts.value[0])
+}
 
 
 /** @param {GlobalScript} script */
@@ -100,7 +100,7 @@ async function validatePrompt() {
 }
 
 /**
- * @typedef {import('../../server/models/stack').GlobalScript} GlobalScript
+ * @typedef {import('./GlobalScripts').GlobalScript} GlobalScript
  */
 </script>
 

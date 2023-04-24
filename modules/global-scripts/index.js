@@ -1,8 +1,10 @@
-/** @type {import('../views').PluginSM<null>} */
+const GlobalScripts = require('./GlobalScripts');
+
+/** @type {import('../views').PluginSM<GlobalScripts>} */
 const plugin = {
   name: "Global scripts",
   icon: "fas fa-columns",
-  export: null,
+  export: GlobalScripts,
   placements: [
     {
       position: "dev-ops",
