@@ -45,6 +45,18 @@ Define your service description.
 }
 ```
 
+## Root path
+
+type: string,required: false
+
+Define your service root directory.
+```js [js]
+{
+  //...
+  rootPath: "...",
+}
+```
+
 ## Groups
 
 type: string[],required: false

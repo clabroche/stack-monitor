@@ -25,7 +25,7 @@ class Service {
      *   remote: string,
      *   branches: {name: string, merged: boolean}[],
      *   stash: string[],
-     *   delta: number,
+     *   delta: number | null,
      *   currentBranch: string,
      *   status: []
      * }}
@@ -52,6 +52,8 @@ class Service {
     this.commands = service.commands || []
     /** @type {boolean} */
     this.enabled = service.enabled || false
+    /** @type {string} */
+    this.rootPath = service.rootPath || ''
   }
 
   async updateGit() {

@@ -1,5 +1,6 @@
-const express = require('express');
+// @ts-ignore
 require('express-async-errors');
+const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const indexRouter = require('./routes/index');
@@ -22,8 +23,8 @@ app.get('*', (req, res) => {
 });
 
 app.use(/** @type {ExpressMiddlewareError} */ ((err, req, res, next) => {
-  console.error(err)
-  res.status(500).send(err)
+  console.error(err?.message || err)
+  res.status(500).send(err?.message || err)
 }));
 
 // @ts-ignore

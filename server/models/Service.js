@@ -61,7 +61,7 @@ module.exports = class Service {
       env: service.spawnOptions?.env,
     }
     /** @type {string} */
-    this.rootPath = service.rootPath || service.spawnOptions?.cwd?.toString?.() || ''
+    this.rootPath = service.rootPath || service.spawnOptions?.cwd?.toString?.() || service.commands?.[0]?.spawnOptions?.cwd?.toString?.() || ''
   }
 
   exportInApi() {

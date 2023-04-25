@@ -23,30 +23,25 @@ module.exports = (stackMonitor) => {
   router.post('/git/:service/branch/:branchName/change', async function (req, res) {
     await git.changeBranch(req.params.service, req.params.branchName)
       .then((result) => res.json(result))
-      .catch(err => res.status(500).json(err))
   })
   router.delete('/git/:service/branch/:branchName', async function (req, res) {
     await git.deleteBranch(req.params.service, req.params.branchName)
       .then((result) => res.json(result))
-      .catch(err => res.status(500).json(err))
   })
   
   router.get('/git/:service/branch/:branchName/remote-delta', async function (req, res) {
     await git.remoteDelta(req.params.service, req.params.branchName)
       .then((result) => res.json(result))
-      .catch(err => res.status(500).json(err))
   })
   
   router.post('/git/:service/fetch', async function (req, res) {
     await git.fetch(req.params.service)
       .then((result) => res.json(result))
-      .catch(err => res.status(500).json(err))
   })
   
   router.delete('/git/:service/reset', async function (req, res) {
     await git.reset(req.params.service)
       .then((result) => res.json(result))
-      .catch(err => res.status(500).json(err))
   })
   
   router.get('/git/:service/current-branch', async(req, res) => {
@@ -56,27 +51,22 @@ module.exports = (stackMonitor) => {
   router.post('/git/:service/pull', async function (req, res) {
     await git.pull(req.params.service)
       .then((result) => res.json(result))
-      .catch(err => res.status(500).json(err))
   })
   router.post('/git/:service/stash', async function (req, res) {
     await git.stash(req.params.service)
       .then((result) => res.json(result))
-      .catch(err => res.status(500).json(err))
   })
   router.post('/git/:service/stash-pop', async function (req, res) {
     await git.stashPop(req.params.service)
       .then((result) => res.json(result))
-      .catch(err => res.status(500).json(err))
   })
   router.post('/git/:service/stash-list', async function (req, res) {
     await git.stashList(req.params.service)
       .then((result) => res.json(result))
-      .catch(err => res.status(500).json(err))
   })
   router.delete('/git/:service/checkout/:file', async function (req, res) {
     await git.checkoutFile(req.params.service, req.params.file.trim())
       .then((result) => res.json(result))
-      .catch(err => res.status(500).json(err))
   })
   
   

@@ -13,7 +13,7 @@ module.exports = (stackMonitor) => {
       res.json(results)
       ts.kill('SIGKILL')
     })
-    ts.send(service.spawnOptions.cwd?.toString() || __dirname)
+    ts.send(service.rootPath || __dirname)
   })
   return router
 }

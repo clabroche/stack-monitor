@@ -51,7 +51,6 @@ const stack = (stackMonitor) => {
 
   stackMonitor.globalScripts.addScript(githubTagsScript(stackMonitor))
 
-
   // Build your definition
   return {
     // Stack monitor can reload services impacted by changes in this files 
@@ -62,7 +61,6 @@ const stack = (stackMonitor) => {
     ],
     stack: [
       {
-        
         label: 'Server',
         description: 'This is the backend of an unbelievable project',
         groups: [groups.API],
@@ -71,7 +69,7 @@ const stack = (stackMonitor) => {
           home: 'https://github.com/clabroche/stack-monitor',
           remote: 'git@github.com:clabroche/stack-monitor.git'
         },
-        rootPath: `${path}/server`,
+        rootPath: pathfs.resolve(__dirname, '..'),
         url: `http://localhost:${env?.SERVER_PORT}`,
         spawnCmd: 'npm',
         spawnArgs: ['run', 'serve'],
@@ -92,7 +90,7 @@ const stack = (stackMonitor) => {
           home: 'https://<an-awesome-url>',
           remote: 'git@github.com:<your-beautiful-profile>/<your-excellent-project>.git'
         },
-        rootPath: `${path}/front`,
+        rootPath: pathfs.resolve(__dirname, '..'),
         url: `http://localhost:${env?.UI_PORT}`,
         spawnCmd: 'npm',
         spawnArgs: ['run', 'serve'],
@@ -108,6 +106,7 @@ const stack = (stackMonitor) => {
       {
         label: 'Hello',
         description: 'Just Hello',
+        rootPath: pathfs.resolve(__dirname, '..'),
         groups: [groups.MISC, "Hello", "Hello World"],
         spawnCmd: 'echo',
         spawnArgs: ['hello'],
@@ -116,6 +115,7 @@ const stack = (stackMonitor) => {
       {
         label: 'World',
         description: 'All the world',
+        rootPath: pathfs.resolve(__dirname, '..'),
         groups: [groups.MISC, "World", "Hello World"],
         spawnCmd: 'echo',
         spawnArgs: ['world'],
@@ -123,6 +123,7 @@ const stack = (stackMonitor) => {
       
       {
         label: 'Mongo',
+        rootPath: pathfs.resolve(__dirname, '..'),
         groups: [groups.MISC],
         description: 'Just start the mongodb in docker',
         spawnCmd: 'docker',
@@ -131,6 +132,7 @@ const stack = (stackMonitor) => {
       
       {
         label: 'Multiple Commands',
+        rootPath: pathfs.resolve(__dirname, '..'),
         description: 'Launch multiple commands at once',
         groups: [groups.MISC],
         commands: [{

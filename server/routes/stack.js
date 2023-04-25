@@ -64,7 +64,7 @@ router.get('/:service/open-in-vs-code', function (req, res) {
   const service = findService(req.params.service)
   let command = (commandExists('code') ? 'code' : null) || (commandExists('code-insiders') ? 'code-insiders' : null)
   if (command) {
-    exec(`${command} .`, { cwd: service.spawnOptions.cwd })
+    exec(`${command} .`, { cwd: service.rootPath })
   }
   res.send(command)
 });
@@ -72,15 +72,15 @@ router.get('/:service/open-link-in-vs-code', function (req, res) {
   const service = findService(req.params.service)
   let command = (commandExists('code') ? 'code' : null) || (commandExists('code-insiders') ? 'code-insiders' : null)
   if(command) {
-    exec(`${command} --goto "${req.query.link}" .`, { cwd: service.spawnOptions.cwd, env: process.env })
+    exec(`${command} --goto "${req.query.link}" .`, { cwd: service.rootPath, env: process.env })
   }
   res.send(command)
 });
 
 router.get('/:service/open-folder', function (req, res) {
   const service = findService(req.params.service)
-  if (service.spawnOptions?.cwd) {
-    open(service.spawnOptions.cwd.toString())
+  if (service.rootPath) {
+    open(service.rootPath.toString())
   }
   res.send()
 });

@@ -41,9 +41,19 @@ export default defineConfig({
           ]},
           { text: 'Extend capacities', link: '/reference/extended-options' },
         ]
-      }
-      , {
-        text: 'Reference',
+      }, {
+        text: 'Features',
+        items: [
+          { text: 'Actions', link: '/features/actions' },
+          { text: 'Git', link: '/features/git' },
+        ]
+      }, {
+        text: 'Integration',
+        items: [
+          { text: 'Visual Studio Code', link: '/integration/vscode' },
+        ]
+      },{
+        text: 'Other',
         items: [
           { text: 'Screenshots', link: '/screenshots/screenshots' },
         ]

@@ -10,7 +10,7 @@ hero:
     alt: VitePress
   actions:
     - theme: brand
-      text: Get started
+      text: Get started (Documentation under construction)
       link: /introduction/getting-started
     - theme: alt
       text: View on GitHub
