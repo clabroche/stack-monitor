@@ -1,4 +1,7 @@
 const path = __dirname
+const pathfs = require('path')
+require('dotenv').config({ path: pathfs.resolve(__dirname, '.env') })
+const githubTagsScript = require('./scripts/tags')
 
 const groups = {
   API: 'api',
@@ -27,7 +30,11 @@ const stack = (stackMonitor) => {
 
   // Hook system
   stackMonitor.onLaunch(() => {
-    console.log('coucou')
+    const message = stackMonitor.getEnabledServices()
+      .map(service => ` - ${service.label}`)
+      .join('\n')
+    console.log('These services are launched:')
+    console.log(message)
   })
 
   stackMonitor.onServiceRestart((service) => {
@@ -42,12 +49,16 @@ const stack = (stackMonitor) => {
     console.log(service?.label, 'kill')
   })
 
+  stackMonitor.globalScripts.addScript(githubTagsScript(stackMonitor))
+
+
   // Build your definition
   return {
     // Stack monitor can reload services impacted by changes in this files 
     watchFiles: [
       require.resolve('./env.local'),
       require.resolve('./env.preprod'),
+      require.resolve('./scripts/tags'),
     ],
     stack: [
       {
@@ -57,9 +68,10 @@ const stack = (stackMonitor) => {
         groups: [groups.API],
         documentation: path + '/documentation/server',
         git: {
-          home: 'https://<an-awesome-url>',
-          remote: 'git@github.com:<your-beautiful-profile>/<your-excellent-project>.git'
+          home: 'https://github.com/clabroche/stack-monitor',
+          remote: 'git@github.com:clabroche/stack-monitor.git'
         },
+        rootPath: `${path}/server`,
         url: `http://localhost:${env?.SERVER_PORT}`,
         spawnCmd: 'npm',
         spawnArgs: ['run', 'serve'],
@@ -80,6 +92,7 @@ const stack = (stackMonitor) => {
           home: 'https://<an-awesome-url>',
           remote: 'git@github.com:<your-beautiful-profile>/<your-excellent-project>.git'
         },
+        rootPath: `${path}/front`,
         url: `http://localhost:${env?.UI_PORT}`,
         spawnCmd: 'npm',
         spawnArgs: ['run', 'serve'],

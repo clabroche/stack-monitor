@@ -89,14 +89,3 @@ console.log(JSON.stringify(['stack-monitor', "debug:", {port} ]));
 
 Output should appeart in debug section of logs
 
-![debug in action](./README/8.png)
-
-
-
-## Screenshots
-![Menu](https://raw.githubusercontent.com/clabroche/stack-monitor/master/README/1.png)
-![Menu](https://raw.githubusercontent.com/clabroche/stack-monitor/master/README/2.png)
-![Menu](https://raw.githubusercontent.com/clabroche/stack-monitor/master/README/3.png)
-![Menu](https://raw.githubusercontent.com/clabroche/stack-monitor/master/README/4.png)
-![Menu](https://raw.githubusercontent.com/clabroche/stack-monitor/master/README/5.png)
-![Menu](https://raw.githubusercontent.com/clabroche/stack-monitor/master/README/6.png)

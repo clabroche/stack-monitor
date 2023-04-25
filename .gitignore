@@ -30,3 +30,6 @@ stats.html
 test-report.xml
 coverage
 built
+
+docs/.vitepress/dist
+docs/.vitepress/cache

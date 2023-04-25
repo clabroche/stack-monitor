@@ -15,7 +15,10 @@
     "serve:server": "cd server && nodemon --trace-warnings bin/www $STACKFILE",
     "serve:production": "npm run build && HTTP_PORT=5456 node server/bin/www ./example/stack.js",
     "start": "server/bin/www",
-    "test": "jest --runInBand"
+    "test": "jest --runInBand",
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs"
   },
   "main": "./background.js",
   "files": [
@@ -91,12 +94,14 @@
     "jsonpath": "^1.1.1",
     "new-github-issue-url": "^1.0.0",
     "nodemon": "^2.0.20",
+    "octokit": "^2.0.14",
     "rollup-plugin-analyzer": "^4.0.0",
     "rollup-plugin-visualizer": "^5.9.0",
     "sass": "^1.58.0",
     "supertest": "^6.3.3",
     "vite": "^4.1.1",
     "vite-plugin-html": "^3.2.0",
+    "vitepress": "^1.0.0-alpha.74",
     "vue": "^3.2.47",
     "vue-json-viewer": "^3.0.4",
     "vue-loader": "^17.0.1",

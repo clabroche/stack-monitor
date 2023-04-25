@@ -1,0 +1,21 @@
+:root {
+  --vp-c-brand: #0076bc;
+  --vp-c-brand-light: #0076bc;
+}
+
+/**
+ * Colors Base
+ *
+ * These are the pure base color presets. Most of the time, you should not be
+ * using these colors directly in the theme but rather use "Colors Theme"
+ * instead because those are "Theme (light or dark)" dependant.
+ * -------------------------------------------------------------------------- */
+
+:root {
+
+  --vp-c-green: #0076bc;
+  --vp-c-green-light: #247eb3;
+  --vp-c-green-lighter: #3d8ebd;
+  --vp-c-green-dark: #035d91;
+  --vp-c-green-darker: #004166;
+}
