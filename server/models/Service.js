@@ -4,6 +4,7 @@ const killport = require('kill-port')
 const URL = require('url')
 const path = require('path')
 const Socket = require('../models/socket')
+const psTree = require('ps-tree')
 const PromiseB = require('bluebird')
 const isWindows = require('../../server/helpers/isWindows')
 
@@ -98,7 +99,12 @@ module.exports = class Service {
   }
 
   async kill(triggerEvent = true) {
-    this.pids.forEach(process => process.kill('SIGKILL'))
+    await PromiseB.map(this.pids, async spawnedProcess => {
+      if(!spawnedProcess.pid) return
+      const children = await psTreeAsync(spawnedProcess.pid)
+      children.map(({PID}) => process.kill(+PID, 'SIGKILL'))
+      spawnedProcess.kill('SIGKILL')
+    })
     const urls = [...this.urls || [], this.url].filter(a => a)
     if (urls.length) {
       await PromiseB.mapSeries(urls, async url => {
@@ -203,6 +209,20 @@ module.exports = class Service {
   }
 
 }
+
+/**
+ * 
+ * @param {number} pid 
+ * @returns {Promise<readonly psTree.PS[]>}
+ */
+function psTreeAsync(pid) {
+  return new Promise((resolve, reject) => {
+    psTree(pid, function (err, children) {
+      if(err) return reject(err)
+      return resolve(children)
+    });
+  })
+};
 
 /**
  * @typedef {import('child_process').ExecOptions} SpawnOptions

@@ -9,7 +9,6 @@ export default {
     return new Promise(resolve => {
       this.socket = io(config.baseURL)
       this.socket.on('connect', function () {
-        console.log('Connection etablished')
         resolve(true);
       });
     })

@@ -30,7 +30,6 @@ const Socket = {
       _socket.onAny((event, ...data) => {
         events[event]?.next(_socket, ...data)
       })
-      console.log('Connection etablished')
     });
   }
 }

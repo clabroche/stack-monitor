@@ -91,7 +91,7 @@ export default {
     spinner: Spinner,
   },
   setup(props, comp) {
-    const instance = getCurrentInstance().proxy;
+    const instance = getCurrentInstance()?.proxy;
     const isOpen = ref(false)
     const filteredOptions = ref([])
     const currentCateg = ref(null)
