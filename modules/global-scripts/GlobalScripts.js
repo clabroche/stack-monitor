@@ -49,6 +49,7 @@ const GlobalScripts = (stackMonitor) => {
       const track = {
         scriptId: script.label,
         currentStep: script.pipeline[0].id,
+        loadingStep: script.pipeline[0].id,
         steps: {},
         output: {},
         prompts: {},
@@ -66,47 +67,40 @@ const GlobalScripts = (stackMonitor) => {
         /**@type {ScriptStep | undefined} */
         let step
         while (step = this.getStep(script.label, track.currentStep)) {
+          const index = getStepIndex(step)
+          const nextStep = index >= 0 ? script.pipeline[index + 1]?.id : ''
+          track.loadingStep = step.id
           track.steps[track.currentStep] = {
+            ...track.steps[track.currentStep],
             isValidated: false,
+            error: undefined,
+            printData: undefined,
           }
-          if (step.prompt) {
-            if (step.prompt.defaultValue) {
-              try {
-                const defaultValue = await step.prompt.defaultValue(track.output)
-                track.steps[track.currentStep].promptValue = defaultValue
-                
-              } catch (error) {
-                console.error('Script error')
-                console.error(error)
-                track.steps[track.currentStep].error = error.message || error
-                break;
+          socket.emit(communicationId, 'track', track)
+
+          try {
+            if (step.skip) {
+              const shouldSkip = await step.skip(track.output, track.prompts)
+              console.log(shouldSkip)
+              if(shouldSkip) {
+                track.steps[track.currentStep].skipped = true
+                track.loadingStep = ''
+                track.currentStep = nextStep
+                socket.emit(communicationId, 'track', track)
+                continue
               }
             }
-            if (step.prompt.options) {
-              try {
-                const options = await step.prompt.options(track.output)
-                track.steps[track.currentStep].promptOptions = options
-              } catch(error) {
-                console.error('Script error')
-                console.error(error)
-                track.steps[track.currentStep].error = error.message || error
-                break;
-              }
-            }
-            if (event !== 'prompt') {
-              break
-            }
-            event = ''
-            if (step.prompt?.validation) {
-              const msgError = await step.prompt.validation(data)
-              if (msgError) {
-                track.steps[track.currentStep].error = msgError
-                break
-              }
-              track.prompts[track.currentStep] = data
-            }
+          } catch (error) {
+            console.error('Script error')
+            console.error(error)
+            track.steps[track.currentStep].error = error.message || error
+            break;
           }
 
+          const shouldBreak = await prompt(step, track, event, data)
+          if(shouldBreak) break
+          if (event === 'validate-prompt') event = ''
+          
           if (step.script) {
             try {
               track.output[track.currentStep] = await step.script(track.output, track.prompts)
@@ -129,14 +123,10 @@ const GlobalScripts = (stackMonitor) => {
             }
           }
 
-          const index = getStepIndex(step)
           track.steps[track.currentStep].isValidated = true
-          if (index >= 0) {
-            track.currentStep = script.pipeline[index + 1]?.id
-          } else {
-            track.currentStep = ''
-          }
+          track.currentStep = nextStep
         }
+        track.loadingStep = ''
         socket.emit(communicationId, 'track', track)
       })
       return communicationId
@@ -146,11 +136,65 @@ const GlobalScripts = (stackMonitor) => {
 
 module.exports = GlobalScripts
 
+/**
+ * 
+ * @param {ScriptStep} step 
+ * @param {TrackStep} track 
+ * @param {string} event
+ * @param {any} data
+ * @returns 
+ */
+async function prompt(step, track, event, data) {
+  if (!step.prompt) return false
+  if (event === 'validate-prompt') {
+    if (step?.prompt?.validation) {
+      try {
+        const msgError = await step.prompt.validation(data)
+        if (msgError) {
+          track.steps[track.currentStep].error = msgError
+          return true
+        }
+        track.prompts[track.currentStep] = data
+      } catch (error) {
+        console.error('Script error')
+        console.error(error)
+        track.steps[track.currentStep].error = error.message || error
+        return true
+      }
+    }
+    return false
+  }
+  if (step.prompt.defaultValue) {
+    try {
+      const defaultValue = await step.prompt.defaultValue(track.output)
+      track.steps[track.currentStep].promptValue = defaultValue
+    } catch (error) {
+      console.error('Script error')
+      console.error(error)
+      track.steps[track.currentStep].error = error.message || error
+      return true
+    }
+  }
+  if (step.prompt.options) {
+    try {
+      const options = await step.prompt.options(track.output)
+      track.steps[track.currentStep].promptOptions = options
+    } catch (error) {
+      console.error('Script error')
+      console.error(error)
+      track.steps[track.currentStep].error = error.message || error
+      return true
+    }
+  }
+  
+  return true
+}
 
 /**
  * @typedef {{
  *    label: string,
  *    id: string,
+ *    skip?: (output: Record<string, any>, prompts: Record<string, any>) => boolean | Promise<boolean>
  *    prompt?:{
  *      question: string,
  *      options?: (output: Record<string, any>) => ({label: string, value: string}[]) | Promise<{label: string, value: string}[]>,
@@ -173,9 +217,11 @@ module.exports = GlobalScripts
  * @typedef {{
  *  scriptId: string,
  *  currentStep: string,
+ *  loadingStep: string,
  *  steps: Record<string, {
  *    error?: string,
  *    isValidated: boolean,
+ *    skipped?: boolean,
  *    printData?: string,
  *    promptValue?: string,
  *    promptOptions?: {label: string, value: string}[],

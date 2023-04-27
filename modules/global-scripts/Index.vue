@@ -13,23 +13,36 @@
         ]">
           <div class="pipelines">
             <div
-              v-for="step of currentScript.pipeline" :key="step.label"
+              v-for="step of displayedSteps" :key="step.label"
               class="pipeline" :class="{
                 valid: track.steps[step.id]?.isValidated,
                 error: !!track.steps[step.id]?.error,
                 current: track.currentStep === step.id,
+                loading: track.loadingStep === step.id,
+                skipped: track.steps[step.id]?.skipped === true,
               }"
             >
               <h2>{{ step.label }}</h2>
-              <template v-if="track.currentStep === step.id && step.prompt">
+              <template v-if="track.currentStep === step.id && step.prompt && step.id !== track.loadingStep">
                 <div>{{ step.prompt.question }}</div>
                 <input v-if="step.prompt.type === 'boolean'" type="checkbox" v-model="track.steps[track.currentStep].promptValue">
                 <input v-else-if="step.prompt.type === 'number'" type="number" v-model="track.steps[track.currentStep].promptValue">
-                <select v-else-if="['select', 'multi-select'].includes(step.prompt.type || '')" v-model="track.steps[track.currentStep].promptValue" :multiple="step.prompt.type === 'multi-select'">
-                  <option v-for="option of track.steps[track.currentStep].promptOptions || []" :value="option.value"> {{ option.label }}</option>
-                </select>
+                <Multiselect v-else-if="step.prompt.type === 'select'"
+                    :options="track.steps[track.currentStep].promptOptions"
+                    customLabel="label"
+                    :single="true"
+                    @update:value="track.steps[track.currentStep].promptValue = $event[0]?.value"
+                  />
+                <Multiselect v-else-if="step.prompt.type === 'multi-select'"
+                  :options="track.steps[track.currentStep].promptOptions"
+                  customLabel="label"
+                  @update:value="track.steps[track.currentStep].promptValue = $event.map(a => a?.value)"
+                />
                 <input type="text" v-else v-model="track.steps[track.currentStep].promptValue">
                 <button @click="validatePrompt">Validate</button>
+              </template>
+              <template v-else-if="step.id === track.loadingStep">
+                <Spinner></Spinner>
               </template>
               <div v-if="track.steps[step.id]?.error" v-html="track.steps[step.id].error"></div>
               <div v-if="track.steps[step.id]" v-html="track.steps[step.id].printData"></div>
@@ -43,9 +56,11 @@
 
 <script setup>
 import SectionCmp from '../../src/components/Section.vue'
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import axios from '../../src/helpers/axios'
 import Socket from '@/helpers/Socket';
+import Spinner from '@/components/Spinner.vue';
+import Multiselect from '@/components/Multiselect.vue';
 
 /** @type {import('vue').Ref<GlobalScript[]>} */
 const globalScripts = ref([])
@@ -53,6 +68,7 @@ const globalScripts = ref([])
 /** @type {import('vue').Ref<import('./GlobalScripts').TrackStep>} */
 const track = ref({
   currentStep: '',
+  loadingStep: '',
   steps: {},
   output: {},
   prompts: {},
@@ -64,6 +80,10 @@ const communicationId = ref('')
 /** @type {import('vue').Ref<GlobalScript | null>} */
 const currentScript = ref(null)
 
+const test = (a) => {
+  console.log(a)
+
+}
 onMounted(reload)
 Socket.socket.on('reloadScripts', reload);
 async function reload() {
@@ -72,12 +92,17 @@ async function reload() {
   if (!currentScript.value && globalScripts.value?.length) await selectScript(globalScripts.value[0])
 }
 
+const displayedSteps = computed(() => {
+  const index = (currentScript.value?.pipeline || []).findIndex(s => s.id === track.value.currentStep)
+  return (currentScript.value?.pipeline || []).filter((s, i) => (index === -1 || i < index + 1) && !track.value.steps[s.id]?.skipped)
+})
 
 /** @param {GlobalScript} script */
 async function selectScript(script) {
   currentScript.value = script
   track.value = {
     currentStep: '',
+    loadingStep: '',
     steps: {},
     output: {},
     prompts: {},
@@ -96,7 +121,7 @@ async function launch() {
 }
 
 async function validatePrompt() {
-  Socket.socket.emit(communicationId.value, 'prompt', track.value.steps[track.value.currentStep].promptValue)
+  Socket.socket.emit(communicationId.value, 'validate-prompt', track.value.steps[track.value.currentStep].promptValue)
 }
 
 /**
@@ -117,6 +142,7 @@ $leftSize: 200px;
   .content {
     display: flex;
     gap: 10px;
+    height: 100%;
     .rooms {
       width: $leftSize;
       flex-shrink: 0;
@@ -160,6 +186,11 @@ $leftSize: 200px;
     .chat-container {
       width: 0;
       flex-grow: 1;
+      height: 100%;
+      &>* {
+        height: 100%;
+        margin: 0;
+      }
       .header {
         display: flex;
         justify-content: space-between;
@@ -201,6 +232,7 @@ $leftSize: 200px;
       flex-direction: column;
       border-color: #adabab;
       background: linear-gradient(90deg, rgba(199,199,199,1) 0%, rgba(0,0,0,0) 100%);
+
       &.valid {
         border-color: #5fc151;
         background: linear-gradient(90deg, rgba(171,221,173,1) 0%, rgba(0,0,0,0) 100%);
@@ -208,6 +240,10 @@ $leftSize: 200px;
       &.current {
         border-color: #829fc1;
         background: linear-gradient(90deg, rgba(168,214,255,1) 0%, rgba(0,0,0,0) 100%);
+      }
+      &.loading {
+        border-color: rgb(180, 166, 34);
+        background: linear-gradient(90deg, rgb(204, 187, 33) 0%, rgba(0,0,0,0) 100%);
       }
       &.error {
         border-color: #dd766d;
