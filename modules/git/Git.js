@@ -26,27 +26,64 @@ const Git = (stackMonitor) => {
       return result.split('\n')
     },
     /** @param {string} serviceName */
-    async getBranches(serviceName) {
+    async getBranches(serviceName, fetch = false) {
       const service = findService(serviceName)
       await requirements(service)
+      if(fetch) await this.fetch(serviceName)
+      const origin = await this.getOrigin(serviceName)
       const unmergeableBranches = ['dev', 'develop', 'main', 'master']
       const currentBranch = await this.getCurrentBranch(service.label)
       const mergedBranches = await execAsyncWithoutErr(`git branch --merged develop`, { cwd: service.rootPath })
         .then((branches) => branches.trim().split('\n').map(a => a.replace('*', '').trim()))
-      return execAsyncWithoutErr('git branch', { cwd: service.rootPath })
-        .then((res) => res.toString().trim().split('\n').map(a => {
-          const name = a.replace('*', '').trim()
+      const localBranches = await execAsyncWithoutErr('git branch', { cwd: service.rootPath })
+        .then((res) => res.toString().trim().split('\n').map(branch => {
+          const name = branch.replace('*', '').trim()
           return {
             name,
+            isRemote: false,
+            isCurrentBranch: currentBranch === name,
+            canDelete: !unmergeableBranches.includes(name) && currentBranch !== name,
             merged: mergedBranches.includes(name) && !unmergeableBranches.includes(name) && currentBranch !== name
           }
         }))
+      const remoteBranches = await execAsyncWithoutErr('git branch -r', { cwd: service.rootPath })
+        .then((res) => res.toString().trim().split('\n').map(branch => {
+          const name = branch.replace('*', '').trim()
+          return {
+            name: name.replace(`${origin}/`, ''),
+            isRemote: true,
+            canDelete: false,
+            merged: false
+          }
+        }).filter(remoteBranch => {
+          return !localBranches.find(localBranch => remoteBranch.name === localBranch.name)
+        }))
+      return [
+        ...localBranches,
+        ...remoteBranches
+      ]
+        
     },
     /** @param {string} serviceName */
     async getCurrentBranch(serviceName) {
       const service = findService(serviceName)
       await requirements(service)
       return (await execAsync('git rev-parse --abbrev-ref HEAD', { cwd: service.rootPath }))?.trim()
+    },
+    /**
+     * 
+     * @param {string} serviceName 
+     * @param {string} branchName 
+     * @param {boolean} shouldPush 
+     * @returns 
+     */
+    async addBranch(serviceName, branchName, shouldPush = false) {
+      if(!branchName) throw new Error('Branch name is empty')
+      const service = findService(serviceName)
+      await requirements(service)
+      const res = (await execAsync(`git checkout -b ${branchName}`, { cwd: service.rootPath }))?.trim()
+      if(shouldPush) await this.push(serviceName)
+      return res
     },
     /** @param {string} serviceName */
     async getStatus(serviceName) {
@@ -116,16 +153,22 @@ const Git = (stackMonitor) => {
     async pull(serviceName) {
       const service = findService(serviceName)
       await requirements(service)
-      const origin = (await execAsync('git remote -v | grep fetch', { cwd: service.rootPath })).split('\t')[0]?.trim() || ''
+      const origin = await this.getOrigin(serviceName)
       const currentBranch = await this.getCurrentBranch(service.label)
       await execAsync(`git pull ${origin} ${currentBranch}`, { cwd: service.rootPath })
       return 'ok'
     },
     /** @param {string} serviceName */
+    async getOrigin(serviceName) {
+      const service = findService(serviceName)
+      await requirements(service)
+      return (await execAsync('git remote -v | grep fetch', { cwd: service.rootPath })).split('\t')[0]?.trim() || ''
+    },
+    /** @param {string} serviceName */
     async push(serviceName) {
       const service = findService(serviceName)
       await requirements(service)
-      const origin = (await execAsync('git remote -v | grep fetch', { cwd: service.rootPath })).split('\t')[0]?.trim() || ''
+      const origin = await this.getOrigin(serviceName)
       const currentBranch = await this.getCurrentBranch(service.label)
       await execAsync(`git push ${origin} ${currentBranch}`, { cwd: service.rootPath })
       return 'ok'

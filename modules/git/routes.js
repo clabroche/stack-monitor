@@ -44,8 +44,13 @@ module.exports = (stackMonitor) => {
       .then((result) => res.json(result))
   })
   
-  router.get('/git/:service/current-branch', async(req, res) => {
+  router.get('/git/:service/current-branch', async (req, res) => {
     const currentBranch = await git.getCurrentBranch(req.params.service)
+    res.json(currentBranch)
+  })
+
+  router.post('/git/:service/add-branch', async (req, res) => {
+    const currentBranch = await git.addBranch(req.params.service, req.body.name, !!req.body.shouldPush)
     res.json(currentBranch)
   })
   router.post('/git/:service/pull', async function (req, res) {

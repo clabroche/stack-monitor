@@ -6,22 +6,33 @@
       header="Branches"
       :noStyle="noStyle"
       :actions="[
+        { label: '', click: () => addBranch(), icon: 'fas fa-plus', small: true },
         { label: '', click: () => gitFetch(), icon: 'fas fa-sync' },
         { label: pullLabel, hidden: git.delta != null && git.delta >= 0, click: () => pull(), icon: 'fas fa-download' }
       ]">
+      <div>
+        <input type="text" placeholder="Search branch..." v-model="searchBranch">
+      </div>
+      <div>
+        <input type="checkbox" v-model="displayOnlyLocalBranches">
+        Display only local branches
+      </div>
       <ul class="branches">
-        <li v-for="(branch, i) of git.branches" :key="'branch' +i" @click="branch?.name ? changeBranch(branch.name) : null" :class="{
+        <li v-for="(branch, i) of displayBranches" :key="'branch' +i" @click="branch?.name ? changeBranch(branch.name) : null" :class="{
           active: branch?.name === service?.git?.currentBranch,
           merged: branch?.merged
         }">
           <div class="actions">
-            <div v-if="branch?.merged === true" title="Already merged into develop">
+            <div v-if="branch?.merged" title="Already merged into develop">
               <i class="fas fa-object-group" aria-hidden="true"></i>
+            </div>
+            <div v-if="branch?.isRemote" title="Is in remote not local">
+              <i class="fas fa-cloud-download-alt" aria-hidden="true"></i>
             </div>
             {{branch?.name}}
           </div>
           <div class="actions">
-            <button class="small" @click.stop="branch?.name ? deleteBranch(branch.name) : null" v-if="!['dev', 'develop', 'main','master'].includes(branch?.name)">
+            <button class="small" @click.stop="branch?.name ? deleteBranch(branch.name) : null" v-if="branch.canDelete">
               <i class="fas fa-trash" aria-hidden="true"></i>
             </button>
           </div>
@@ -89,6 +100,18 @@
       Do you really want to change branch to "{{branchName}}" on this repository ?
     </template>
   </modal>
+  <modal ref="add-branch-modal" cancelString="Cancel" validateString="Validate">
+    <template #header>
+      Add Branch
+    </template>
+    <template #body="{data:model}">
+      <input type="text" v-model="model.name" placeholder="Name of branch">
+      <div>
+        <input type="checkbox" v-model="model.shouldPush" placeholder="Name of branch">
+        Push this branch after creation ?
+      </div>
+    </template>
+  </modal>
     <modal ref="branch-delete-modal" cancelString="No" validateString="Yes">
     <template #header>
       Branch delete
@@ -128,6 +151,7 @@ import { Terminal } from 'xterm/lib/xterm';
 import { FitAddon } from 'xterm-addon-fit';
 import { CanvasAddon } from 'xterm-addon-canvas';
 import { SearchAddon } from 'xterm-addon-search';
+import { upperFirst } from 'lodash';
 
 export default {
   components: {
@@ -154,6 +178,14 @@ export default {
       if(this.git?.delta == null) return 'Search...' 
       return 'Pull ' + '(' + (this.git.delta || 0) + ')'
     },
+    displayBranches() {
+      return (this.git?.branches || [])
+        .filter(branch => branch.name.toUpperCase().includes(this.searchBranch.toUpperCase()))
+        .filter(branch => {
+          if(this.displayOnlyLocalBranches) return !branch.isRemote
+          return true
+        }) 
+    }
   },
   data() {
     return {
@@ -169,7 +201,9 @@ export default {
       defaultBranch: null,
       search: '',
       /** @type {import('xterm-addon-search').SearchAddon | null} */
-      terminalSearch: null
+      terminalSearch: null,
+      displayOnlyLocalBranches: true,
+      searchBranch: '',
     }
   },
   async mounted() {
@@ -245,17 +279,30 @@ export default {
     },
     async gitFetch() {
       try {
-        if(!this.service.git) return
+        if (!this.service.git) return
         this.service.git.delta = null
         await this.service.gitFetch()
           .catch((err) => notification.next('error', err?.response?.data || err?.message || err))
         const currentBranch = await this.service.getCurrentBranch()
-        if(!currentBranch) return 
+        if (!currentBranch) return
         this.service.git.delta = await this.service.gitRemoteDelta(currentBranch)
-        
+
       } catch (error) {
         console.error(error)
-        this.service.git.delta = 0
+        if (this.service.git) this.service.git.delta = 0
+      }
+    },
+    async addBranch() {
+      const model = {
+        name: '',
+        shouldPush: false
+      }
+      // @ts-ignore
+      const res = await this.$refs['add-branch-modal'].open(model).promise
+      if(res) {
+        if(!model.name) return notification.next('error', 'Branch name cannot be empty')
+        await this.service.addBranch(model.name, model.shouldPush)
+        if(model.shouldPush) await this.gitFetch()
       }
     },
 

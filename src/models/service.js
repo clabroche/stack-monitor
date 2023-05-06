@@ -23,7 +23,7 @@ class Service {
      * @type {{
      *   home: string,
      *   remote: string,
-     *   branches: {name: string, merged: boolean}[],
+     *   branches: {name: string, merged: boolean, canDelete: boolean, isRemote: boolean}[],
      *   stash: string[],
      *   delta: number | null,
      *   currentBranch: string,
@@ -124,6 +124,16 @@ class Service {
   async getCurrentBranch() {
     const { data: currentBranch } = await axios.get('/git/' + this.label + '/current-branch')
     return currentBranch
+  }
+  /**
+   * @param {string} name 
+   * @param {boolean} shouldPush 
+   */
+  async addBranch(name, shouldPush) {
+    const { data: status } = await axios.post('/git/' + this.label + '/add-branch', {
+      shouldPush, name
+    })
+    return status
   }
 
   async getStatus() {
