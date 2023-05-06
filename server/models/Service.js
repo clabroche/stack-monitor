@@ -137,6 +137,7 @@ module.exports = class Service {
     this.store = ''
     await new Promise(resolve => setTimeout(resolve, 100))
     this.enabled = false
+    this.crashed = false
     if(triggerEvent) this.Stack.getStack()?.triggerOnServiceKill(this)
     await this.sendHasBeenModified()
   }
