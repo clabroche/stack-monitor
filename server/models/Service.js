@@ -40,6 +40,8 @@ module.exports = class Service {
     this.groups = service.groups || []
     /** @type {boolean} */
     this.enabled = service.enabled || false
+    /** @type {boolean} */
+    this.crashed = service.crashed || false
     /** 
      * @type {{
      *  spawnArgs?: string[],
@@ -97,6 +99,9 @@ module.exports = class Service {
     this.launch(false)
     this.Stack.getStack()?.triggerOnServiceRestart(this)
   }
+  async sendHasBeenModified() {
+    Socket.io?.emit('conf:update', [this.label])
+  }
 
   async kill(triggerEvent = true) {
     await PromiseB.map(this.pids, async spawnedProcess => {
@@ -133,6 +138,7 @@ module.exports = class Service {
     await new Promise(resolve => setTimeout(resolve, 100))
     this.enabled = false
     if(triggerEvent) this.Stack.getStack()?.triggerOnServiceKill(this)
+    await this.sendHasBeenModified()
   }
   launch(triggerEvent = true) {
     this.store = ''
@@ -156,6 +162,7 @@ module.exports = class Service {
     }
     this.enabled = true
     if(triggerEvent) this.Stack.getStack()?.triggerOnServiceStart(this)
+    this.sendHasBeenModified()
   }
   
   /**
@@ -165,6 +172,7 @@ module.exports = class Service {
    * @param {SpawnOptions} spawnOptions 
    */
   launchProcess(spawnCmd, spawnArgs = [], spawnOptions = {}) {
+    this.crashed = false
     let cwd = spawnOptions.cwd
     spawnOptions.shell = isWindows ? process.env.ComSpec : '/bin/sh'
     if (cwd && spawnCmd.match(/[/\\]/g)) {
@@ -202,10 +210,18 @@ module.exports = class Service {
       }
       add(message)
     })
+    spawnProcess.on('exit', (code) => {
+      if(code) {
+        Socket.io?.emit('service:crash', { label: this.label, code })
+        this.Stack.getStack()?.triggerOnServiceCrash(this, code)
+        this.crashed = true
+      }
+    })
   }
 
   enable() {
     this.enabled = true
+    this.sendHasBeenModified()
   }
 
 }

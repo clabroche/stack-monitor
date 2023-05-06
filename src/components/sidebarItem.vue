@@ -1,7 +1,7 @@
 <template>
   <div @click="$router.push({name: 'stack-single', params: {label: service.label}})"
     class="sidebar-item"
-    :class="{active: isActive(service), disabled: !service.enabled}">
+    :class="{active: isActive(service), disabled: !service.enabled, crashed: service.crashed}">
       {{service.label}}
       <i class="fas fa-chevron-right"  aria-hidden="true"></i>
   </div>
@@ -48,6 +48,9 @@ export default {
   }
   &.disabled {
     color: #999;
+  }
+  &.crashed {
+    color: red;
   }
 }
 </style>

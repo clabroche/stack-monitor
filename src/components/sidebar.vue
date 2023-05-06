@@ -12,7 +12,10 @@ import Stack from '../models/stack'
 import System from '../models/system'
 import { sort } from 'fast-sort'
 import sidebarItemVue from './sidebarItem.vue'
-import { computed, onMounted, ref, watch } from '@vue/runtime-core'
+import { computed, onMounted, ref } from 'vue'
+import Socket from '@/helpers/Socket'
+import notification from '@/helpers/notification'
+
 export default {
   components: {
     sidebarItem: sidebarItemVue
@@ -21,18 +24,18 @@ export default {
     currentService: {default: null}
   },
   setup() {
-    /** @type {import('vue').Ref<import('../models/service').default[]>} */
-    const localServices = ref(Stack.services)
     const search = ref('')
 
     onMounted(async () => {
       await Stack.loadServices()
-      localServices.value = Stack.services
+      Socket.socket.on('service:crash', async (service, code) => {
+        notification.next('error', `${service.label} has crashed with code ${code}`)
+        await Stack.loadServices()
+      });
     })
-    watch(() => Stack.services, () => localServices.value = Stack.services, {deep: true})
     return {
       search,
-      sortedStack:computed(() => sort(localServices.value.filter(a => (a.label || '').toUpperCase().includes(search.value.toUpperCase()))).desc((a) => a.enabled)),
+      sortedStack:computed(() => sort(Stack.services.value.filter(a => (a.label || '').toUpperCase().includes(search.value.toUpperCase()))).desc((a) => a.enabled)),
       System,
     }
   }

@@ -52,6 +52,8 @@ class Service {
     this.commands = service.commands || []
     /** @type {boolean} */
     this.enabled = service.enabled || false
+    /** @type {boolean} */
+    this.crashed = service.crashed || false
     /** @type {string} */
     this.rootPath = service.rootPath || ''
   }

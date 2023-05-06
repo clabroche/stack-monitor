@@ -81,7 +81,6 @@ const GlobalScripts = (stackMonitor) => {
           try {
             if (step.skip) {
               const shouldSkip = await step.skip(track.output, track.prompts)
-              console.log(shouldSkip)
               if(shouldSkip) {
                 track.steps[track.currentStep].skipped = true
                 track.loadingStep = ''

@@ -33,11 +33,11 @@
                 <i class="fas fa-exclamation-triangle"></i>
                 Pending changes... Pull may not work. Stash or reset your changes before.
               </div>
-              <button class="small" :disabled="checkUpdatePending || !!service.git?.status?.filter(a => a).length" @click="stash(service)">
+              <button class="small" :disabled="checkUpdatePending || !service.git?.status?.filter(a => a).length" @click="stash(service)">
                 <i class="fas fa-sun"></i>
                 Stash
               </button>
-              <button class="small" :disabled="checkUpdatePending || !!service.git.stash" @click="stashPop(service)">
+              <button class="small" :disabled="checkUpdatePending || !service.git.stash" @click="stashPop(service)">
                 <i class="far fa-sun"></i>
                 Unstash
               </button>
@@ -127,13 +127,13 @@ import notification from "@/helpers/notification"
 import Spinner from "@/components/Spinner.vue"
 
 /** @type {import('vue').Ref<import('@/models/service').default[]>}*/
-const services = ref(stack.services.sort((a, b) => a.label?.localeCompare(b?.label || '') || 0))
+const services = ref(stack.services.value.sort((a, b) => a.label?.localeCompare(b?.label || '') || 0))
 /** @type {import('vue').Ref<import('@/models/service').default[]>}*/
 const servicesToPull = ref([])
 /** @type {import('vue').Ref<import('@/models/service').default[]>}*/
 const servicesToPush = ref([])
 async function updateGit() {
-  const result = await PromiseB.map(stack.services, async(service) => {
+  const result = await PromiseB.map(stack.services.value, async(service) => {
     await service.updateGit()
     return service
   }, { concurrency: 6 })
@@ -144,8 +144,9 @@ onMounted(async() => {
   await updateGit()
   await checkUpdates()
 })
-watch(() => stack.services, async() => {
-  await updateGit()
+watch(() => stack.services.value, async() => {
+  console.log('flzekfzekf')
+  // await updateGit()
 }, {deep: true})
 
 /**
@@ -170,18 +171,20 @@ const checkUpdates = async () => {
   currentServiceChecking.value = ''
   servicesToPull.value = []
   servicesToPush.value = []
-  await PromiseB.map(stack?.services || [], async (service) => {
+  await PromiseB.map(stack?.services.value || [], async (service) => {
     try {
       currentServiceChecking.value = service.label || ''
       await service.updateGit()
       const currentBranch = await service.getCurrentBranch()
       if(service.git && currentBranch) {
         service.git.delta = await service.gitRemoteDelta(currentBranch)
-        if (service.git.delta < 0) {
-          servicesToPull.value.push(service)
-        }
-        if (service.git.delta > 0) {
-          servicesToPush.value.push(service)
+        if(service.git.delta) {
+          if (service.git.delta < 0) {
+            servicesToPull.value.push(service)
+          }
+          if (service.git.delta > 0) {
+            servicesToPush.value.push(service)
+          }
         }
       }
       return service

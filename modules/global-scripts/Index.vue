@@ -36,7 +36,7 @@
                 <Multiselect v-else-if="step.prompt.type === 'multi-select'"
                   :options="track.steps[track.currentStep].promptOptions"
                   customLabel="label"
-                  @update:value="track.steps[track.currentStep].promptValue = $event.map(a => a?.value)"
+                  @update:value="track.steps[track.currentStep].promptValue = $event.map((/**@type {{value: any}}*/a) => a?.value)"
                 />
                 <input type="text" v-else v-model="track.steps[track.currentStep].promptValue">
                 <button @click="validatePrompt">Validate</button>
@@ -80,10 +80,6 @@ const communicationId = ref('')
 /** @type {import('vue').Ref<GlobalScript | null>} */
 const currentScript = ref(null)
 
-const test = (a) => {
-  console.log(a)
-
-}
 onMounted(reload)
 Socket.socket.on('reloadScripts', reload);
 async function reload() {

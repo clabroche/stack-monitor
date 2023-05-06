@@ -110,7 +110,6 @@ export default {
         : option[props.customLabel] || option
     }
     const getKey = (option) => {
-      console.log(option)
       return currentCateg.value?.customKey
         ? option[currentCateg.value.customKey]
         : option[props.customKey] || option

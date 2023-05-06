@@ -40,7 +40,7 @@
 
 <script>
 import System from '../models/system'
-import { computed, onMounted, ref, watch } from '@vue/runtime-core'
+import { computed, onMounted, ref } from 'vue'
 import SidebarViewModeItemVue from './SidebarViewModeItem.vue'
 import stack from '../models/stack'
 import router from '@/router/router'
@@ -57,16 +57,13 @@ export default {
     currentService: {default: null}
   },
   setup() {
-    /** @type {import('vue').Ref<import('../models/service').default[]>} */
-    const localServices = ref(stack.services)
-    /** @type {import('vue').Ref<import('../../modules/views').PluginSM[]>} */
+    /** @type {import('vue').Ref<import('../../modules/views').PluginSM<null>[]>} */
     const plugins = ref([])
     const cpu = ref(0)
     const mem = ref(0)
 
     onMounted(async () => {
       await stack.loadServices()
-      localServices.value = stack.services
       const { data: _plugins } = await axios.get('/plugins/sidebar')
       plugins.value = _plugins?.flat() || []
       Socket.socket.on('infos:global', data => {
@@ -76,17 +73,13 @@ export default {
       })
     })
 
-    watch(() => stack.services, () => {
-      localServices.value = stack.services
-    }, {deep: true})
-
     return {
       buttons:computed(() => ([
         {
           text: 'Single View',
           active: 'single',
           icon: 'fas fa-columns',
-          click: () => router.push({name:'stack-single', params: {label: stack.services[0].label}})
+          click: () => router.push({name:'stack-single', params: {label: stack.services.value[0]?.label}})
         },
         {
           text: 'Multiple view',

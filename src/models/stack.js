@@ -1,14 +1,15 @@
 import axios from "../helpers/axios"
 import Service from "./service"
 import Socket from '../helpers/Socket';
+import { ref } from "vue";
 
 function Stack () {
-  /** @type {import('./service').default[]} */
-  this.services = []
+  /** @type {import('vue').Ref<import('./service').default[]>} */
+  this.services = ref([])
   Socket.socket.on('conf:update', (/**@type {string[]}*/data) => {
     if (data.length) {
       data.forEach(label => {
-        const service = this.services.find(_service => _service.label === label)
+        const service = this.services.value.find(_service => _service.label === label)
         if (service) service.fetch()
       })
     }
@@ -18,8 +19,8 @@ function Stack () {
 Stack.prototype.loadServices = async function () {
   /** @type {{data: import('./service').default[]}} */
   const { data: services } = await axios.get('/stack/services')
-  this.services = services.filter(s => s).map(service => new Service(service))
-  return this.services
+  this.services.value = services.filter(s => s).map(service => new Service(service))
+  return this.services.value
 }
 
 Stack.prototype.getEnvironment = async function () {
@@ -57,12 +58,12 @@ Stack.prototype.launchServices = async function (services) {
 }
 /** @param {string} label */
 Stack.prototype.getService = async function(label) {
-  if(!this.services.length) await this.loadServices()
-  return this.services.filter(service => service.label === label).pop()
+  if(!this.services.value.length) await this.loadServices()
+  return this.services.value.filter(service => service.label === label).pop()
 }
 
 Stack.prototype.getEnabledServices = async function () {
-  if(!this.services.length) await this.loadServices()
-  return  this.services.filter(service => service.enabled)
+  if(!this.services.value.length) await this.loadServices()
+  return  this.services.value.filter(service => service.enabled)
 }
 export default new Stack()

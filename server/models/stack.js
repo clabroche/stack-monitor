@@ -24,6 +24,8 @@ class Stack {
   static #onServiceRestart = () => { }
   /**@type {(service: Service) => undefined} */
   static #onServiceStart = () => { }
+  /**@type {(service: Service, code: number | null) => undefined} */
+  static #onServiceCrash = () => { }
   /**@type {(service: Service) => undefined} */
   static #onServiceKill = () => { }
   static Socket = Socket
@@ -222,6 +224,7 @@ class Stack {
   triggerOnLaunch() {
     return Stack.#onLaunchCallback()
   }
+
   /** @param {(service: Service) => undefined} cb  */
   static onServiceRestart(cb) {
     this.#onServiceRestart = cb
@@ -230,6 +233,7 @@ class Stack {
   triggerOnServiceRestart(service) {
     return Stack.#onServiceRestart(service)
   }
+
   /** @param {(service: Service) => undefined} cb  */
   static onServiceStart(cb) {
     this.#onServiceStart = cb
@@ -238,6 +242,19 @@ class Stack {
   triggerOnServiceStart(service) {
     return Stack.#onServiceStart(service)
   }
+
+  /** @param {(service: Service, code?: number | null) => undefined} cb  */
+  static onServiceCrash(cb) {
+    this.#onServiceCrash = cb
+  }
+  /** 
+   * @param {Service} service 
+   * @param {number | null} code 
+   */
+  triggerOnServiceCrash(service, code) {
+    return Stack.#onServiceCrash(service, code)
+  }
+
   /** @param {(service: Service) => undefined} cb  */
   static onServiceKill(cb) {
     this.#onServiceKill = cb
@@ -246,6 +263,7 @@ class Stack {
   triggerOnServiceKill(service) {
     return Stack.#onServiceKill(service)
   }
+
   static stopWatchers() {
     Stack.#currentWatches.forEach(currentWatch => currentWatch.close())
   }

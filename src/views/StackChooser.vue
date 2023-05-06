@@ -4,7 +4,7 @@
   <background-stack-chooser :lowResources="true"></background-stack-chooser>
   <left-logo/>
   <div class="right">
-    <section-cmp class="stack-chooser" v-if="localServices" header="Choose all services to launch">
+    <section-cmp class="stack-chooser" v-if="Stack.services" header="Choose all services to launch">
       <div class="groups">
         <div v-for="(group) of groups" :key="group.label">
           <div class="group-header" @click="group.show = !group.show">
@@ -62,32 +62,29 @@ export default {
     LeftLogo
   },
   setup() {
-    /** @type {import('vue').Ref<import('@/models/service').default[]>} */
-    const localServices = ref([])
     onMounted(async () => {
       await Stack.loadServices()
-      localServices.value = Stack.services
-      localServices.value.forEach(service => {
+      Stack.services.value.forEach(service => {
         const state = localStorage.getItem(`automatic-toggle-${service.label}`)
         service.enabled = state === 'true' ? true : false
       })
     })
 
     const validate = async() => {
-      await Stack.launchServices(localServices.value.filter(service => service.enabled))
+      await Stack.launchServices(Stack.services.value.filter(service => service.enabled))
       const enabledServices = await Stack.getEnabledServices()
       router.push({name: 'stack-single', params: {label: enabledServices[0].label}})
     }
-    const enableAll = () => localServices.value.map(service => service.enabled = true)
-    const disableAll =() => localServices.value.map(service => service.enabled = false)
+    const enableAll = () => Stack.services.value.map(service => service.enabled = true)
+    const disableAll =() => Stack.services.value.map(service => service.enabled = false)
     /** @param {string} group */
-    const getServicesFromGroup = group => localServices.value.filter(service => service.groups?.includes(group)||group === 'All')
+    const getServicesFromGroup = group => Stack.services.value.filter(service => service.groups?.includes(group)||group === 'All')
     /** @param {string} group */
     const isGroupSelected = group => getServicesFromGroup(group).every(service => service.enabled)
     return {
-      isAllEnabled: computed(() => localServices.value.every(service => service.enabled)),
+      isAllEnabled: computed(() => Stack.services.value.every(service => service.enabled)),
       groups: computed(() => {
-        const groupsById = localServices.value.reduce((groups, service) => {
+        const groupsById = Stack.services.value.reduce((groups, service) => {
           if(service.groups) {
             service.groups.forEach(group => {
               if(!groups[group]) groups[group] = reactive({services: [], label: group})
@@ -112,7 +109,7 @@ export default {
         localStorage.setItem(`automatic-toggle-${service.label}`, service.enabled == null ? 'false' : service.enabled.toString())
       },
       isGroupSelected,
-      localServices,
+      Stack,
       System,
       validate, 
       enableAll,

@@ -128,15 +128,12 @@ export default {
         restartInProgress.value = true
         await currentService.value?.restart()
           .finally(() => restartInProgress.value = false)
-        Stack.services = [...Stack.services]
       },
       async stop() {
         await currentService.value?.stop()
-        Stack.services = [...Stack.services]
       },
       async start() {
         await currentService.value?.start()
-        Stack.services = [...Stack.services]
       },
     }
   }

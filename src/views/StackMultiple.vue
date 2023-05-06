@@ -54,22 +54,22 @@ export default {
     /** @type {import('vue').Ref<InstanceType<typeof Tabs> | null>} */
     const tabRef = ref(null)
     onMounted(async () => {
-      /** @type {{data: import('../../modules/views').PluginSM[]}} */
+      /** @type {{data: import('../../modules/views').PluginSM<null>[]}} */
       const {data: plugins} = await axios.get('/plugins/services')
       tabs.value = plugins
         .sort((a,b) => ((a.order || 0) - (b.order || 0)))
         .map(plugin => /** @type {Tab}*/({label: plugin.name, id: plugin.name, icon: plugin.icon}))
       watch(() => tabRef.value?.currentTab?.id , async ()=> {
         if(!tabRef.value?.currentTab?.id) return 
-        services.value = await PromiseB.filter(stack.services, async service => {
+        services.value = await PromiseB.filter(stack.services.value, async service => {
           if(tabRef?.value?.currentTab?.id) {
             const currentPlugin = tabRef.value.currentTab.id
             if(!service.enabled) return false
-            /** @type {{data: import('../../modules/views').PluginSM[]}} */
+            /** @type {{data: import('../../modules/views').PluginSM<null>[]}} */
             const {data: plugins} = await axios.get('/plugins/services/'+ service.label)
             const availablePlugins = plugins.map(a => a.name)
             const plugin = availablePlugins.find(plugin => plugin === currentPlugin)
-            return plugin
+            return !!plugin
           }
           return false
         })
@@ -84,12 +84,10 @@ export default {
       /** @param {import('@/models/service').default} service */
       async restart(service) {
         await service.restart()
-        stack.services = [...stack.services]
       },
       /** @param {import('@/models/service').default} service */
       async stop(service) {
         await service.stop()
-        stack.services = [...stack.services]
       },
       /** @param {string} url */
       goTo(url) {
