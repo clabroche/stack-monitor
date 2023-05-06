@@ -4,8 +4,15 @@ const router = express.Router();
 /** @param {import('../../typings/index').StackMonitor} stackMonitor */
 module.exports = (stackMonitor) => {
   const { git } = stackMonitor
+  // router.get('/git/:service/graph', async function(req, res) {
+  //   const graph = await git.getGraph(req.params.service, { 
+  //     graphOnAll: req.query.graphOnAll === 'true',
+  //     noColor: req.query.noColor === 'true'
+  //   })
+  //   res.json(graph)
+  // })
   router.get('/git/:service/graph', async function(req, res) {
-    const graph = await git.getGraph(req.params.service, { graphOnAll: req.query.graphOnAll === 'true' })
+    const graph = await git.getLog(req.params.service)
     res.json(graph)
   })
   router.get('/git/:service/branches', async function (req, res) {

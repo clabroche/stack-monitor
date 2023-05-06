@@ -63,7 +63,8 @@
         <button @click="nextSearch"><i class="fas fa-chevron-down"></i></button>
       </div>
     </div>
-    <div ref="terminalRef"></div>
+    <!-- <div ref="terminalRef"></div> -->
+    <GitGraph :graph="graph"></GitGraph>
   </section-cmp>
   <modal ref="reset-modal" cancelString="No" validateString="Yes">
     <template #header>
@@ -128,11 +129,13 @@ import { Terminal } from 'xterm/lib/xterm';
 import { FitAddon } from 'xterm-addon-fit';
 import { CanvasAddon } from 'xterm-addon-canvas';
 import { SearchAddon } from 'xterm-addon-search';
+import GraphCmp from './Graph.vue';
 
 export default {
   components: {
     sectionCmp: SectionVue,
-    modal: ModalVue
+    modal: ModalVue,
+    GitGraph: GraphCmp
   },
   props: {
     noStyle: {default: false},
@@ -169,13 +172,15 @@ export default {
       defaultBranch: null,
       search: '',
       /** @type {import('xterm-addon-search').SearchAddon | null} */
-      terminalSearch: null
+      terminalSearch: null,
+      /** @type {string[]} */
+      graph: []
     }
   },
   async mounted() {
     if(this.customGit) return 
-    const commandRef = /** @type {HTMLElement}*/(this.$refs.terminalRef)
-    if(!commandRef) return
+    // const commandRef = /** @type {HTMLElement}*/(this.$refs.terminalRef)
+    // if(!commandRef) return
     // @ts-ignore
     this.interval = setInterval(() => this.service.updateGit(), 1000)
     // @ts-ignore
@@ -188,34 +193,34 @@ export default {
       else if (branchNames.includes('master')) this.defaultBranch = 'master'
       else if (branchNames.includes('main')) this.defaultBranch = 'main'
     }
-    commandRef.innerHTML = ''
-    this.terminal = new Terminal({
-      smoothScrollDuration: 100,
-      experimentalCarAtlas: 'static',
-      fontFamily: 'MesloLGS NF, monospace',
-      convertEol: true,
-      disableStdin: true,
-      fontSize: 13,
-      allowTransparency: true,
-      minimumContrastRatio: 7,
-      theme: {
-        background: '#ffffff00',
-        foreground: '#4c4c4c',
-        selectionBackground: '#1d95db',
-        selectionForeground: 'white'
-      }
-    });
-    const fitAddon = new FitAddon();
-    if(this.terminal) {
-      this.terminal.loadAddon(fitAddon);
-      this.terminal.loadAddon(new CanvasAddon());
-      const searchAddon = new SearchAddon();
-      this.terminalSearch = searchAddon
-      this.terminal.loadAddon(searchAddon);
-      this.terminal.open(commandRef);
-      fitAddon.activate(this.terminal)
-      fitAddon.fit();
-    }
+    // commandRef.innerHTML = ''
+    // this.terminal = new Terminal({
+    //   smoothScrollDuration: 100,
+    //   experimentalCarAtlas: 'static',
+    //   fontFamily: 'MesloLGS NF, monospace',
+    //   convertEol: true,
+    //   disableStdin: true,
+    //   fontSize: 13,
+    //   allowTransparency: true,
+    //   minimumContrastRatio: 7,
+    //   theme: {
+    //     background: '#ffffff00',
+    //     foreground: '#4c4c4c',
+    //     selectionBackground: '#1d95db',
+    //     selectionForeground: 'white'
+    //   }
+    // });
+    // const fitAddon = new FitAddon();
+    // if(this.terminal) {
+    //   this.terminal.loadAddon(fitAddon);
+    //   this.terminal.loadAddon(new CanvasAddon());
+    //   const searchAddon = new SearchAddon();
+    //   this.terminalSearch = searchAddon
+    //   this.terminal.loadAddon(searchAddon);
+    //   this.terminal.open(commandRef);
+    //   fitAddon.activate(this.terminal)
+    //   fitAddon.fit();
+    // }
     await this.updateGraph()
     await this.gitFetch()
   },
@@ -260,16 +265,18 @@ export default {
     },
 
     async updateGraph() {
-      const graph = await this.service.getGraph(this.graphOnAll)
+      this.graph = await this.service.getGraph(this.graphOnAll, true)
         .catch((err) => notification.next('error', err?.response?.data || err?.message || err))
-      if(graph && this.terminal) {
-        this.terminal.clear()
-        this.terminal.writeln(graph.join('\n'))
-        setTimeout(() => {
-          if(!this.terminal) return
-          this.terminal.scrollToTop()
-        });
-      }
+      // const graph = await this.service.getGraph(this.graphOnAll, false)
+      //   .catch((err) => notification.next('error', err?.response?.data || err?.message || err))
+      // if(graph && this.terminal) {
+      //   this.terminal.clear()
+      //   this.terminal.writeln(graph)
+      //   setTimeout(() => {
+      //     if(!this.terminal) return
+      //     this.terminal.scrollToTop()
+      //   });
+      // }
     },
     /** @param {string} status */
     colorStatus(status) {

@@ -1,4 +1,4 @@
-const { exec } = require('child_process')
+const { exec, spawn } = require('child_process')
 
 module.exports = {
   /**
@@ -12,6 +12,28 @@ module.exports = {
         if (err) return rej(stderr || err)
         res(stdout)
       })
+    })
+  },
+  /**
+   * @param {string} spawnCmd 
+   * @param {string[]} spawnArgs 
+   * @param {import('child_process').SpawnOptions} spawnOptions 
+   * @returns {Promise<string>}
+   */
+  spawnAsync: function (spawnCmd, spawnArgs = [], spawnOptions = {}) {
+    return new Promise((res, rej) => {
+      const spawnProcess = spawn(spawnCmd, spawnArgs, spawnOptions)
+      /**
+       * @type {Buffer[]}
+       */
+      let stdout = []
+      spawnProcess.stdout?.on('data', (data) => {
+        stdout.push(data)
+      })
+      spawnProcess.stderr?.on('data', (message) => {
+        rej(message?.toString())
+      })
+      spawnProcess.on('exit', () => res(Buffer.concat(stdout).toString()))
     })
   },
   /**

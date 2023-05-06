@@ -1,5 +1,5 @@
 const { existsSync } = require('fs-extra')
-const { execAsync, execAsyncWithoutErr } = require('../../server/helpers/exec')
+const { execAsync, execAsyncWithoutErr, spawnAsync } = require('../../server/helpers/exec')
 const pathfs = require('path')
 
 /** @param {import('../../typings/index').StackMonitor} stackMonitor */
@@ -16,14 +16,29 @@ const Git = (stackMonitor) => {
   return {
     /**
      * @param {string} serviceName 
-     * @param {{graphOnAll?: boolean}} param1 
+     * @param {{graphOnAll?: boolean,noColor?: boolean}} param1 
      */
-    async getGraph(serviceName, {graphOnAll} = {}) {
+    async getGraph(serviceName, {graphOnAll, noColor} = {}) {
       const service = findService(serviceName)
       await requirements(service)
-      const cmd = `git -c color.ui=always log  --decorate=full --oneline --graph ${(graphOnAll ? '--all' : '')} -500`;
+      const cmd = `git ${noColor ? '' : '-c color.ui=always '}log  --decorate=full --oneline --graph ${(graphOnAll ? '--all' : '')} -500`;
       const result = await execAsync(cmd, { cwd: service.rootPath, env: process.env });
       return result.split('\n')
+    },
+    /**
+     * @param {string} serviceName 
+     */
+    async getLog(serviceName) {
+      const service = findService(serviceName)
+      await requirements(service)
+      const logTxts = await spawnAsync(
+        `git`,
+        ['log', '-n 36', '--oneline', `--pretty=format:{  #'#commit#'#: #'#%H#'#,  #'#abbreviated_commit#'#: #'#%h#'#,  #'#tree#'#: #'#%T#'#,  #'#abbreviated_tree#'#: #'#%t#'#,  #'#parent#'#: #'#%P#'#,  #'#abbreviated_parent#'#: #'#%p#'#,  #'#refs#'#: #'#%D#'#,  #'#encoding#'#: #'#%e#'#,  #'#subject#'#: #'#%s#'#,  #'#sanitized_subject_line#'#: #'#%f#'#,  #'#body#'#: #'#%b#'#,  #'#commit_notes#'#: #'##'#,  #'#verification_flag#'#: #'#%G?#'#,  #'#signer#'#: #'#%GS#'#,  #'#signer_key#'#: #'#%GK#'#,  #'#author#'#: {    #'#name#'#: #'#%aN#'#,    #'#email#'#: #'#%aE#'#,    #'#date#'#: #'#%aD#'#  },  #'#commiter#'#: {    #'#name#'#: #'#%cN#'#,    #'#email#'#: #'#%cE#'#,    #'#date#'#: #'#%cD#'#  }},`],
+        { cwd: service.rootPath, env: process.env },
+      );
+      console.log(logTxts)
+      const res = logTxts.toString().trim().split('\n').join('').slice(0, -1).replace(/"/g, "'").replace(/#'#/g, '"')
+      return JSON.parse(`[${res}]`);
     },
     /** @param {string} serviceName */
     async getBranches(serviceName) {

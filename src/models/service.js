@@ -169,10 +169,11 @@ class Service {
    * 
    * @param {boolean} graphOnAll 
    */
-  async getGraph(graphOnAll) {
+  async getGraph(graphOnAll, noColor = true) {
     const {data: graph} = await axios.get(`/git/${this.label}/graph`, {
       params: {
-        graphOnAll
+        graphOnAll,
+        noColor
       }
     })
     return graph
