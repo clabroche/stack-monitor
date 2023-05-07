@@ -62,12 +62,12 @@ export default {
       }
     }
     onMounted(async ()=> {
-      redirect()
       Socket.socket.on('connect',  redirect);
       Socket.socket.on('disconnect', redirect);
       Socket.socket.on('forceReload', () => {
         window.location.reload()
       });
+      await redirect()
     })
 
     // Check versions

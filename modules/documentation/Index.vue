@@ -44,7 +44,7 @@ onMounted(async () => {
   if(!currentPage.value) {
     const defaultFile = tree.value.find(leaf => leaf.name?.toUpperCase() === 'INDEX.MD')
     if(defaultFile) {
-      goTo(defaultFile)
+      await goTo(defaultFile)
     }
   }
 })

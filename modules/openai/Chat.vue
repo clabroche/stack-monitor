@@ -62,13 +62,13 @@ async function reload() {
     firstMount = false
   }, 0);
 }
-watch(() => props.messages, () => {
-  reload()
+watch(() => props.messages, async () => {
+  await reload()
 }, {deep:true})
 
 /** @param {KeyboardEvent} ev */
 async function sendEnter(ev) {
-  if (ev.ctrlKey) send(ev)
+  if (ev.ctrlKey) await send(ev)
 }
 /** @param {Event} ev */
 async function input(ev) {

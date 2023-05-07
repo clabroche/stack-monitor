@@ -105,7 +105,7 @@ export default {
       if (props.oninput) props.oninput(localValue.value)
     }
     const getLabel = (option) => {
-      return currentCateg.value && currentCateg.value.customLabel
+      return currentCateg.value?.customLabel
         ? option[currentCateg.value.customLabel]
         : option[props.customLabel] || option
     }

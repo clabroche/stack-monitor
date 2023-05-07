@@ -12,7 +12,9 @@ import Socket from './helpers/Socket';
   const {default: Editor} = await import('./components/Editor.vue')
   const {default: Markdown} = await import('vue3-markdown-it')
   
-  system.getVersion()
+  system.getVersion().catch(err => {
+    console.error(err)
+  })
 
   const app = createApp(App)
     .component('Editor', Editor)

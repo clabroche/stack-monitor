@@ -151,7 +151,6 @@ import { Terminal } from 'xterm/lib/xterm';
 import { FitAddon } from 'xterm-addon-fit';
 import { CanvasAddon } from 'xterm-addon-canvas';
 import { SearchAddon } from 'xterm-addon-search';
-import { upperFirst } from 'lodash';
 
 export default {
   components: {

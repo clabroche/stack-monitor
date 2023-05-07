@@ -3,9 +3,9 @@ const plugins = require('../../modules/plugins');
 
 /** @type {import('express').Router[]} */
 const routes = [];
-/** @type {PluginSM[]} */
+/** @type {PluginSM<null>[]} */
 const forService = [];
-/** @type {Record<string, PluginSM[]>} */
+/** @type {Record<string, PluginSM<null>[]>} */
 const allPlugins = {}
 
 Object.keys(plugins)

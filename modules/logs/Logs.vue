@@ -138,6 +138,7 @@ import { computed, onMounted, ref, watch, watchEffect } from '@vue/runtime-core'
 import router from '@/router/router';
 import Modal from '@/components/Modal.vue'
 import Service from '@/models/service'
+import notification from '@/helpers/notification';
 const props = defineProps({
   service: { 
     /** @type {import('@/models/service').default | null}*/
@@ -181,7 +182,7 @@ async function findSolution(data) {
 
 watch(() => props.service?.enabled, async() => {
   if(props.service?.enabled && !terminal.value) {
-    createTerminal()
+    await createTerminal()
   } else if(props.service?.enabled && logsContainer.value) {
     await new Promise(resolve => setTimeout(resolve, 10));
     terminal.value?.open(logsContainer.value);
@@ -223,7 +224,7 @@ const toggleIsOpen = (val) => {
   setTimeout(() => scroll(true), 0);
 }
 
-const filterWithoutDebounce = function () {
+const filterWithoutDebounce = async function () {
   terminal.value?.clear()
   jsons.value = []
   const lines = logs.value
@@ -233,7 +234,7 @@ const filterWithoutDebounce = function () {
       write(line)
       return line
     });
-  scroll()
+  await scroll()
   return lines
 }
 const filter = debounce(filterWithoutDebounce, 300)
@@ -271,6 +272,7 @@ async function createTerminal() {
         const selection = terminal.value?.getSelection();
         if (selection) {
           navigator?.clipboard?.writeText(selection)
+            .catch(err => notification.next('error', 'Cannot copy to clipboard'))
           return false;
         }
       }

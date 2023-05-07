@@ -339,7 +339,7 @@ async function reloadGloblalConf(originalStack, newStack) {
  */
 const checkConf = async (path = '') => {
   try {
-    if (path && path.endsWith('.js')) delete require.cache[require.resolve(path)]
+    if (path?.endsWith('.js')) delete require.cache[require.resolve(path)]
     const originalStack = Stack.getStack()
     if (!originalStack?.confPath) return 
     const newStack = await Stack.parse(originalStack.confPath, Stack)

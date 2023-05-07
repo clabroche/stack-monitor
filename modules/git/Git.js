@@ -6,7 +6,7 @@ const pathfs = require('path')
 const Git = (stackMonitor) => {
   const {findService} = stackMonitor
   /** @param {import('../../server/models/Service')} service */
-  function requirements(service) {
+  async function requirements(service) {
     if (!service) throw new Error('Git Error: Service not found') 
     if (!service.git) throw new Error('Git Error - ' + service?.label + ': Git option not set')
     if (!service.rootPath) throw new Error('Git Error - ' + service?.label + ': Root Path option not set')

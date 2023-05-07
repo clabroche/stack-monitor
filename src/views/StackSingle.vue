@@ -78,7 +78,7 @@ export default {
     const mem = ref(0)
     const restartInProgress = ref(false)
     watch(() => router.currentRoute.value.params.label, async () => {
-      reload()
+      await reload()
     })
     /** @type {NodeJS.Timer} */
     let interval
@@ -102,7 +102,7 @@ export default {
     onMounted(async () => {
       await reload()
       interval = setInterval(async () => {
-        if(!currentService.value || !currentService.value.label) return
+        if(!currentService.value?.label) return
         const {cpu: _cpu, mem: _mem} = await System.getInfos(currentService.value.label.toString())
         cpu.value = _cpu
         mem.value = _mem

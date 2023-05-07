@@ -99,7 +99,7 @@ module.exports = class Service {
     this.launch(false)
     this.Stack.getStack()?.triggerOnServiceRestart(this)
   }
-  async sendHasBeenModified() {
+  sendHasBeenModified() {
     Socket.io?.emit('conf:update', [this.label])
   }
 
@@ -139,7 +139,7 @@ module.exports = class Service {
     this.enabled = false
     this.crashed = false
     if(triggerEvent) this.Stack.getStack()?.triggerOnServiceKill(this)
-    await this.sendHasBeenModified()
+    this.sendHasBeenModified()
   }
   launch(triggerEvent = true) {
     this.store = ''

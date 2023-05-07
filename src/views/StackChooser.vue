@@ -50,10 +50,11 @@
 import Stack from '../models/stack'
 import System from '../models/system'
 import SectionVue from '../components/Section.vue'
-import { computed, onMounted, reactive, ref } from 'vue'
+import { computed, onMounted, reactive } from 'vue'
 import router from '../router/router'
 import BackgroundStackChooser from '../components/BackgroundStackChooser.vue'
 import LeftLogo from '../components/LeftLogo.vue'
+
 export default {
   name: 'StackChooser',
   components: {

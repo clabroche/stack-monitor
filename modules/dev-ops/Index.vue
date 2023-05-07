@@ -3,13 +3,13 @@
     <div class="sidebar">
       <ul>
         <input type="text" ref="searchToolRef" placeholder="Search tool..." v-model="searchToolTerm" autofocus="true" @keypress.enter="chooseFirst">
-        <li v-for="plugin of buttonsPlugins" :key="plugin.name" class="sidebar-item"
+        <li v-for="plugin of buttonsPlugins" :key="plugin?.name" class="sidebar-item"
           @click="plugin?.click?.()"
           :class="{ active: isActive(plugin) }">
           <div class="item">
-            <i class="icon" :class="plugin.icon" v-if="plugin.icon"></i>
-            <span class="icon" v-if="plugin.iconText">{{ plugin.iconText }}</span>
-            {{ plugin.text }}
+            <i class="icon" :class="plugin?.icon" v-if="plugin?.icon"></i>
+            <span class="icon" v-if="plugin?.iconText">{{ plugin?.iconText }}</span>
+            {{ plugin?.text }}
           </div>
         </li>
       </ul>
@@ -33,12 +33,12 @@ import axios from '@/helpers/axios'
 import router from '@/router/router'
 
 import { onMounted, ref, computed } from 'vue'
-/** @type {import('vue').Ref<import('../views').PluginSM[]>} */
+/** @type {import('vue').Ref<import('../views').PluginSM<null>[]>} */
 const plugins = ref([])
 const searchToolTerm = ref('')
 const searchToolRef = ref()
 onMounted(async () => {
-  /** @type {{data: import('../../modules/views').PluginSM[]}} */
+  /** @type {{data: import('../../modules/views').PluginSM<null>[]}} */
   const { data: _plugins } = await axios.get('/plugins/dev-ops')
   plugins.value = _plugins?.flat() || []
   searchToolRef.value?.focus()
@@ -65,15 +65,15 @@ const buttonsPlugins = computed(() => ([
         active: placement.active
       }
     })
-  }).flat().filter(f => f && f.text?.toUpperCase().includes(searchToolTerm.value?.toUpperCase())) || [],
+  }).flat().filter(f => f?.text?.toUpperCase().includes(searchToolTerm.value?.toUpperCase())) || [],
 ]))
 
 function chooseFirst() {
   buttonsPlugins.value?.[0]?.click()
 }
-/**@param {import('../views').PluginSM<undefined>} plugin */
+/**@param {import('../views').PluginSM<null> | undefined} plugin */
 function isActive(plugin) {
-  return router.currentRoute.value.params.plugin === plugin.name
+  return router.currentRoute.value.params.plugin === plugin?.name
 }
 
 </script>

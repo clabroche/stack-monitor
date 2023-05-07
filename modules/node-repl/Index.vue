@@ -63,7 +63,7 @@ onMounted(async () => {
         terminal.value.writeln(line)
       })
   })
-  reload()
+  await reload()
 })
 
 async function write() {
@@ -76,7 +76,7 @@ async function reload() {
   const { data: _rooms } = await axios.get('/node-repl/rooms')
   rooms.value = _rooms
   if (!room.value) {
-    changeRoom(rooms.value?.[0])
+    await changeRoom(rooms.value?.[0])
   }
   const { data: _room } = await axios.get(`/node-repl/chat/${room.value}`)
   messages.value = _room
