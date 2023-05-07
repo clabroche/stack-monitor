@@ -144,11 +144,6 @@ onMounted(async() => {
   await updateGit()
   await checkUpdates()
 })
-watch(() => stack.services.value, async() => {
-  console.log('flzekfzekf')
-  // await updateGit()
-}, {deep: true})
-
 /**
  * @param {*[]} arr 
  * @param {string[]} properties 

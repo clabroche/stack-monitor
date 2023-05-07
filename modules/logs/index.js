@@ -4,7 +4,7 @@ const plugin = {
   icon: 'fas fa-terminal',
   export: null,
   placements: ['service'],
-  order: 2,
+  order: 1,
   routes: require('./routes')
 }
 module.exports = plugin

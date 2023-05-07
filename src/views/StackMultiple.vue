@@ -3,7 +3,7 @@
     <tabs :tabs="tabs" :showLabels="false" ref="tabRef">
       <template #default="{tab}">
           <div class="tab" >
-            <draggable v-model="services"
+            <draggableVue v-model="services"
               v-bind="{animation: 800,}"
               item-key="label"
               class="services">
@@ -22,7 +22,7 @@
                   <component :is="tab.id" :service="service" :key="service.label" :isInMultiMode="true"  :noStyle="true"></component>
                 </section-cmp>
               </template>
-            </draggable>
+            </draggableVue>
           </div>
       </template>
     </tabs>
@@ -34,7 +34,7 @@ import { ref } from '@vue/reactivity'
 import Section from '../components/Section.vue'
 import stack from '../models/stack'
 import Tabs from '../components/Tabs.vue'
-import draggable from 'vuedraggable'
+import draggableVue from 'vuedraggable'
 import { onMounted, watch } from '@vue/runtime-core'
 import PromiseB from 'bluebird'
 import axios from '../helpers/axios'
@@ -43,7 +43,7 @@ export default {
   components: {
     SectionCmp: Section,
     Tabs,
-    draggable,
+    draggableVue,
   },
   name: 'StackSingle',
   setup() {
@@ -153,5 +153,8 @@ export default {
     min-width: 300px;
     width: 100%;
   }
+}
+.sortable-ghost {
+  display: none;
 }
 </style>

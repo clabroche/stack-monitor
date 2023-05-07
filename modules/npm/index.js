@@ -6,7 +6,7 @@ const plugin = {
   icon: 'fab fa-npm',
   export: null,
   placements: ['service'],
-  order: 3,
+  order: 4,
   /**
    * 
    * @param {import('../../server/models/Service')} service 

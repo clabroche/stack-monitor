@@ -16,6 +16,7 @@ import Regex from "./regex/Index.vue";
 import JSONFormatter from "./json-formatter/Index.vue";
 import Documentation from "./documentation/Index.vue";
 import DevOps from "./dev-ops/Index.vue";
+import Github from "./github/Index.vue";
 import GlobalScripts from "./global-scripts/Index.vue";
 
 const toolboxPlugins = [
@@ -66,6 +67,7 @@ const plugins = [
   })),
   { name: "Logs", cmp: LogsVue },
   { name: "Git", cmp: GitVue },
+  { name: "Github", cmp: Github },
   { name: "Documentation", cmp: Documentation },
   { name: "Npm", cmp: NpmVue },
   { name: "Bugs", cmp: BugsVue },

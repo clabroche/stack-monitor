@@ -16,4 +16,5 @@ module.exports = {
   regex: require('./regex'),
   toolbox: require('./toolbox'),
   uuid: require('./uuid'),
+  github: require('./github'),
 }

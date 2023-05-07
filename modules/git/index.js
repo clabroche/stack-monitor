@@ -12,7 +12,7 @@ const plugin = {
     goTo: { path: "/Git-NotUpToDate" },
     active: "Git-NotUpToDate",
   }],
-  order: 1,
+  order: 2,
   hidden: () => commandExists('git').then(() => false).catch(() => true),
   routes: require('./routes'),
 }
