@@ -93,7 +93,7 @@
   <sectionCmp v-else>
     <div class="not-launch">
       <i class="fas fa-ban"></i>
-      Lancer le service pour voir les logs
+      Launch this service to view logs
     </div>
   </sectionCmp>
 

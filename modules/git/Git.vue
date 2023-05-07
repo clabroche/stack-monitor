@@ -63,7 +63,7 @@
   </div>
   <section-cmp class="section-branches">
     <div>
-      Afficher toutes les branches: 
+      Display all branches: 
       <input type="checkbox" v-model="graphOnAll" @change="updateGraph">
     </div>
     <div class="input-container">
