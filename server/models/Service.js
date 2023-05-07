@@ -199,10 +199,9 @@ module.exports = class Service {
         line = lineNotFinished + line
         lineNotFinished = ''
       }
-      if (line) {
-        this.store += line.slice(0, 10000)
-        Socket.io?.emit('logs:update', { msg: line, label: this.label })
-      }
+      line = line.slice(0, 10000)
+      this.store += line
+      Socket.io?.emit('logs:update', { msg: line, label: this.label })
     }
     spawnProcess.stdout?.on('data', add)
     spawnProcess.stderr?.on('data', (message) => {

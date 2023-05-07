@@ -239,6 +239,11 @@ const filterWithoutDebounce = function () {
 const filter = debounce(filterWithoutDebounce, 300)
 
 onMounted(() => createTerminal())
+Socket.socket.on('conf:update', () => {
+  if (logsContainer.value && !logsContainer.value?.children.length && terminal.value) {
+    terminal.value.open(logsContainer.value)
+  }
+})
 async function createTerminal() {
   await new Promise(resolve => setTimeout(resolve, 10));
   if(!logsContainer.value) return
@@ -292,14 +297,13 @@ async function createTerminal() {
   logs.value.split('\n').map(line => write(line))
   Socket.socket.on('logs:update', (/** @type {{label: string, msg: string}}*/data) => {
     if (data.label !== props.service.label || !data.msg) return
-    data.msg.trim().split('\n').filter(a => a).map(line => {
-      write(line)
-      logs.value += line
-      scroll()
-    })
+    logs.value += `${data.msg}`
+    write(`${data.msg}`, true)
+    scroll()
   })
   Socket.socket.on('logs:clear', data => {
     if (data.label !== props.service.label) return
+    logs.value = ''
     terminal.value?.clear()
   })
 }
@@ -348,17 +352,24 @@ const toggles = ref([
   { label: 'Debug', isOpen: jsonSMContainerOpen, jsons: jsonsSMToDisplay }
 ])
 
-/** @param {string} line */
-function write(line) {
+/** 
+ * @param {string} line
+ * @param {boolean} noNewLine
+ */
+function write(line, noNewLine = false) {
   if(!isLineFiltered(line)) return
   try { line = JSON.parse(line) } catch (error) { }
+  let toPrint = ''
   if (typeof line !== 'string') {
-    terminal.value?.writeln(JSON.stringify(line))
+    toPrint = JSON.stringify(line)
     jsons.value.push(line)
     jsons.value = jsons.value.slice(-lineToKeep.value)
   } else {
-    terminal.value?.writeln(line)
+    toPrint = line
   }
+  noNewLine
+    ? terminal.value?.write(toPrint)
+    : terminal.value?.writeln(toPrint)
 }
 
 async function clear() {
