@@ -7,6 +7,7 @@ const Socket = require('../models/socket')
 const psTree = require('ps-tree')
 const PromiseB = require('bluebird')
 const isWindows = require('../../server/helpers/isWindows')
+const dayjs = require('dayjs')
 
 
 module.exports = class Service {
@@ -189,27 +190,33 @@ module.exports = class Service {
     this.pids.push(spawnProcess)
     // @ts-ignore
     spawnProcess.title = this.label
-    let lineNotFinished = ''
-    const add = (/** @type {Buffer} */ data) => {
-      let line = data.toString()
-      if (!line.endsWith('\n') && !line.endsWith('\r\n')) {
-        lineNotFinished += line
-        return
-      } else {
-        line = lineNotFinished + line
-        lineNotFinished = ''
+    let lastDatePrinted = dayjs().subtract(1, 'month')
+    const add = (/** @type {Buffer | string} */ data) => {
+      if(dayjs().diff(lastDatePrinted, 'second') >= 2) {
+        const date = `\n========= ${dayjs().format('YYYY-MM-DD HH:mm:ss')} =========\n`
+        this.store += date
+        Socket.io?.emit('logs:update', { msg: date, label: this.label })
       }
+      lastDatePrinted = dayjs()
+      let line = data.toString()
       line = line.slice(0, 10000)
-      this.store += line
+      this.store += line + '\n'
       Socket.io?.emit('logs:update', { msg: line, label: this.label })
     }
-    spawnProcess.stdout?.on('data', add)
-    spawnProcess.stderr?.on('data', (message) => {
+    const readline = require('readline');
+    readline.createInterface({
+      input: spawnProcess.stdout,
+      terminal: true,
+    }).on('line', add)
+    readline.createInterface({
+      input: spawnProcess.stderr,
+      terminal: true,
+    }).on('line', (message) => {
       if (!message.toString().includes('webpack.Progress')) {
         Socket.io?.emit('alert', { label: this.label, message: message.toString(), type: 'error' })
       }
       add(message)
-    })
+    });
     spawnProcess.on('exit', (code) => {
       if(code) {
         Socket.io?.emit('service:crash', { label: this.label, code })

@@ -13,9 +13,9 @@
           @click="action?.click?.()"
           v-for="action of activeActions"
           :key="action.label"
-          class="action small" :class="{mini: !action.label && action.icon}">
+          class="action small" :class="{mini: !action.label && action.icon || action.small, active: action.active}">
           <i :class="action.icon" v-if="action.icon"  aria-hidden="true"></i>
-          <span class="text">{{action.label}}</span>
+          <span class="text" v-if="action.label">{{action.label}}</span>
         </button>
       </div>
     </div>
@@ -50,6 +50,8 @@ const activeActions = computed(() => {
  *   icon?: string,
  *   hidden?: boolean,
  *   label?: string,
+ *   small?: boolean,
+ *   active?: boolean,
  * }} Action
  */
 </script>
@@ -122,11 +124,18 @@ $shadow: rgb(165, 177, 179);
     flex-wrap: wrap;
     width: max-content;
     justify-content: flex-end;
+    .action {
+      gap: 5px;
+    }
     .action.mini {
       width: max-content;
       i {
         margin: 0;
       }
+    }
+    .action.active {
+      background: none;
+      background-color: green;
     }
   }
   .content {

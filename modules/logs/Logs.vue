@@ -32,7 +32,12 @@
     </div>
     <div class="main-content">
       <sectionCmp v-if="isOpen" header="Logs" :noStyle="noStyle"
-        :actions="[{ icon: 'fas fa-chevron-down', click: () => scrollTerminal() }, { icon: 'fas fa-trash', click: () => clear() }]">
+        :actions="[
+          { label: `{} JSON (${jsonsToDisplay?.length})`, click: () => toggleIsOpen(0), small: true, active: jsonContainerOpen },
+          { icon: 'fas fa-bug', label: `Debug (${jsonsSMToDisplay?.length})`, click: () => toggleIsOpen(1), small: true, active: jsonSMContainerOpen },
+          { icon: 'fas fa-chevron-down', click: () => scrollTerminal() },
+          { icon: 'fas fa-trash', click: () => clear() },
+        ]">
           <div v-if="service" class="logs-container" ref="logsContainer" id="terminal" style="box-sizing: content-box">
         </div>
         <transition name="appear">
@@ -82,12 +87,6 @@
           </sectionCmp>
         </transition>
       </sectionCmp>
-      
-      <div class="open-buttons">
-          <button v-for="(toggle, i) of toggles" :key="toggle.label" @click="toggleIsOpen(i)" :class="{ bordered: toggle.isOpen }">
-            <span style="font-weight: bold;">{{toggle.label}} ({{ toggle?.jsons?.length }})</span>
-          </button>
-      </div>
     </div>
   </div>
   <sectionCmp v-else>
@@ -139,6 +138,7 @@ import router from '@/router/router';
 import Modal from '@/components/Modal.vue'
 import Service from '@/models/service'
 import notification from '@/helpers/notification';
+
 const props = defineProps({
   service: { 
     /** @type {import('@/models/service').default | null}*/
@@ -250,7 +250,6 @@ async function createTerminal() {
   if(!logsContainer.value) return
   if (!isOpen.value) return
   terminal.value = new Terminal({
-    smoothScrollDuration: 100,
     experimentalCarAtlas: 'static',
     fontFamily: 'MesloLGS NF, monospace',
     convertEol: true,
@@ -289,18 +288,19 @@ async function createTerminal() {
     fitAddon.activate(terminal.value)
     fitAddon.fit();
     setTimeout(() => {
-      fitAddon.fit();
-    }, 100);
+      scrollTerminal()
+    }, 500);
   }
   window.onresize = function () {
     fitAddon.fit();
   }
   logs.value = await props.service.getLogs()
-  logs.value.split('\n').map(line => write(line))
+  write(logs.value, true)
+  await filter()
   Socket.socket.on('logs:update', (/** @type {{label: string, msg: string}}*/data) => {
     if (data.label !== props.service.label || !data.msg) return
     logs.value += `${data.msg}`
-    write(`${data.msg}`, true)
+    write(`${data.msg}`)
     scroll()
   })
   Socket.socket.on('logs:clear', data => {
@@ -308,10 +308,10 @@ async function createTerminal() {
     logs.value = ''
     terminal.value?.clear()
   })
+  scrollTerminal()
 }
 
 const jsonsToDisplay = computed(() => {
-  scroll()
   return jsonPathSearch.value ?
     jsons.value.map(json => {
       try {
@@ -332,7 +332,6 @@ function scrollTerminal() {
   }
 }
 const jsonsSMToDisplay = computed(() => {
-  scroll()
   const filteredJSON = jsons.value
     .filter(json => json?.[0] === 'stack-monitor')
     .map(j => j.length === 2  ? j[1] : j.slice(1))
