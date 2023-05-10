@@ -174,7 +174,7 @@ export default {
     },
     /** @return {string} */
     pullLabel() {
-      if(this.git?.delta == null) return 'Search...' 
+      if(this.git?.delta == null) return 'Refresh...' 
       return 'Pull ' + '(' + (this.git.delta || 0) + ')'
     },
     displayBranches() {
