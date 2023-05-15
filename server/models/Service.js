@@ -199,18 +199,21 @@ module.exports = class Service {
       }
       lastDatePrinted = dayjs()
       let line = data.toString()
-      line = line.slice(0, 10000)
+      if(line.length > 100000 && !line.startsWith('["stack-monitor"')) line = line.slice(0, 10000)
       this.store += line + '\n'
       Socket.io?.emit('logs:update', { msg: line, label: this.label })
     }
     const readline = require('readline');
     readline.createInterface({
       input: spawnProcess.stdout,
-      terminal: true,
-    }).on('line', add)
+      terminal: false,
+      historySize: 0
+    })
+    .on('line', add)
     readline.createInterface({
       input: spawnProcess.stderr,
-      terminal: true,
+      terminal: false,
+      historySize: 0
     }).on('line', (message) => {
       if (!message.toString().includes('webpack.Progress')) {
         Socket.io?.emit('alert', { label: this.label, message: message.toString(), type: 'error' })
