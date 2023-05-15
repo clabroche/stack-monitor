@@ -146,7 +146,7 @@ module.exports = GlobalScripts
 async function prompt(step, track, event, data) {
   if (!step.prompt) return false
   if (event === 'validate-prompt') {
-    if (step?.prompt?.validation) {
+    if (step.prompt?.validation) {
       try {
         const msgError = await step.prompt.validation(data)
         if (msgError) {

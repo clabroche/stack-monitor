@@ -25,9 +25,9 @@ module.exports = (stackMonitor) => {
     router.post('/node-repl/chat/:room', async (req, res) => {
         const { room } = req.params
         const {script} = req.body
-        if (!conf?.chat?.[room]) {
-            if (!conf?.chat) conf.chat = {}
-            if (!conf?.chat?.[room]) conf.chat[room] = {}
+        if (!conf.chat?.[room]) {
+            if (!conf.chat) conf.chat = {}
+            if (!conf.chat?.[room]) conf.chat[room] = {}
         }
         conf.chat[room].script = script
         const socketId = v4()

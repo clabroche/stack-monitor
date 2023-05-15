@@ -229,8 +229,6 @@ export default {
           return headersById[sortProperty.value].customGroupByValue(row[sortProperty.value])
         } else if(typeof row[sortProperty.value] === 'string') {
           return row[sortProperty.value].toString().toUpperCase().substr(0, 1)
-        } else if(typeof row[sortProperty.value] === 'number') {
-          return row[sortProperty.value]
         } else {
           return row[sortProperty.value]
         }

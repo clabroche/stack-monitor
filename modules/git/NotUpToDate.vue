@@ -120,7 +120,7 @@
 
 <script setup>
 import stack from "@/models/stack"
-import { computed, onMounted, ref, watch } from "vue"
+import { computed, onMounted, ref } from "vue"
 import SectionCmp from '@/components/Section.vue'
 import PromiseB from 'bluebird'
 import notification from "@/helpers/notification"
