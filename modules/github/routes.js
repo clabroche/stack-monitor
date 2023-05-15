@@ -26,7 +26,6 @@ module.exports = (stackMonitor) => {
   router.get('/github/service/:label/ready', async (req, res) => {
     requirements()
     if (!octokit) return
-    octokit.auth
     const { data: { login } } = await octokit.rest.users.getAuthenticated();
     return res.send(login)
   })
