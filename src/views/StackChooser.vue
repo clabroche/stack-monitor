@@ -20,7 +20,8 @@
             </div>
           </div>
           <ul v-if="group.show || group.label === 'All'">
-            <li v-for="service of group.services" :key="'services-'+service.label">
+            <input type="text" v-model="search" @keypress.enter="toggleService(displayedServices(group.services)[0])" placeholder="Type+Enter to toggle..." >
+            <li v-for="service of displayedServices(group.services)" :key="'services-'+service.label">
               <input :id="'input-' + service.label" type="checkbox" v-model="service.enabled" :checked="service.enabled ? true : false" @change="save(service)">
               <label :for="'input-' + service.label">
                 {{service.label}}
@@ -50,10 +51,11 @@
 import Stack from '../models/stack'
 import System from '../models/system'
 import SectionVue from '../components/Section.vue'
-import { computed, onMounted, reactive } from 'vue'
+import { computed, onMounted, reactive, ref } from 'vue'
 import router from '../router/router'
 import BackgroundStackChooser from '../components/BackgroundStackChooser.vue'
 import LeftLogo from '../components/LeftLogo.vue'
+import Service from '@/models/service'
 
 export default {
   name: 'StackChooser',
@@ -82,7 +84,14 @@ export default {
     const getServicesFromGroup = group => Stack.services.value.filter(service => service.groups?.includes(group)||group === 'All')
     /** @param {string} group */
     const isGroupSelected = group => getServicesFromGroup(group).every(service => service.enabled)
+    const search = ref('')
+
+    /** @param {import('@/models/service').default} service */
+    const save = async (service) => {
+      localStorage.setItem(`automatic-toggle-${service.label}`, service.enabled == null ? 'false' : service.enabled.toString())
+    }
     return {
+      search,
       isAllEnabled: computed(() => Stack.services.value.every(service => service.enabled)),
       groups: computed(() => {
         const groupsById = Stack.services.value.reduce((groups, service) => {
@@ -105,16 +114,24 @@ export default {
         const groupSelected = isGroupSelected(group)
         getServicesFromGroup(group).map(service => service.enabled = !groupSelected)
       },
-      /** @param {import('@/models/service').default} service */
-      async save(service) {
-        localStorage.setItem(`automatic-toggle-${service.label}`, service.enabled == null ? 'false' : service.enabled.toString())
-      },
+      save,
       isGroupSelected,
       Stack,
       System,
       validate, 
       enableAll,
-      disableAll
+      disableAll,
+      /** @param {Service[]} services */
+      displayedServices(services) {
+        return services.filter(s => s.label?.toUpperCase().includes(search.value.toUpperCase()))
+      },
+      /** @param {Service} service */
+      async toggleService (service) {
+        if(service != null) {
+          service.enabled = !service.enabled
+          await save(service)
+        }
+      }
     }
   }
 }
