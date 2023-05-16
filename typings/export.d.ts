@@ -6,7 +6,7 @@ export type {
   StackObject,
   StackFunction,
   Environment,
-  StackWithPlugins
+  StackWithPlugins as StackMonitor
 } from "../server/models/stack";
 
 export type {
