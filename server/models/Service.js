@@ -9,8 +9,7 @@ const PromiseB = require('bluebird')
 const isWindows = require('../../server/helpers/isWindows')
 const dayjs = require('dayjs')
 
-
-module.exports = class Service {
+class Service {
   /**
    * @param {import('../../typings/index').NonFunctionProperties<Service>} service
    * @param {import('./stack')} Stack
@@ -250,6 +249,12 @@ function psTreeAsync(pid) {
   })
 };
 
+module.exports = Service
+
 /**
  * @typedef {import('child_process').ExecOptions} SpawnOptions
+ */
+
+/**
+ * @typedef {Service} ServiceType
  */
