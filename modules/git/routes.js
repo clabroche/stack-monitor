@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-/** @param {import('../../typings/index').StackMonitor} stackMonitor */
+/** @param {import('../../typings/export').StackMonitor} stackMonitor */
 module.exports = (stackMonitor) => {
   const { git } = stackMonitor
   router.get('/git/:service/graph', async function(req, res) {

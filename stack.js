@@ -5,7 +5,7 @@ const groups = {
   api: '02 - APIs',
 }
 
-/** @type {import('./typings/index').StackFile} */
+/** @type {import('./typings/export').StackFile} */
 const stack = (stackMonitor) => {
   return {
     services: [

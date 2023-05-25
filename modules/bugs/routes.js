@@ -3,7 +3,7 @@ const router = express.Router();
 const pathfs = require('path')
 const {fork} = require('child_process')
 
-/** @param {import('../../typings/index').StackMonitor} stackMonitor */
+/** @param {import('../../typings/export').StackMonitor} stackMonitor */
 module.exports = (stackMonitor) => {
   router.get('/bugs/:service', async (req, res) => {
     const service = stackMonitor.findService(req.params.service)

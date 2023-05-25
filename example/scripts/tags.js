@@ -2,8 +2,8 @@ const PromiseB = require('bluebird')
 const Octokit = require('octokit')
 
 /**
- * @param {import('../../typings/index').StackMonitor} stackMonitor 
- * @returns {import('../../typings/index').GlobalScript}
+ * @param {import('../../typings/export').StackMonitor} stackMonitor 
+ * @returns {import('../../typings/export').GlobalScripts.Script}
  */
 const script = (stackMonitor) => ({
   label: 'github:tags',

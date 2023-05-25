@@ -3,21 +3,18 @@
     :style="{ maxHeight: isInMultiMode ? '400px' : 'inherit' }"
   >
     <div class="header">
-      <div class="input-container">
-        <i class="fas fa-search"></i>
-        <input type="text" v-model="search" placeholder="Search..." @keypress.enter="nextSearch">
-        <div>
-          <button @click="previousSearch"><i class="fas fa-chevron-up"></i></button>
-          <button @click="nextSearch"><i class="fas fa-chevron-down"></i></button>
+      <template v-if="countJSON || countDebug">
+        <div class="input-container">
+          <i class="fas fa-search"></i>
+          <input type="text" v-model="jsonPathSearch" placeholder="JSON path...">
         </div>
-      </div>
-      <div class="separator"></div>
+        <div class="separator"></div>
+      </template>
       <div class="input-container">
         <i class="fas fa-times"></i>
         <input
           type="text" v-model="filterSearch"
-          :placeholder="isInclude ? 'Include...' : 'Exclude...'"
-          @keypress.enter="nextSearch">
+          :placeholder="isInclude ? 'Include...' : 'Exclude...'">
         <div class="radios">
           <div>
             <input type="radio" id="include" :checked="isInclude" :value="isInclude" @input="isInclude = true">
@@ -29,63 +26,83 @@
           </div>
         </div>
       </div>
+      <div class="separator"></div>
+      <div class="input-container">
+        <div class="radios">
+          <div>
+            <div>Display</div>
+            <select v-model="numberToDisplay">
+              <option :value="10">10</option>
+              <option :value="50">50</option>
+              <option :value="100">100</option>
+              <option :value="150">150</option>
+              <option :value="200">200</option>
+              <option :value="500">500</option>
+              <option :value="800">800</option>
+              <option :value="1000">1000</option>
+              <option :value="1500">1500</option>
+              <option :value="2000">2000</option>
+            </select>
+            <div>lines</div>
+          </div>
+          <div>
+            <input type="checkbox" :checked="simplifiedMode" v-model="simplifiedMode">
+            <label for="exclude">Simplified mode</label>
+          </div>
+        </div>
+      </div>
     </div>
     <div class="main-content">
       <sectionCmp v-if="isOpen" header="Logs" :noStyle="noStyle"
         :actions="[
-          { label: `{} JSON (${jsonsToDisplay?.length})`, click: () => toggleIsOpen(0), small: true, active: jsonContainerOpen },
-          { icon: 'fas fa-bug', label: `Debug (${jsonsSMToDisplay?.length})`, click: () => toggleIsOpen(1), small: true, active: jsonSMContainerOpen },
-          { icon: 'fas fa-chevron-down', click: () => scrollTerminal() },
+          { icon: 'fas fa-list', label: `${countLine}`, small: true, hidden: !countLine, active: !mode, click: () => mode = '' },
+          { icon: 'fas fa-bug', label: `${countDebug}`, small: true, hidden: !countDebug, active: mode === 'debug', click: () => mode = 'debug' },
+          { label: `{} ${countJSON}`, small: true, hidden: !countJSON, active: mode === 'json', click: () => mode = 'json' },
+          { icon: 'fas fa-chevron-down', click: () => scroll(true) },
           { icon: 'fas fa-trash', click: () => clear() },
         ]">
-          <div v-if="service" class="logs-container" ref="logsContainer" id="terminal" style="box-sizing: content-box">
-        </div>
-        <transition name="appear">
-          <sectionCmp v-if="isOpen && jsonContainerOpen" :header="'Objects: (' + jsonsToDisplay.length + ')'" :noStyle="true" class="right json-container" style="background-color: white; border: none">
-            <div class="jsons-header input-container">
-              <input type="text" placeholder="Ex: src.result[0]" v-model="jsonPathSearch">
-            </div>
-            <div class="jsons" ref="jsonsRef">
-              <div v-for="json of jsonsToDisplay" :key="json">
-                <json-viewer :value="json" :copyable="true" :expand-depth="1" :show-double-quotes="true">
-                  <template #copy="{ copied }">
-                    <div v-if="copied">Copied</div>
-                    <div v-else>Copy</div>
-                    <router-link :to="{ name: 'JSONFormatter', query: { json: JSON.stringify(json) } }">
-                      Open in json-viewer
-                    </router-link>
-                    <div @click.stop="findSolution(json)">
+          <div class="terminal" ref="jsonsRef">
+            <div class="line" :class="{separator: line.isSeparator, json: line.json, debug: line.debug}" v-for="line of displayedLines" :key="line.id" >
+              <div v-html="line.msg" v-if="simplifiedMode"></div>
+              <div v-else-if="line.debug" >
+                <h2 class="section-header">Debug</h2>
+                <div class="section-content">
+                  <div class="section-actions">
+                    <button class="small" v-if="false">Copied</button>
+                    <button class="small" v-else @click="copy(JSON.stringify(line.debug))">Copy</button>
+                    <button class="small">
+                      <router-link :to="{ name: 'JSONFormatter', query: { json: JSON.stringify(line.debug) } }">
+                        Open in json-viewer
+                      </router-link>
+                    </button>
+                    <button class="small" @click.stop="findSolution(/**@type {any}*/(line.debug))">
                       Find a solution
-                    </div>
-                  </template>
-                </json-viewer>
+                    </button>
+                  </div>
+                  <JsonTreeView :maxDepth="1" :data="transformerJSON(line.debug)" :copyable="true" :expand-depth="1" :show-double-quotes="true"/>
+                </div>
               </div>
-            </div>
-          </sectionCmp>
-        </transition>
-        <transition name="appear">
-          <sectionCmp v-if="isOpen && jsonSMContainerOpen" :header="'Debug Objects: (' + jsonsSMToDisplay.length + ')'" :noStyle="true" class="right json-container" style="background-color: white; border: none">
-            <div class="jsons-header input-container">
-              <input type="text" placeholder="Ex: src.result[0]" v-model="jsonPathSearch">
-            </div>
-            <div class="jsons" ref="jsonsRef">
-              <div v-for="json of jsonsSMToDisplay" :key="json">
-                <json-viewer :value="json" :copyable="true" :expand-depth="1" :show-double-quotes="true">
-                  <template #copy="{ copied }">
-                    <div v-if="copied">Copied</div>
-                    <div v-else>Copy</div>
-                    <router-link :to="{ name: 'JSONFormatter', query: { json: JSON.stringify(json) } }">
-                      Open in json-viewer
-                    </router-link>
-                    <div @click.stop="findSolution(json)">
+              <div v-else-if="line.json"  >
+                <h2 class="section-header">JSON</h2>
+                <div class="section-content">
+                  <div class="section-actions">
+                    <button class="small" v-if="false">Copied</button>
+                    <button class="small" v-else @click="copy(JSON.stringify(line.json))">Copy</button>
+                    <button class="small">
+                      <router-link :to="{ name: 'JSONFormatter', query: { json: JSON.stringify(line.json) } }">
+                        Open in json-viewer
+                      </router-link>
+                    </button>
+                    <button class="small" @click.stop="findSolution(/**@type {any}*/(line.json))">
                       Find a solution
-                    </div>
-                  </template>
-                </json-viewer>
+                    </button>
+                  </div>
+                  <JsonTreeView :maxDepth="1" :data="transformerJSON(line.json)" :copyable="true" :expand-depth="1" :show-double-quotes="true"/>
+                </div>
               </div>
+              <div v-html="line.msg" v-else></div>
             </div>
-          </sectionCmp>
-        </transition>
+          </div>
       </sectionCmp>
     </div>
   </div>
@@ -120,21 +137,13 @@
 
 <script setup>
 import Socket from '@/helpers/Socket';
-// @ts-ignore
-import { Terminal } from 'xterm/lib/xterm';
-import { FitAddon } from 'xterm-addon-fit';
 import sectionCmp from '@/components/Section.vue';
-import { SearchAddon } from 'xterm-addon-search';
-import { WebLinksAddon } from 'xterm-addon-web-links';
-import { CanvasAddon } from 'xterm-addon-canvas';
-import debounce from 'debounce'
 // @ts-ignore
-import JsonViewer from 'vue-json-viewer'
+import { JsonTreeView } from "json-tree-view-vue3";
 // @ts-ignore
 import jsonpath from 'jsonpath'
 import 'vue-json-viewer/style.css'
-import { computed, onMounted, ref, watch, watchEffect } from '@vue/runtime-core';
-import router from '@/router/router';
+import { computed, onMounted, ref, nextTick } from 'vue';
 import Modal from '@/components/Modal.vue'
 import Service from '@/models/service'
 import notification from '@/helpers/notification';
@@ -150,24 +159,64 @@ const props = defineProps({
 
 /** @type {import('vue').Ref<import('xterm').Terminal | null>} */
 const terminal = ref(null)
-/** @type {import('vue').Ref<import('xterm-addon-search').SearchAddon | null>} */
-const terminalSearch = ref(null)
 /** @type {import('vue').Ref<HTMLElement | null>} */
-  const logsContainer = ref(null)
-  /** @type {import('vue').Ref<HTMLElement | null>} */
+const logsContainer = ref(null)
+/** @type {import('vue').Ref<HTMLElement | null>} */
 const jsonsRef = ref(null)
 const filterSearch = ref('')
-const jsonPathSearch = ref('')
-  /** @type {import('vue').Ref<Record<string, any>[]>} */
-const jsons = ref([])
 const isOpen = ref(true)
 const isInclude = ref(false)
-const logs = ref('')
+/** @type {import('vue').Ref<LogMessage[]>} */
+const logs = ref([])
+const jsonPathSearch = ref('')
 const findSolutionModal = ref()
+const simplifiedMode = ref(false)
+const numberToDisplay = ref(100)
 const findSolutionResultModal = ref()
-const lineToKeep = ref(router.currentRoute.value.query.lineToKeep || 120)
-watchEffect(() => {
-  lineToKeep.value = router.currentRoute.value.query.lineToKeep || 120
+const mode = ref('')
+
+/** @param {string} data */
+function copy(data) {
+  navigator.clipboard.writeText(data)
+    .then(() => notification.next('success', 'Data copied to clipboard'))
+}
+
+const countJSON = computed(() => {
+  let count = logs.value.reduce((count, line) => line.json && !line.debug ? count + 1 : count, 0)
+  if(count > numberToDisplay.value) count = numberToDisplay.value
+  return count
+})
+const countDebug = computed(() => {
+  let count = logs.value.reduce((count, line) => line.debug ? count + 1 : count, 0)
+  if(count > numberToDisplay.value) count = numberToDisplay.value
+  return count
+})
+const countLine = computed(() => {
+  let count = logs.value.length
+  if(count > numberToDisplay.value) count = numberToDisplay.value
+  return count
+})
+
+/** @param {any} json */
+function transformerJSON(json) {
+  if (jsonPathSearch.value) {
+    try {
+      const res = jsonpath.query(json, jsonPathSearch.value)
+      if (res.length === 1) return JSON.stringify(res['0'])
+      else return JSON.stringify(res)
+    } catch (error) {
+      // console.error(error)
+    }
+  } 
+  return JSON.stringify(json)
+}
+const displayedLines = computed(() => {
+  if(mode.value === 'debug') {
+    return logs.value.filter((line) => line.isSeparator || (line.debug && isLineIncluded(line))).slice(-numberToDisplay.value)
+  } else if(mode.value === 'json') {
+    return logs.value.filter(line => line.isSeparator || (line.json && !line.debug && isLineIncluded(line))).slice(-numberToDisplay.value)
+  } 
+  return logs.value.filter((line) => line.isSeparator || (isLineIncluded(line))).slice(-numberToDisplay.value)
 })
 
 /** @param {Record<string, string>} data */
@@ -180,219 +229,55 @@ async function findSolution(data) {
   }
 }
 
-watch(() => props.service?.enabled, async() => {
-  if(props.service?.enabled && !terminal.value) {
-    await createTerminal()
-  } else if(props.service?.enabled && logsContainer.value) {
-    await new Promise(resolve => setTimeout(resolve, 10));
-    terminal.value?.open(logsContainer.value);
-  }
-})
-const search = ref('')
-
-const jsonContainerOpen = ref(false)
-const jsonSMContainerOpen = ref(false)
-
-
-
-watch(() => search.value, () => {
-  if (terminalSearch.value) {
-    terminalSearch.value.findNext(search.value)
-  }
-})
-watch(() => `${isInclude.value}|${filterSearch.value}`, () => filter())
-watch(() => isOpen.value, () => createTerminal()) 
-
-/** @param {string} line */
-const isLineFiltered = (line) => {
+/** @param {LogMessage} line */
+const isLineIncluded = (line) => {
   const message = filterSearch.value
+  if(line.isSeparator) return true
   if (!message) return true
   const filters = message.includes(' | ')
     ? message.split(' | ')
     : [message]
-  return filters.filter(a => a).every((filter => {
-    const res = line.toUpperCase().match(new RegExp(escapeRegExp(filter), 'gi'))
-    return isInclude.value ? res : !res
-  }))
+  if(line.msg.includes('Mongoose') || line.msg.includes('nodemon'))console.log(filters.filter(a => a).map((filter => {
+    const res = line.msg.toUpperCase().match(new RegExp(escapeRegExp(filter), 'gi'))
+    return isInclude.value ? !!res : !res
+  })), line.msg)
+  return isInclude.value
+    ? filters.filter(a => a).some((filter => {
+      const res = line.msg.toUpperCase().match(new RegExp(escapeRegExp(filter), 'gi'))
+      return !!res
+    }))
+    : filters.filter(a => a).every((filter => {
+      const res = line.msg.toUpperCase().match(new RegExp(escapeRegExp(filter), 'gi'))
+      return !res
+    }))
 }
 
-/** @param {number} val */
-const toggleIsOpen = (val) => {
-  const shouldOpen = !toggles.value[val].isOpen
-  toggles.value.forEach(t => t.isOpen = false)
-  toggles.value[val].isOpen = shouldOpen
-  setTimeout(() => scroll(true), 0);
-}
-
-const filterWithoutDebounce = async function () {
-  terminal.value?.clear()
-  jsons.value = []
-  const lines = logs.value
-    ?.split('\n')
-    ?.filter(isLineFiltered)
-    ?.map(line => {
-      write(line)
-      return line
-    });
-  await scroll()
-  return lines
-}
-const filter = debounce(filterWithoutDebounce, 300)
-
-onMounted(() => createTerminal())
+onMounted(() => mounted())
 Socket.socket.on('conf:update', () => {
   if (logsContainer.value && !logsContainer.value?.children.length && terminal.value) {
     terminal.value.open(logsContainer.value)
   }
 })
-async function createTerminal() {
-  await new Promise(resolve => setTimeout(resolve, 10));
-  if(!logsContainer.value) return
-  if (!isOpen.value) return
-  terminal.value = new Terminal({
-    experimentalCarAtlas: 'static',
-    fontFamily: 'MesloLGS NF, monospace',
-    convertEol: true,
-    disableStdin: true,
-    fontSize: 13,
-    allowTransparency: true,
-    minimumContrastRatio: 7,
-    theme: {
-      background: '#ffffff00',
-      foreground: '#4c4c4c',
-      selectionBackground: '#1d95db',
-      selectionForeground: 'white'
-    }
-  });
-  const fitAddon = new FitAddon();
-  if(terminal.value) {
-    terminal.value.attachCustomKeyEventHandler((arg) => {
-      if (arg.ctrlKey && arg.code === "KeyC" && arg.type === "keydown") {
-        const selection = terminal.value?.getSelection();
-        if (selection) {
-          navigator?.clipboard?.writeText(selection)
-            .catch(err => notification.next('error', 'Cannot copy to clipboard'))
-          return false;
-        }
-      }
-      return true;
-    });
-    terminal.value.loadAddon(fitAddon);
-    terminal.value.loadAddon(new WebLinksAddon());
-    terminal.value.loadAddon(new CanvasAddon());
-  
-    terminal.value.open(logsContainer.value);
-    const searchAddon = new SearchAddon();
-    terminalSearch.value = searchAddon
-    terminal.value.loadAddon(searchAddon);
-    fitAddon.activate(terminal.value)
-    fitAddon.fit();
-    setTimeout(() => {
-      scrollTerminal()
-    }, 500);
-  }
-  window.onresize = function () {
-    fitAddon.fit();
-  }
+async function mounted() {
   logs.value = await props.service.getLogs()
-  write(logs.value, true)
-  await filter()
-  Socket.socket.on('logs:update', (/** @type {{label: string, msg: string}}*/data) => {
-    if (data.label !== props.service.label || !data.msg) return
-    logs.value += `${data.msg}`
-    write(`${data.msg}`)
+  Socket.socket.on('logs:update', (/** @type {LogMessage}*/data) => {
+    if (data.label !== props.service.label) return
+    logs.value.push(data)
     scroll()
   })
   Socket.socket.on('logs:clear', data => {
     if (data.label !== props.service.label) return
-    logs.value = ''
+    logs.value = []
     terminal.value?.clear()
   })
-  scrollTerminal()
-}
-
-const jsonsToDisplay = computed(() => {
-  return jsonPathSearch.value ?
-    jsons.value.map(json => {
-      try {
-        const res = jsonpath.query(json, jsonPathSearch.value)
-        if (res.length === 1) return res['0']
-        else return res
-      } catch (error) {
-        console.error(error)
-      }
-    })
-    : jsons.value
-})
-function scrollTerminal() {
-  if (terminal) {
-    // @ts-ignore
-    terminal.value.scrollToBottom()
-    scroll(true)
-  }
-}
-const jsonsSMToDisplay = computed(() => {
-  const filteredJSON = jsons.value
-    .filter(json => json?.[0] === 'stack-monitor')
-    .map(j => j.length === 2  ? j[1] : j.slice(1))
-  return jsonPathSearch.value ?
-    filteredJSON.map(json => {
-      try {
-        const res = jsonpath.query(json, jsonPathSearch.value)
-        if (res.length === 1) return res['0']
-        else return res
-      } catch (error) {
-        console.error(error)
-      }
-    })
-    : filteredJSON
-})
-
-const toggles = ref([
-  { label: 'All', isOpen: jsonContainerOpen, jsons: jsonsToDisplay },
-  { label: 'Debug', isOpen: jsonSMContainerOpen, jsons: jsonsSMToDisplay }
-])
-
-/** 
- * @param {string} line
- * @param {boolean} noNewLine
- */
-function write(line, noNewLine = false) {
-  if(!isLineFiltered(line)) return
-  try { line = JSON.parse(line) } catch (error) { }
-  let toPrint = ''
-  if (typeof line !== 'string') {
-    toPrint = JSON.stringify(line)
-    jsons.value.push(line)
-    jsons.value = jsons.value.slice(-lineToKeep.value)
-  } else {
-    toPrint = line
-  }
-  noNewLine
-    ? terminal.value?.write(toPrint)
-    : terminal.value?.writeln(toPrint)
+  scroll(true)
 }
 
 async function clear() {
-  terminal.value?.clear()
   props.service.clear()
-  logs.value = ''
-  jsons.value = []
+  logs.value = []
 }
-/** @param {MouseEvent | KeyboardEvent} ev */
-async function nextSearch(ev) {
-  if (ev.shiftKey) {
-    return previousSearch()
-  }
-  if (terminalSearch.value) {
-    terminalSearch.value.findNext(search.value)
-  }
-}
-async function previousSearch() {
-  if (terminalSearch.value) {
-    terminalSearch.value.findPrevious(search.value)
-  }
-}
+
 /** @param {string} text */
 function escapeRegExp(text) {
   return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
@@ -406,9 +291,13 @@ async function scroll(force = false, customElement = null) {
   const container = customElement || jsonsRef.value
   if(!container) return
   const shouldScroll = container.scrollTop + container.clientHeight === container.scrollHeight
-  await new Promise(res => setTimeout(res, 100))
+  await nextTick()
   if (shouldScroll || force) container.scrollTop = container.scrollHeight
 }
+
+/**
+ * @typedef {import('../../server/models/Service').LogMessage} LogMessage
+ */
 </script>
 
 
@@ -431,12 +320,15 @@ async function scroll(force = false, customElement = null) {
   flex-wrap: wrap;
   justify-content: center;
   gap: 20px;
+  position: relative;
+  z-index: 1;
+  margin: 10px 0;
   &>.separator {
     border-left: 1px solid lightgrey;
-
+    height: 40px;
   }
 }
-.logs-container, .json-container {
+.terminal {
   width: 100%;
   margin: auto;
   height: calc(100vh - 400px - 40px);
@@ -482,26 +374,15 @@ async function scroll(force = false, customElement = null) {
   flex-direction: column;
   &>div {
     display: flex;
-    align-items: center
+    align-items: center;
+    gap: 5px;
+    input {
+      margin: 0;
+    }
   }
 }
 
-$jsonHeaderHeight: 10px;
-$jsonHeadermargin: 10px;
-.jsons-header {
-  height: $jsonHeaderHeight;
-  margin-bottom: $jsonHeadermargin;
-  input {
-    width: 100%;
-  }
-
-}
-.jsons {
-  overflow: auto;
-  height: calc(100% - ($jsonHeaderHeight + $jsonHeadermargin));
-}
-.main-content .json-container {
-  position: absolute;
+.main-content  {
   background: none;
   right: 3px;
   top: 0;
@@ -509,39 +390,123 @@ $jsonHeadermargin: 10px;
   box-shadow: 0 0 10px 0 rgba(0,0,0,0.2);
   margin: 0;
   z-index: 100;
-}
-.open-buttons {
-  width: 140px;
-  button {
-    width: 100%;
+  .section {
+    margin: 0;
   }
 }
 
-.appear-enter-active,
-.appear-leave-active {
-  transition:  .3s;
-  transform-origin: right 
-}
-.appear-enter-from,
-.appear-leave-to {
-  opacity: 0
+.terminal {
+  display: flex;
+  flex-direction: column;
+  line-break: anywhere;
+  overflow: auto;
+  .line {
+    border-left: 2px solid #ccc;
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;
+    padding-left: 10px;
+    margin: 0px 0;
+    will-change: background-color;
+    transition: 300ms;
+    .section-actions {
+      display: none;
+      button {
+        width: max-content;
+        a {
+          color: white;
+          text-decoration: none;
+        }
+      }
+    }
+    .section-header {
+      margin: 0;
+      padding: 0 10px;
+      background-color: #000000;
+      color: white;
+      border-top-left-radius: 10px;
+      border-top-right-radius: 10px;
+      position: relative;
+      z-index: 1;
+    }
+    .section-content {
+      border-left: 4px solid #000000;
+      border-bottom-left-radius: 4px;
+      padding-left: 10px;
+    }
+    &:hover {
+      background-color: rgba(0,0,0,0.05);
+      .section-content {
+        position: relative;
+        .section-actions {
+          position: absolute;
+          top: 0;
+          right: 0;
+          display: flex;
+          align-items: center;
+          gap: 2px;
+
+        }
+      }
+    }
+    &.json {
+      padding: 0;
+      margin: 10px 0;
+      border: none;
+      .section-header {
+        background-color: #e9d6b2;
+      }
+      .section-content {
+        border-color: #e9d6b2
+      }
+    }
+    
+    &.debug {
+      padding: 0;
+      margin: 10px 0;
+      border: none;
+      .section-header {
+        background-color: #ac32c4;
+      }
+      .section-content {
+        border-color: #ac32c4
+      }
+    }
+    &.separator {
+      border-left: none;
+      margin: 20px auto;
+      display: inline-block;
+      width: max-content;
+      font-weight: bold;
+    }
+    
+  }
 }
 </style>
 
 <style lang="scss">
 @import '~xterm/css/xterm.css';
-
 .xterm-decoration-top {
   background-color: orange;
   color: white;
 }
 
-.jv-container {
-  background-color: transparent !important;
-  .jv-code {
+.json-view-item {
+  &.root-item {
     padding: 10px 0;
-    border-bottom: 1px solid lightgrey;
+  }
+  button {
+    background: none;
+    box-shadow: none;
+    background-color: transparent !important;
+    margin: 0;
+    padding: 0;
+    width: max-content;
+    &:hover {
+      background-color: rgba(0,0,0,0.1) !important;
+    }
+  }
+  .value-key {
+    white-space: normal;
   }
 }
-
 </style>

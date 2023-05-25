@@ -75,6 +75,7 @@ class Service {
     return this
   }
 
+  /** @returns {Promise<LogMessage[]>}*/
   async getLogs() {
     const { data: logs } = await axios.get('/logs/' + this.label + '/logs')
     return logs
@@ -275,3 +276,7 @@ class Service {
 
 
 export default Service
+
+/**
+ * @typedef {import('../../server/models/Service').LogMessage} LogMessage
+ */

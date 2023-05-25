@@ -2,7 +2,7 @@ const { existsSync } = require('fs-extra')
 const { execAsync, execAsyncWithoutErr } = require('../../server/helpers/exec')
 const pathfs = require('path')
 
-/** @param {import('../../typings/index').StackMonitor} stackMonitor */
+/** @param {import('../../typings/export').StackMonitor} stackMonitor */
 const Git = (stackMonitor) => {
   const {findService} = stackMonitor
   /** @param {import('../../server/models/Service')} service */

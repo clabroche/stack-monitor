@@ -8,6 +8,12 @@ const psTree = require('ps-tree')
 const PromiseB = require('bluebird')
 const isWindows = require('../../server/helpers/isWindows')
 const dayjs = require('dayjs')
+const { v4 } = require('uuid')
+const ainsiconvert = new (require('ansi-to-html'))({
+  newline: true,
+  bg: '#FFFFFFFF',
+  fg: '#4c4c4c'
+})
 
 class Service {
   /**
@@ -50,8 +56,8 @@ class Service {
      * }[]}
      * */
     this.commands = service.commands || []
-    /** @type {string} */
-    this.store = service.store || ''
+    /** @type {LogMessage[]} */
+    this.store = service.store || []
     /** @type {import('child_process').ChildProcess[]} */
     this.pids = service.pids || []
     /** @type {string[]} */
@@ -134,7 +140,7 @@ class Service {
     toKill.forEach(({ pid }) => process.kill(pid, 'SIGKILL'))
     this.pids = []
     Socket.io?.emit('logs:clear', { label: this.label })
-    this.store = ''
+    this.store = []
     await new Promise(resolve => setTimeout(resolve, 100))
     this.enabled = false
     this.crashed = false
@@ -142,7 +148,7 @@ class Service {
     this.sendHasBeenModified()
   }
   launch(triggerEvent = true) {
-    this.store = ''
+    this.store = []
     if (this.spawnCmd) {
       this.launchProcess(
         this.spawnCmd,
@@ -189,18 +195,34 @@ class Service {
     this.pids.push(spawnProcess)
     // @ts-ignore
     spawnProcess.title = this.label
-    let lastDatePrinted = dayjs().subtract(1, 'month')
+    let lastDatePrinted = Date.now() - 100000000000
     const add = (/** @type {Buffer | string} */ data) => {
-      if(dayjs().diff(lastDatePrinted, 'second') >= 2) {
-        const date = `\n========= ${dayjs().format('YYYY-MM-DD HH:mm:ss')} =========\n`
-        this.store += date
-        Socket.io?.emit('logs:update', { msg: date, label: this.label })
+      const timestamp = Date.now()
+      if(timestamp > lastDatePrinted + 2000) {
+        const date = `🕑  ${dayjs().format('YYYY-MM-DD HH:mm:ss')}`
+        /**@type {LogMessage}*/
+        const line = { id: v4(), label: this.label, msg: date, timestamp, isSeparator: true }
+        this.store.push(line)
+        Socket.io?.emit('logs:update', line)
       }
-      lastDatePrinted = dayjs()
-      let line = data.toString()
-      if(line.length > 100000 && !line.startsWith('["stack-monitor"')) line = line.slice(0, 10000)
-      this.store += line + '\n'
-      Socket.io?.emit('logs:update', { msg: line, label: this.label })
+      lastDatePrinted = Date.now()
+      const ansiMsg = data.toString()
+      const stripMsg = ansiMsg.replaceAll(/[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g, '')
+      const msg = ansiMsg ? ainsiconvert.toHtml(ansiMsg) : '<br/>'
+      const json = parseJSON(stripMsg)
+      const debug = parseDebug(json)
+      /** @type {LogMessage} */
+      let line = { 
+        msg,
+        timestamp,
+        id: v4(),
+        label: this.label,
+        json,
+        debug
+      }
+      if(line.msg.length > 100000 && !line.msg.startsWith('["stack-monitor"')) line.msg = line.msg.slice(0, 10000)
+      this.store.push(line)
+      Socket.io?.emit('logs:update', line)
     }
     const readline = require('readline');
     readline.createInterface({
@@ -249,6 +271,24 @@ function psTreeAsync(pid) {
   })
 };
 
+/** @param {string} str */
+function parseJSON(str) {
+  if (!str) return null
+  let json = null
+  const firstChar = str.trim().charAt(0)
+  if (firstChar === '[' || firstChar === '{') {
+    try { json = JSON.parse(str) } catch (error) { }
+  }
+  return json
+}
+
+/** @param {any[]} json */
+function parseDebug(json) {
+  if (!json) return null
+  let debug = null
+  if (json?.[0] === 'stack-monitor') debug = json.length === 2 ? json[1] : json.slice(1)
+  return debug
+}
 module.exports = Service
 
 /**
@@ -257,4 +297,15 @@ module.exports = Service
 
 /**
  * @typedef {Service} ServiceType
+ */
+/**
+ * @typedef {{
+ *  msg: string,
+ *  timestamp: number,
+ *  id: string,
+ *  json?: Record<any, any> | any[] | null,
+ *  debug?: Record<any, any> | any[] | null,
+ *  isSeparator?: boolean,
+ *  label: string
+ * }} LogMessage
  */

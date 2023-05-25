@@ -3,7 +3,7 @@ const router = express.Router();
 const Npm = require('./Npm');
 const {v4} = require('uuid');
 
-/** @param {import('../../typings/index').StackMonitor} stackMonitor */
+/** @param {import('../../typings/export').StackMonitor} stackMonitor */
 module.exports = (stackMonitor) => {
   const { findService, Socket } = stackMonitor
 

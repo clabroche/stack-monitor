@@ -204,7 +204,7 @@ class Stack {
       await Stack.getStack()?.kill()
       enabledServices.forEach(s => {
         s.enabled = true
-        s.store = ''
+        s.store = []
       })
       const stack = Stack.getStack()
       if(stack?.confPath) {
