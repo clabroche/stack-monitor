@@ -18,16 +18,21 @@ class Stack {
   static #currentWatches = []
   /**@type {string} */
   static #currentEnvironment = ''
-  /**@type {() => undefined} */
+  /**@type {() => void} */
   static #onLaunchCallback = () => { }
-  /**@type {(service: Service) => undefined} */
+  /**@type {(service: Service) => void} */
   static #onServiceRestart = () => { }
-  /**@type {(service: Service) => undefined} */
+  /**@type {(service: Service) => void} */
   static #onServiceStart = () => { }
-  /**@type {(service: Service, code: number | null) => undefined} */
+  /**@type {(service: Service, code: number | null) => void} */
   static #onServiceCrash = () => { }
-  /**@type {(service: Service) => undefined} */
+  /**@type {(service: Service) => void} */
   static #onServiceKill = () => { }
+  static parsers = {
+    links: require('../parser/link'),
+    jsons: require('../parser/json'),
+    debug: require('../parser/debug'),
+  }
   static Socket = Socket
 
   /** @param {Partial<Stack>} stack */
@@ -36,6 +41,8 @@ class Stack {
     this.confPath = stack.confPath
     /** @type {string[]} */
     this.watchFiles = stack.watchFiles || []
+    /** @type {import('./Service').Parser[]} */
+    this.logParsers = stack.logParsers || []
     /** @type {Service[]} */
     this.services = (stack.services || []).map(service => new Service(service, /**@type {StackWithPlugins}*/(Stack)))
   }
@@ -217,7 +224,7 @@ class Stack {
     }
   }
 
-  /** @param {() => undefined} cb  */
+  /** @param {() => void} cb  */
   static onLaunch(cb) {
     this.#onLaunchCallback = cb
   }
@@ -225,7 +232,7 @@ class Stack {
     return Stack.#onLaunchCallback()
   }
 
-  /** @param {(service: Service) => undefined} cb  */
+  /** @param {(service: Service) => void} cb  */
   static onServiceRestart(cb) {
     this.#onServiceRestart = cb
   }
@@ -234,7 +241,7 @@ class Stack {
     return Stack.#onServiceRestart(service)
   }
 
-  /** @param {(service: Service) => undefined} cb  */
+  /** @param {(service: Service) => void} cb  */
   static onServiceStart(cb) {
     this.#onServiceStart = cb
   }
@@ -243,7 +250,7 @@ class Stack {
     return Stack.#onServiceStart(service)
   }
 
-  /** @param {(service: Service, code?: number | null) => undefined} cb  */
+  /** @param {(service: Service, code?: number | null) => void} cb  */
   static onServiceCrash(cb) {
     this.#onServiceCrash = cb
   }
@@ -255,7 +262,7 @@ class Stack {
     return Stack.#onServiceCrash(service, code)
   }
 
-  /** @param {(service: Service) => undefined} cb  */
+  /** @param {(service: Service) => void} cb  */
   static onServiceKill(cb) {
     this.#onServiceKill = cb
   }
@@ -406,6 +413,7 @@ function difference(fromObject, toObject) {
 /**
  * @typedef {{
  * watchFiles?: string[],
+ * logParsers?: import('./Service').Parser[],
  * stack?: StackArray,
  * services?: StackArray,
  * }} StackObject

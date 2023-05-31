@@ -139,6 +139,8 @@ $shadow: rgb(165, 177, 179);
     }
   }
   .content {
+    display: flex;
+    flex-direction: column;
     overflow: auto;
     height: 100%;
     padding: 10px;

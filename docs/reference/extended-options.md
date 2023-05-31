@@ -18,6 +18,10 @@ module.exports = (stackMonitor) => {
  - To view services options go to [Service Options](/reference/service-options)
  - To view Global options go to [Global Options](/reference/global-options)
 
+## Log Parser
+
+See [Global Options](/reference/global-options#log-parsers)
+
 ## Environments
 
 You can let the application switch from one environment to another with a simple dropdown:

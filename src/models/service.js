@@ -81,8 +81,22 @@ class Service {
     return logs
   }
 
+  /** @param {{message: string, pid?: number}} prompt */
+  async sendTerminalPrompt(prompt) {
+    const { data: logs } = await axios.post('/logs/' + this.label + '/prompt', {...prompt, service: this.label})
+    return logs
+  }
+
   async clear() {
     const { data: logs } = await axios.delete('/logs/' + this.label + '/logs')
+    return logs
+  }
+
+  /** @param {string} msg */
+  async autocomplete(msg) {
+    const { data: logs } = await axios.get('/logs/' + this.label + '/autocomplete', {
+      params: { message: msg }
+    })
     return logs
   }
 

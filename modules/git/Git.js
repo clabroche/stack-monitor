@@ -33,9 +33,9 @@ const Git = (stackMonitor) => {
       const origin = await this.getOrigin(serviceName)
       const unmergeableBranches = ['dev', 'develop', 'main', 'master']
       const currentBranch = await this.getCurrentBranch(service.label)
-      const mergedBranches = await execAsyncWithoutErr(`git branch --merged develop`, { cwd: service.rootPath })
+      const mergedBranches = await execAsyncWithoutErr(`git branch --no-color --merged develop`, { cwd: service.rootPath })
         .then((branches) => branches.trim().split('\n').map(a => a.replace('*', '').trim()))
-      const localBranches = await execAsyncWithoutErr('git branch', { cwd: service.rootPath })
+      const localBranches = await execAsyncWithoutErr('git branch --no-color', { cwd: service.rootPath })
         .then((res) => res.toString().trim().split('\n').map(branch => {
           const name = branch.replace('*', '').trim()
           return {
@@ -46,7 +46,7 @@ const Git = (stackMonitor) => {
             merged: mergedBranches.includes(name) && !unmergeableBranches.includes(name) && currentBranch !== name
           }
         }))
-      const remoteBranches = await execAsyncWithoutErr('git branch -r', { cwd: service.rootPath })
+      const remoteBranches = await execAsyncWithoutErr('git branch --no-color -r', { cwd: service.rootPath })
         .then((res) => res.toString().trim().split('\n').map(branch => {
           const name = branch.replace('*', '').trim()
           return {
@@ -89,7 +89,7 @@ const Git = (stackMonitor) => {
     async getStatus(serviceName) {
       const service = findService(serviceName)
       await requirements(service)
-      return execAsyncWithoutErr('git status -s', { cwd: service.rootPath })
+      return execAsyncWithoutErr('git -c color.status=no status -s', { cwd: service.rootPath })
         .then((res) => res.toString().trim().split('\n')?.filter(a => a))
     },
     /** @param {string} serviceName */

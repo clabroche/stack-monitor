@@ -11,7 +11,9 @@ export type {
 
 export type {
   SpawnOptions,
-  ServiceType as Service
+  ServiceType as Service,
+  LogMessage,
+  Parser
 } from "../server/models/Service";
 
 //===== Global Scripts ==========

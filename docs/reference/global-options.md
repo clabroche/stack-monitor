@@ -31,3 +31,69 @@ module.exports = {
   ],
 }
 ```
+## Log Parsers
+type: string[],required: false
+
+Capture log messages and create custom parser. There is some built-in parsers.
+
+```js [js]
+
+/** @type {import('@iryu54/stack-monitor').Parser} */
+const yourCustomParser = {
+  id: 'my-awesome-parser',
+  transform: (line) => {
+    if (line?.json?.level === 'error') { // line.json is filled by previous 'stackMonitor.parsers.jsons'
+      line.source = 'stderr'; // We want to pass this line to the stderr channel. A red border will be applied in view
+    }
+    return line;
+  },
+};
+
+module.exports = (stackMonitor) => {
+  return {
+    //...
+    logParsers: [
+      stackMonitor.parsers.links,
+      stackMonitor.parsers.jsons,
+      stackMonitor.parsers.debug,
+      yourCustomParser,
+    ],
+  }
+}
+```
+
+A custom parser should be of this shape:
+
+```js [js]
+/**
+ * @typedef {{
+ *  msg: string,
+ *  raw: string,
+ *  timestamp: number,
+ *  id: string,
+ *  source?: 'stdout' | 'stderr'
+ *  json?: Record<any, any> | any[] | null,
+ *  debug?: Record<any, any> | any[] | null,
+ *  isSeparator?: boolean,
+ *  label: string,
+ *  pid?: number,
+ *  cmd?: {
+ *    cmd: string,
+ *    args: string[],
+ *    options: import('child_process').ExecOptions
+ *   },
+ * }} LogMessage
+ */
+
+/**
+ * @typedef {{
+ *  id: string,
+ *  transform: ((msg: LogMessage, service?: Service | null) => LogMessage)
+ * }} Parser
+ */
+```
+
+You could helped by types in 
+```js [js]
+import('@iryu54/stack-monitor').Parser
+```

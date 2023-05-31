@@ -9,12 +9,7 @@ const PromiseB = require('bluebird')
 const isWindows = require('../../server/helpers/isWindows')
 const dayjs = require('dayjs')
 const { v4 } = require('uuid')
-const ainsiconvert = new (require('ansi-to-html'))({
-  newline: true,
-  bg: '#FFFFFFFF',
-  fg: '#4c4c4c'
-})
-
+const {stripAnsi, ansiconvert, unescapeAnsi} = require('../helpers/ansiconvert')
 class Service {
   /**
    * @param {import('../../typings/index').NonFunctionProperties<Service>} service
@@ -71,6 +66,8 @@ class Service {
     }
     /** @type {string} */
     this.rootPath = service.rootPath || service.spawnOptions?.cwd?.toString?.() || service.commands?.[0]?.spawnOptions?.cwd?.toString?.() || ''
+    /** @type {Parser[]} */
+    this.logParsers = service.logParsers || []
   }
 
   exportInApi() {
@@ -174,63 +171,80 @@ class Service {
   
   /**
    * 
-   * @param {string} spawnCmd 
-   * @param {string[]} spawnArgs 
-   * @param {SpawnOptions} spawnOptions 
+   * @param {string} _spawnCmd 
+   * @param {string[]} _spawnArgs 
+   * @param {SpawnOptions} _spawnOptions 
    */
-  launchProcess(spawnCmd, spawnArgs = [], spawnOptions = {}) {
+  launchProcess(_spawnCmd, _spawnArgs = [], _spawnOptions = {}) {
     this.crashed = false
-    let cwd = spawnOptions.cwd
-    spawnOptions.shell = isWindows ? process.env.ComSpec : '/bin/sh'
-    if (cwd && spawnCmd.match(/[/\\]/g)) {
-      spawnCmd = path.resolve(cwd.toString(), spawnCmd)
-    }
-    let envs = spawnOptions.env || {}
-    if (spawnOptions.env) {
-      envs = Object.assign({}, process.env, spawnOptions.env)
-    }
-    const spawnProcess = spawn(spawnCmd, spawnArgs, { ...spawnOptions, env: envs })
+    const {spawnCmd, spawnArgs, spawnOptions} = this.parseIncomingCommand(_spawnCmd, _spawnArgs, _spawnOptions)
+    const spawnProcess = spawn(spawnCmd, spawnArgs, spawnOptions)
     if (!this.pids) this.pids = []
     if (!this.pids) this.pids = []
     this.pids.push(spawnProcess)
     // @ts-ignore
     spawnProcess.title = this.label
-    let lastDatePrinted = Date.now() - 100000000000
-    const add = (/** @type {Buffer | string} */ data) => {
+    let lastDatePrinted = Date.now()
+    /** @type {LogMessage[]} */
+    const queue = []
+    const stack = this.Stack.getStack()
+
+    const add = (/** @type {Buffer | string} */ data, /** @type {Partial<LogMessage>} */ logMessageOverride) => {
       const timestamp = Date.now()
       if(timestamp > lastDatePrinted + 2000) {
         const date = `🕑  ${dayjs().format('YYYY-MM-DD HH:mm:ss')}`
         /**@type {LogMessage}*/
-        const line = { id: v4(), label: this.label, msg: date, timestamp, isSeparator: true }
+        const line = { id: v4(), raw: date, label: this.label, msg: date, timestamp, isSeparator: true }
         this.store.push(line)
-        Socket.io?.emit('logs:update', line)
+        queue.push(line)
       }
       lastDatePrinted = Date.now()
-      const ansiMsg = data.toString()
-      const stripMsg = ansiMsg.replaceAll(/[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g, '')
-      const msg = ansiMsg ? ainsiconvert.toHtml(ansiMsg) : '<br/>'
-      const json = parseJSON(stripMsg)
-      const debug = parseDebug(json)
+      const ansiMsg = unescapeAnsi(data.toString())
+      const stripMsg = stripAnsi(ansiMsg)
+      const htmlMessage = ansiMsg ? ansiconvert.toHtml(ansiMsg) : '<br/>'
       /** @type {LogMessage} */
-      let line = { 
-        msg,
+      let line = {
+        pid: spawnProcess.pid,
+        msg: htmlMessage,
+        raw: stripMsg,
         timestamp,
-        id: v4(),
         label: this.label,
-        json,
-        debug
+        json: null,
+        debug: null ,
+        ...logMessageOverride,
+        id: v4(),
       }
+      
+      line = [...(stack?.logParsers || []), ...this.logParsers].reduce((line, parser) => {
+        if(!parser?.transform) {
+          console.error(`It seems your parser "${parser?.id}" has not a transform function. Please verify or disable it..`)
+          return line
+        }
+        const result = parser.transform(line, this)
+        if(!result?.id) {
+          console.error(`It seems your parser "${parser.id}" not retrun correct value. Please verify or disable it..`)
+          return line
+        }
+        return result
+      }, line)
       if(line.msg.length > 100000 && !line.msg.startsWith('["stack-monitor"')) line.msg = line.msg.slice(0, 10000)
       this.store.push(line)
-      Socket.io?.emit('logs:update', line)
+      queue.push(line)
     }
+
+    const intervalId = setInterval(() => {
+      if(queue.length) {
+        const messages = queue.splice(0, queue.length)
+        Socket.io?.emit('logs:update', messages)
+      }
+    }, 0);
     const readline = require('readline');
     readline.createInterface({
       input: spawnProcess.stdout,
       terminal: false,
       historySize: 0
     })
-    .on('line', add)
+    .on('line', (message) => add(message, {source: 'stdout'}))
     readline.createInterface({
       input: spawnProcess.stderr,
       terminal: false,
@@ -239,22 +253,77 @@ class Service {
       if (!message.toString().includes('webpack.Progress')) {
         Socket.io?.emit('alert', { label: this.label, message: message.toString(), type: 'error' })
       }
-      add(message)
+      add(message, {source: 'stderr'})
     });
-    spawnProcess.on('exit', (code) => {
+    spawnProcess.on('exit', (code, signal) => {
+      setTimeout(() => {
+        clearInterval(intervalId)
+      }, 50);
       if(code) {
-        Socket.io?.emit('service:crash', { label: this.label, code })
+        Socket.io?.emit('service:crash', { label: this.label, code, signal })
         this.Stack.getStack()?.triggerOnServiceCrash(this, code)
         this.crashed = true
       }
     })
+
+    const date = `🕑  ${dayjs().format('YYYY-MM-DD HH:mm:ss')}`
+    /**@type {LogMessage}*/
+    const line = { id: v4(), raw: date, label: this.label, msg: date, timestamp: lastDatePrinted, isSeparator: true }
+    this.store.push(line)
+    queue.push(line)
+    
+    /** @type {LogMessage} */
+    const launchMessage = {
+      id: v4(),
+      timestamp: Date.now(),
+      label: this.label,
+      pid: spawnProcess.pid,
+      msg: `${spawnCmd} ${spawnArgs.join(' ')}`,
+      raw: `${spawnCmd} ${spawnArgs.join(' ')}`,
+      cmd: {
+        cmd: spawnCmd,
+        args: spawnArgs,
+        options: spawnOptions,
+      }
+    }
+    this.store.push(launchMessage)
+    Socket.io?.emit('logs:update', [launchMessage]) 
+  }
+
+  /**
+   * 
+   * @param {number} pid 
+   * @param {string} message
+   */
+  respondToProcess(pid, message) {
+    const process = this.pids.find(process => process.pid === pid)
+    if(!process) return console.error(`Pid (${pid}) not found`)
+    process.stdin?.write(message)
   }
 
   enable() {
     this.enabled = true
     this.sendHasBeenModified()
   }
-
+  /**
+   * 
+   * @param {string} spawnCmd 
+   * @param {string[]} spawnArgs 
+   * @param {SpawnOptions} _spawnOptions 
+   */
+  parseIncomingCommand(spawnCmd, spawnArgs, _spawnOptions) {
+    let cwd = _spawnOptions.cwd
+    _spawnOptions.shell = isWindows ? process.env.ComSpec : '/bin/sh'
+    if (cwd && spawnCmd.match(/[/\\]/g)) {
+      spawnCmd = path.resolve(cwd.toString(), spawnCmd)
+    }
+    let envs = _spawnOptions.env || {}
+    if (_spawnOptions.env) {
+      envs = Object.assign({}, process.env, _spawnOptions.env)
+    }
+    const spawnOptions = { ..._spawnOptions, env: envs }
+    return {spawnCmd, spawnArgs, spawnOptions}
+  }
 }
 
 /**
@@ -271,24 +340,8 @@ function psTreeAsync(pid) {
   })
 };
 
-/** @param {string} str */
-function parseJSON(str) {
-  if (!str) return null
-  let json = null
-  const firstChar = str.trim().charAt(0)
-  if (firstChar === '[' || firstChar === '{') {
-    try { json = JSON.parse(str) } catch (error) { }
-  }
-  return json
-}
 
-/** @param {any[]} json */
-function parseDebug(json) {
-  if (!json) return null
-  let debug = null
-  if (json?.[0] === 'stack-monitor') debug = json.length === 2 ? json[1] : json.slice(1)
-  return debug
-}
+
 module.exports = Service
 
 /**
@@ -301,11 +354,22 @@ module.exports = Service
 /**
  * @typedef {{
  *  msg: string,
+ *  raw: string,
  *  timestamp: number,
  *  id: string,
+ *  source?: 'stdout' | 'stderr'
  *  json?: Record<any, any> | any[] | null,
  *  debug?: Record<any, any> | any[] | null,
  *  isSeparator?: boolean,
- *  label: string
+ *  label: string,
+ *  pid?: number,
+ *  cmd?: {cmd: string, args: string[], options: import('child_process').ExecOptions},
  * }} LogMessage
+ */
+
+/**
+ * @typedef {{
+ *  id: string,
+ *  transform: ((msg: LogMessage, service?: Service | null) => LogMessage)
+ * }} Parser
  */
