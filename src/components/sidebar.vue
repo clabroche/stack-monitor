@@ -1,8 +1,10 @@
 <template>
   <div class="sidebar">
-    <ul v-if="sortedStack.length">
-      <input type="text" v-model="search" placeholder="Search service...">
-      <sidebar-item v-for="service of sortedStack" :key="service.label" :service="service"/>
+    <ul>
+      <input type="text" v-model="search" placeholder="Search service..." @keypress.enter="launchService" >
+      <template v-if="sortedStack.length">
+        <sidebar-item v-for="service of sortedStack" :key="service.label" :service="service"/>
+      </template>
     </ul>
   </div>
 </template>
@@ -15,6 +17,7 @@ import sidebarItemVue from './sidebarItem.vue'
 import { computed, onMounted, ref } from 'vue'
 import Socket from '@/helpers/Socket'
 import notification from '@/helpers/notification'
+import router from '@/router/router'
 
 export default {
   components: {
@@ -28,15 +31,24 @@ export default {
 
     onMounted(async () => {
       await Stack.loadServices()
-      Socket.socket.on('service:crash', async (service, code) => {
-        notification.next('error', `${service.label} has crashed with code ${code}`)
+      Socket.socket.on('service:crash', async ({label, code, signal}) => {
+        notification.next('error', `${label} has crashed with code ${code}`)
         await Stack.loadServices()
       });
     })
+    const sortedStack = computed(() => sort(Stack.services.value.filter(a => (a.label || '').toUpperCase().includes(search.value.toUpperCase()))).desc((a) => a.enabled))
     return {
       search,
-      sortedStack:computed(() => sort(Stack.services.value.filter(a => (a.label || '').toUpperCase().includes(search.value.toUpperCase()))).desc((a) => a.enabled)),
+      sortedStack,
       System,
+      /** @param {KeyboardEvent} $event */
+      launchService($event) {
+        const service = sortedStack.value[0]
+        if ($event.ctrlKey && service) {
+          service?.restart()
+          router.push({name: 'stack-single', params: {label: service.label}})
+        }
+      }
     }
   }
 }
