@@ -39,14 +39,15 @@ export default {
         placement: props.placement,
         interactive: true,
         allowHTML: true,
-        appendTo: document.querySelector('body'),
+        appendTo: props.appendTo || document.querySelector('body'),
         arrow: true,
-        arrowType: 'sharp',
+        hideOnClick: true,
         animation: 'shift-away',
         theme: 'light-border',
       })
     })
     return {
+      tippyInstance,
       refTrigger,
       refContent,
       tippy
