@@ -59,6 +59,7 @@
           <template #trigger>
             <div class="pid" :class="{active: currentPidView}" >
               Commands {{ currentPidView?.raw ? `: ${currentPidView?.raw?.substring(0, 20)}...` : ''}}
+              <i class="fas fa-chevron-down"></i>
             </div>
           </template>
           <template #content>
