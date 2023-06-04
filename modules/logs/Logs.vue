@@ -55,11 +55,22 @@
     <div class="main-content">
       <div class="pids-container" v-if="pids">
         <div class="pid" :class="{active: !currentPidView}" @click="currentPidView = null; scroll(true)">All</div>
-        <div class="pid" v-for="pid of pids" :key="pid"
-          @click="currentPidView = pid; scroll(true)"
-          :class="{active: currentPidView === pid}">
-          {{ pid }}
-        </div>
+        <Popover appendTo="parent">
+          <template #trigger>
+            <div class="pid" :class="{active: currentPidView}" >
+              Commands {{ currentPidView?.raw ? `: ${currentPidView?.raw?.substring(0, 20)}...` : ''}}
+            </div>
+          </template>
+          <template #content>
+            <div class="pids">
+              <div v-for="pid of pids.slice().reverse()" :key="pid.pid" class="pid"
+                @click="currentPidView = pid; scroll(true)"
+                :class="{active: currentPidView?.pid === pid.pid}">
+                {{ pid.raw }}
+              </div>
+            </div>
+          </template>
+        </Popover>
       </div>
       <sectionCmp v-if="isOpen" header="Logs" :noStyle="noStyle"
         :actions="[
@@ -76,9 +87,10 @@
               separator: line.isSeparator != null,
               json: line.json != null && !simplifiedMode,
               debug: line.debug != null && !simplifiedMode,
-              cmd: line.cmd != null && !simplifiedMode
+              cmd: line.cmd != null && !simplifiedMode,
+              prompt: line.prompt && !simplifiedMode,
             }" v-for="line of displayedLines" :key="line.id" >
-              <Popover placement="bottom-start" appendTo="">
+              <Popover placement="bottom-start" appendTo="" ref="popoversRef">
                 <template #trigger>
                   <div v-html="line.msg" v-if="simplifiedMode"></div>
                   <div v-else-if="line.cmd != null" >
@@ -86,6 +98,10 @@
                     <div class="section-content">
                       {{ line.msg }}
                     </div>
+                  </div>
+                  <div v-else-if="line.prompt">
+                    <h2 class="section-header">Prompt</h2>
+                    <div class="section-content" v-html="line.msg.trim() || '<br/>'"/>
                   </div>
                   <div v-else-if="line.debug  != null" >
                     <h2 class="section-header">Debug</h2>
@@ -137,9 +153,12 @@
                     <div class="more-info-label">Raw message:</div>
                     <div class="more-info-content"><pre>{{ line.msg }}</pre></div>
                   </div>
-                  <div class="more-info-container" v-if="line.pid" @click="line.pid ? currentPidView = line.pid : ''">
-                    <div class="more-info-label">Issued from pid:</div>
-                    <div class="more-info-content">{{ line.pid }}</div>
+                  <div class="more-info-container" v-if="line.pid" @click="setPid(line)">
+                    <div class="more-info-label">Issued from pid: </div>
+                    <div class="more-info-content">
+                      {{ line.pid }}
+                      <button class="small"><i class="fas fa-chevron-right"></i></button>
+                    </div>
                   </div>
                   <div class="more-info-container">
                     <div class="more-info-label">Emitted date:</div>
@@ -170,9 +189,31 @@
                 </div>
               </div>
             </div>
-            <textarea v-model="messageToSend" @keypress.enter="sendEnter" @keyup="keyup" :placeholder="currentPidView ? `Send command to ${currentPidView}...` : 'Send new command...'"
-              @input="inputTerminal"></textarea>
-            <button @click="send"><i class="fas fa-envelope"></i></button>
+            <div class="bar-terminal">
+              <div class="left">
+                <div class="blue">
+                  <i class="icon fas fa-folder"></i>
+                  <label>{{ getShortPath(service.rootPath) }}</label>
+                </div>
+                <div :class="gitChanges?.length ? 'yellow': 'green'" v-if="currentBranch">
+                  <i class="icon fas fa-code-branch"></i>
+                  <label>
+                    {{ currentBranch }}
+                    <div v-if="+gitRemoteDelta > 0"><i class="fas fa-long-arrow-alt-up"></i>{{ +gitRemoteDelta }}</div>
+                    <div v-if="+gitRemoteDelta < 0"><i class="fas fa-long-arrow-alt-down"></i>{{ Math.abs(+gitRemoteDelta) }}</div>
+                  </label>
+                </div>
+              </div>
+              <div class="right">
+              </div>
+            </div>
+            <div class="input-content-terminal">
+              <div class="badge" v-if="currentPidView?.pid">Pid: {{ currentPidView.pid }}</div>
+              <i class="fas fa-chevron-right"></i>
+              <textarea ref="textareaRef" v-model="messageToSend" @keypress.enter="sendEnter" @keyup="keyup" :placeholder="currentPidView ? `Send command to ${currentPidView.pid}...` : 'Send new command...'"
+                @input="inputTerminal"></textarea>
+              <!-- <button @click="send"><i class="fas fa-envelope"></i></button> -->
+            </div>
           </div>
       </sectionCmp>
     </div>
@@ -214,12 +255,14 @@ import { JsonTreeView } from "json-tree-view-vue3";
 // @ts-ignore
 import jsonpath from 'jsonpath'
 import 'vue-json-viewer/style.css'
-import { computed, onMounted, ref, nextTick } from 'vue';
+import { computed, onMounted, ref, nextTick, onBeforeUnmount } from 'vue';
 import Modal from '@/components/Modal.vue'
 import Service from '@/models/service'
 import notification from '@/helpers/notification';
 import Popover from '@/components/Popover.vue';
 import dayjs from 'dayjs'
+import fs from '@/models/fs';
+import { debounce } from 'debounce';
 
 const props = defineProps({
   service: { 
@@ -286,31 +329,39 @@ function transformerJSON(json) {
   return JSON.stringify(json)
 }
 const displayedLines = computed(() => {
+  /** @type {LogMessage[]} */
+  let lines = []
   if(mode.value === 'debug') {
-    return logs.value
-      .filter((line) => {
-        if(line.isSeparator) return true
-        if(line.debug && isLineIncluded(line)) return true
+    lines = logs.value
+      .filter((line, i, arr) => {
+        if(line.isSeparator) return isLineIncluded(line, arr[i + 1])
+        if(line.debug && isLineIncluded(line, arr[i + 1])) return true
         return false
       })
       .slice(-numberToDisplay.value)
   } else if(mode.value === 'json') {
-    return logs.value
-      .filter(line => {
-        if(line.isSeparator) return true
-        if(line.json && !line.debug && isLineIncluded(line)) return true
+    lines = logs.value
+      .filter((line, i, arr) => {
+        if(line.isSeparator) return isLineIncluded(line, arr[i + 1])
+        if(line.json && !line.debug && isLineIncluded(line, arr[i + 1])) return true
         return false
       })
       .slice(-numberToDisplay.value)
-  } 
-  return logs.value
-    .filter((line) => {
-      if(line.isSeparator) return true
-      if(isLineIncluded(line)) return true
-      return false
-      
-    })
-    .slice(-numberToDisplay.value)
+  } else {
+    lines = logs.value
+      .filter((line, i, arr) => {
+        if(line.isSeparator) return isLineIncluded(line, arr[i + 1])
+        if(isLineIncluded(line, arr[i + 1])) return true
+        return false
+        
+      })
+      .slice(-numberToDisplay.value)
+  }
+    
+  return lines.filter((line, i, arr) => {
+    if(line.isSeparator) return !arr[i+1]?.isSeparator
+    return true
+  })
 })
 
 /** @param {Record<string, string>} data */
@@ -323,11 +374,14 @@ async function findSolution(data) {
   }
 }
 
-/** @param {LogMessage} line */
-const isLineIncluded = (line) => {
+/**
+ * @param {LogMessage} line
+ * @param {LogMessage | undefined} nextLine
+ */
+const isLineIncluded = (line, nextLine) => {
   const message = filterSearch.value
   if(line.isSeparator) return true
-  if(currentPidView.value && currentPidView.value !== line.pid) return false  
+  if(currentPidView.value?.pid && currentPidView.value?.pid !== line.pid) return false  
   if (!message) return true
   const filters = message.includes(' | ')
     ? message.split(' | ')
@@ -357,6 +411,25 @@ async function mounted() {
       logs.value.push(data)
       scroll()
     })
+  })
+  Socket.socket.on('service:exit', (/** @type {{label:string, code: number, signal: string, pid?: number}}*/data) => {
+    if (data.label !== props.service.label) return
+    if(data.pid) {
+      if(currentPidView.value?.pid === data.pid) {
+        currentPidView.value = null
+        scroll(true)
+      }
+    }
+  })
+
+  Socket.socket.on('service:crash', (/** @type {{label:string, code: number, signal: string, pid?: number}}*/data) => {
+    if (data.label !== props.service.label) return
+    if(data.pid) {
+      if(currentPidView.value?.pid === data.pid) {
+        currentPidView.value = null
+        scroll(true)
+      }
+    }
   })
   Socket.socket.on('logs:clear', data => {
     if (data.label !== props.service.label) return
@@ -391,30 +464,40 @@ async function scroll(force = false, customElement = null) {
 const messageToSend = ref('')
 /** @param {Event} ev */
 async function send(ev) {
+  ev.preventDefault()
+  const pid = await props.service.sendTerminalPrompt({
+    message: messageToSend.value.trim(),
+    pid: currentPidView.value?.pid || undefined
+  })
+  currentPidView.value = logs.value.find((log) => log.pid === pid)
+  messageToSend.value = ''
+  if(ev.target) {
+    await nextTick()
+    rerenderTextarea()
+  }
+  scroll(true)
+  reloadBarInfos(true)
+}
+
+const textareaRef = ref()
+function rerenderTextarea() {
+  textareaRef.value.style.height = 'calc(15px)';
+  textareaRef.value.style.height = textareaRef.value.scrollHeight + 'px'
+}
+/** @param {KeyboardEvent} ev */
+async function sendEnter(ev) {
   const active = histories.value.find(a => a.active)
   if(active) {
-    setTimeout(() => {
+    setTimeout(async () => {
       messageToSend.value = active.raw?.trim()
+      await nextTick()
+      rerenderTextarea()
       setTimeout(() => {
         histories.value = []
       },100);
     });
-    
     return
   }
-  if (messageToSend.value.trim()) {
-    scroll(true)
-    await props.service.sendTerminalPrompt({message: messageToSend.value, pid: currentPidView.value || undefined})
-    //!.....Send
-    if(ev.target) {
-      /**@type {HTMLElement}*/(ev.target).style.height = 'calc(1em + 15px)';
-      /**@type {HTMLElement}*/(ev.target).style.height = /**@type {HTMLElement}*/(ev.target).scrollHeight + 'px'
-    }
-    messageToSend.value = ''
-  }
-}
-/** @param {KeyboardEvent} ev */
-async function sendEnter(ev) {
   if (!ev.ctrlKey) await send(ev)
   else messageToSend.value += '\n'
 }
@@ -422,18 +505,33 @@ async function sendEnter(ev) {
 async function inputTerminal(ev) {
   if(ev.target) {
     if(/**@type {HTMLElement}*/(ev.target).scrollHeight < 300) {
-      /**@type {HTMLElement}*/(ev.target).style.height = 'calc(1em + 15px)';
-      /**@type {HTMLElement}*/(ev.target).style.height = /**@type {HTMLElement}*/(ev.target).scrollHeight + 'px'
+      rerenderTextarea()
     }
   }
 }
 
+async function sendTerminate() {
+  await props.service.sendTerminalTerminate({pid: currentPidView.value?.pid || undefined})
+}
 /** @param {KeyboardEvent} $event */
 async function keyup($event) {
-  if($event.code ==='ArrowUp') changeActive($event, 1)
-  else if($event.code ==='ArrowDown') changeActive($event, -1)
-  else histories.value = await props.service.autocomplete(messageToSend.value)
+  if($event.code === 'Escape') return histories.value = []
+  if($event.code === 'Enter') return histories.value = []
+  if($event.ctrlKey && $event.code === 'KeyC') return sendTerminate()
+  if($event.code !=='ArrowUp' && $event.code !=='ArrowDown' && !messageToSend.value) return histories.value = []
+  if($event.code ==='ArrowUp' && histories.value.length) return changeActive($event, 1)
+  if($event.code ==='ArrowDown' && histories.value.length) return changeActive($event, -1)
+  if(['ArrowUp', 'ArrowDown'].includes($event.code)) return histories.value = await props.service.autocomplete(messageToSend.value, {force: true})
+  await autocomplete()
+  if(!messageToSend.value) changeActive($event, 1)
 }
+
+const autocomplete = debounce(async (force = false) => {
+  const _histories = await props.service.autocomplete(messageToSend.value, {force})
+  if(!messageToSend.value && !force) return 
+  histories.value = _histories
+
+}, 300)
 
 /**
  * @param {KeyboardEvent} $event
@@ -452,12 +550,64 @@ async function changeActive($event, offset) {
     else changeActive($event, offset)
   }
 }
-/** @type {import('vue').Ref<number | null>} */
+/** @type {import('vue').Ref<LogMessage | null | undefined>} */
 const currentPidView = ref(null)
 const pids = computed(() => logs.value.reduce((aggr, log) => {
-  if(log.pid && !aggr?.includes(log.pid)) aggr.push(log.pid)
+  if(log.pid && !aggr?.find(_log => _log.pid === log.pid)) aggr.push(log)
   return aggr
-}, /**@type {number[]}*/([])))
+}, /**@type {LogMessage[]}*/([])))
+
+const currentBranch = ref('')
+const gitChanges = ref('')
+const homedir = ref('')
+const gitRemoteDelta = ref('')
+const interval = setInterval(() => {
+  reloadBarInfos()
+}, 1000);
+const longInterval = setInterval(() => {
+  reloadBarInfos(true)
+}, 20000);
+onBeforeUnmount(() => {
+  clearInterval(interval)
+  clearInterval(longInterval)
+})
+onMounted(async () => {
+  homedir.value = await fs.homeDir()
+  reloadBarInfos(true)
+})
+
+async function reloadBarInfos(reloadCostingInfos = false) {
+  gitChanges.value = await props.service.getStatus()
+  currentBranch.value = await props.service.getCurrentBranch()
+  if(reloadCostingInfos) {
+    gitRemoteDelta.value = await props.service.gitRemoteDelta(currentBranch.value)
+  }
+}
+
+/**
+ * 
+ * @param {string | undefined} path 
+ */
+function getShortPath(path) {
+  return path
+    ?.replace(homedir.value, '~')
+}
+
+/** @type {import('vue').Ref<InstanceType<typeof Popover>[]>}*/
+const popoversRef = ref([])
+/**
+ * @param {LogMessage | undefined | null} line 
+ */
+function setPid(line) {
+  currentPidView.value = line?.pid ?  line : null
+  hidePopovers()
+}
+
+function hidePopovers() {
+  popoversRef.value?.forEach(popover => {
+    popover?.tippyInstance?.hide()
+  });
+}
 /**
  * @typedef {import('../../server/models/Service').LogMessage} LogMessage
  */
@@ -521,7 +671,6 @@ const pids = computed(() => logs.value.reduce((aggr, log) => {
     padding: 5px 10px;
   }
 }
-
 .main-content {
   display: flex;
   flex-direction: column;
@@ -530,9 +679,19 @@ const pids = computed(() => logs.value.reduce((aggr, log) => {
     flex-wrap: wrap;
     position: relative;
     z-index: 1;
+    .pids {
+      max-height: 400px;
+      overflow: auto;
+      .pid {
+        &.active {
+          border-left-color: #0076bc;
+          border-bottom-color: transparent;
+        }
+      }
+    }
     .pid {
       padding: 5px 10px;
-      border-bottom: 2px solid transparent;
+      border: 2px solid transparent;
       &.active {
         border-bottom-color:#0076bc
       }
@@ -586,6 +745,9 @@ const pids = computed(() => logs.value.reduce((aggr, log) => {
     margin: 0px 0;
     will-change: background-color;
     transition: 300ms;
+    white-space: pre-wrap;
+    width: 100%;
+    box-sizing: border-box;
     .section-actions {
       display: none;
       button {
@@ -598,6 +760,7 @@ const pids = computed(() => logs.value.reduce((aggr, log) => {
     }
     .section-header {
       margin: 0;
+      width: max-content;
       padding: 0 10px;
       background-color: #000000;
       color: white;
@@ -609,7 +772,8 @@ const pids = computed(() => logs.value.reduce((aggr, log) => {
     .section-content {
       border-left: 4px solid #000000;
       border-bottom-left-radius: 4px;
-      padding-left: 10px;
+      padding: 0 10px;
+      box-sizing: border-box;
     }
     &:hover {
       background-color: rgba(0,0,0,0.05);
@@ -660,6 +824,22 @@ const pids = computed(() => logs.value.reduce((aggr, log) => {
         border-color: #0076bc
       }
     }
+    &.prompt {
+      padding: 0;
+      margin: 10px 0;
+      border: none;
+      align-self: flex-end;
+      margin-right: 10px;
+      .section-header {
+        background-color: #5800bc;
+        margin-left: auto;
+      }
+      .section-content {
+        border-left: none;
+        text-align: right;
+        border-right: 4px solid #5800bc;
+      }
+    }
     &.separator {
       border-left: none;
       margin: 20px auto;
@@ -682,9 +862,9 @@ const pids = computed(() => logs.value.reduce((aggr, log) => {
 
 .input-container-terminal {
   display: flex;
+  flex-direction: column;
   align-items: center;
   position: relative;
-  gap: 10px;
   box-shadow: 0 0 10px 0 rgba(0,0,0,0.2);
   border-radius: 10px;
   padding: 10px;
@@ -694,10 +874,101 @@ const pids = computed(() => logs.value.reduce((aggr, log) => {
   margin: auto;
   margin-bottom: 5px;
   margin-top: 20px;
+  .bar-terminal {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    .left,.right {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1px;
+      &.right{
+        justify-content: flex-end;
+      }
+      &> div {
+        padding: 2px 5px;
+        margin-right: 12px;
+        box-sizing: border-box;
+        position: relative;
+        color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 12px;
+        white-space: nowrap;
+        label {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          gap: 10px;
+        }
+        &.red {
+          background-color: #da0606;
+          &::before {background-color: #da0606;}
+          &::after {border-color: #da0606;}
+        }
+        &.white {
+          background-color: lightgrey;
+          color: black;
+          &::before {background-color: lightgrey;}
+          &::after {border-color: lightgrey;}
+        }
+        &.yellow {
+          background-color: #bca900;
+          &::before {background-color: #bca900;}
+          &::after {border-color: #bca900;}
+        }
+        &.blue {
+          background-color: #0076bc;
+          &::before {background-color: #0076bc;}
+          &::after {border-color: #0076bc;}
+        }
+        &.green {
+          background-color: #00bc55;
+          &::before {background-color: #00bc55;}
+          &::after {border-color: #00bc55;}
+        }
+        &::after {
+          content: '';
+          border: 12px solid transparent;
+          border-top-color: transparent !important;
+          border-bottom-color: transparent !important;
+          border-right-color: transparent !important;
+          border-right: none;
+          width: 0px;
+          height: 100%;
+          box-sizing: border-box;
+          position: absolute;
+          left: 100%;
+          z-index: 1;
+          top: 0;
+        }
+        &::before {
+          content: '';
+          width: 12px;
+          height: 100%;
+          box-sizing: border-box;
+          position: absolute;
+          right: 100%;
+          background-color: attr(color);
+          top: 0;
+        }
+      }
+    }
+  }
+  .input-content-terminal {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    gap: 10px;
+  }
   textarea {
     outline: none;
     height: max-content;
-    height: calc(1em + 15px);
+    height: calc(19px);
+    margin-top: 5px;
     flex-grow: 1;
     border: none;
   }
@@ -722,6 +993,12 @@ const pids = computed(() => logs.value.reduce((aggr, log) => {
     border: 1px solid #d2d2d2;
     border-radius: 5px;
     padding: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    button {
+      width: max-content;
+    }
   }
 }
 </style>
@@ -787,7 +1064,7 @@ const pids = computed(() => logs.value.reduce((aggr, log) => {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px;
+    padding: 2px 10px;
     border-bottom: 1px solid lightgrey;
     .right {
       display: flex;
@@ -799,5 +1076,12 @@ const pids = computed(() => logs.value.reduce((aggr, log) => {
       background-color: rgba(0,0,0,0.1);
     }
   }
+}
+.badge {
+  border-radius: 1000px;
+  background-color: grey;
+  color: white;
+  padding: 0 10px;
+  box-shadow: 0 0 10px 0px rgba(0,0,0,0.4);
 }
 </style>

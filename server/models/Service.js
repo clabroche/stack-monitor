@@ -11,6 +11,13 @@ const dayjs = require('dayjs')
 const { v4 } = require('uuid')
 const {stripAnsi, ansiconvert, unescapeAnsi} = require('../helpers/ansiconvert')
 const createInterface = require('../helpers/readline')
+
+/** @type {Record<string, {cmd: string, args: string[]}>} */
+const alias = {
+  ls: {cmd: `ls`, args: ['--color=force']},
+  gco: {cmd: `git`, args: ['checkout']},
+}
+
 class Service {
   /**
    * @param {import('../../typings/index').NonFunctionProperties<Service>} service
@@ -172,14 +179,14 @@ class Service {
   
   /**
    * 
-   * @param {string} _spawnCmd 
-   * @param {string[]} _spawnArgs 
-   * @param {SpawnOptions} _spawnOptions 
+   * @param {string} spawnCmd 
+   * @param {string[]} spawnArgs 
+   * @param {SpawnOptions} spawnOptions 
    */
-  launchProcess(_spawnCmd, _spawnArgs = [], _spawnOptions = {}) {
+  launchProcess(spawnCmd, spawnArgs = [], spawnOptions = {}) {
     this.crashed = false
-    const {spawnCmd, spawnArgs, spawnOptions} = this.parseIncomingCommand(_spawnCmd, _spawnArgs, _spawnOptions)
-    const spawnProcess = spawn(spawnCmd, spawnArgs, spawnOptions)
+    const {cmd, args, options} = this.parseIncomingCommand(spawnCmd, spawnArgs, spawnOptions)
+    const spawnProcess = spawn(cmd, args, options)
     if (!this.pids) this.pids = []
     if (!this.pids) this.pids = []
     this.pids.push(spawnProcess)
@@ -257,11 +264,14 @@ class Service {
       setTimeout(() => {
         clearInterval(intervalId)
       }, 50);
-      if(code) {
-        Socket.io?.emit('service:crash', { label: this.label, code, signal })
+      if (code) {
+        Socket.io?.emit('service:crash', { label: this.label, code, signal, pid: spawnProcess.pid })
         this.Stack.getStack()?.triggerOnServiceCrash(this, code)
         this.crashed = true
+      } else {
+        Socket.io?.emit('service:exit', { label: this.label, code, signal, pid: spawnProcess.pid })
       }
+
     })
 
     const date = `🕑  ${dayjs().format('YYYY-MM-DD HH:mm:ss')}`
@@ -276,16 +286,20 @@ class Service {
       timestamp: Date.now(),
       label: this.label,
       pid: spawnProcess.pid,
-      msg: `${spawnCmd} ${spawnArgs.join(' ')}`,
-      raw: `${spawnCmd} ${spawnArgs.join(' ')}`,
+      msg: `${cmd} ${args.join(' ')}`,
+      raw: `${cmd} ${args.join(' ')}`,
       cmd: {
-        cmd: spawnCmd,
-        args: spawnArgs,
-        options: spawnOptions,
+        cmd,
+        args,
+        options,
       }
     }
     this.store.push(launchMessage)
     Socket.io?.emit('logs:update', [launchMessage]) 
+    return {
+      launchMessage,
+      spawnProcess
+    }
   }
 
   /**
@@ -296,7 +310,29 @@ class Service {
   respondToProcess(pid, message) {
     const process = this.pids.find(process => process.pid === pid)
     if(!process) return console.error(`Pid (${pid}) not found`)
-    process.stdin?.write(message)
+    process.stdin?.write(message.trim() + '\n')
+
+    /**@type {LogMessage}*/
+    const line = {
+      id: v4(),
+      raw: message.trim() + '\n',
+      label: this.label,
+      msg: message.trim() + '\n',
+      timestamp: Date.now(),
+      prompt: true,
+      pid: pid,
+    }
+    this.store.push(line)
+    Socket.io?.emit('logs:update', [line])
+  }
+  /**
+   * 
+   * @param {number} pid 
+   */
+  terminate(pid) {
+    const process = this.pids.find(process => process.pid === pid)
+    if(!process) return console.error(`Pid (${pid}) not found`)
+    process.kill('SIGTERM')
   }
 
   enable() {
@@ -307,20 +343,33 @@ class Service {
    * 
    * @param {string} spawnCmd 
    * @param {string[]} spawnArgs 
-   * @param {SpawnOptions} _spawnOptions 
+   * @param {SpawnOptions} spawnOptions 
    */
-  parseIncomingCommand(spawnCmd, spawnArgs, _spawnOptions) {
-    let cwd = _spawnOptions.cwd
-    _spawnOptions.shell = isWindows ? process.env.ComSpec : '/bin/sh'
-    if (cwd && spawnCmd.match(/[/\\]/g)) {
-      spawnCmd = path.resolve(cwd.toString(), spawnCmd)
+  parseIncomingCommand(spawnCmd, spawnArgs = [], spawnOptions = {}) {
+    let cmd = spawnCmd?.split(' ')?.[0]
+    let argFromCmd = spawnCmd?.split(' ')?.slice(1).join(' ')
+    let args = [argFromCmd, ...spawnArgs].filter(a => a)
+
+    const currentAlias = alias[cmd]
+    if(currentAlias) {
+      cmd = currentAlias?.cmd || cmd
+      args = [...(currentAlias?.args || []), ...args]
     }
-    let envs = _spawnOptions.env || {}
-    if (_spawnOptions.env) {
-      envs = Object.assign({}, process.env, _spawnOptions.env)
+
+    let options = {
+      ...spawnOptions,
+      cwd: spawnOptions.cwd || this.rootPath,
+      shell: isWindows ? process.env.ComSpec : '/bin/sh',
+      env: {
+        ...process.env,
+        ...(spawnOptions.env || {})
+      }
     }
-    const spawnOptions = { ..._spawnOptions, env: envs }
-    return {spawnCmd, spawnArgs, spawnOptions}
+
+    if (cmd.match(/[/\\]/g)) {
+      cmd = path.resolve(options.cwd.toString(), cmd)
+    }
+    return {cmd, args, options}
   }
 }
 
@@ -354,6 +403,7 @@ module.exports = Service
  *  msg: string,
  *  raw: string,
  *  timestamp: number,
+ *  prompt?: boolean,
  *  id: string,
  *  source?: 'stdout' | 'stderr'
  *  json?: Record<any, any> | any[] | null,

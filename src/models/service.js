@@ -87,15 +87,24 @@ class Service {
     return logs
   }
 
+  /** @param {{pid?: number}} prompt */
+  async sendTerminalTerminate(prompt) {
+    const { data: logs } = await axios.post('/logs/' + this.label + '/terminate', {...prompt, service: this.label})
+    return logs
+  }
+
   async clear() {
     const { data: logs } = await axios.delete('/logs/' + this.label + '/logs')
     return logs
   }
 
-  /** @param {string} msg */
-  async autocomplete(msg) {
+  /**
+   * @param {string} msg
+   * @param {{force?: boolean}} param0
+   */
+  async autocomplete(msg, {force} = {}) {
     const { data: logs } = await axios.get('/logs/' + this.label + '/autocomplete', {
-      params: { message: msg }
+      params: { message: msg, force: !!force }
     })
     return logs
   }
@@ -285,6 +294,10 @@ class Service {
   static async findSolutionFromAi(data) {
     const { data: bugs } = await axios.post('/openai/error', { data })
     return bugs || []
+  }
+  static async homedir() {
+    const { data: path } = await axios.post('/fs/homedir')
+    return path || ''
   }
 }
 
