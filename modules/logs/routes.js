@@ -54,10 +54,14 @@ module.exports = (stackMonitor) => {
 
   router.post('/logs/:service/terminate', function (req, res) {
     const service = findService(req.params.service)
-    /** @type {number | undefined} */
-    const pid = req.body.pid
+    const {
+      /** @type {number | undefined} */
+      pid,
+      /** @type {boolean | undefined} */
+      forceKill
+    } = req.body
     if(!pid) throw new Error('Pid is required')
-    if(pid) service.terminate(pid)
+    if(pid) service.terminate(pid, !!forceKill)
     Socket.io?.emit('logs:update', [])
     res.send('ok')
   });

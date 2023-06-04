@@ -1,6 +1,7 @@
 <template>
   <div
     class="spinner"
+    :class="{noColor}"
     v-if="display"
     :style="{
       width: size + 'px',
@@ -17,6 +18,10 @@ defineProps({
   },
   size: {
     default: "70",
+  },
+  noColor: {
+    type: Boolean,
+    default: false,
   },
 })
 </script>
@@ -76,7 +81,6 @@ defineProps({
   align-items: center;
   transform: translateZ(0);
   flex-shrink: 0;
-
   &::before {
     content: " ";
     animation-name: pulse;
@@ -95,6 +99,14 @@ defineProps({
     background-color: #0076bc;
     position: absolute;
     border-radius: 100%;
+  }
+
+  &.noColor {
+    border-color: white;
+    border-bottom-color: transparent;
+    &::before, &::after {
+      background-color: white;
+    }
   }
 }
 

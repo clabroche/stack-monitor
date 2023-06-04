@@ -87,7 +87,7 @@ class Service {
     return logs
   }
 
-  /** @param {{pid?: number}} prompt */
+  /** @param {{pid?: number, forceKill?: boolean}} prompt */
   async sendTerminalTerminate(prompt) {
     const { data: logs } = await axios.post('/logs/' + this.label + '/terminate', {...prompt, service: this.label})
     return logs

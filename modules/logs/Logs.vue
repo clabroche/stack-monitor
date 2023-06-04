@@ -84,7 +84,8 @@
           <div class="terminal" ref="jsonsRef">
             <div class="line" :class="{
               simplifiedMode,
-              stderr: line.source === 'stderr',
+              stderr: line.source === 'stderr' || (line.cmd && line.cmd.status === 'error'),
+              success: (line.cmd && line.cmd.status === 'exited'),
               separator: line.isSeparator != null,
               json: line.json != null && !simplifiedMode,
               debug: line.debug != null && !simplifiedMode,
@@ -95,10 +96,18 @@
                 <template #trigger>
                   <div v-html="line.msg" v-if="simplifiedMode"></div>
                   <div v-else-if="line.cmd != null" >
-                    <h2 class="section-header">Command</h2>
-                    <div class="section-content">
-                      {{ line.msg }}
-                    </div>
+                    <template v-if="line.cmd.cmd.trim()">
+                      <h2 class="section-header" v-if="line.cmd.cmd.trim()">
+                        Command
+                        <template v-if="line.cmd.status === 'running'"><Spinner style="display: inline-flex;" :no-color="true" :size="20"></Spinner></template>
+                      </h2>
+                      <div class="section-content">
+                        {{ line.msg }} 
+                      </div>
+                    </template>
+                    <template v-else>
+                      <br/>
+                    </template>
                   </div>
                   <div v-else-if="line.prompt">
                     <h2 class="section-header">Prompt</h2>
@@ -176,7 +185,7 @@
             </div>
           </div>
 
-          <div class="input-container-terminal">
+          <div class="input-container-terminal" v-if="!currentPidView || currentPidView.cmd?.status == 'running'">
             <div class="histories" v-if="histories?.length">
               <div 
                 class="history" :class="{active: history.active}" 
@@ -215,6 +224,11 @@
                 @input="inputTerminal"></textarea>
               <!-- <button @click="send"><i class="fas fa-envelope"></i></button> -->
             </div>
+          </div>
+          <div class="input-container-terminal" v-else-if="currentPidView">
+            Your command no longer accepts further response 
+            <button @click="currentPidView = null">Go to all processes view</button>
+            <button class="danger" @click="sendTerminate(true)">Or try to force kill</button>
           </div>
       </sectionCmp>
     </div>
@@ -264,6 +278,7 @@ import Popover from '@/components/Popover.vue';
 import dayjs from 'dayjs'
 import fs from '@/models/fs';
 import { debounce } from 'debounce';
+import Spinner from '@/components/Spinner.vue';
 
 const props = defineProps({
   service: { 
@@ -413,6 +428,17 @@ async function mounted() {
       scroll()
     })
   })
+
+  Socket.socket.on('logs:update:lines', (/** @type {LogMessage[]}*/lines) => {
+    lines.forEach(line=> {
+      if (line.label !== props.service.label) return
+      const index = logs.value.findIndex(a => a.id === line.id)
+      if(index >= 0) {
+        logs.value.splice(index, 1, line)
+      }
+    })
+  })
+
   Socket.socket.on('service:exit', (/** @type {{label:string, code: number, signal: string, pid?: number}}*/data) => {
     if (data.label !== props.service.label) return
     if(data.pid) {
@@ -470,7 +496,14 @@ async function send(ev) {
     message: messageToSend.value.trim(),
     pid: currentPidView.value?.pid || undefined
   })
-  currentPidView.value = logs.value.find((log) => log.pid === pid)
+  if(messageToSend.value.trim()) {
+    setTimeout(() => {
+      const lineFound = logs.value.find((log) => log.pid === pid.pid)
+      if(lineFound?.cmd?.status === 'running') {
+        currentPidView.value = lineFound
+      }
+    }, 100);
+  }
   messageToSend.value = ''
   if(ev.target) {
     await nextTick()
@@ -511,8 +544,9 @@ async function inputTerminal(ev) {
   }
 }
 
-async function sendTerminate() {
-  await props.service.sendTerminalTerminate({pid: currentPidView.value?.pid || undefined})
+/** @param {boolean} forceKill*/
+async function sendTerminate(forceKill = false) {
+  await props.service.sendTerminalTerminate({pid: currentPidView.value?.pid || undefined, forceKill})
 }
 /** @param {KeyboardEvent} $event */
 async function keyup($event) {
@@ -769,6 +803,8 @@ function hidePopovers() {
       border-top-right-radius: 10px;
       position: relative;
       z-index: 1;
+      display: flex;
+      align-items: center;
     }
     .section-content {
       border-left: 4px solid #000000;
@@ -849,12 +885,21 @@ function hidePopovers() {
       font-weight: bold;
     }
     &.stderr {
-      border-left-color: red;
+      border-left-color: #ac1010;
       .section-header {
-        background-color: red;
+        background-color: #ac1010;
       }
       .section-content {
-        border-color: red
+        border-color: #ac1010
+      }
+    }
+    &.success {
+      border-left-color: #0c9913;
+      .section-header {
+        background-color: #0c9913;
+      }
+      .section-content {
+        border-color: #0c9913
       }
     }
     

@@ -186,7 +186,7 @@ class Service {
   launchProcess(spawnCmd, spawnArgs = [], spawnOptions = {}) {
     this.crashed = false
     const {cmd, args, options} = this.parseIncomingCommand(spawnCmd, spawnArgs, spawnOptions)
-    const spawnProcess = spawn(cmd, args, options)
+    const spawnProcess = spawn(cmd, args, {...options, detached: true})
     if (!this.pids) this.pids = []
     if (!this.pids) this.pids = []
     this.pids.push(spawnProcess)
@@ -260,26 +260,7 @@ class Service {
       }
       add(message, {source: 'stderr'})
     });
-    spawnProcess.on('exit', (code, signal) => {
-      setTimeout(() => {
-        clearInterval(intervalId)
-      }, 50);
-      if (code) {
-        Socket.io?.emit('service:crash', { label: this.label, code, signal, pid: spawnProcess.pid })
-        this.Stack.getStack()?.triggerOnServiceCrash(this, code)
-        this.crashed = true
-      } else {
-        Socket.io?.emit('service:exit', { label: this.label, code, signal, pid: spawnProcess.pid })
-      }
 
-    })
-
-    const date = `🕑  ${dayjs().format('YYYY-MM-DD HH:mm:ss')}`
-    /**@type {LogMessage}*/
-    const line = { id: v4(), raw: date, label: this.label, msg: date, timestamp: lastDatePrinted, isSeparator: true }
-    this.store.push(line)
-    queue.push(line)
-    
     /** @type {LogMessage} */
     const launchMessage = {
       id: v4(),
@@ -292,10 +273,30 @@ class Service {
         cmd,
         args,
         options,
+        status: 'running'
       }
     }
-    this.store.push(launchMessage)
-    Socket.io?.emit('logs:update', [launchMessage]) 
+    spawnProcess.on('exit', (code, signal) => {
+      setTimeout(() => {
+        clearInterval(intervalId)
+      }, 50);
+      if (code) {
+        if(launchMessage.cmd) launchMessage.cmd.status = 'error'
+        Socket.io?.emit('service:crash', { label: this.label, code, signal, pid: spawnProcess.pid })
+        this.Stack.getStack()?.triggerOnServiceCrash(this, code)
+        this.crashed = true
+      } else {
+        if(launchMessage.cmd) launchMessage.cmd.status = 'exited'
+        Socket.io?.emit('service:exit', { label: this.label, code, signal, pid: spawnProcess.pid })
+      }
+      Socket.io?.emit('logs:update:lines', [launchMessage]) 
+    })
+
+    const date = `🕑  ${dayjs().format('YYYY-MM-DD HH:mm:ss')}`
+    /**@type {LogMessage}*/
+    const line = { id: v4(), raw: date, label: this.label, msg: date, timestamp: lastDatePrinted, isSeparator: true }
+    this.store.push(line, launchMessage)
+    Socket.io?.emit('logs:update', [line, launchMessage]) 
     return {
       launchMessage,
       spawnProcess
@@ -326,13 +327,16 @@ class Service {
     Socket.io?.emit('logs:update', [line])
   }
   /**
-   * 
    * @param {number} pid 
+   * @param {boolean} forceKill 
    */
-  terminate(pid) {
-    const process = this.pids.find(process => process.pid === pid)
-    if(!process) return console.error(`Pid (${pid}) not found`)
-    process.kill('SIGTERM')
+  terminate(pid, forceKill = false) {
+    const processFound = this.pids.find(process => process.pid === pid)
+    if(!processFound) return console.error(`Pid (${pid}) not found`)
+    if(processFound.pid) {
+      process.kill(-processFound.pid, forceKill ? 'SIGKILL' : 'SIGTERM')
+    }
+
   }
 
   enable() {
@@ -411,7 +415,7 @@ module.exports = Service
  *  isSeparator?: boolean,
  *  label: string,
  *  pid?: number,
- *  cmd?: {cmd: string, args: string[], options: import('child_process').ExecOptions},
+ *  cmd?: {cmd: string, args: string[], options: import('child_process').ExecOptions, status: 'running' | 'error' | 'exited'},
  * }} LogMessage
  */
 
