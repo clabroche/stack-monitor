@@ -90,6 +90,16 @@ export default {
     const save = async (service) => {
       localStorage.setItem(`automatic-toggle-${service.label}`, service.enabled == null ? 'false' : service.enabled.toString())
     }
+    /**
+     * @param {Service} service
+     * @param {boolean | null} force
+     */
+    const toggleService = async (service, force = null) => {
+      if(service != null) {
+        service.enabled = force != null ? force : !service.enabled
+        await save(service)
+      }
+    }
     return {
       search,
       isAllEnabled: computed(() => Stack.services.value.every(service => service.enabled)),
@@ -112,7 +122,9 @@ export default {
       /** @param {string} group */
       toggleGroup(group) {
         const groupSelected = isGroupSelected(group)
-        getServicesFromGroup(group).map(service => service.enabled = !groupSelected)
+        getServicesFromGroup(group).map(service => {
+          toggleService(service, !groupSelected)
+        })
       },
       save,
       isGroupSelected,
@@ -125,13 +137,7 @@ export default {
       displayedServices(services) {
         return services.filter(s => s.label?.toUpperCase().includes(search.value.toUpperCase()))
       },
-      /** @param {Service} service */
-      async toggleService (service) {
-        if(service != null) {
-          service.enabled = !service.enabled
-          await save(service)
-        }
-      }
+      toggleService,
     }
   }
 }
