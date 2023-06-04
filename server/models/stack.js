@@ -33,6 +33,7 @@ class Stack {
     jsons: require('../parser/json'),
     debug: require('../parser/debug'),
   }
+  static getSave = require('../models/saves')
   static Socket = Socket
 
   /** @param {Partial<Stack>} stack */
