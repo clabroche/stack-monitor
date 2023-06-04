@@ -125,11 +125,11 @@ const Git = (stackMonitor) => {
     async remoteDelta(serviceName, branchName) {
       const service = findService(serviceName)
       await requirements(service)
-      if (service.git.remote) {
-        const hasRemote = +(await execAsync(`git ls-remote --heads ${service.git.remote} ${branchName} | wc -l`, { cwd: service.rootPath }))
-        if(!hasRemote) return 1
+      const upstream = await execAsync(`git rev-parse --abbrev-ref --symbolic-full-name @{u}`, { cwd: service.rootPath }).catch(() => {})
+      if(!upstream) {
+        await execAsync(`git branch --set-upstream-to=origin/${branchName} ${branchName}`, { cwd: service.rootPath }).catch(() => {})
+        return 1
       }
-      await execAsync(`git branch --set-upstream-to=origin/${branchName} ${branchName}`, { cwd: service.rootPath })
       await execAsync(`git fetch origin ${branchName}`, { cwd: service.rootPath })
       const localCommit = await execAsync(`git log --oneline ${branchName}`, { cwd: service.rootPath })
       const remoteCommit = await execAsync(`git log --oneline origin/${branchName}`, { cwd: service.rootPath })
