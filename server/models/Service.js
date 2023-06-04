@@ -10,6 +10,7 @@ const isWindows = require('../../server/helpers/isWindows')
 const dayjs = require('dayjs')
 const { v4 } = require('uuid')
 const {stripAnsi, ansiconvert, unescapeAnsi} = require('../helpers/ansiconvert')
+const createInterface = require('../helpers/readline')
 class Service {
   /**
    * @param {import('../../typings/index').NonFunctionProperties<Service>} service
@@ -238,17 +239,14 @@ class Service {
         Socket.io?.emit('logs:update', messages)
       }
     }, 0);
-    const readline = require('readline');
-    readline.createInterface({
+    new createInterface({
       input: spawnProcess.stdout,
-      terminal: false,
-      historySize: 0
+      emitAfterNoDataMs: 100,
     })
     .on('line', (message) => add(message, {source: 'stdout'}))
-    readline.createInterface({
+    new createInterface({
       input: spawnProcess.stderr,
-      terminal: false,
-      historySize: 0
+      emitAfterNoDataMs: 100,
     }).on('line', (message) => {
       if (!message.toString().includes('webpack.Progress')) {
         Socket.io?.emit('alert', { label: this.label, message: message.toString(), type: 'error' })
