@@ -5,7 +5,7 @@ module.exports = {
   setupFiles: [
     './tests/setup.js'
   ],
-  testMatch: ['**/src/**/*.spec.(js)', '**/tests/**/*.spec.(js)'],
+  testMatch: ['**/src/**/*.spec.(js)','**/server/**/*.spec.(js)', '**/tests/**/*.spec.(js)'],
   collectCoverage: process.env.coverage === 'false' ? false : true,
   collectCoverageFrom: [
     '**/*.js',

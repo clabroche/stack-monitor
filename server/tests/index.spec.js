@@ -1,5 +1,6 @@
 const request = require("supertest");
 const pathfs = require('path');
+const dayjs = require("dayjs");
 
 const confsPathTests = {
   array: pathfs.resolve(__dirname, 'testFiles', 'stackArray.js'),
@@ -109,7 +110,37 @@ describe('Test', () => {
       expect(chooseApiReturn.body).toEqual(expect.arrayContaining([expect.objectContaining({ label: 'Server' })]))
       expect(Stack.findService('Server').pids).toHaveLength(1)
       await wait(200)
-      expect(Stack.findService('Server').store).toEqual('server\n')
+      expect(Stack.findService('Server').store[0]).toEqual(
+        {
+          id: expect.any(String),
+          isSeparator: true,
+          label: 'Server',
+          msg: expect.stringContaining(dayjs().format('YYYY-MM-DD')),
+          raw: expect.stringContaining(dayjs().format('YYYY-MM-DD')),
+          timestamp: expect.any(Number)
+        }
+      )
+      expect(Stack.findService('Server').store[1]).toEqual(
+        {
+          id: expect.any(String),
+          label: "Server",
+          msg: "echo server $PORT $mongoDbURL",
+          pid: expect.any(Number),
+          raw: "echo server $PORT $mongoDbURL",
+          timestamp: expect.any(Number),
+          cmd: expect.objectContaining({
+            args: ["server", "$PORT", "$mongoDbURL"], 
+            cmd: "echo", 
+            options: expect.objectContaining({
+              env: {
+                ...process.env,
+                PORT: "MY_SERVER_PORT"
+              },
+              shell: "/bin/sh"
+            }),
+          })
+        }
+      )
       expect(chooseApiReturn.body[0]).not.toHaveProperty('pids')
       expect(chooseApiReturn.body[0]).not.toHaveProperty('store')
     })

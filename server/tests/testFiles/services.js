@@ -1,3 +1,4 @@
+require('dotenv').config({path: require('path').resolve(__dirname, '.env')})
 const path = __dirname
 
 const groups = {
@@ -31,7 +32,7 @@ const services = [
   {
     label: 'Front',
     spawnCmd: 'echo',
-    spawnArgs: ['Front', '$PORT', '$mongoDbURL'],
+    spawnArgs: ['Front $PORT $mongoDbURL'],
     spawnOptions: {
       cwd: __dirname,
       env: {
