@@ -611,13 +611,13 @@ onMounted(async () => {
   reloadBarInfos(true)
 })
 
-async function reloadBarInfos(reloadCostingInfos = false) {
+const reloadBarInfos = debounce(async(reloadCostingInfos = false) => {
   gitChanges.value = await props.service.getStatus()
   currentBranch.value = await props.service.getCurrentBranch()
   if(reloadCostingInfos) {
     gitRemoteDelta.value = await props.service.gitRemoteDelta(currentBranch.value)
   }
-}
+}, 100)
 
 /**
  * 
