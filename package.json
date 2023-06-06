@@ -113,7 +113,7 @@
     "vite": "^4.3.5",
     "vite-plugin-html": "^3.2.0",
     "vitepress": "^1.0.0-alpha.74",
-    "vue": "^3.2.47",
+    "vue": "^3.3.4",
     "vue-json-viewer": "^3.0.4",
     "vue-loader": "^17.1.0",
     "vue-router": "^4.1.6",
