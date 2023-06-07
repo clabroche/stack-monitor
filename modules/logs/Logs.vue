@@ -132,7 +132,7 @@
                     <template v-if="line.cmd.cmd.trim()">
                       <h2 class="section-header" v-if="line.cmd.cmd.trim()">
                         Command
-                        <template v-if="line.cmd.status === 'running'"><Spinner style="display: inline-flex;" :no-color="true" :size="20"></Spinner></template>
+                        <template v-if="line.cmd.status === 'running'"><Spinner style="display: inline-flex;" :no-color="true" size="20"></Spinner></template>
                       </h2>
                       <div class="section-content">
                         {{ line.msg }} 
