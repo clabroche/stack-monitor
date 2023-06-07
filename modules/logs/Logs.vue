@@ -64,7 +64,7 @@
           </template>
           <template #content>
             <div class="pids">
-              <div v-for="pid of pids.slice().reverse()" :key="pid.pid" class="pid"
+              <div v-for="pid of pids.slice().reverse().filter(a => a.raw?.trim())" :key="pid.pid" class="pid"
                 @click="currentPidView = pid; scroll(true)"
                 :class="{active: currentPidView?.pid === pid.pid}">
                 {{ pid.raw }}
@@ -81,6 +81,41 @@
           { icon: 'fas fa-chevron-down', click: () => scroll(true) },
           { icon: 'fas fa-trash', click: () => clear() },
         ]" class="terminal-container">
+          <Transition name="slide-fade">
+          <div class="terminal-panel" v-if="selectedLine">
+            <div class="terminal-panel-bg" @click="selectedLine = null"></div>
+            <div class="terminal-panel-content">
+              <h3>
+                Type:
+                <template v-if="selectedLine.debug">Debug</template>
+                <template v-else-if="selectedLine.json">JSON</template>
+                <template v-else-if="selectedLine.cmd">Command</template>
+                <template v-else>Text</template>
+              </h3>
+              <div class="more-info-container">
+                <div class="more-info-label">Raw message:</div>
+                <div class="more-info-content"><pre>{{ selectedLine.msg }}</pre></div>
+              </div>
+              <div class="more-info-container" v-if="selectedLine.pid" @click="setPid(selectedLine)">
+                <div class="more-info-label">Issued from pid: </div>
+                <div class="more-info-content">
+                  {{ selectedLine.pid }}
+                  <button class="small"><i class="fas fa-chevron-right"></i></button>
+                </div>
+              </div>
+              <div class="more-info-container">
+                <div class="more-info-label">Emitted date:</div>
+                <div class="more-info-content">{{ dayjs(selectedLine.timestamp).format('YYYY-MM-DD HH:mm:ss') }}</div>
+              </div>
+              <div v-if="selectedLine.cmd" class="more-info-container">
+                <div class="more-info-label">Options:</div>
+                <div class="more-info-content">
+                  <JsonTreeView :maxDepth="1" :data="transformerJSON(selectedLine.cmd)" :copyable="true" :expand-depth="1" :show-double-quotes="true"/>
+                </div>
+              </div>
+            </div> 
+          </div>
+          </Transition>
           <div class="terminal" ref="jsonsRef">
             <div class="line" :class="{
               simplifiedMode,
@@ -91,9 +126,7 @@
               debug: line.debug != null && !simplifiedMode,
               cmd: line.cmd != null && !simplifiedMode,
               prompt: line.prompt && !simplifiedMode,
-            }" v-for="line of displayedLines" :key="line.id" >
-              <Popover placement="bottom-start" appendTo="" ref="popoversRef">
-                <template #trigger>
+            }" v-for="line of displayedLines" :key="line.id" @click="selectedLine = line" >
                   <div v-html="line.msg" v-if="simplifiedMode"></div>
                   <div v-else-if="line.cmd != null" >
                     <template v-if="line.cmd.cmd.trim()">
@@ -150,38 +183,6 @@
                     </div>
                   </div>
                   <div v-html="line.msg" v-else></div>
-                </template>
-                <template #content>
-                  <h3>
-                    Type:
-                    <template v-if="line.debug">Debug</template>
-                    <template v-else-if="line.json">JSON</template>
-                    <template v-else-if="line.cmd">Command</template>
-                    <template v-else>Text</template>
-                  </h3>
-                  <div class="more-info-container">
-                    <div class="more-info-label">Raw message:</div>
-                    <div class="more-info-content"><pre>{{ line.msg }}</pre></div>
-                  </div>
-                  <div class="more-info-container" v-if="line.pid" @click="setPid(line)">
-                    <div class="more-info-label">Issued from pid: </div>
-                    <div class="more-info-content">
-                      {{ line.pid }}
-                      <button class="small"><i class="fas fa-chevron-right"></i></button>
-                    </div>
-                  </div>
-                  <div class="more-info-container">
-                    <div class="more-info-label">Emitted date:</div>
-                    <div class="more-info-content">{{ dayjs(line.timestamp).format('YYYY-MM-DD HH:mm:ss') }}</div>
-                  </div>
-                  <div v-if="line.cmd" class="more-info-container">
-                    <div class="more-info-label">Options:</div>
-                    <div class="more-info-content">
-                      <JsonTreeView :maxDepth="1" :data="transformerJSON(line.cmd)" :copyable="true" :expand-depth="1" :show-double-quotes="true"/>
-                    </div>
-                  </div>
-                </template>
-              </Popover>
             </div>
           </div>
 
@@ -189,6 +190,7 @@
             <div class="histories" v-if="histories?.length">
               <div 
                 class="history" :class="{active: history.active}" 
+                @click="messageToSend = history.raw; histories = []; textareaRef?.focus()"
                 v-for="(history, i) of histories" :key="i + 'history'">
                 <div>
                   {{ history.raw }}
@@ -197,6 +199,11 @@
                   <div>Used: {{history.timestamps?.length || 0}}</div>
                   <div>Last used: {{history.timestamp ? dayjs(history.timestamp).format('YYYY-MM-DD HH:mm:ss'): '???'}}</div>
                 </div>
+              </div>
+            </div>
+            <div class="histories" v-else-if="autocompleteInProgress">
+              <div class="history">
+                <Spinner size="20"></Spinner>
               </div>
             </div>
             <div class="bar-terminal">
@@ -220,8 +227,15 @@
             <div class="input-content-terminal">
               <div class="badge" v-if="currentPidView?.pid">Pid: {{ currentPidView.pid }}</div>
               <i class="fas fa-chevron-right"></i>
-              <textarea ref="textareaRef" v-model="messageToSend" @keypress.enter="sendEnter" @keyup="keyup" :placeholder="currentPidView ? `Send command to ${currentPidView.pid}...` : 'Send new command...'"
-                @input="inputTerminal"></textarea>
+              <PassThrough>
+                <textarea ref="textareaRef"
+                  v-model="messageToSend"
+                  @keypress.enter="sendEnter"
+                  @keyup="keyup"
+                  @input="inputTerminal"
+                  :placeholder="currentPidView ? `Send command to ${currentPidView.pid}...` : 'Send new command...'"
+                />
+              </PassThrough>
               <!-- <button @click="send"><i class="fas fa-envelope"></i></button> -->
             </div>
           </div>
@@ -279,6 +293,7 @@ import dayjs from 'dayjs'
 import fs from '@/models/fs';
 import { debounce } from 'debounce';
 import Spinner from '@/components/Spinner.vue';
+import PassThrough from './PassThrough.vue';
 
 const props = defineProps({
   service: { 
@@ -300,6 +315,8 @@ const isOpen = ref(true)
 const isInclude = ref(false)
 /** @type {import('vue').Ref<LogMessage[]>} */
 const logs = ref([])
+/** @type {import('vue').Ref<LogMessage | null>} */
+const selectedLine = ref(null)
 const jsonPathSearch = ref('')
 const findSolutionModal = ref()
 const simplifiedMode = ref(false)
@@ -537,6 +554,7 @@ async function sendEnter(ev) {
 }
 /** @param {Event} ev */
 async function inputTerminal(ev) {
+  histories.value = []
   if(ev.target) {
     if(/**@type {HTMLElement}*/(ev.target).scrollHeight < 300) {
       rerenderTextarea()
@@ -548,6 +566,7 @@ async function inputTerminal(ev) {
 async function sendTerminate(forceKill = false) {
   await props.service.sendTerminalTerminate({pid: currentPidView.value?.pid || undefined, forceKill})
 }
+const autocompleteInProgress = ref(false)
 /** @param {KeyboardEvent} $event */
 async function keyup($event) {
   if($event.code === 'Escape') return histories.value = []
@@ -557,16 +576,20 @@ async function keyup($event) {
   if($event.code ==='ArrowUp' && histories.value.length) return changeActive($event, 1)
   if($event.code ==='ArrowDown' && histories.value.length) return changeActive($event, -1)
   if(['ArrowUp', 'ArrowDown'].includes($event.code)) return histories.value = await props.service.autocomplete(messageToSend.value, {force: true})
+  autocompleteInProgress.value = true
   await autocomplete()
   if(!messageToSend.value) changeActive($event, 1)
 }
-
 const autocomplete = debounce(async (force = false) => {
-  const _histories = await props.service.autocomplete(messageToSend.value, {force})
-  if(!messageToSend.value && !force) return 
-  histories.value = _histories
-
-}, 300)
+  try {
+    autocompleteInProgress.value = true
+    const _histories = await props.service.autocomplete(messageToSend.value, {force})
+    if(!messageToSend.value && !force) return 
+    histories.value = _histories
+  } finally {
+    autocompleteInProgress.value = false
+  }
+}, 200)
 
 /**
  * @param {KeyboardEvent} $event
@@ -680,7 +703,7 @@ function hidePopovers() {
   width: 100%;
   margin: auto;
   height: calc(100vh - 400px - 40px);
-
+  position: relative;
   @media (max-width: 1300px) { 
     height: calc(100vh - 500px - 40px);
   }
@@ -688,6 +711,33 @@ function hidePopovers() {
     height: calc(100vh - 650px - 40px);
   }
   box-sizing: border-box;
+  .terminal-panel {
+    position: absolute;
+    z-index: 2;
+    right: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    .terminal-panel-bg {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.5);
+      left: 0;
+      top: 0;
+    }
+    .terminal-panel-content {
+      max-width: calc(100% - 40px);
+      background-color: white;
+      z-index: 2;
+      position: absolute;
+      right: 0;
+      top: 0;
+      height: 100%;
+      padding: 10px;
+      box-sizing: border-box;
+    }
+  }
 }
 
 .input-container {
@@ -718,6 +768,10 @@ function hidePopovers() {
       max-height: 400px;
       overflow: auto;
       .pid {
+        &:hover {
+          background-color: rgba(0,0,0,0.05);
+          cursor: pointer;
+        }
         &.active {
           border-left-color: #0076bc;
           border-bottom-color: transparent;
@@ -1112,6 +1166,10 @@ function hidePopovers() {
     align-items: center;
     padding: 2px 10px;
     border-bottom: 1px solid lightgrey;
+    &:hover {
+      background-color: rgba(0,0,0,0.05);
+      cursor: pointer;
+    }
     .right {
       display: flex;
       flex-direction: column;
@@ -1129,5 +1187,30 @@ function hidePopovers() {
   color: white;
   padding: 0 10px;
   box-shadow: 0 0 10px 0px rgba(0,0,0,0.4);
+}
+
+.slide-fade-enter-active{
+  transition: all 0.2s ease-out;
+  &>* {
+    transition: all 0.2s ease-out;
+  }
+}
+
+.slide-fade-leave-active{
+  transition: all 0.2s cubic-bezier(1, 0.5, 0.8, 1);
+  &>* {
+    transition: all 0.2s cubic-bezier(1, 0.5, 0.8, 1);
+  }
+}
+
+.slide-fade-enter-from,
+.slide-fade-leave-to {
+  overflow: hidden;
+  .terminal-panel-content {
+    transform: translateX(100%);
+  }
+  .terminal-panel-bg {
+    opacity: 0;
+  }
 }
 </style>
