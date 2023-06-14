@@ -17,4 +17,5 @@ module.exports = {
   toolbox: require('./toolbox'),
   uuid: require('./uuid'),
   github: require('./github'),
+  kanban: require('./kanban'),
 }

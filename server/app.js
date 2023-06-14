@@ -24,6 +24,7 @@ app.get('*', (req, res) => {
 
 app.use(/** @type {ExpressMiddlewareError} */ ((err, req, res, next) => {
   console.error(err?.message || err)
+  err?.stack ? console.error(err.stack) : ''
   res.status(500).send(err?.message || err)
 }));
 

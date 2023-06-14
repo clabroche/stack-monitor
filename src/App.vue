@@ -143,8 +143,8 @@ button {
   cursor: pointer;
   box-sizing: border-box;
   box-shadow:
-    -5px 5px 10px #bdbdbd,
-    5px -5px 10px #ffffff;
+    -5px 5px 10px rgba(0,0,0,0.1),
+    5px -5px 10px rgba(0,0,0,0.2);
   &:hover {
     background-color: #194f91;
     box-shadow: 1px 1px 1px 1px rgba(0,0,0,0.5);

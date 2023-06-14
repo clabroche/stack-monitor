@@ -657,7 +657,8 @@ const popoversRef = ref([])
  * @param {LogMessage | undefined | null} line 
  */
 function setPid(line) {
-  currentPidView.value = line?.pid ?  line : null
+  const command = logs.value.find(l => l.cmd && l.pid === line?.pid)
+  currentPidView.value = command || null
   hidePopovers()
 }
 

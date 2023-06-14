@@ -17,6 +17,7 @@ import JSONFormatter from "./json-formatter/Index.vue";
 import Documentation from "./documentation/Index.vue";
 import DevOps from "./dev-ops/Index.vue";
 import Github from "./github/Index.vue";
+import Kanban from "./kanban/Index.vue";
 import GlobalScripts from "./global-scripts/Index.vue";
 
 const toolboxPlugins = [
@@ -30,6 +31,7 @@ const toolboxPlugins = [
   { name: 'Mongo', component: Mongo },
   { name: 'OpenAI', component: OpenAI },
   { name: 'GlobalScripts', component: GlobalScripts },
+  { name: 'Kanban', component: Kanban },
   { name: 'Toolbox', component: Toolbox ,children: [
     {
       path: ":plugin",
