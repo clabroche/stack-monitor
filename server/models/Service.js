@@ -186,7 +186,7 @@ class Service {
   launchProcess(spawnCmd, spawnArgs = [], spawnOptions = {}) {
     this.crashed = false
     const {cmd, args, options} = this.parseIncomingCommand(spawnCmd, spawnArgs, spawnOptions)
-    const spawnProcess = spawn(cmd, args, {...options, detached: true})
+    const spawnProcess = spawn(cmd, args, {...options, detached: !isWindows})
     if (!this.pids) this.pids = []
     if (!this.pids) this.pids = []
     this.pids.push(spawnProcess)

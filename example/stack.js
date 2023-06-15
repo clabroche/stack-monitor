@@ -59,6 +59,11 @@ const stack = (stackMonitor) => {
       require.resolve('./env.preprod'),
       require.resolve('./scripts/tags'),
     ],
+    logParsers: [
+      stackMonitor.parsers.links,
+      stackMonitor.parsers.jsons,
+      stackMonitor.parsers.debug,
+    ],
     stack: [
       {
         label: 'Server',
