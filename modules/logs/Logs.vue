@@ -548,7 +548,7 @@ async function sendEnter(ev) {
     });
     return
   }
-  if (!ev.ctrlKey) await send(ev)
+  if (!ev.shiftKey) await send(ev)
   else messageToSend.value += '\n'
 }
 /** @param {Event} ev */

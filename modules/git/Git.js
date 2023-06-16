@@ -162,7 +162,7 @@ const Git = (stackMonitor) => {
     async getOrigin(serviceName) {
       const service = findService(serviceName)
       await requirements(service)
-      return (await execAsync('git remote -v | grep fetch', { cwd: service.rootPath })).split('\t')[0]?.trim() || ''
+      return (await execAsync('git remote -v', { cwd: service.rootPath })).trim().split('\n').find(a => a?.includes('fetch'))?.split('\t')[0]?.trim() || ''
     },
     /** @param {string} serviceName */
     async push(serviceName) {

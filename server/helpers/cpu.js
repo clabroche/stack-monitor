@@ -1,7 +1,7 @@
 const os = require('os');
 const Socket = require('../models/socket');
 const { fork } = require('node:child_process');
-const { exec, ChildProcess } = require('child_process')
+const { ChildProcess } = require('child_process')
 const osutils = require('os-utils');
 
 const nbCpus = os.cpus().length
@@ -15,22 +15,13 @@ function cpuUsagePromise() {
 }
 
 async function getRam() {
-  const line = await new Promise(resolve => {
-    exec('free -t --mega | grep Total', (err, stdout) => resolve(stdout))
-  });
-  const regex = /\d+/gm;
-  let m;
-  /** @type {number[]} */
-  let res = [];
+  const freemem = os.freemem();
+  const totalmem = os.totalmem();
 
-  while ((m = regex.exec(line)) !== null) {
-    if (m.index === regex.lastIndex) regex.lastIndex++;
-    m.forEach(match => res.push(Number.isNaN(+match) ? 0 : +match));
-  }
   return {
-    memPercentage: res[0] ? res[1] * 100 / res[0] : 0,
-    totalmem: res[0],
-    freemem: res[5],
+    memPercentage: totalmem ? freemem * 100 / totalmem : 0,
+    totalmem: totalmem,
+    freemem: freemem,
   }
 }
 
