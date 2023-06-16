@@ -8,11 +8,11 @@
     "url": "https://corentinlabroche.fr/"
   },
   "scripts": {
-    "serve": "HTTP_PORT=5456 VITE_HTTP_PORT=5456 NODE_ENV=DEV concurrently --kill-others \"npm run serve:front\" \"npm run serve:server\"",
+    "serve": "cross-env HTTP_PORT=5456 VITE_HTTP_PORT=5456 NODE_ENV=DEV concurrently --kill-others \"npm run serve:front\" \"npm run serve:server\"",
     "build": "vite build",
     "launchExamples": "cd example/front/ && npm ci && cd ../server && npm ci && cd .. && node ../server/bin/www ./stack.js",
     "serve:front": "vite",
-    "serve:server": "cd server && nodemon --trace-warnings bin/www $STACKFILE",
+    "serve:server": "cd server && nodemon --trace-warnings bin/www ../example/stack.js",
     "serve:production": "npm run build && HTTP_PORT=5456 node server/bin/www ./example/stack.js",
     "start": "server/bin/www",
     "test": "jest --runInBand",

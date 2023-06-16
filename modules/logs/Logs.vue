@@ -126,7 +126,7 @@
               debug: line.debug != null && !simplifiedMode,
               cmd: line.cmd != null && !simplifiedMode,
               prompt: line.prompt && !simplifiedMode,
-            }" v-for="line of displayedLines" :key="line.id" @click="selectedLine = line" >
+            }" v-for="line of displayedLines" :key="line.id" @click="setSelectedLine(line)" >
                   <div v-html="line.msg" v-if="simplifiedMode"></div>
                   <div v-else-if="line.cmd != null" >
                     <template v-if="line.cmd.cmd.trim()">
@@ -666,6 +666,11 @@ function hidePopovers() {
   popoversRef.value?.forEach(popover => {
     popover?.tippyInstance?.hide()
   });
+}
+
+function setSelectedLine(line) {
+  if (window.getSelection().toString()) return
+  selectedLine.value = line
 }
 /**
  * @typedef {import('../../server/models/Service').LogMessage} LogMessage
