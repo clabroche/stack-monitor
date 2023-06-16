@@ -1,5 +1,5 @@
 <template>
-  <div header="Logs" @is-open="isOpen = $event" :defaultIsOpen="isOpen" v-if="service.enabled"
+  <div  v-if="service.enabled"
     :style="{ maxHeight: isInMultiMode ? '400px' : 'inherit' }"
   >
     <div class="header">
@@ -73,7 +73,7 @@
           </template>
         </Popover>
       </div>
-      <sectionCmp v-if="isOpen" header="Logs" :noStyle="noStyle"
+      <sectionCmp :header="'Logs' + (currentPidView?.raw ? `: ${currentPidView?.raw}` : '')" :noStyle="noStyle"
         :actions="[
           { icon: 'fas fa-list', label: `${countLine}`, small: true, hidden: !countLine, active: !mode, click: () => mode = '' },
           { icon: 'fas fa-bug', label: `${countDebug}`, small: true, hidden: !countDebug, active: mode === 'debug', click: () => mode = 'debug' },
@@ -96,7 +96,7 @@
                 <div class="more-info-label">Raw message:</div>
                 <div class="more-info-content"><pre>{{ selectedLine.msg }}</pre></div>
               </div>
-              <div class="more-info-container" v-if="selectedLine.pid" @click="setPid(selectedLine)">
+              <div class="more-info-container pid-box" v-if="selectedLine.pid" @click="setPid(selectedLine)">
                 <div class="more-info-label">Issued from pid: </div>
                 <div class="more-info-content">
                   {{ selectedLine.pid }}
@@ -311,7 +311,6 @@ const logsContainer = ref(null)
 /** @type {import('vue').Ref<HTMLElement | null>} */
 const jsonsRef = ref(null)
 const filterSearch = ref('')
-const isOpen = ref(true)
 const isInclude = ref(false)
 /** @type {import('vue').Ref<LogMessage[]>} */
 const logs = ref([])
@@ -651,21 +650,13 @@ function getShortPath(path) {
     ?.replace(homedir.value, '~')
 }
 
-/** @type {import('vue').Ref<InstanceType<typeof Popover>[]>}*/
-const popoversRef = ref([])
 /**
  * @param {LogMessage | undefined | null} line 
  */
 function setPid(line) {
   const command = logs.value.find(l => l.cmd && l.pid === line?.pid)
   currentPidView.value = command || null
-  hidePopovers()
-}
-
-function hidePopovers() {
-  popoversRef.value?.forEach(popover => {
-    popover?.tippyInstance?.hide()
-  });
+  selectedLine.value = null
 }
 
 function setSelectedLine(line) {
@@ -1217,6 +1208,14 @@ function setSelectedLine(line) {
   }
   .terminal-panel-bg {
     opacity: 0;
+  }
+}
+.pid-box {
+  cursor: pointer;
+  &:hover {
+    button {
+      transform: scale(1.1)
+    }
   }
 }
 </style>
