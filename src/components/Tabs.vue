@@ -15,6 +15,7 @@
 
 <script setup>
 import { ref, onMounted, computed, watch } from 'vue'
+import router from '../router/router.js'
 
 const props = defineProps({
   tabs: {
@@ -32,13 +33,28 @@ const load = () => {
     currentTab.value = props.tabs.find(tab => tab.id === tabId) || props.tabs[0]
   }
 }
-onMounted(load)
+onMounted(() => {
+  if(router.currentRoute.value.query.tab) {
+    localStorage.setItem('tab', router.currentRoute.value.query.tab)
+  }
+  load()
+})
 watch(() => props.tabs, ()=> {
   if(!currentTab.value && props.tabs?.[0]) {
     load()
   }
 })
-const save = () => localStorage.setItem('tab', currentTab.value?.id ? currentTab.value.id : '')
+watch(() => router.currentRoute.value, ()=> {
+  const goTo = router.currentRoute.value.query.tab
+  if(goTo) currentTab.value = props.tabs?.find(t => t.id === goTo)
+}, {immediate: true})
+
+const save = () => {
+  const toSave = currentTab.value?.id ? currentTab.value.id : ''
+  localStorage.setItem('tab', toSave)
+  router.push({path: router.currentRoute.value.fullPath, query: Object.assign({}, router.currentRoute.value.query || {},  {tab: toSave})})
+
+}
 
 const availableTabs = computed(() => {
   return props.tabs.filter((tab) => !tab.hidden)

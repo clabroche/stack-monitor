@@ -4,29 +4,25 @@
       <div class="command-container">
         <div class=button-container>
           <button @click="run('install')">
-            <i :class="launched['install'] ? 'fas fa-spinner' : 'fas fa-play'" aria-hidden="true"></i>
+            <i class="fas fa-play" aria-hidden="true"></i>
           </button>
           install
         </div>
-        <div :ref="el => refs.install = el"></div>
       </div>
       <div class="command-container">
         <div class=button-container>
           <button @click="run('rebuild')">
-            <i :class="launched['rebuild'] ? 'fas fa-spinner' : 'fas fa-play'" aria-hidden="true"></i>
+            <i class="fas fa-play" aria-hidden="true"></i>
           </button>
           rebuild
         </div>
-        <div :ref="el => refs.rebuild = el"></div>
       </div>
-      <div v-for="(script, key) of packageJson.scripts" :key="key" :title="script">
+      <div v-for="(script, command) of packageJson.scripts" :key="command" :title="script">
         <div>
-          <button @click="run(key)">
-            <i :class="launched[key] ? 'fas fa-spinner' : 'fas fa-play'" aria-hidden="true"></i>
+          <button @click="run(command)">
+            <i class="fas fa-play" aria-hidden="true"></i>
           </button>
-          {{key}}
-        </div>
-        <div :ref="el => refs[key] = el">
+          {{command}}
         </div>
       </div>
     </section-cmp>
@@ -84,11 +80,9 @@
 import Socket from '@/helpers/Socket'
 import Service from '@/models/service'
 import SectionVue from '@/components/Section.vue'
-// @ts-ignore
-import { Terminal } from 'xterm/lib/xterm';
-import { FitAddon } from 'xterm-addon-fit';
 import { onMounted, reactive, ref, watch } from 'vue'
 import Spinner from '@/components/Spinner.vue';
+import router from '../../src/router/router.js'
 export default {
   components: {
     sectionCmp: SectionVue,
@@ -111,10 +105,6 @@ export default {
     const packageJson = ref(null)
     /** @type {import('vue').Ref<import('./index').Outdated | null>} */
     const outdated = ref(null)
-    /** @type {Record<string, boolean>} */
-    const launched = reactive({})
-    /** @type {import('vue').Ref<Record<string, Array<HTMLElement> | HTMLElement>>} */
-    const refs = ref({})
     const reload = async () => {
       if(props.service) {
         isNpm.value = await props.service.isNpm()
@@ -128,40 +118,19 @@ export default {
       isNpm,
       packageJson,
       outdated,
-      launched,
-      refs,
       /** @param {string} command */
       async run(command) {
         if(props.service) {
-          // @ts-ignore
-          const commandRef = Array.isArray(refs.value[command]) ? refs.value[command][0] : refs.value[command]
-          commandRef.innerHTML = ''
-          const socketId = await props.service.runNpmCommand(command)
-          const terminal = new Terminal({
-            experimentalCharAtlas: 'static',
-            convertEol: true,
-            disableStdin: true,
-            fontSize: 10,
-            theme: {
-              
-            }
-          });
-          const fitAddon = new FitAddon();
-          terminal.loadAddon(fitAddon);
-          terminal.open(commandRef);
-          fitAddon.activate(terminal)
-          fitAddon.fit();
-          launched[command] = true
-          Socket.socket.on(socketId, /**@param {{msg: string}} param0*/({msg}) => {
-            launched[command] = true
-            if(msg.trim() === '!:;end') {
-              launched[command] = false
-              return
-            }
-            msg.trim().split('\n').filter(a => a).map(line => {
-              terminal.writeln(line)
+          if(['install', 'build', 'rebuild'].includes(command)) {
+            await props.service.sendTerminalPrompt({
+              message: `npm ${command}`,
             })
-          })
+          } else {
+            await props.service.sendTerminalPrompt({
+              message: `npm run ${command}`,
+            })
+          }
+          router.push({path: router.currentRoute.value.fullPath, query: Object.assign({}, router.currentRoute.value.query || {}, {tab: 'Logs'})})
         }
       }
     }
