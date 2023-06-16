@@ -2,6 +2,7 @@ const path = __dirname
 const pathfs = require('path')
 require('dotenv').config({ path: pathfs.resolve(__dirname, '.env') })
 const githubTagsScript = require('./scripts/tags')
+const { default: axios } = require('axios')
 
 const groups = {
   API: 'api',
@@ -70,6 +71,23 @@ const stack = (stackMonitor) => {
         description: 'This is the backend of an unbelievable project',
         groups: [groups.API],
         documentation: path + '/documentation/server',
+        logParsers: [
+          {
+            id: 'health-hide-parser',
+            transform: (msg) => {
+              // @ts-ignore
+              if(msg?.json?.route === '/health') msg.hide = true
+              return msg
+            }
+          }
+        ],
+        health: {
+          check: async (service) => {
+            const { data } = await axios.get('http://localhost:3009')
+            return data
+          },
+          interval: 500
+        },
         git: {
           home: 'https://github.com/clabroche/stack-monitor',
           remote: 'git@github.com:clabroche/stack-monitor.git'

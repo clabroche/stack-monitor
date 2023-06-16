@@ -412,6 +412,7 @@ async function findSolution(data) {
  */
 const isLineIncluded = (line, nextLine) => {
   const message = filterSearch.value
+  if(line.hide) return false
   if(line.isSeparator) return true
   if(currentPidView.value?.pid && currentPidView.value?.pid !== line.pid) return false  
   if (!message) return true

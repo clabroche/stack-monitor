@@ -76,6 +76,16 @@ class Service {
     this.rootPath = service.rootPath || service.spawnOptions?.cwd?.toString?.() || service.commands?.[0]?.spawnOptions?.cwd?.toString?.() || ''
     /** @type {Parser[]} */
     this.logParsers = service.logParsers || []
+    /** 
+     * @type {{
+     *   check: ((service: Service) => boolean | Promise<boolean>) | undefined,
+     *   interval?: number
+     * }}
+     * */
+    this.health = {
+      check: service.health?.check,
+      interval: service.health?.interval || 1000
+    }
   }
 
   exportInApi() {
@@ -183,7 +193,7 @@ class Service {
    * @param {string[]} spawnArgs 
    * @param {SpawnOptions} spawnOptions 
    */
-  launchProcess(spawnCmd, spawnArgs = [], spawnOptions = {}) {
+  launchProcess(spawnCmd, spawnArgs = [], spawnOptions = {}, isMainProcess = true) {
     this.crashed = false
     const {cmd, args, options} = this.parseIncomingCommand(spawnCmd, spawnArgs, spawnOptions)
     const spawnProcess = spawn(cmd, args, {...options, detached: !isWindows})
@@ -283,8 +293,10 @@ class Service {
       if (code) {
         if(launchMessage.cmd) launchMessage.cmd.status = 'error'
         Socket.io?.emit('service:crash', { label: this.label, code, signal, pid: spawnProcess.pid })
-        this.Stack.getStack()?.triggerOnServiceCrash(this, code)
-        this.crashed = true
+        if(isMainProcess) {
+          this.Stack.getStack()?.triggerOnServiceCrash(this, code)
+          this.crashed = true
+        }
       } else {
         if(launchMessage.cmd) launchMessage.cmd.status = 'exited'
         Socket.io?.emit('service:exit', { label: this.label, code, signal, pid: spawnProcess.pid })
@@ -296,13 +308,41 @@ class Service {
     /**@type {LogMessage}*/
     const line = { id: v4(), raw: date, label: this.label, msg: date, timestamp: lastDatePrinted, isSeparator: true }
     this.store.push(line, launchMessage)
-    Socket.io?.emit('logs:update', [line, launchMessage]) 
+    Socket.io?.emit('logs:update', [line, launchMessage])
+
+    if (isMainProcess) {
+      this.launchHealthChecker(spawnProcess)
+    }
+
     return {
       launchMessage,
       spawnProcess
     }
   }
 
+  /**
+   * 
+   * @param {import('child_process').ChildProcessWithoutNullStreams} spawnProcess 
+   */
+  async launchHealthChecker(spawnProcess) {
+    if (!spawnProcess.pid || !this.health?.check) return
+    if (!(await psTreeAsync(spawnProcess.pid))?.length) return 
+    let result
+    try { result = await this.health.check(this) }
+    catch (error) {
+      console.error('Service health failed:' + error)
+    }
+    if(!result) {
+      this.crashed = true
+      Socket.io?.emit('service:healthcheck:down', { label: this.label, pid: spawnProcess.pid })
+    } else {
+      this.crashed = false
+      Socket.io?.emit('service:healthcheck:up', { label: this.label, pid: spawnProcess.pid })
+    }
+    await new Promise(res => setTimeout(res ,this.health.interval))
+    this.launchHealthChecker(spawnProcess)
+    return
+  }
   /**
    * 
    * @param {number} pid 
@@ -334,7 +374,9 @@ class Service {
     const processFound = this.pids.find(process => process.pid === pid)
     if(!processFound) return console.error(`Pid (${pid}) not found`)
     if(processFound.pid) {
-      process.kill(-processFound.pid, forceKill ? 'SIGKILL' : 'SIGTERM')
+      isWindows
+        ? process.kill(processFound.pid, 'SIGKILL')
+        : process.kill(-processFound.pid, forceKill ? 'SIGKILL' : 'SIGTERM')
     }
 
   }
@@ -415,6 +457,7 @@ module.exports = Service
  *  isSeparator?: boolean,
  *  label: string,
  *  pid?: number,
+ *  hide?: boolean,
  *  cmd?: {cmd: string, args: string[], options: import('child_process').ExecOptions, status: 'running' | 'error' | 'exited'},
  * }} LogMessage
  */

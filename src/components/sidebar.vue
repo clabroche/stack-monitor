@@ -35,6 +35,12 @@ export default {
         notification.next('error', `${label} has crashed with code ${code}`)
         await Stack.loadServices()
       });
+      Socket.socket.on('service:healthcheck:down', async ({label, code, signal}) => {
+        await Stack.loadServices()
+      });
+      Socket.socket.on('service:healthcheck:up', async ({label, code, signal}) => {
+        await Stack.loadServices()
+      });
     })
     const sortedStack = computed(() => sort(Stack.services.value.filter(a => (a.label || '').toUpperCase().includes(search.value.toUpperCase()))).desc((a) => a.enabled))
     return {

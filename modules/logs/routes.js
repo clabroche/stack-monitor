@@ -36,7 +36,7 @@ module.exports = (stackMonitor) => {
     let result = {id: v4(),pid, cmd: message, args: [], raw: message, timestamp: Date.now(), service: service.label}
     if(pid) service.respondToProcess(pid, message)
     else if(message) {
-      const {spawnProcess, launchMessage} = service.launchProcess(message, [], service.spawnOptions)
+      const {spawnProcess, launchMessage} = service.launchProcess(message, [], service.spawnOptions,  false)
       result = {
         ...result,
         pid: spawnProcess.pid,
