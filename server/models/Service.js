@@ -209,14 +209,7 @@ class Service {
 
     const add = (/** @type {Buffer | string} */ data, /** @type {Partial<LogMessage>} */ logMessageOverride) => {
       const timestamp = Date.now()
-      if(timestamp > lastDatePrinted + 2000) {
-        const date = `🕑  ${dayjs().format('YYYY-MM-DD HH:mm:ss')}`
-        /**@type {LogMessage}*/
-        const line = { id: v4(), raw: date, label: this.label, msg: date, timestamp, isSeparator: true }
-        this.store.push(line)
-        queue.push(line)
-      }
-      lastDatePrinted = Date.now()
+      
       const ansiMsg = unescapeAnsi(data.toString())
       const stripMsg = stripAnsi(ansiMsg)
       const htmlMessage = ansiMsg ? ansiconvert.toHtml(ansiMsg) : '<br/>'
@@ -232,7 +225,7 @@ class Service {
         ...logMessageOverride,
         id: v4(),
       }
-      
+
       line = [...(stack?.logParsers || []), ...this.logParsers].reduce((line, parser) => {
         if(!parser?.transform) {
           console.error(`It seems your parser "${parser?.id}" has not a transform function. Please verify or disable it..`)
@@ -245,6 +238,18 @@ class Service {
         }
         return result
       }, line)
+
+      if(line.hide) return
+
+      if(timestamp > lastDatePrinted + 2000) {
+        const date = `🕑  ${dayjs().format('YYYY-MM-DD HH:mm:ss')}`
+        /**@type {LogMessage}*/
+        const line = { id: v4(), raw: date, label: this.label, msg: date, timestamp, isSeparator: true }
+        this.store.push(line)
+        queue.push(line)
+      }
+      lastDatePrinted = Date.now()
+
       if(line.msg.length > 100000 && !line.msg.startsWith('["stack-monitor"')) line.msg = line.msg.slice(0, 10000)
       this.store.push(line)
       queue.push(line)
