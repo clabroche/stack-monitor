@@ -241,6 +241,10 @@ class Service {
 
       if(line.hide) return
 
+      if (line.source === 'stderr') {
+        Socket.io?.emit('alert', { label: this.label, message: line.raw.toString(), type: 'error' })
+      }
+
       if(timestamp > lastDatePrinted + 2000) {
         const date = `🕑  ${dayjs().format('YYYY-MM-DD HH:mm:ss')}`
         /**@type {LogMessage}*/
@@ -270,9 +274,6 @@ class Service {
       input: spawnProcess.stderr,
       emitAfterNoDataMs: 100,
     }).on('line', (message) => {
-      if (!message.toString().includes('webpack.Progress')) {
-        Socket.io?.emit('alert', { label: this.label, message: message.toString(), type: 'error' })
-      }
       add(message, {source: 'stderr'})
     });
 
