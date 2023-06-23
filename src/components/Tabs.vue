@@ -5,6 +5,7 @@
         <div v-if="tab.label && !tab.icon">{{tab.label}}</div>
         <i v-if="tab.icon" :class="tab.icon" aria-hidden="true"></i>
         <label v-if="showLabels">{{tab?.data?.value?.length || tab?.data?.length || 0}}</label>
+        <div v-if="tab?.warning" class="badge warning">{{ tab.warning }}</div>
       </button>
     </div>
     <div class="content">
@@ -35,7 +36,7 @@ const load = () => {
 }
 onMounted(() => {
   if(router.currentRoute.value.query.tab) {
-    localStorage.setItem('tab', router.currentRoute.value.query.tab)
+    localStorage.setItem('tab', router.currentRoute.value.query.tab?.toString())
   }
   load()
 })
@@ -70,7 +71,8 @@ defineExpose({
  * hidden: boolean,
  * label: string,
  * icon: string,
- * data?: any
+ * data?: any,
+ * warning?: number
  * }} Tab
  */
 </script>
@@ -108,6 +110,7 @@ defineExpose({
     }
   }
   button {
+    position: relative;
     outline: none;
     color: #999;
     border-radius: 5px 5px 0 0;
@@ -158,5 +161,21 @@ defineExpose({
 .content {
   position: relative;
   flex-grow: 1;
+}
+.badge {
+  position: absolute;
+  right: 0px;
+  top: 0px;
+  transform: translateX(50%) translateY(-50%);
+  z-index: 1;
+  padding: 0;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  &.warning {
+    background-color: #e5b100;
+  }
 }
 </style>

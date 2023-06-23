@@ -10,6 +10,7 @@ const Service = require('./Service')
 const PromiseB = require('bluebird')
 const dot = require('dot-object')
 const pathfs = require('path')
+const { existsSync } = require('fs-extra')
 
 class Stack {
   /**@type {Stack | null} */
@@ -174,9 +175,24 @@ class Stack {
     Stack.#currentStack = await this.parse(confPath, this) 
     ;[
       ...(Stack.#currentStack?.watchFiles || []),
-      confPath
-    ].forEach(filePath => {
-      if (fs.existsSync(filePath)) {
+      confPath,
+      ...Stack.getServices().flatMap(service => {
+        const envRootPath = service.rootPath && pathfs.resolve(service.rootPath, '.env')
+        const envSpawnOptionsPath = service.spawnOptions.cwd && pathfs.resolve(service.spawnOptions.cwd.toString(), '.env')
+        const commandPaths = service.commands.map(command => {
+          const commandPath = command?.spawnOptions?.cwd && pathfs.resolve(command.spawnOptions.cwd.toString(), '.env')
+          return commandPath && existsSync(commandPath)? commandPath : null
+        })
+        return [
+          envRootPath && existsSync(envRootPath)? envRootPath : null,
+          envSpawnOptionsPath && existsSync(envSpawnOptionsPath) ? envSpawnOptionsPath : null,
+          ...commandPaths
+        ]
+      })
+    ]
+    .filter((a, i, arr) => a && arr.indexOf(a) === i)
+    .forEach(filePath => {
+      if (filePath && fs.existsSync(filePath)) {
         Stack.#currentWatches.push(
           watch(filePath, async () => {
             checkConfDebounce(filePath)
@@ -301,13 +317,17 @@ async function reloadService(originalStack, newStack) {
     const newService = newData.services.find(s => s.label === originalService.label)
     if (newService?.label) {
       const diffs = difference(originalService.exportForDifference(), newService)
-      if (!Object.keys(diffs).length) return false
+      if(!Object.keys(diffs)?.length) return
       let shouldRestart = false
       Object.keys(diffs).forEach(key => {
         if (key.includes('spawnOptions.shell')) return // spawnOptions.shell is set by stack-monitor not user 
-        // @ts-ignore
-        dot.copy('to', key, diffs[key], originalService)
-        shouldRestart = true
+        if(diffs[key]?.to) {
+          dot.copy('to', key, diffs[key], originalService)
+          shouldRestart = true
+        } else if(!diffs[key]?.to) {
+          dot.delete(key, originalService)
+          shouldRestart = true
+        }
       })
       return shouldRestart
     }
@@ -366,9 +386,9 @@ const checkConfDebounce = debounce(
 
 /**
  * Deep diff between two object, using lodash
- * @param  {Object} fromObject Object compared
- * @param  {Object} toObject   Object to compare with
- * @return {Object}        Return a new object who represent the diff
+ * @param  {Record<string, any>} fromObject Object compared
+ * @param  {Record<string, any>} toObject   Object to compare with
+ * @return {Record<string, any>}        Return a new object who represent the diff
  */
 function difference(fromObject, toObject) {
   const changes = {}

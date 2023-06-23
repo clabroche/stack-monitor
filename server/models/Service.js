@@ -11,6 +11,8 @@ const dayjs = require('dayjs')
 const { v4 } = require('uuid')
 const {stripAnsi, ansiconvert, unescapeAnsi} = require('../helpers/ansiconvert')
 const createInterface = require('../helpers/readline')
+const { existsSync, readFileSync } = require('fs-extra')
+const pathfs = require('path')
 
 /** @type {Record<string, {cmd: string, args: string[]}>} */
 const alias = {
@@ -86,6 +88,27 @@ class Service {
       check: service.health?.check,
       interval: service.health?.interval || 1000
     }
+
+    if((this.spawnOptions.cwd || this.rootPath)) {
+      const customEnvs = this.loadCustomEnv((this.spawnOptions.cwd || this.rootPath).toString())
+      this.spawnOptions.overrideEnvs = customEnvs
+    }
+    this.commands.map(command => {
+      if(command?.spawnOptions?.cwd) {
+        const customEnvs = this.loadCustomEnv(command.spawnOptions.cwd.toString())
+        command.spawnOptions.overrideEnvs = customEnvs
+      }
+    })
+
+  }
+
+  /** @param {string} path */
+  loadCustomEnv(path) {
+    const dotEnvPath = pathfs.resolve(path, '.env')
+    if(existsSync(dotEnvPath) && readFileSync(dotEnvPath, {encoding: 'utf-8'}).trim()) {
+      console.log(`! A .env will override your ${this.label} service !`)
+      return require('dotenv').parse(readFileSync(dotEnvPath));
+    }
   }
 
   exportInApi() {
@@ -140,19 +163,6 @@ class Service {
         }
       })
     }
-    const psList = (/** @type {any[]} */ ...args) => import('ps-list').then(({ default: fetch }) => fetch(...args));
-    const list = await psList()
-    const toKill = list.filter(({ cmd }) =>
-      (
-        (cmd?.includes('nodemon') || cmd?.includes('php')) &&
-        this.spawnOptions?.cwd &&
-        cmd?.includes(this.spawnOptions.cwd.toString())
-      ) || (
-        cmd === "php artisan serve" &&
-        this.spawnCmd === 'php' && this.spawnArgs.includes('artisan') && this.spawnArgs.includes('serve')
-      )
-    )
-    toKill.forEach(({ pid }) => process.kill(pid, 'SIGKILL'))
     this.pids = []
     Socket.io?.emit('logs:clear', { label: this.label })
     this.store = []
@@ -415,7 +425,8 @@ class Service {
       shell: isWindows ? process.env.ComSpec : '/bin/sh',
       env: {
         ...process.env,
-        ...(spawnOptions.env || {})
+        ...(spawnOptions.env || {}),
+        ...spawnOptions.overrideEnvs || {}
       }
     }
 
@@ -445,7 +456,9 @@ function psTreeAsync(pid) {
 module.exports = Service
 
 /**
- * @typedef {import('child_process').ExecOptions} SpawnOptions
+ * @typedef {import('child_process').ExecOptions &
+ *  {overrideEnvs?: import('child_process').ExecOptions['env']}
+ * } SpawnOptions
  */
 
 /**

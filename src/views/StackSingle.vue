@@ -59,6 +59,7 @@ import Tabs from '../components/Tabs.vue';
 import Card from '../components/Card.vue';
 import NotificationBell from '../components/NotificationBell.vue';
 import axios from '../helpers/axios'
+import Socket from '../helpers/Socket';
 
 export default {
   name: 'StackSingle',
@@ -80,6 +81,12 @@ export default {
     watch(() => router.currentRoute.value.params.label, async () => {
       await reload()
     })
+    Socket.socket.on('conf:update', (/**@type {string[]}*/data) => {
+      if (data.includes(router.currentRoute.value.params.label.toString())) {
+        reload()
+      }
+    })
+
     /** @type {NodeJS.Timer} */
     let interval
     const tabs = ref([])
@@ -93,9 +100,23 @@ export default {
             /** @type {any} */ a,
             /** @type {any} */ b
           ) => a.order - b.order)
-          .map((/** @type {{ name: any; icon: any; hidden: any; }} */ service) => (
-            {label: service.name, id: service.name, icon:service.icon, hidden: service.hidden})
-          )
+          .map((/** @type {{ name: any; icon: any; hidden: any; }} */ service) => {
+            const tab = {
+              label: service.name,
+              id: service.name,
+              icon:service.icon,
+              hidden: service.hidden,
+              warning: 0
+            }
+            if(service.name === "Configuration") {
+              const overrideEnvs = Object.keys(currentService.value?.spawnOptions?.overrideEnvs || {})
+              const envs = Object.keys(currentService.value?.spawnOptions?.env || {})
+              if(envs.some((key => overrideEnvs.includes(key)))) {
+                tab.warning = 1   
+              }
+            }
+            return tab
+          })
       }
     }
 

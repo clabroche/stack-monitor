@@ -90,7 +90,7 @@ export default {
         if(!service)return
         service.enabled = s.enabled
       })
-      await Stack.launchServices(Stack.services.value.filter(service => service.enabled))
+      Stack.launchServices(Stack.services.value.filter(service => service.enabled))
       const enabledServices = await Stack.getEnabledServices()
       router.push({name: 'stack-single', params: {label: enabledServices[0]?.label || Stack.services.value[0]?.label}})
     }
@@ -132,7 +132,7 @@ export default {
           groups['All'].services.push(service)
 
           return groups
-        }, /**@type {Record<string, {label: string, services: import('@/models/service').default[], show?: boolean}>}*/({}))
+        }, /**@type {Record<string, {label: string, services: typeof servicesToLaunch['value'][number][], show?: boolean}>}*/({}))
         return Object.keys(groupsById).map(key => groupsById[key]).sort((a, b) => a.label.localeCompare(b.label))
       }),
       /** @param {string} group */
@@ -147,7 +147,7 @@ export default {
       Stack,
       System,
       validate, 
-      /** @param {Service[]} services */
+      /** @param {typeof servicesToLaunch['value'][number][]} services */
       displayedServices(services) {
         return services.filter(s => s.label?.toUpperCase().includes(search.value.toUpperCase()))
       },

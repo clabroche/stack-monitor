@@ -13,11 +13,11 @@
         </div>
       </div>
       <div class="section-configs">
-        <div class="key-value">
+        <div class="key-value" v-if="service.description">
           <div class="key">Description</div>
           <div class="value">{{service.description}}</div>
         </div>
-        <div class="key-value">
+        <div class="key-value" v-if="service.url">
           <div class="key">Url</div>
           <div class="value">{{service.url}}</div>
         </div>
@@ -29,11 +29,11 @@
         </div>
       </div>
       <div class="section-configs">
-        <div class="key-value">
+        <div class="key-value" v-if="service.git.home">
           <div class="key">Home</div>
           <div class="value">{{service.git.home}}</div>
         </div>
-        <div class="key-value">
+        <div class="key-value" v-if="service.git.remote">
           <div class="key">Remote</div>
           <div class="value">{{service.git.remote}}</div>
         </div>
@@ -81,12 +81,23 @@
           <i class="fas fa-cog" aria-hidden="true"></i>
           <h3>Envs</h3>
         </div>
-        <button @click="exportEnv">Exporter</button>
+        <button @click="exportEnv">Export</button>
       </div>
       <div class="section-configs">
-        <div class="key-value" v-for="(value, key) of service.spawnOptions.env" :key="key">
-          <div class="key">{{key}}</div>
-          <div class="value">{{service.spawnOptions.env[key]}}</div>
+        <div class="key-value" v-for="env of envs" :key="env.key">
+          <div class="key" :class="{overrided: env.overrided}">
+            {{env.key}}
+            <template v-if="env.overrided">
+              (<i class="fas fa-exclamation-triangle"></i> Overrided by .env)
+            </template>
+          </div>
+          <div class="value" v-if="!env.overrided">{{env.value}}</div>
+          <div class="value" v-else>
+            <ul>
+              <li>Current: {{env.value}}</li>
+              <li style="color:#aaa">Original: {{env.originalValue}}</li>
+            </ul>
+          </div>
         </div>
       </div>
     </div>
@@ -96,6 +107,8 @@
 <script>
 import Service from '@/models/service'
 import SectionVue from '@/components/Section.vue'
+import { sort } from 'fast-sort'
+import { computed } from 'vue'
 export default {
   components: {
     sectionCmp: SectionVue,
@@ -110,6 +123,31 @@ export default {
   },
   setup(props) {
     return {
+      envs: computed(() => {
+        const options = props.service.spawnOptions || {}
+        const overrideEnvs = Object.keys(options.overrideEnvs || {})
+          .map(key => ({
+            key,
+            value: (options.overrideEnvs || {})[key],
+            overrided: (options.env || {})[key] != null,
+            originalValue: (options.env || {})[key],
+          }))
+        const envs = Object.keys(options.env || {})
+          .filter(f => !options.overrideEnvs?.[f])
+          .map(key => ({
+            key,
+            value: (options.env || {})[key],
+            overrided: false,
+            originalValue: (options.env || {})[key],
+          }))
+        return sort([
+          ...envs,
+          ...overrideEnvs,
+        ]).asc([
+          u => !u.overrided,
+          u => u.key,
+        ])
+      }),
       exportEnv() {
         const envObject = props.service.spawnOptions?.env || {}
         const envString = Object.keys(envObject).map(key => `${key}=${envObject[key]}`).join('\n')
@@ -140,9 +178,6 @@ export default {
   .key {
     font-weight: bold;
   }
-  .value {
-    height: calc(1em + 7px);
-  }
 }
 .section-configs {
   margin-left: 20px;
@@ -169,6 +204,9 @@ export default {
     background-color: #084b74;
     color: white;
     z-index: 1;
+    &.overrided {
+      background-color: #e5b100;
+    }
     &::before {
       content: "";
       top: 50%;
@@ -211,6 +249,10 @@ export default {
       position: absolute;
       left: 0;
       transform: translateX(-41px);
+    }
+    ul {
+      margin: 0;
+      padding: 0 10px;
     }
   }
 }
@@ -262,5 +304,8 @@ export default {
     display: flex;
     align-items: center;
   }
+}
+button {
+  width: max-content;
 }
 </style>
