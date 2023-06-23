@@ -117,14 +117,14 @@ class Service {
   }
   async restart() {
     await this.kill(false)
-    this.launch(false)
+    await this.launch(false)
     this.Stack.getStack()?.triggerOnServiceRestart(this)
   }
   sendHasBeenModified() {
     Socket.io?.emit('conf:update', [this.label])
   }
 
-  async kill(triggerEvent = true) {
+  async kill(triggerEvent = true, keepEnabled = false) {
     await PromiseB.map(this.pids, async spawnedProcess => {
       if(!spawnedProcess.pid) return
       const children = await psTreeAsync(spawnedProcess.pid)
@@ -157,13 +157,14 @@ class Service {
     Socket.io?.emit('logs:clear', { label: this.label })
     this.store = []
     await new Promise(resolve => setTimeout(resolve, 100))
-    this.enabled = false
+    this.enabled = keepEnabled
     this.crashed = false
     if(triggerEvent) this.Stack.getStack()?.triggerOnServiceKill(this)
     this.sendHasBeenModified()
   }
-  launch(triggerEvent = true) {
+  async launch(triggerEvent = true) {
     this.store = []
+    await this.kill(false, true).catch(console.error)
     if (this.spawnCmd) {
       this.launchProcess(
         this.spawnCmd,

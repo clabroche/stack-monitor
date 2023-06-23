@@ -57,14 +57,14 @@ router.post('/delete-conf', async function (req, res) {
   await myConfs.remove(path)
   res.json(path)
 });
-router.post('/choose', function (req, res) {
+router.post('/choose', async function (req, res) {
   /** @type {string[]} */
   const servicesLabelSelected = req.body
   if(!Array.isArray(servicesLabelSelected)) return res.status(400).send('you should provide an array as body with all service label you want to launch')
   const stack = Stack.getStack()
   if(!stack) return res.status(500).send('Stack not configured')
   stack.enable(servicesLabelSelected)
-  stack.launch()
+  await stack.launch()
   res.json(stack.getEnabledServices().map(s => s.exportInApi()))
 });
 router.get('/', function (req, res) {
@@ -110,7 +110,7 @@ router.get('/:service/restart', async function (req, res) {
 });
 router.get('/:service/start', async function (req, res) {
   const service = findService(req.params.service)
-  service.launch()
+  await service.launch()
   res.send()
 });
 

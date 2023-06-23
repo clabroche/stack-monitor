@@ -112,10 +112,10 @@ class Stack {
   }
 
 
-  launch() {
-    this.getServices().forEach(microservice => {
+  async launch() {
+    await PromiseB.map(this.getServices(), microservice => {
       if (microservice.enabled) {
-        microservice.launch()
+        return microservice.launch()
       }
     })
     Stack.#onLaunchCallback()
@@ -218,7 +218,7 @@ class Stack {
       if(stack?.confPath) {
         await checkConf(stack.confPath)
       }
-      Stack.getStack()?.launch()
+      await Stack.getStack()?.launch()
 
     } else {
       throw new Error('env not found')
