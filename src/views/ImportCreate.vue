@@ -12,7 +12,7 @@
   </div>
 
   <div class="version">
-    {{ System.version }}
+    {{ System.version.value }}
   </div>
   <div class="tools" @click="$router.push({ name: 'Toolbox' })">
     <i class="fas fa-toolbox"></i>

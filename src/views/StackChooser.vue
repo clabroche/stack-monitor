@@ -4,7 +4,7 @@
   <background-stack-chooser :lowResources="true"></background-stack-chooser>
   <left-logo/>
   <div class="right">
-    <section-cmp class="stack-chooser" v-if="Stack.services" header="Choose all services to launch">
+    <section-cmp class="stack-chooser" v-if="servicesToLaunch" header="Choose all services to launch">
       <div class="groups">
         <div v-for="(group) of groups" :key="group.label">
           <div class="group-header" @click="group.show = !group.show">
@@ -20,9 +20,14 @@
             </div>
           </div>
           <ul v-if="group.show || group.label === 'All'">
-            <input type="text" v-model="search" @keypress.enter="toggleService(displayedServices(group.services)[0])" placeholder="Type+Enter to toggle..." >
+            <input type="text" v-model="search" @keypress.enter="toggleService(servicesToLaunch.find(f => f.label === displayedServices(group.services)[0]?.label))" placeholder="Type+Enter to toggle..." >
             <li v-for="service of displayedServices(group.services)" :key="'services-'+service.label">
-              <input :id="'input-' + service.label" type="checkbox" v-model="service.enabled" :checked="service.enabled ? true : false" @change="save(service)">
+              <input
+                type="checkbox"
+                :id="'input-' + service.label"
+                :value="servicesToLaunch.find(f => f.label === service.label)?.enabled"
+                :checked="servicesToLaunch.find(f => f.label === service.label)?.enabled"
+                @change="toggleService(servicesToLaunch.find(f => f.label === service.label))">
               <label :for="'input-' + service.label">
                 {{service.label}}
               </label>
@@ -31,14 +36,14 @@
         </div>
       </div>
       <div class="actions">
-        <button v-if="!isAllEnabled" @click="enableAll">Select all</button>
-        <button v-else @click="disableAll">Unselect all</button>
+        <button v-if="!isAllEnabled" @click="toggleGroup('All')">Select all</button>
+        <button v-else @click="toggleGroup('All')">Unselect all</button>
         <button @click="validate" class="success"><i class="fas fa-play" aria-hidden="true"></i> Launch</button>
       </div>
     </section-cmp>
   </div>
   <div class="version">
-    {{System.version}}
+    {{System.version.value}}
   </div>
 
   <div class="tools" @click="$router.push({name: 'Toolbox'})">
@@ -51,7 +56,7 @@
 import Stack from '../models/stack'
 import System from '../models/system'
 import SectionVue from '../components/Section.vue'
-import { computed, onMounted, reactive, ref } from 'vue'
+import { computed, onMounted, reactive, ref, watch } from 'vue'
 import router from '../router/router'
 import BackgroundStackChooser from '../components/BackgroundStackChooser.vue'
 import LeftLogo from '../components/LeftLogo.vue'
@@ -65,33 +70,43 @@ export default {
     LeftLogo
   },
   setup() {
+    /** @type {import('vue').Ref<{label: string | undefined, enabled: boolean, groups: string[] | undefined}[]>} */
+    const servicesToLaunch = ref([])
     onMounted(async () => {
       await Stack.loadServices()
-      Stack.services.value.forEach(service => {
+      servicesToLaunch.value = Stack.services.value.map(service => {
         const state = localStorage.getItem(`automatic-toggle-${service.label}`)
-        service.enabled = state === 'true' ? true : false
+        return {
+          label: service.label,
+          enabled: state === 'true' || service.enabled || false,
+          groups: service.groups
+        }
       })
     })
 
     const validate = async() => {
+      servicesToLaunch.value.forEach((s) => {
+        const service = Stack.services.value.find(_s => _s.label === s.label)
+        if(!service)return
+        service.enabled = s.enabled
+      })
       await Stack.launchServices(Stack.services.value.filter(service => service.enabled))
       const enabledServices = await Stack.getEnabledServices()
-      router.push({name: 'stack-single', params: {label: enabledServices[0].label}})
+      router.push({name: 'stack-single', params: {label: enabledServices[0]?.label || Stack.services.value[0]?.label}})
     }
-    const enableAll = () => Stack.services.value.map(service => service.enabled = true)
-    const disableAll =() => Stack.services.value.map(service => service.enabled = false)
     /** @param {string} group */
-    const getServicesFromGroup = group => Stack.services.value.filter(service => service.groups?.includes(group)||group === 'All')
+    const getServicesFromGroup = group => servicesToLaunch.value.filter(service => service.groups?.includes(group)||group === 'All')
     /** @param {string} group */
     const isGroupSelected = group => getServicesFromGroup(group).every(service => service.enabled)
     const search = ref('')
 
-    /** @param {import('@/models/service').default} service */
+    /** @param {typeof servicesToLaunch['value'][number] | undefined} service */
     const save = async (service) => {
+      if(!service?.label) return
       localStorage.setItem(`automatic-toggle-${service.label}`, service.enabled == null ? 'false' : service.enabled.toString())
     }
     /**
-     * @param {Service} service
+     * @param {typeof servicesToLaunch['value'][number] | undefined} service
      * @param {boolean | null} force
      */
     const toggleService = async (service, force = null) => {
@@ -101,10 +116,11 @@ export default {
       }
     }
     return {
+      servicesToLaunch,
       search,
-      isAllEnabled: computed(() => Stack.services.value.every(service => service.enabled)),
+      isAllEnabled: computed(() => servicesToLaunch.value.every(service => service.enabled)),
       groups: computed(() => {
-        const groupsById = Stack.services.value.reduce((groups, service) => {
+        const groupsById = servicesToLaunch.value.reduce((groups, service) => {
           if(service.groups) {
             service.groups.forEach(group => {
               if(!groups[group]) groups[group] = reactive({services: [], label: group})
@@ -131,8 +147,6 @@ export default {
       Stack,
       System,
       validate, 
-      enableAll,
-      disableAll,
       /** @param {Service[]} services */
       displayedServices(services) {
         return services.filter(s => s.label?.toUpperCase().includes(search.value.toUpperCase()))

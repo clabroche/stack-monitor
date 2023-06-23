@@ -6,6 +6,24 @@ const { exec } = require('child_process');
 const open = require('open');
 const myConfs = require('../models/myConfs');
 const commandExists = require('command-exists').sync;
+const Octokit = require('octokit');
+
+router.get('/has-update', async function (req, res) {
+  try {
+    const localVersion = `v${require('../../package.json').version}`
+    const octokit = new Octokit.Octokit({ auth: process.env.GH_APIKEY });
+    const { data: tags } = await octokit.rest.repos.listTags({ owner: 'clabroche', repo:'stack-monitor' })
+    const remoteVersion = tags[0]?.name
+    return res.json({
+      local: localVersion,
+      remote: remoteVersion,
+      hasUpdate: localVersion !== remoteVersion
+    })
+  } catch (error) {
+    console.error(error)
+    return res.json(null)
+  }
+});
 
 router.get('/configuration', function (req, res) {
   res.json(Stack.getStack()?.exportInApi())
