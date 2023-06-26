@@ -1,6 +1,8 @@
 /** @type {import('../views').PluginSM<null>} */
 const plugin = {
   name: "Mongo",
+  displayName: 'Mongo',
+  description: 'Make some operation on mongo objectid',
   icon: "fab fa-envira",
   export: null,
   placements: [

@@ -19,9 +19,11 @@ import DevOps from "./dev-ops/Index.vue";
 import Github from "./github/Index.vue";
 import Kanban from "./kanban/Index.vue";
 import GlobalScripts from "./global-scripts/Index.vue";
+import Finder from "./finder/Index.vue";
 
 const toolboxPlugins = [
   { name: 'JWT', component: JWT },
+  { name: "Finder", component: Finder },
   { name: 'Git-NotUpToDate', component: NotUpToDate },
   { name: 'Regex', component: Regex },
   { name: 'UUID', component: UUID },
@@ -82,6 +84,8 @@ export default plugins
  * @template T
  * @typedef {{
  *  name: string,
+ *  displayName: string,
+*   description?: string,
  *  icon?: string,
  *  order?: number,
  *  hidden?: (service: import('../server/models/Service')) => Promise<boolean> | boolean,
@@ -94,6 +98,6 @@ export default plugins
  *    iconText?: string,
  *    goTo?: import('vue-router').RouteLocationRaw | string,
  *    active: string
- *  } | 'toolbox' | 'sidebar' | 'dev-ops' | 'service')[]
+ *  } | 'toolbox' | 'sidebar' | 'dev-ops' | 'service' | 'global')[]
  * }} PluginSM
  */

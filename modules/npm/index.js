@@ -3,6 +3,8 @@ const Npm = require('./Npm')
 /** @type {import('../views').PluginSM<null>} */
 const plugin = {
   name: 'Npm',
+  displayName: 'Npm',
+  description: 'View your dependencies and execute your scripts on a service',
   icon: 'fab fa-npm',
   export: null,
   placements: ['service'],

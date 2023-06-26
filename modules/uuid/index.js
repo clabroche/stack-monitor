@@ -1,6 +1,8 @@
 /** @type {import('../views').PluginSM<import('./UUID')>} */
 const plugin = {
   name: "UUID",
+  displayName: 'UUID',
+  description: 'Generate an UUID',
   icon: "fas fa-random",
   placements: [
     {

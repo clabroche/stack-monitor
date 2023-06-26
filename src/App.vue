@@ -16,6 +16,7 @@
     <a :href="githubIssue" target="_blank">Click here</a>
   </div>
 
+  <Finder/>
   <notif-history/>
   <notifications/>
 

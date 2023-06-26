@@ -1,6 +1,8 @@
 /** @type {import('../views').PluginSM<null>} */
 const plugin = {
   name: "OpenAI",
+  displayName: 'Open A.I.',
+  description: 'Just chat with Chat GPT',
   icon: "fas fa-brain",
   export: null,
   placements: [

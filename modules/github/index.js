@@ -1,6 +1,8 @@
 /** @type {import('../views').PluginSM<null>} */
 const plugin = {
   name: 'Github',
+  displayName: 'Github',
+  description: 'View pull requests for a given service',
   icon: 'fab fa-github',
   export: null,
   placements: ['service'],

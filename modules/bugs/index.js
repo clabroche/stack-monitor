@@ -1,13 +1,15 @@
 const fse = require('fs-extra')
 const pathfs = require('path')
 
-/** @type {import('../views').PluginSM<{a: 'a'}>} */
+/** @type {import('../views').PluginSM<null>} */
 const plugin = {
   name: 'Bugs',
+  displayName: 'Bugs',
+  description: 'Find bugs across a whole javascript project',
   icon: 'fas fa-bug',
   placements: ['service'],
   order: 4,
-  export: {a: 'a'},
+  export: null,
   /** @param {import('../../server/models/Service')} service*/
   hidden: async (service) => {
     const serviceIsNpm = await isNpm(service)

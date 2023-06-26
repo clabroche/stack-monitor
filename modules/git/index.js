@@ -3,6 +3,8 @@ const commandExists = require('command-exists')
 /** @type {import('../views').PluginSM<import('./Git')>} */
 const plugin = {
   name: 'Git',
+  displayName: 'Git',
+  description: 'View and manage git across whole projects',
   icon: 'fab fa-git-alt',
   export: require('./Git'),
   placements: ['service', {

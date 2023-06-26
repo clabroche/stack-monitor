@@ -29,9 +29,8 @@
 </template>
 
 <script setup>
-import SectionCmp from '@/components/Section.vue'
 import axios from '@/helpers/axios'
-import {ref, onMounted, watch} from 'vue'
+import {ref, onMounted} from 'vue'
 import Column from './Column.vue';
 import Modal from '@/components/Modal.vue';
 

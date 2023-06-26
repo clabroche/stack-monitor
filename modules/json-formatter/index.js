@@ -1,6 +1,8 @@
 /** @type {import('../views').PluginSM<null>} */
 const plugin = {
   name: "JSONFormatter",
+  displayName: "Json Formatter",
+  description: 'View json validity and explore it',
   icon: "fas fa-random",
   export: null,
   placements: [

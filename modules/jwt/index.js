@@ -1,6 +1,8 @@
 /** @type {import('../views').PluginSM<null>} */
 const plugin = {
   name: "JWT",
+  displayName: "JWT",
+  description: "View a json web token",
   icon: "fas fa-key",
   export: null,
   placements: [

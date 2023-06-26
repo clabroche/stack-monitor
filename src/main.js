@@ -3,7 +3,7 @@ import Socket from './helpers/Socket';
 ;(async () => {
   console.log('Init Socket...')
   await Socket.init()
-
+  
   const {default: router} = await import('./router/router')
   const { createApp } = await import('vue');
   const {default: App} = await import('./App.vue')

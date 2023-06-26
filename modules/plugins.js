@@ -18,4 +18,5 @@ module.exports = {
   uuid: require('./uuid'),
   github: require('./github'),
   kanban: require('./kanban'),
+  finder: require('./finder'),
 }

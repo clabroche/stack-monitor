@@ -1,6 +1,8 @@
 /** @type {import('../views').PluginSM<null>} */
 const plugin = {
   name: "Regex",
+  displayName: 'Regex',
+  description: 'Test your regular expression',
   icon: "fas fa-key",
   export: null,
   placements: [

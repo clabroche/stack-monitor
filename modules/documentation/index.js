@@ -1,6 +1,8 @@
 /** @type {import('../views').PluginSM<null>} */
 const plugin = {
   name: 'Documentation',
+  displayName: 'Documentation',
+  description: 'Read documentation for a given service',
   icon: 'fas fa-book',
   export: null,
   placements: ['service'],

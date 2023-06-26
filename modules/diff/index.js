@@ -1,6 +1,8 @@
 /** @type {import('../views').PluginSM<null>} */
 const plugin = {
   name: "Diff",
+  displayName: 'Differences',
+  description: 'Find differences between two strings',
   icon: "fas fa-columns",
   export: null,
   placements: [

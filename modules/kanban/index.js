@@ -1,6 +1,8 @@
 /** @type {import('../views').PluginSM<import('./UUID')>} */
 const plugin = {
   name: "kanban",
+  displayName: 'Kanban',
+  description: 'Manage your project with cards',
   icon: "fas fa-random",
   placements: [
     {

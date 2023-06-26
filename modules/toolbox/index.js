@@ -1,6 +1,8 @@
 /** @type {import('../views').PluginSM<null>} */
 const plugin = {
   name: 'Toolbox',
+  displayName: 'Toolbox',
+  description: 'Choose from a bunch of tool',
   icon: 'fas fa-plus',
   export: null,
   placements: [{
