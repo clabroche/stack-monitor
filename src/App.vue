@@ -27,7 +27,6 @@ import sidebarVue from './components/sidebar.vue'
 import Socket from './helpers/Socket'
 import githubIssue from './helpers/githubIssue'
 import { ref, onMounted } from 'vue'
-import router from './router/router'
 import system from './models/system'
 import notif from './helpers/notification'
 import Notifications from "./components/Notifications.vue"
@@ -35,6 +34,7 @@ import './helpers/ServiceError'
 import NotifHistory from './components/NotifHistory.vue'
 import SidebarViewMode from './components/SidebarViewMode.vue'
 import EnvironmentsChooser from './components/EnvironmentsChooser.vue'
+import { useRouter } from 'vue-router';
 
 export default {
   components: {
@@ -45,6 +45,7 @@ export default {
     EnvironmentsChooser,
   },
   setup() {
+    const router = useRouter(); 
     const connected = ref(true)
     const redirect = async () => {
       connected.value = Socket.socket.connected

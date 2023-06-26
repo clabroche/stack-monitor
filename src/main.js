@@ -4,9 +4,9 @@ import Socket from './helpers/Socket';
   console.log('Init Socket...')
   await Socket.init()
 
+  const {default: router} = await import('./router/router')
   const { createApp } = await import('vue');
   const {default: App} = await import('./App.vue')
-  const {default: router} = await import('./router/router')
   const {default: system} = await import('./models/system')
   const {default: views} = await import('../modules/views')
   const {default: Editor} = await import('./components/Editor.vue')

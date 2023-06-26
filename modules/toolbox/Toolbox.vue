@@ -30,7 +30,8 @@
 
 <script setup>
 import axios from '@/helpers/axios'
-import router from '@/router/router'
+import { useRouter } from 'vue-router';
+const router = useRouter(); 
 
 import { onMounted, ref, computed } from 'vue'
 /** @type {import('vue').Ref<import('../views').PluginSM<undefined>[]>} */

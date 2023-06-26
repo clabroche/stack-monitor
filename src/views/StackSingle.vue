@@ -54,12 +54,12 @@ import System from '../models/system'
 import ProgressVue from '../components/Progress.vue';
 import SectionVue from '../components/Section.vue'
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
-import router from '../router/router'
 import Tabs from '../components/Tabs.vue';
 import Card from '../components/Card.vue';
 import NotificationBell from '../components/NotificationBell.vue';
 import axios from '../helpers/axios'
 import Socket from '../helpers/Socket';
+import { useRouter } from 'vue-router';
 
 export default {
   name: 'StackSingle',
@@ -71,6 +71,7 @@ export default {
     NotificationBell,
   },
   setup() {
+    const router = useRouter(); 
     /** @type {import('vue').Ref<import('../models/service').default[]>} */
     const stack = ref([])
       /** @type {import('vue').Ref<import('../models/service').default | undefined>}*/

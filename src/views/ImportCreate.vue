@@ -31,11 +31,12 @@ import BackgroundStackChooser from '../components/BackgroundStackChooser.vue'
 import Section from '../components/Section.vue'
 import { onMounted } from '@vue/runtime-core'
 import Stack from '../models/stack'
-import router from '../router/router'
 import Modal from '../components/Modal.vue'
 import Explorer from '../components/Explorer.vue'
 import LeftLogo from '../components/LeftLogo.vue'
 import System from '../models/system'
+import { useRouter } from 'vue-router';
+
 export default {
   name: 'StackChooser',
   components: {
@@ -46,6 +47,7 @@ export default {
     LeftLogo
   },
   setup() {
+    const router = useRouter(); 
     const recents = ref([])
     onMounted(async () => {
       recents.value = await Stack.getAllConfsPath()

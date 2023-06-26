@@ -43,10 +43,10 @@ import System from '../models/system'
 import { computed, onMounted, ref } from 'vue'
 import SidebarViewModeItemVue from './SidebarViewModeItem.vue'
 import stack from '../models/stack'
-import router from '@/router/router'
 import DoughtnutChart from './DoughtnutChart.vue'
 import axios from '@/helpers/axios'
 import Socket from '@/helpers/Socket';
+import { useRouter } from 'vue-router';
 
 export default {
   components: {
@@ -57,6 +57,7 @@ export default {
     currentService: {default: null}
   },
   setup() {
+    const router = useRouter(); 
     /** @type {import('vue').Ref<import('../../modules/views').PluginSM<null>[]>} */
     const plugins = ref([])
     const cpu = ref(0)

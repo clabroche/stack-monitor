@@ -252,7 +252,7 @@ class Service {
 
       if(line.hide) return
 
-      if (line.source === 'stderr') {
+      if (line.source === 'stderr' && isMainProcess) {
         Socket.io?.emit('alert', { label: this.label, message: line.raw.toString(), type: 'error' })
       }
 
@@ -309,8 +309,8 @@ class Service {
       }, 50);
       if (code) {
         if(launchMessage.cmd) launchMessage.cmd.status = 'error'
-        Socket.io?.emit('service:crash', { label: this.label, code, signal, pid: spawnProcess.pid })
         if(isMainProcess) {
+          Socket.io?.emit('service:crash', { label: this.label, code, signal, pid: spawnProcess.pid })
           this.Stack.getStack()?.triggerOnServiceCrash(this, code)
           this.crashed = true
         }

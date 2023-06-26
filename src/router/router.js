@@ -1,7 +1,3 @@
-import StackChooserVue from '../views/StackChooser.vue'
-import StackSingle from '../views/StackSingle.vue'
-import StackMultiple from '../views/StackMultiple.vue'
-import ImportCreate from '../views/ImportCreate.vue'
 import { createRouter, createWebHashHistory } from "vue-router";
 import plugins from '../../modules/views'
 
@@ -16,21 +12,21 @@ const routes = [
   {
     path: '/stack-chooser',
     name: 'stack-chooser',
-    component: StackChooserVue
+    component: () => import('../views/StackChooser.vue')
   },
   {
     path: '/stack-single/:label',
     name: 'stack-single',
-    component: StackSingle
+    component: () => import('../views/StackSingle.vue')
   },
   {
     path: '/stack-multiple',
     name: 'stack-multiple',
-    component: StackMultiple
+    component: () => import('../views/StackMultiple.vue')
   }, {
     path: '/import-create',
     name: 'import-create',
-    component: ImportCreate
+    component: () => import('../views/ImportCreate.vue')
   },
   ...pluginsRoutes,
   {

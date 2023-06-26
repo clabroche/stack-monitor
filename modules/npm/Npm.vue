@@ -77,12 +77,12 @@
 </template>
 
 <script>
-import Socket from '@/helpers/Socket'
 import Service from '@/models/service'
 import SectionVue from '@/components/Section.vue'
-import { onMounted, reactive, ref, watch } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import Spinner from '@/components/Spinner.vue';
-import router from '../../src/router/router.js'
+import { useRouter } from 'vue-router';
+
 export default {
   components: {
     sectionCmp: SectionVue,
@@ -100,6 +100,7 @@ export default {
     }
   },
   setup(props) {
+    const router = useRouter(); 
     const isNpm = ref(false)
     /** @type {import('vue').Ref<Record<string, any> | null>} */
     const packageJson = ref(null)

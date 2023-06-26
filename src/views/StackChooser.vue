@@ -57,10 +57,9 @@ import Stack from '../models/stack'
 import System from '../models/system'
 import SectionVue from '../components/Section.vue'
 import { computed, onMounted, reactive, ref, watch } from 'vue'
-import router from '../router/router'
 import BackgroundStackChooser from '../components/BackgroundStackChooser.vue'
 import LeftLogo from '../components/LeftLogo.vue'
-import Service from '@/models/service'
+import { useRouter } from 'vue-router';
 
 export default {
   name: 'StackChooser',
@@ -70,6 +69,7 @@ export default {
     LeftLogo
   },
   setup() {
+    const router = useRouter(); 
     /** @type {import('vue').Ref<{label: string | undefined, enabled: boolean, groups: string[] | undefined}[]>} */
     const servicesToLaunch = ref([])
     onMounted(async () => {
@@ -162,7 +162,7 @@ export default {
 .stack-chooser-root {
   width: 100vw;
   height: 100vh;
-  display: flex;
+  display: flex; 
   justify-content: space-between;
   align-items: center;
   position: relative;

@@ -5,8 +5,9 @@
 </template>
 
 <script setup>
-import router from '@/router/router';
 import { computed } from 'vue';
+import { useRouter } from 'vue-router';
+const router = useRouter(); 
 
 const props = defineProps({
   button: {

@@ -16,7 +16,9 @@
 
 <script setup>
 import { ref, onMounted, computed, watch } from 'vue'
-import router from '../router/router.js'
+import { useRouter } from 'vue-router';
+const router = useRouter(); 
+
 
 const props = defineProps({
   tabs: {

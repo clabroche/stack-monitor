@@ -27,9 +27,10 @@
 
 <script setup>
 import SectionCmp from '@/components/Section.vue'
-import router from '@/router/router'
 import { ref, watchEffect } from 'vue'
 import JsonViewer from 'vue-json-viewer'
+import { useRouter } from 'vue-router';
+const router = useRouter(); 
 
 const initialJSON = router.currentRoute.value.query.json?.toString()
 const showRaw = ref(false)

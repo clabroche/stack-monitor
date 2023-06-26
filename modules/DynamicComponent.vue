@@ -3,8 +3,10 @@
 </template>
 
 <script setup>
-import router from '@/router/router'
 import {ref, watchEffect} from 'vue'
+import { useRouter } from 'vue-router';
+const router = useRouter();
+
 
 const component = ref()
 watchEffect(() => {

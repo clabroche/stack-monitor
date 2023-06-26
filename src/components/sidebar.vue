@@ -17,7 +17,7 @@ import sidebarItemVue from './sidebarItem.vue'
 import { computed, onMounted, ref } from 'vue'
 import Socket from '@/helpers/Socket'
 import notification from '@/helpers/notification'
-import router from '@/router/router'
+import { useRouter } from 'vue-router';
 
 export default {
   components: {
@@ -27,6 +27,7 @@ export default {
     currentService: {default: null}
   },
   setup() {
+    const router = useRouter(); 
     const search = ref('')
 
     onMounted(async () => {
