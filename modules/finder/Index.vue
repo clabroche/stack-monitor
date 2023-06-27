@@ -1,5 +1,8 @@
 <template>
   <div class="finder-root" v-show="show" @click="show = false" :class="{isComponent}">
+    <div class="hint" v-if="isComponent">
+      Press Ctrl+Alt+P To open it anywhere
+    </div>
     <div class="finder-container" @click.stop="">
       <input type="text" autofocus v-model="search" placeholder="Type to find something..." ref="inputRef" @keyup="keyup">
       <div class="groups">
@@ -154,13 +157,20 @@ async function keyup($event) {
   width: 100vw;
   height: 100vh;
   display: flex;
+  flex-direction: column;
+  align-items: center;
   justify-content: center;
+  .hint {
+    margin: 10px;
+    background-color: #aaa;
+    border-radius: 10px;
+    padding: 5px;
+  }
   &.isComponent {
     position: relative;
   }
   .finder-container {
     width: 90%;
-    margin-top: 40px;
     border-radius: 10px;
     max-width: 1000px;
     height: max-content;
