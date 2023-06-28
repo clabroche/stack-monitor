@@ -24,7 +24,7 @@ const stack = (stackMonitor) => {
     PREPROD: {
       label: 'Preprod',
       envs: require('./env.preprod'),
-      color: '#0000ff',
+      color: 'white',
       bgColor: '#0000ff'
     }
   }, 'LOCAL')
