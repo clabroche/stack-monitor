@@ -1,26 +1,28 @@
 <template>
   <div @click="$router.push({name: 'stack-single', params: {label: service.label}})"
     class="sidebar-item"
-    :class="{active: isActive(service), disabled: !service.enabled, crashed: service.crashed}">
+    :class="{active: isActive, disabled: !service.enabled, crashed: service.crashed}">
       {{service.label}}
       <i class="fas fa-chevron-right"  aria-hidden="true"></i>
   </div>
 </template>
 
-<script>
-export default {
-  props: {
-    service: {default: null}
-  },
-  methods: {
-    /** @param {import('../models/service').default} service*/
-    isActive(service) {
-      const url = this.$route.fullPath.split('?')[0]
-      const serviceLabel = url.split('/').pop()
-      return service.label ? encodeURIComponent(service.label) === serviceLabel : false
-    }
+<script setup>
+import { computed } from 'vue';
+import { useRouter } from 'vue-router';
+const router = useRouter()
+
+const props = defineProps({
+  service: {
+    /** @type {import('../models/service').default | null} */
+    default: null
   }
-}
+})
+const isActive = computed(() => {
+  const url = router.currentRoute.value.fullPath.split('?')[0]
+  const serviceLabel = url.split('/').filter(a => a).pop()
+  return props.service?.label ? encodeURIComponent(props.service.label) === serviceLabel : false
+})
 </script>
 
 <style lang="scss" scoped>

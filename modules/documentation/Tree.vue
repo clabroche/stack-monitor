@@ -1,7 +1,7 @@
 <template>
   <div class="root">
     <div v-for="leaf of tree" :key="leaf.name">
-      <div class="label" :class="{active: leaf === activeLeaf, isFile: !leaf.isDir}" @click.stop="leaf.isDir ? '' : $emit('go', leaf)">
+      <div class="label" :class="{active: leaf?.path === activeLeaf?.path, isFile: !leaf.isDir}" @click.stop="leaf.isDir ? '' : $emit('go', leaf)">
         <i class="fas fa-folder" v-if="leaf.isDir"></i>
         <i class="fas fa-file" v-else></i>
         {{ leaf.name || leaf.path }}
@@ -30,7 +30,11 @@ defineProps({
     // @ts-ignore
     default: () => ([])
   },
-  activeLeaf: {}
+  activeLeaf: {
+    required: true,
+    /** @type {import('./index').Leaf | null | undefined} */
+    default: undefined
+  }
 })
 </script>
 

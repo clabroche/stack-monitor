@@ -1,13 +1,6 @@
 const express = require('express');
 const router = express.Router();
-
-/**
- * @param {string} str 
- * @param {string} search 
- */
-function searchString(str, search) {
-  return str?.toUpperCase()?.includes(search)
-}
+const PromiseB = require('bluebird')
 
 /**
  * 
@@ -18,9 +11,11 @@ function pluginToUrl(plugin) {
     const placement = plugin.placements[i];
     if(typeof placement !== 'string') {
       if(placement.position === 'toolbox') {
+        // @ts-ignore
         return `/toolbox${placement.goTo?.path || placement.goTo}`
       }
       if(placement.position === 'sidebar') {
+        // @ts-ignore
         return `${placement.goTo?.path || placement.goTo}`
       }
     }
@@ -29,7 +24,10 @@ function pluginToUrl(plugin) {
 
 /** @param {import('../../typings/export').StackMonitor} stackMonitor */
 const routes = (stackMonitor) => {
-  const { getServices } = stackMonitor
+  const {
+    getServices,
+    helpers: {searchString}
+  } = stackMonitor
   router.get('/finder/search', async function (req, res) {
     const search = req.query.q?.toString()?.toUpperCase() || ''
     /** @type {FinderChoice[]} */
@@ -43,17 +41,22 @@ const routes = (stackMonitor) => {
       }))
     
     const plugins = require('../plugins');
-    const _plugins = Object.keys(plugins)
-      .map((/** @type {keyof typeof plugins}*/key) => plugins[key])
-      .filter((plugin) => searchString(plugin.name, search))
-      .map(plugin => ({
-        title: plugin.displayName || plugin.name,
-        description: plugin.description,
-        group: 'Plugin',
-        icon: plugin.icon,
-        url: pluginToUrl(plugin)
+    const _plugins = (await PromiseB
+      .map(Object.keys(plugins), (/** @type {keyof typeof plugins}*/key) => plugins[key])
+      .map(async plugin => {
+        return [
+          ...(await plugin?.finder?.(search, stackMonitor) || []),
+          ...(searchString(plugin.name, search) ? [{
+            title: plugin.displayName || plugin.name,
+            description: plugin.description,
+            group: 'Plugin',
+            icon: plugin.icon,
+            url: pluginToUrl(plugin) || ''
+          }] : [])
+        ]
       }))
-      .filter(a => a.url)
+      .flat()
+      .filter(a => a?.url)
 
     /** @type {FinderChoice[]} */
     const result = [
@@ -75,7 +78,7 @@ module.exports = routes
  *  description?: string,
  *  secondaryTitle?: string
  *  secondaryDescription?: string,
- *  url?: string,
+ *  url: import('vue-router').RouteLocationRaw | string,
  * }} FinderChoice
  */
 

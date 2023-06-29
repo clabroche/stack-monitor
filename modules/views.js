@@ -91,6 +91,7 @@ export default plugins
  *  hidden?: (service: import('../server/models/Service')) => Promise<boolean> | boolean,
  *  routes?: (stackMonitor: typeof import('../server/models/stack')) => import('express').Router,
  *  export: T,
+ *  finder?: (search: string, stackMonitor: typeof import('../server/models/stack')) => import('./finder/routes').FinderChoice[] | Promise<import('./finder/routes').FinderChoice[]>
  *  placements: ({
  *    label: string,
  *    position?: 'toolbox' | 'sidebar' | 'dev-ops',

@@ -5,7 +5,7 @@
       <div class="boards-container">
         <input type="text" v-model="boardToCreate" @keypress.enter="createBoard" placeholder="New Board...">
         <div class="boards">
-          <div class="board" :class="{active: selectedBoard?.id === board?.id}" v-for="board of boards" :key="board?.id" @click="selectedBoard = board">
+          <div class="board" :class="{active: selectedBoard?.id === board?.id}" v-for="board of boards" :key="board?.id" @click="$router.push({query: {boardId: board?.id}})">
             {{ board?.name }}
             <button class="small" @click="deleteBoard(board)"><i class="fas fa-trash"></i></button>
           </div>
@@ -30,9 +30,11 @@
 
 <script setup>
 import axios from '@/helpers/axios'
-import {ref, onMounted} from 'vue'
+import {ref, onMounted, watch} from 'vue'
 import Column from './Column.vue';
 import Modal from '@/components/Modal.vue';
+import {useRoute} from 'vue-router'
+const route = useRoute()
 
 defineProps({
   plugin: {}
@@ -42,17 +44,17 @@ const boards = ref([])
 /** @type {import('vue').Ref<import('../../typings').NonFunctionProperties<import('./Kanban').BoardType>['prototype'] | null>} */
 const selectedBoard = ref()
 const boardToCreate = ref('')
-const columnToCreate = ref('')
 const deleteBoardModal = ref('')
+
+watch(() => route.query.boardId, () => {
+  selectedBoard.value = boards.value.find(b => b?.id===route.query.boardId)
+}, {immediate: true})
 
 onMounted(reload)
 async function refreshBoards() {
   const {data: _boards} = await axios.get('/kanban/boards')
   boards.value = _boards
-  console.log(boards.value)
-  if(selectedBoard.value?.id) {
-    selectedBoard.value = boards.value.find(b => b?.id===selectedBoard.value?.id)
-  } 
+  selectedBoard.value = boards.value.find(b => b?.id===route.query.boardId)
 }
 async function reload() {
   await refreshBoards()

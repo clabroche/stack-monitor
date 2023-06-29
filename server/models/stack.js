@@ -37,6 +37,8 @@ class Stack {
   static getSave = require('../models/saves')
   static Socket = Socket
 
+  static helpers = require('../helpers/exportedHelpers')
+
   /** @param {Partial<Stack>} stack */
   constructor(stack) {
     /** @type {string | undefined} */
@@ -47,6 +49,8 @@ class Stack {
     this.logParsers = stack.logParsers || []
     /** @type {Service[]} */
     this.services = (stack.services || []).map(service => new Service(service, /**@type {StackWithPlugins}*/(Stack)))
+
+    this.helpers = require('../helpers/exportedHelpers')
   }
 
   /** @param {string[]} servicesLabelSelected */

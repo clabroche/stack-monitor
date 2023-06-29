@@ -18,11 +18,13 @@
 import Service from '@/models/service'
 import SectionCmp from '@/components/Section.vue'
 import axios from '@/helpers/axios'
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 // @ts-ignore
 import Tree from './Tree.vue'
 // @ts-ignore
 import Markdown from 'vue3-markdown-it'
+import {useRoute} from 'vue-router'
+const route = useRoute()
 
 const props = defineProps({
   service: {
@@ -34,17 +36,34 @@ const props = defineProps({
 
 /** @type {import('vue').Ref<Leaf[]>} */
 const tree = ref([])
+
+/** @type {import('vue').Ref<Leaf[]>} */
+const flatTree = ref([])
 const currentPage = ref(null)
-/** @type {import('vue').Ref<Leaf | null>} */
+/** @type {import('vue').Ref<Leaf | null | undefined>} */
 const activeLeaf = ref(null)
+
+watch(() => route.query.leaf, () => {
+  const leaf = flatTree.value.find((leaf) => leaf.path === route.query.leaf?.toString())
+  if(leaf) return goTo(leaf)
+})
 
 onMounted(async () => {
   const {data} = await axios.get(`/documentation/service/${props.service.label}`)
+  const {data: flat} = await axios.get(`/documentation/service/${props.service.label}/flat`)
+  flatTree.value = flat
   tree.value = data
   if(!currentPage.value) {
+    if(route.query.leaf) {
+      const leaf = flatTree.value.find((leaf) => leaf.path === route.query.leaf?.toString())
+      if(leaf) return goTo(leaf)
+    }
     const defaultFile = tree.value.find(leaf => leaf.name?.toUpperCase() === 'INDEX.MD')
     if(defaultFile) {
       await goTo(defaultFile)
+    } else {
+      const firstFile = tree.value[0]
+      if(firstFile) await goTo(firstFile)
     }
   }
 })

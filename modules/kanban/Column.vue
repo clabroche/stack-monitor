@@ -2,14 +2,19 @@
   <div class="column-root" v-if="column">
     <div class="column-header">
       <h2>
-        <input class="invisible" type="text" v-model="column.name" @focusout="saveColumn" @keypress.enter="saveColumn" placeholder="Name of column..." @input="$event.target.style.width = `${$event.target.value.length}em`">
+        <input class="invisible" type="text" v-model="column.name"
+          @focusout="saveColumn"
+          @keypress.enter="saveColumn"
+          placeholder="Name of column..."
+          @input="resizeInput"
+        >
       </h2>
       <div class="actions">
         <button class="small" @click.stop="deleteColumn(column)"><i class="fas fa-trash"></i></button>
       </div>
     </div>
     <div class="cards">
-      <div class="add-card" @click="openCreateModal"><i class="fas fa-plus"></i>Create a card</div>
+      <div class="add-card" @click="openCreateModal()"><i class="fas fa-plus"></i>Create a card</div>
       <draggableComponent
         v-model="cards"
         group="column" 
@@ -62,12 +67,26 @@
 import Modal from '@/components/Modal.vue';
 import axios from '@/helpers/axios'
 import { cloneDeep } from 'lodash';
-import {ref, onMounted} from 'vue'
+import {ref, onMounted, watch} from 'vue'
 import draggableComponent from 'vuedraggable';
+import {useRoute, useRouter} from 'vue-router'
+const route = useRoute()
+const router = useRouter()
+
+/**
+ * 
+ * @param {KeyboardEvent} $ev 
+ */
+function resizeInput($ev) {
+  const target = /**@type {HTMLInputElement}*/($ev.target)
+  if(!target) return
+  target.style.width = `${target.value.length}em`
+}
 
 const props = defineProps({
   board: {
     required: true,
+    type: null,
   },
   columnId: {
     required: true,
@@ -75,27 +94,43 @@ const props = defineProps({
   }
 })
 const emit = defineEmits(['refresh'])
-const createCardModal = ref()
-const deleteCardModal = ref('')
-const deleteColumnModal = ref('')
+/** @type {import('vue').Ref<InstanceType<typeof Modal> | null>} */
+const createCardModal = ref(null)
+/** @type {import('vue').Ref<InstanceType<typeof Modal> | null>} */
+const deleteCardModal = ref(null)
+/** @type {import('vue').Ref<InstanceType<typeof Modal> | null>} */
+const deleteColumnModal = ref(null)
 const drag = ref(false)
+/** @type {import('vue').Ref<InstanceType<import('./Kanban').CardType>[]>} */
 const cards = ref([])
 /** @type {import('vue').Ref<import('../../typings').NonFunctionProperties<import('./Kanban').ColumnType>['prototype'] | undefined | null>} */
 const column = ref()
+
+
+watch(() => route.query.cardId, () => {
+  if(!route.query.cardId) return
+  const card = cards.value.find(b => b?.id===route.query.cardId)
+  if(card) openCreateModal(card)
+}, {immediate: true})
+
 onMounted(async () => {
   await refreshColumn()
   refreshCards()
 })
+
+/** @param {InstanceType<import('./Kanban').CardType>} card */
 async function deleteCard(card) {
-  deleteCardModal.value.open(card).subscribe(async (res) => {
+  deleteCardModal.value?.open(card).subscribe(async (res) => {
     if(!res) return
     await axios.delete(`/kanban/boards/${props.board.id}/columns/${props.columnId}/cards/${card.id}`)
     await refreshColumn()
     await refreshCards()
   })
 }
+
+/** @param {InstanceType<import('./Kanban').ColumnType>} column */
 async function deleteColumn(column) {
-  deleteColumnModal.value.open(column).subscribe(async (res) => {
+  deleteColumnModal.value?.open(column).subscribe(async (res) => {
     if(!res) return
     await axios.delete(`/kanban/boards/${props.board.id}/columns/${props.columnId}/`)
     await refreshColumn()
@@ -109,10 +144,17 @@ async function refreshColumn() {
 async function refreshCards() {
   const {data: _cards} = await axios.get(`/kanban/boards/${props.board.id}/columns/${props.columnId}/cards`)
   cards.value = _cards
+  const card = cards.value.find(b => b?.id===route.query.cardId)
+  if(card) openCreateModal(card)
 }
-async function openCreateModal(card) {
-  card = card ? cloneDeep(card) : {}
-  createCardModal.value.open(card).subscribe(async (res) => {
+/** @param {InstanceType<import('./Kanban').CardType> | Record<any, any>} card */
+async function openCreateModal(card = {}) {
+  card = cloneDeep(card)
+  if(card.id) {
+    router.push({query: {...route.query, cardId: card.id,}})
+  }
+  createCardModal.value?.open(card).subscribe(async (res) => {
+    router.push({query: {...route.query, cardId: undefined,}})
     if(!res) return
     await axios.post(`/kanban/boards/${props.board.id}/columns/${props.columnId}/cards`, card)
     await refreshColumn()
@@ -120,8 +162,13 @@ async function openCreateModal(card) {
   })
 }
 
+/**
+ * 
+ * @param {KeyboardEvent | FocusEvent} $ev 
+ */
 async function saveColumn($ev) {
-  if($ev?.target) $ev.target.blur()
+  const target = /**@type {HTMLElement}*/($ev.target)
+  if(target) target.blur()
   if(column.value?.cardIds) column.value.cardIds = cards.value.map(c => c.id)
   await axios.post(`/kanban/boards/${props.board.id}/columns/`, column.value)
   await refreshColumn()

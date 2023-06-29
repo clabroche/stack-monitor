@@ -10,27 +10,25 @@
           <h2>{{ group.label }}</h2>
           <div class="choices">
             <div class="choice" v-for="choice of group.choices" :key="`${choice}`" :class="{active: choice.active}" @click.stop="validate(choice)">
-              <div >
-                <div class="left">
-                  <div class="icon">
-                    <i :class="choice.icon || 'fas fa-cog'"></i>
-                  </div>
-                  <div>
-                    <div class="title">
-                      {{ choice.title }}
-                    </div>
-                    <div class="description">
-                      {{ choice.description }}
-                    </div>
-                  </div>
+              <div class="left">
+                <div class="icon">
+                  <i :class="choice.icon || 'fas fa-cog'"></i>
                 </div>
-                <div class="right">
+                <div>
                   <div class="title">
-                    {{ choice.secondaryTitle }}
+                    {{ choice.title }}
                   </div>
                   <div class="description">
-                    {{ choice.secondaryDescription }}
+                    {{ choice.description }}
                   </div>
+                </div>
+              </div>
+              <div class="right">
+                <div class="title">
+                  {{ choice.secondaryTitle }}
+                </div>
+                <div class="description">
+                  {{ choice.secondaryDescription }}
                 </div>
               </div>
             </div>
@@ -39,7 +37,7 @@
                 <div v-if="group.otherChoices?.length">
                   <div class="title">And {{group.otherChoices.length}} others...</div>
                   <div class="description">
-                    {{ group.otherChoices.map(a => a.title).slice(0, 20).join(', ') }} ...
+                    {{ group.otherChoices.map(a => a.title).slice(0, 20).map(a => a.slice(0, 40) + '...').join(', ') }} ...
                   </div>
                 </div>
               </div>
@@ -58,13 +56,18 @@ import { debounce } from 'debounce';
 import { useRouter } from 'vue-router';
 const router = useRouter()
 
+/** @param {KeyboardEvent} e */
 const listener = async (e) => {
-  e.preventDefault()
   if(e.ctrlKey && e.altKey && e.code === 'KeyP') {
+    e.preventDefault()
     show.value = !show.value
     search.value = ''
     await nextTick()
     inputRef.value.focus()
+  }
+  if(e.code === 'Escape') {
+    e.preventDefault()
+    show.value = false
   }
 }
 
@@ -170,6 +173,7 @@ async function keyup($event) {
     position: relative;
   }
   .finder-container {
+    overflow: auto;
     width: 90%;
     border-radius: 10px;
     max-width: 1000px;
@@ -202,14 +206,16 @@ async function keyup($event) {
           display: flex;
           align-items: center;
           .icon {
+            flex-shrink: 0;
             width: 30px;
           }
         }
         .right {
+          flex-shrink: 0;
           text-align: right;
         }
         .title {
-          font-size: 1.2em;
+          font-size: 1.02em;
         }
         .description {
           font-size: 0.8em;
@@ -222,6 +228,8 @@ async function keyup($event) {
 .groups {
   display: flex;
   flex-direction: column;
+  overflow: auto;
+  max-height: 50vh;
   gap: 10px;
   .group {
     border-radius: 10px;

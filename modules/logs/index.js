@@ -1,3 +1,5 @@
+const dayjs = require('dayjs')
+
 /** @type {import('../views').PluginSM<null>} */
 const plugin = {
   name: 'Logs',
@@ -7,6 +9,22 @@ const plugin = {
   export: null,
   placements: ['service'],
   order: 1,
+  finder: (search, stackMonitor) => {
+    const services = stackMonitor.getServices()
+      ?.flatMap(s => (s.store?.slice(-300).reverse().map(line => ({log: line, service: s}))))
+      ?.filter(({log}) => stackMonitor.helpers.searchString(log.raw, search))
+    return [
+      ...services.map(service => ({
+        icon: 'fas fa-terminal',
+        title: service.log.raw,
+        group: 'Logs',
+        description: `Log from ${service.service.label}`,
+        secondaryTitle: service.service.label,
+        secondaryDescription: dayjs(service.log.timestamp).format('YYYY-DD-MM HH:mm:ss'),
+        url: {path: `/stack-single/${encodeURIComponent(service.service.label)}`, query: {tab: 'Logs'}},
+      })),
+    ]
+  },
   routes: require('./routes')
 }
 module.exports = plugin
