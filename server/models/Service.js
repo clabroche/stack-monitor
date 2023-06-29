@@ -316,8 +316,8 @@ class Service {
         }
       } else {
         if(launchMessage.cmd) launchMessage.cmd.status = 'exited'
-        Socket.io?.emit('service:exit', { label: this.label, code, signal, pid: spawnProcess.pid })
       }
+      Socket.io?.emit('service:exit', { label: this.label, code, signal, pid: spawnProcess.pid })
       Socket.io?.emit('logs:update:lines', [launchMessage]) 
     })
 
