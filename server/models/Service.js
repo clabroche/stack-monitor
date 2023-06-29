@@ -344,15 +344,15 @@ class Service {
   async launchHealthChecker(spawnProcess) {
     if (!spawnProcess.pid || !this.health?.check) return
     if (!(await psTreeAsync(spawnProcess.pid))?.length) return 
-    let result
-    try { result = await this.health.check(this) }
+    let healthy
+    try { healthy = await this.health.check(this) }
     catch (error) {
       console.error('Service health failed:' + error)
     }
-    if(!result) {
+    if(!healthy && !this.crashed) {
       this.crashed = true
       Socket.io?.emit('service:healthcheck:down', { label: this.label, pid: spawnProcess.pid })
-    } else {
+    } else if(healthy && this.crashed) {
       this.crashed = false
       Socket.io?.emit('service:healthcheck:up', { label: this.label, pid: spawnProcess.pid })
     }
