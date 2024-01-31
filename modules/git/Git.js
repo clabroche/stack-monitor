@@ -11,7 +11,8 @@ const Git = (stackMonitor) => {
     if (!service.git) throw new Error('Git Error - ' + service?.label + ': Git option not set')
     if (!service.rootPath) throw new Error('Git Error - ' + service?.label + ': Root Path option not set')
     if (!existsSync(service.rootPath)) throw new Error('Git Error - ' + service?.label + ': Root Path option not exists on disk')
-    if (!existsSync(pathfs.resolve(service.rootPath, '.git'))) throw new Error('Git Error - ' + service?.label + ': Git not found in ' + service.rootPath)
+    if (!existsSync(pathfs.resolve(service.rootPath, '.git'))) return false
+    return true
   }
   return {
     /**
@@ -20,7 +21,7 @@ const Git = (stackMonitor) => {
      */
     async getGraph(serviceName, {graphOnAll} = {}) {
       const service = findService(serviceName)
-      await requirements(service)
+      if(!await requirements(service)) return []
       const cmd = `git -c color.ui=always log  --decorate=full --oneline --graph ${(graphOnAll ? '--all' : '')} -500`;
       const result = await execAsync(cmd, { cwd: service.rootPath, env: process.env });
       return result.split('\n')
@@ -28,7 +29,7 @@ const Git = (stackMonitor) => {
     /** @param {string} serviceName */
     async getBranches(serviceName, fetch = false) {
       const service = findService(serviceName)
-      await requirements(service)
+      if(!await requirements(service)) return []
       if(fetch) await this.fetch(serviceName)
       const origin = await this.getOrigin(serviceName)
       const unmergeableBranches = ['dev', 'develop', 'main', 'master']
@@ -67,7 +68,7 @@ const Git = (stackMonitor) => {
     /** @param {string} serviceName */
     async getCurrentBranch(serviceName) {
       const service = findService(serviceName)
-      await requirements(service)
+      if(!await requirements(service)) return ''
       return (await execAsync('git rev-parse --abbrev-ref HEAD', { cwd: service.rootPath }))?.trim()
     },
     /**
@@ -80,7 +81,7 @@ const Git = (stackMonitor) => {
     async addBranch(serviceName, branchName, shouldPush = false) {
       if(!branchName) throw new Error('Branch name is empty')
       const service = findService(serviceName)
-      await requirements(service)
+      if(!await requirements(service)) return ''
       const res = (await execAsync(`git checkout -b ${branchName}`, { cwd: service.rootPath }))?.trim()
       if(shouldPush) await this.push(serviceName)
       return res
@@ -88,14 +89,14 @@ const Git = (stackMonitor) => {
     /** @param {string} serviceName */
     async getStatus(serviceName) {
       const service = findService(serviceName)
-      await requirements(service)
+      if(!await requirements(service)) return []
       return execAsyncWithoutErr('git -c color.status=no status -s', { cwd: service.rootPath })
         .then((res) => res.toString().trim().split('\n')?.filter(a => a))
     },
     /** @param {string} serviceName */
     async getDiff(serviceName) {
       const service = findService(serviceName)
-      await requirements(service)
+      if(!await requirements(service)) return ''
       return execAsync(`git diff --minimal`, { cwd: service.rootPath })
     },
     /** 
@@ -104,7 +105,7 @@ const Git = (stackMonitor) => {
      */
     async changeBranch(serviceName, branchName) {
       const service = findService(serviceName)
-      await requirements(service)
+      if(!await requirements(service)) return 'ko'
       await execAsync('git checkout ' + branchName, { cwd: service.rootPath })
       return 'ok'
     },
@@ -114,7 +115,7 @@ const Git = (stackMonitor) => {
      */
     async deleteBranch(serviceName, branchName) {
       const service = findService(serviceName)
-      await requirements(service)
+      if(!await requirements(service)) return 'ko'
       await execAsync('git branch --delete ' + branchName, { cwd: service.rootPath })
       return 'ok'
     },
@@ -124,7 +125,7 @@ const Git = (stackMonitor) => {
      */
     async remoteDelta(serviceName, branchName) {
       const service = findService(serviceName)
-      await requirements(service)
+      if(!await requirements(service)) return 0
       const upstream = await execAsync(`git rev-parse --abbrev-ref --symbolic-full-name @{u}`, { cwd: service.rootPath }).catch(() => {})
       if(!upstream) {
         await execAsync(`git branch --set-upstream-to=origin/${branchName} ${branchName}`, { cwd: service.rootPath }).catch(() => {})
@@ -138,21 +139,21 @@ const Git = (stackMonitor) => {
     /** @param {string} serviceName */
     async fetch(serviceName) {
       const service = findService(serviceName)
-      await requirements(service)
+      if(!await requirements(service)) return 'ko'
       await execAsync(`git fetch`, { cwd: service.rootPath })
       return 'ok'
     },
     /** @param {string} serviceName */
     async reset(serviceName) {
       const service = findService(serviceName)
-      await requirements(service)
+      if(!await requirements(service)) return 'ko'
       await execAsync('git reset --hard', { cwd: service.rootPath })
       return 'ok'
     },
     /** @param {string} serviceName */
     async pull(serviceName) {
       const service = findService(serviceName)
-      await requirements(service)
+      if(!await requirements(service)) return 'ko'
       const origin = await this.getOrigin(serviceName)
       const currentBranch = await this.getCurrentBranch(service.label)
       await execAsync(`git pull ${origin} ${currentBranch}`, { cwd: service.rootPath })
@@ -161,13 +162,13 @@ const Git = (stackMonitor) => {
     /** @param {string} serviceName */
     async getOrigin(serviceName) {
       const service = findService(serviceName)
-      await requirements(service)
+      if(!await requirements(service)) return ''
       return (await execAsync('git remote -v', { cwd: service.rootPath })).trim().split('\n').find(a => a?.includes('fetch'))?.split('\t')[0]?.trim() || ''
     },
     /** @param {string} serviceName */
     async push(serviceName) {
       const service = findService(serviceName)
-      await requirements(service)
+      if(!await requirements(service)) return 'ko'
       const origin = await this.getOrigin(serviceName)
       const currentBranch = await this.getCurrentBranch(service.label)
       await execAsync(`git push ${origin} ${currentBranch}`, { cwd: service.rootPath })
@@ -176,7 +177,7 @@ const Git = (stackMonitor) => {
     /** @param {string} serviceName */
     async stash(serviceName) {
       const service = findService(serviceName)
-      await requirements(service)
+      if(!await requirements(service)) return 'ko'
       await execAsync('git add .', { cwd: service.rootPath })
       await execAsync('git stash', { cwd: service.rootPath })
       return 'ok'
@@ -184,7 +185,7 @@ const Git = (stackMonitor) => {
     /** @param {string} serviceName */
     async stashPop(serviceName) {
       const service = findService(serviceName)
-      await requirements(service)
+      if(!await requirements(service)) return 'ko'
       await execAsync('git stash pop', { cwd: service.rootPath })
       await execAsync('git reset HEAD', { cwd: service.rootPath })
       return 'ok'
@@ -192,7 +193,7 @@ const Git = (stackMonitor) => {
     /** @param {string} serviceName */
     async stashList(serviceName) {
       const service = findService(serviceName)
-      await requirements(service)
+      if(!await requirements(service)) return ''
       const list = await execAsync('git stash show', { cwd: service.rootPath })
         .catch(() => '')
       return list
@@ -203,7 +204,7 @@ const Git = (stackMonitor) => {
      */
     async checkoutFile(serviceName, filePath) {
       const service = findService(serviceName)
-      await requirements(service)
+      if(!await requirements(service)) return 'ko'
       await execAsync('git checkout ' + filePath, { cwd: service.rootPath })
       return 'ok'
     },
