@@ -13,6 +13,7 @@ const {stripAnsi, ansiconvert, unescapeAnsi} = require('../helpers/ansiconvert')
 const createInterface = require('../helpers/readline')
 const { existsSync, readFileSync } = require('fs-extra')
 const pathfs = require('path')
+const net = require('net');
 
 /** @type {Record<string, {cmd: string, args: string[]}>} */
 const alias = {
@@ -157,9 +158,17 @@ class Service {
     const urls = [...this.urls || [], this.url].filter(a => a)
     if (urls.length) {
       await PromiseB.mapSeries(urls, async url => {
-        const port = URL.parse(url).port
+        const port = URL.parse(url).port;
         if (port && !Number.isNaN(+port)) {
-          await killport(+port).catch((err) => console.error('Error: (Kill port):', err?.message || err))
+          let free = false
+          for (let i = 0; i < 16; i++) {
+            await new Promise((resolve) => { setTimeout(resolve, 100) });
+            free = await checkport(+port);
+            if(free) break;
+          }
+          if(!free) {
+            await killport(+port).catch((err) => console.error('Error: (Kill port):', err?.message || err));
+          }
         }
       })
     }
@@ -451,7 +460,21 @@ function psTreeAsync(pid) {
   })
 };
 
-
+/** @param {number} _port */
+function checkport(_port) {
+  return new Promise((resolve) => {
+    const s = net.createServer();
+    s.once('error', () => {
+      s.close();
+      resolve(false);
+    });
+    s.once('listening', () => {
+      resolve(true);
+      s.close();
+    });
+    s.listen(_port);
+  });
+}
 
 module.exports = Service
 
