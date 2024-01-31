@@ -13,7 +13,10 @@ const plugin = {
   placements: ['service'],
   order: 6,
   /** @param {import('../../server/models/Service')} service*/
-  hidden: (service) => !service.documentation, 
+  hidden: (service) => {
+    if(!service) return false
+    return !service?.documentation
+  }, 
   routes: require('./routes'),
   finder: async (search, stackMonitor) => {
     const services = stackMonitor.getServices()?.filter(s => s.documentation)

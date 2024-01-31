@@ -15,6 +15,7 @@ const plugin = {
    * @returns 
    */
   hidden: async (service) => {
+    if(!service) return false;
     const project = new Npm(service)
     const serviceIsNpm = await project.isNpm()
     return !serviceIsNpm

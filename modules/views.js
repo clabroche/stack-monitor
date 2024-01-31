@@ -88,8 +88,11 @@ export default plugins
 *   description?: string,
  *  icon?: string,
  *  order?: number,
- *  hidden?: (service: import('../server/models/Service')) => Promise<boolean> | boolean,
- *  routes?: (stackMonitor: typeof import('../server/models/stack')) => import('express').Router,
+ *  hidden?: (
+ *    service: import('../server/models/Service') | null,
+ *    stack: typeof import('../server/models/stack'),
+ *  ) => Promise<boolean> | boolean,
+ *  routes?: (stackMonitor: import('../server/models/stack')) => import('express').Router,
  *  export: T,
  *  finder?: (search: string, stackMonitor: typeof import('../server/models/stack')) => import('./finder/routes').FinderChoice[] | Promise<import('./finder/routes').FinderChoice[]>
  *  placements: ({

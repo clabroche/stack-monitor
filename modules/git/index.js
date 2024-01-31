@@ -15,7 +15,10 @@ const plugin = {
     active: "Git-NotUpToDate",
   }],
   order: 2,
-  hidden: () => commandExists('git').then(() => false).catch(() => true),
+  hidden: (service) =>  {
+    if(!service) return true
+    return commandExists('git').then(() => false).catch(() => true)
+  },
   routes: require('./routes'),
 }
 module.exports = plugin

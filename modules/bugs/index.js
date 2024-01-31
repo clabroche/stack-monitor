@@ -10,8 +10,8 @@ const plugin = {
   placements: ['service'],
   order: 4,
   export: null,
-  /** @param {import('../../server/models/Service')} service*/
   hidden: async (service) => {
+    if(!service) return true
     const serviceIsNpm = await isNpm(service)
     return !serviceIsNpm
   },

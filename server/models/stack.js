@@ -47,6 +47,8 @@ class Stack {
     this.watchFiles = stack.watchFiles || []
     /** @type {import('./Service').Parser[]} */
     this.logParsers = stack.logParsers || []
+    /** @type {boolean} */
+    this.monorepo = stack.monorepo || false
     /** @type {Service[]} */
     this.services = (stack.services || []).map(service => new Service(service, /**@type {StackWithPlugins}*/(Stack)))
 
@@ -440,6 +442,7 @@ function difference(fromObject, toObject) {
  * watchFiles?: string[],
  * logParsers?: import('./Service').Parser[],
  * stack?: StackArray,
+ * monorepo?: boolean,
  * services?: StackArray,
  * }} StackObject
  */

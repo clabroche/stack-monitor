@@ -8,7 +8,10 @@ const plugin = {
   placements: ['service'],
   order: 3,
   /** @param {import('../../server/models/Service')} service*/
-  hidden: async (service) => !service.git?.remote?.includes('github.com'), 
+  hidden: async (service) => {
+    if(!service) return true
+    return !service.git?.remote?.includes('github.com')
+  }, 
   routes: require('./routes'),
 }
 module.exports = plugin
