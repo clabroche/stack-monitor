@@ -72,6 +72,7 @@ input {
 }
 .sidebar {
     display: flex;
+    overflow: auto;
     flex-direction: column;
     justify-content: space-between;
     box-shadow: 0px 0px 4px 0px black;
