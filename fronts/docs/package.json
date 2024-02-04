@@ -1,6 +1,7 @@
 {
   "name": "@clabroche/fronts-docs",
   "version": "1.11.23",
+  "private": "true",
   "description": "Monitor processes as a stack",
   "repository": "https://github.com/clabroche/stack-monitor",
   "author": {

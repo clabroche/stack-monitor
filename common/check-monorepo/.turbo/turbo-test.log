@@ -1,0 +1,1176 @@
+
+[1m[2mDetermining test suites to run...[22m[22m[999D[K
+[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1Alerna-lite notice cli v2.7.2
+lerna-lite info Executing command in 22 packages: "pwd"
+lerna-lite success exec Executed command in 22 packages: "pwd"
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A[0m[7m[1m[31m FAIL [39m[22m[27m[0m ]8;;file:///home/coco/Projects/stack-monitor/common/check-monorepo/src/index.spec.js[2msrc/[22m[1mindex.spec.js[22m]8;;
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A  Workspaces binding
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A    [32m✓[39m [2mAll workspaces should be bind to Yarn (601 ms)[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A    [32m✓[39m [2mAll workspaces should be bind to Lerna (1717 ms)[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A  Workspaces naming
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A    [32m✓[39m [2mAll packages should have correct names (5 ms)[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A  Dependencies
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A    All packages should inherit from the retrigger-all-build package
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m@clabroche/common-authentication should have a devDependencies section[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m@clabroche/common-authentication should inherit from the retrigger-all-build package (2 ms)[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m@clabroche/common-check-monorepo should have a devDependencies section[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m@clabroche/common-check-monorepo should inherit from the retrigger-all-build package[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m@clabroche/common-context should have a devDependencies section[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m@clabroche/common-context should inherit from the retrigger-all-build package (1 ms)[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m@clabroche/common-express should have a devDependencies section[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m@clabroche/common-express should inherit from the retrigger-all-build package (1 ms)[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m@clabroche/common-express-404 should have a devDependencies section[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m@clabroche/common-express-404 should inherit from the retrigger-all-build package[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m@clabroche/common-express-error-handler should have a devDependencies section (1 ms)[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m@clabroche/common-express-error-handler should inherit from the retrigger-all-build package[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m@clabroche/common-express-gulp should have a devDependencies section[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m@clabroche/common-express-gulp should inherit from the retrigger-all-build package[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m@clabroche/common-express-health-check should have a devDependencies section[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m@clabroche/common-express-health-check should inherit from the retrigger-all-build package[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m@clabroche/common-express-http-error should have a devDependencies section[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m@clabroche/common-express-http-error should inherit from the retrigger-all-build package[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m@clabroche/common-express-logger should have a devDependencies section[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m@clabroche/common-express-logger should inherit from the retrigger-all-build package (1 ms)[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m@clabroche/common-jest should have a devDependencies section[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m@clabroche/common-jest should inherit from the retrigger-all-build package[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m@clabroche/common-mongo should have a devDependencies section (1 ms)[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m@clabroche/common-mongo should inherit from the retrigger-all-build package[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m@clabroche/common-socket-front should have a devDependencies section[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m@clabroche/common-socket-front should inherit from the retrigger-all-build package[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m@clabroche/common-socket-server should have a devDependencies section (1 ms)[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m@clabroche/common-socket-server should inherit from the retrigger-all-build package[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m@clabroche/common-swagger should have a devDependencies section[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m@clabroche/common-swagger should inherit from the retrigger-all-build package[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m@clabroche/common-typings should have a devDependencies section (1 ms)[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m@clabroche/common-typings should inherit from the retrigger-all-build package[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m@clabroche/common-workflow-conflict-resolver should have a devDependencies section[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m@clabroche/common-workflow-conflict-resolver should inherit from the retrigger-all-build package[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m@clabroche/common-workflows should have a devDependencies section[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m@clabroche/common-workflows should inherit from the retrigger-all-build package (1 ms)[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m@clabroche/fronts-app should have a devDependencies section[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m@clabroche/fronts-app should inherit from the retrigger-all-build package[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m@clabroche/fronts-docs should have a devDependencies section[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m@clabroche/fronts-docs should inherit from the retrigger-all-build package[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m@iryu54/stack-monitor should have a devDependencies section[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m@iryu54/stack-monitor should inherit from the retrigger-all-build package[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A    All packages should have a test script
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m/home/coco/Projects/stack-monitor/common/authentication should have a test script (1 ms)[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m/home/coco/Projects/stack-monitor/common/check-monorepo should have a test script[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m/home/coco/Projects/stack-monitor/common/context should have a test script[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m/home/coco/Projects/stack-monitor/common/express should have a test script[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m/home/coco/Projects/stack-monitor/common/express-404 should have a test script[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m/home/coco/Projects/stack-monitor/common/express-error-handler should have a test script[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m/home/coco/Projects/stack-monitor/common/express-gulp should have a test script[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m/home/coco/Projects/stack-monitor/common/express-health-check should have a test script[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m/home/coco/Projects/stack-monitor/common/express-http-error should have a test script[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m/home/coco/Projects/stack-monitor/common/express-logger should have a test script (1 ms)[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m/home/coco/Projects/stack-monitor/common/jest should have a test script[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m/home/coco/Projects/stack-monitor/common/mongo should have a test script[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m/home/coco/Projects/stack-monitor/common/socket-front should have a test script (1 ms)[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m/home/coco/Projects/stack-monitor/common/socket-server should have a test script[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m/home/coco/Projects/stack-monitor/common/swagger should have a test script[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m/home/coco/Projects/stack-monitor/common/typings should have a test script[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m/home/coco/Projects/stack-monitor/common/workflow-conflict-resolver should have a test script[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m/home/coco/Projects/stack-monitor/common/workflows should have a test script[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m/home/coco/Projects/stack-monitor/fronts/app should have a test script[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m/home/coco/Projects/stack-monitor/fronts/docs should have a test script[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m/home/coco/Projects/stack-monitor/servers/server should have a test script (1 ms)[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A  Files
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A    All packages should have a npmrc to the root of package
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m@clabroche/common-authentication should have a npmrc to the root of package (2 ms)[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m@clabroche/common-check-monorepo should have a npmrc to the root of package[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m@clabroche/common-context should have a npmrc to the root of package[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m@clabroche/common-express should have a npmrc to the root of package (1 ms)[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m@clabroche/common-express-404 should have a npmrc to the root of package[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m@clabroche/common-express-error-handler should have a npmrc to the root of package[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m@clabroche/common-express-gulp should have a npmrc to the root of package[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m@clabroche/common-express-health-check should have a npmrc to the root of package[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m@clabroche/common-express-http-error should have a npmrc to the root of package[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m@clabroche/common-express-logger should have a npmrc to the root of package[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m@clabroche/common-jest should have a npmrc to the root of package[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m@clabroche/common-mongo should have a npmrc to the root of package[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m@clabroche/common-retrigger-all-build should have a npmrc to the root of package[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m@clabroche/common-socket-front should have a npmrc to the root of package[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m@clabroche/common-socket-server should have a npmrc to the root of package[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m@clabroche/common-swagger should have a npmrc to the root of package[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m@clabroche/common-typings should have a npmrc to the root of package[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m@clabroche/common-workflow-conflict-resolver should have a npmrc to the root of package[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m@clabroche/common-workflows should have a npmrc to the root of package[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m@clabroche/fronts-app should have a npmrc to the root of package[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m@clabroche/fronts-docs should have a npmrc to the root of package[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m@iryu54/stack-monitor should have a npmrc to the root of package[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A    All packages should not have a packagelock to the root of package
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m@clabroche/common-authentication should not have a packagelock to the root of package[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m@clabroche/common-check-monorepo should not have a packagelock to the root of package[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m@clabroche/common-context should not have a packagelock to the root of package[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m@clabroche/common-express should not have a packagelock to the root of package[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m@clabroche/common-express-404 should not have a packagelock to the root of package (1 ms)[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m@clabroche/common-express-error-handler should not have a packagelock to the root of package[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m@clabroche/common-express-gulp should not have a packagelock to the root of package[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m@clabroche/common-express-health-check should not have a packagelock to the root of package[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m@clabroche/common-express-http-error should not have a packagelock to the root of package[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m@clabroche/common-express-logger should not have a packagelock to the root of package (1 ms)[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m@clabroche/common-jest should not have a packagelock to the root of package[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m@clabroche/common-mongo should not have a packagelock to the root of package[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m@clabroche/common-retrigger-all-build should not have a packagelock to the root of package[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m@clabroche/common-socket-front should not have a packagelock to the root of package (1 ms)[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m@clabroche/common-socket-server should not have a packagelock to the root of package[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m@clabroche/common-swagger should not have a packagelock to the root of package[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m@clabroche/common-typings should not have a packagelock to the root of package[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m@clabroche/common-workflow-conflict-resolver should not have a packagelock to the root of package (1 ms)[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m@clabroche/common-workflows should not have a packagelock to the root of package[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m@clabroche/fronts-app should not have a packagelock to the root of package[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m@clabroche/fronts-docs should not have a packagelock to the root of package[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A      [32m✓[39m [2m@iryu54/stack-monitor should not have a packagelock to the root of package[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A  Publish config
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A    [31m✕[39m [2m@clabroche/common-authentication should not been in private mode (4 ms)[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A    [32m✓[39m [2m@clabroche/common-authentication should have a repository field[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A    [31m✕[39m [2m@clabroche/common-check-monorepo should not been in private mode (1 ms)[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A    [32m✓[39m [2m@clabroche/common-check-monorepo should have a repository field[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A    [31m✕[39m [2m@clabroche/common-context should not been in private mode (1 ms)[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A    [32m✓[39m [2m@clabroche/common-context should have a repository field[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A    [31m✕[39m [2m@clabroche/common-express should not been in private mode (1 ms)[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A    [32m✓[39m [2m@clabroche/common-express should have a repository field[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A    [31m✕[39m [2m@clabroche/common-express-404 should not been in private mode (1 ms)[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A    [32m✓[39m [2m@clabroche/common-express-404 should have a repository field[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A    [31m✕[39m [2m@clabroche/common-express-error-handler should not been in private mode (1 ms)[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A    [32m✓[39m [2m@clabroche/common-express-error-handler should have a repository field[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A    [31m✕[39m [2m@clabroche/common-express-gulp should not been in private mode (1 ms)[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A    [32m✓[39m [2m@clabroche/common-express-gulp should have a repository field[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A    [31m✕[39m [2m@clabroche/common-express-health-check should not been in private mode (1 ms)[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A    [32m✓[39m [2m@clabroche/common-express-health-check should have a repository field[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A    [31m✕[39m [2m@clabroche/common-express-http-error should not been in private mode (1 ms)[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A    [32m✓[39m [2m@clabroche/common-express-http-error should have a repository field[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A    [31m✕[39m [2m@clabroche/common-express-logger should not been in private mode[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A    [32m✓[39m [2m@clabroche/common-express-logger should have a repository field[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A    [31m✕[39m [2m@clabroche/common-jest should not been in private mode[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A    [32m✓[39m [2m@clabroche/common-jest should have a repository field[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A    [31m✕[39m [2m@clabroche/common-mongo should not been in private mode[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A    [32m✓[39m [2m@clabroche/common-mongo should have a repository field[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A    [31m✕[39m [2m@clabroche/common-retrigger-all-build should not been in private mode (1 ms)[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A    [32m✓[39m [2m@clabroche/common-retrigger-all-build should have a repository field[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A    [31m✕[39m [2m@clabroche/common-socket-front should not been in private mode[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A    [32m✓[39m [2m@clabroche/common-socket-front should have a repository field[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A    [31m✕[39m [2m@clabroche/common-socket-server should not been in private mode[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A    [32m✓[39m [2m@clabroche/common-socket-server should have a repository field[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A    [31m✕[39m [2m@clabroche/common-swagger should not been in private mode (1 ms)[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A    [32m✓[39m [2m@clabroche/common-swagger should have a repository field[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A    [31m✕[39m [2m@clabroche/common-typings should not been in private mode[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A    [32m✓[39m [2m@clabroche/common-typings should have a repository field (1 ms)[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A    [31m✕[39m [2m@clabroche/common-workflow-conflict-resolver should not been in private mode[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A    [32m✓[39m [2m@clabroche/common-workflow-conflict-resolver should have a repository field[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A    [31m✕[39m [2m@clabroche/common-workflows should not been in private mode (1 ms)[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A    [32m✓[39m [2m@clabroche/common-workflows should have a repository field[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A    [31m✕[39m [2m@clabroche/fronts-app should not been in private mode[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A    [32m✓[39m [2m@clabroche/fronts-app should have a repository field[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A    [31m✕[39m [2m@clabroche/fronts-docs should not been in private mode[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A    [32m✓[39m [2m@clabroche/fronts-docs should have a repository field[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A    [32m✓[39m [2m@iryu54/stack-monitor should not been in private mode[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A    [32m✓[39m [2m@iryu54/stack-monitor should have a repository field[22m
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A[1m[31m  [1m● [22m[1mPublish config › @clabroche/common-authentication should not been in private mode[39m[22m
+
+    [2mexpect([22m[31mreceived[39m[2m).[22mtoBe[2m([22m[32mexpected[39m[2m) // Object.is equality[22m
+
+    Expected: [32m"to be in private mode"[39m
+    Received: [31m"/home/coco/Projects/stack-monitor/common/authentication/package.json"[39m
+[2m[22m
+[2m    [0m [90m 108 |[39m       [36mif[39m(workspace[33m.[39mpackageJSON[33m.[39mname [33m===[39m [32m'@iryu54/stack-monitor'[39m) [36mreturn[39m[0m[22m
+[2m    [0m [90m 109 |[39m       [36mif[39m([33m![39mworkspace[33m.[39mpackageJSON[33m.[39m[36mprivate[39m) {[0m[22m
+[2m    [0m[31m[1m>[22m[2m[39m[90m 110 |[39m         expect(workspace[33m.[39mpath[33m+[39m [32m'/package.json'[39m)[33m.[39mtoBe([32m'to be in private mode'[39m)[0m[22m
+[2m    [0m [90m     |[39m                                                 [31m[1m^[22m[2m[39m[0m[22m
+[2m    [0m [90m 111 |[39m       }[0m[22m
+[2m    [0m [90m 112 |[39m     })[33m;[39m[0m[22m
+[2m    [0m [90m 113 |[39m     it([32m`${workspace.packageJSON.name} should have a repository field`[39m[33m,[39m () [33m=>[39m {[0m[22m
+[2m[22m
+[2m      [2mat Object.toBe ([22m[2m[0m[36msrc/index.spec.js[39m[0m[2m:110:49)[22m[2m[22m
+
+[1m[31m  [1m● [22m[1mPublish config › @clabroche/common-check-monorepo should not been in private mode[39m[22m
+
+    [2mexpect([22m[31mreceived[39m[2m).[22mtoBe[2m([22m[32mexpected[39m[2m) // Object.is equality[22m
+
+    Expected: [32m"to be in private mode"[39m
+    Received: [31m"/home/coco/Projects/stack-monitor/common/check-monorepo/package.json"[39m
+[2m[22m
+[2m    [0m [90m 108 |[39m       [36mif[39m(workspace[33m.[39mpackageJSON[33m.[39mname [33m===[39m [32m'@iryu54/stack-monitor'[39m) [36mreturn[39m[0m[22m
+[2m    [0m [90m 109 |[39m       [36mif[39m([33m![39mworkspace[33m.[39mpackageJSON[33m.[39m[36mprivate[39m) {[0m[22m
+[2m    [0m[31m[1m>[22m[2m[39m[90m 110 |[39m         expect(workspace[33m.[39mpath[33m+[39m [32m'/package.json'[39m)[33m.[39mtoBe([32m'to be in private mode'[39m)[0m[22m
+[2m    [0m [90m     |[39m                                                 [31m[1m^[22m[2m[39m[0m[22m
+[2m    [0m [90m 111 |[39m       }[0m[22m
+[2m    [0m [90m 112 |[39m     })[33m;[39m[0m[22m
+[2m    [0m [90m 113 |[39m     it([32m`${workspace.packageJSON.name} should have a repository field`[39m[33m,[39m () [33m=>[39m {[0m[22m
+[2m[22m
+[2m      [2mat Object.toBe ([22m[2m[0m[36msrc/index.spec.js[39m[0m[2m:110:49)[22m[2m[22m
+
+[1m[31m  [1m● [22m[1mPublish config › @clabroche/common-context should not been in private mode[39m[22m
+
+    [2mexpect([22m[31mreceived[39m[2m).[22mtoBe[2m([22m[32mexpected[39m[2m) // Object.is equality[22m
+
+    Expected: [32m"to be in private mode"[39m
+    Received: [31m"/home/coco/Projects/stack-monitor/common/context/package.json"[39m
+[2m[22m
+[2m    [0m [90m 108 |[39m       [36mif[39m(workspace[33m.[39mpackageJSON[33m.[39mname [33m===[39m [32m'@iryu54/stack-monitor'[39m) [36mreturn[39m[0m[22m
+[2m    [0m [90m 109 |[39m       [36mif[39m([33m![39mworkspace[33m.[39mpackageJSON[33m.[39m[36mprivate[39m) {[0m[22m
+[2m    [0m[31m[1m>[22m[2m[39m[90m 110 |[39m         expect(workspace[33m.[39mpath[33m+[39m [32m'/package.json'[39m)[33m.[39mtoBe([32m'to be in private mode'[39m)[0m[22m
+[2m    [0m [90m     |[39m                                                 [31m[1m^[22m[2m[39m[0m[22m
+[2m    [0m [90m 111 |[39m       }[0m[22m
+[2m    [0m [90m 112 |[39m     })[33m;[39m[0m[22m
+[2m    [0m [90m 113 |[39m     it([32m`${workspace.packageJSON.name} should have a repository field`[39m[33m,[39m () [33m=>[39m {[0m[22m
+[2m[22m
+[2m      [2mat Object.toBe ([22m[2m[0m[36msrc/index.spec.js[39m[0m[2m:110:49)[22m[2m[22m
+
+[1m[31m  [1m● [22m[1mPublish config › @clabroche/common-express should not been in private mode[39m[22m
+
+    [2mexpect([22m[31mreceived[39m[2m).[22mtoBe[2m([22m[32mexpected[39m[2m) // Object.is equality[22m
+
+    Expected: [32m"to be in private mode"[39m
+    Received: [31m"/home/coco/Projects/stack-monitor/common/express/package.json"[39m
+[2m[22m
+[2m    [0m [90m 108 |[39m       [36mif[39m(workspace[33m.[39mpackageJSON[33m.[39mname [33m===[39m [32m'@iryu54/stack-monitor'[39m) [36mreturn[39m[0m[22m
+[2m    [0m [90m 109 |[39m       [36mif[39m([33m![39mworkspace[33m.[39mpackageJSON[33m.[39m[36mprivate[39m) {[0m[22m
+[2m    [0m[31m[1m>[22m[2m[39m[90m 110 |[39m         expect(workspace[33m.[39mpath[33m+[39m [32m'/package.json'[39m)[33m.[39mtoBe([32m'to be in private mode'[39m)[0m[22m
+[2m    [0m [90m     |[39m                                                 [31m[1m^[22m[2m[39m[0m[22m
+[2m    [0m [90m 111 |[39m       }[0m[22m
+[2m    [0m [90m 112 |[39m     })[33m;[39m[0m[22m
+[2m    [0m [90m 113 |[39m     it([32m`${workspace.packageJSON.name} should have a repository field`[39m[33m,[39m () [33m=>[39m {[0m[22m
+[2m[22m
+[2m      [2mat Object.toBe ([22m[2m[0m[36msrc/index.spec.js[39m[0m[2m:110:49)[22m[2m[22m
+
+[1m[31m  [1m● [22m[1mPublish config › @clabroche/common-express-404 should not been in private mode[39m[22m
+
+    [2mexpect([22m[31mreceived[39m[2m).[22mtoBe[2m([22m[32mexpected[39m[2m) // Object.is equality[22m
+
+    Expected: [32m"to be in private mode"[39m
+    Received: [31m"/home/coco/Projects/stack-monitor/common/express-404/package.json"[39m
+[2m[22m
+[2m    [0m [90m 108 |[39m       [36mif[39m(workspace[33m.[39mpackageJSON[33m.[39mname [33m===[39m [32m'@iryu54/stack-monitor'[39m) [36mreturn[39m[0m[22m
+[2m    [0m [90m 109 |[39m       [36mif[39m([33m![39mworkspace[33m.[39mpackageJSON[33m.[39m[36mprivate[39m) {[0m[22m
+[2m    [0m[31m[1m>[22m[2m[39m[90m 110 |[39m         expect(workspace[33m.[39mpath[33m+[39m [32m'/package.json'[39m)[33m.[39mtoBe([32m'to be in private mode'[39m)[0m[22m
+[2m    [0m [90m     |[39m                                                 [31m[1m^[22m[2m[39m[0m[22m
+[2m    [0m [90m 111 |[39m       }[0m[22m
+[2m    [0m [90m 112 |[39m     })[33m;[39m[0m[22m
+[2m    [0m [90m 113 |[39m     it([32m`${workspace.packageJSON.name} should have a repository field`[39m[33m,[39m () [33m=>[39m {[0m[22m
+[2m[22m
+[2m      [2mat Object.toBe ([22m[2m[0m[36msrc/index.spec.js[39m[0m[2m:110:49)[22m[2m[22m
+
+[1m[31m  [1m● [22m[1mPublish config › @clabroche/common-express-error-handler should not been in private mode[39m[22m
+
+    [2mexpect([22m[31mreceived[39m[2m).[22mtoBe[2m([22m[32mexpected[39m[2m) // Object.is equality[22m
+
+    Expected: [32m"to be in private mode"[39m
+    Received: [31m"/home/coco/Projects/stack-monitor/common/express-error-handler/package.json"[39m
+[2m[22m
+[2m    [0m [90m 108 |[39m       [36mif[39m(workspace[33m.[39mpackageJSON[33m.[39mname [33m===[39m [32m'@iryu54/stack-monitor'[39m) [36mreturn[39m[0m[22m
+[2m    [0m [90m 109 |[39m       [36mif[39m([33m![39mworkspace[33m.[39mpackageJSON[33m.[39m[36mprivate[39m) {[0m[22m
+[2m    [0m[31m[1m>[22m[2m[39m[90m 110 |[39m         expect(workspace[33m.[39mpath[33m+[39m [32m'/package.json'[39m)[33m.[39mtoBe([32m'to be in private mode'[39m)[0m[22m
+[2m    [0m [90m     |[39m                                                 [31m[1m^[22m[2m[39m[0m[22m
+[2m    [0m [90m 111 |[39m       }[0m[22m
+[2m    [0m [90m 112 |[39m     })[33m;[39m[0m[22m
+[2m    [0m [90m 113 |[39m     it([32m`${workspace.packageJSON.name} should have a repository field`[39m[33m,[39m () [33m=>[39m {[0m[22m
+[2m[22m
+[2m      [2mat Object.toBe ([22m[2m[0m[36msrc/index.spec.js[39m[0m[2m:110:49)[22m[2m[22m
+
+[1m[31m  [1m● [22m[1mPublish config › @clabroche/common-express-gulp should not been in private mode[39m[22m
+
+    [2mexpect([22m[31mreceived[39m[2m).[22mtoBe[2m([22m[32mexpected[39m[2m) // Object.is equality[22m
+
+    Expected: [32m"to be in private mode"[39m
+    Received: [31m"/home/coco/Projects/stack-monitor/common/express-gulp/package.json"[39m
+[2m[22m
+[2m    [0m [90m 108 |[39m       [36mif[39m(workspace[33m.[39mpackageJSON[33m.[39mname [33m===[39m [32m'@iryu54/stack-monitor'[39m) [36mreturn[39m[0m[22m
+[2m    [0m [90m 109 |[39m       [36mif[39m([33m![39mworkspace[33m.[39mpackageJSON[33m.[39m[36mprivate[39m) {[0m[22m
+[2m    [0m[31m[1m>[22m[2m[39m[90m 110 |[39m         expect(workspace[33m.[39mpath[33m+[39m [32m'/package.json'[39m)[33m.[39mtoBe([32m'to be in private mode'[39m)[0m[22m
+[2m    [0m [90m     |[39m                                                 [31m[1m^[22m[2m[39m[0m[22m
+[2m    [0m [90m 111 |[39m       }[0m[22m
+[2m    [0m [90m 112 |[39m     })[33m;[39m[0m[22m
+[2m    [0m [90m 113 |[39m     it([32m`${workspace.packageJSON.name} should have a repository field`[39m[33m,[39m () [33m=>[39m {[0m[22m
+[2m[22m
+[2m      [2mat Object.toBe ([22m[2m[0m[36msrc/index.spec.js[39m[0m[2m:110:49)[22m[2m[22m
+
+[1m[31m  [1m● [22m[1mPublish config › @clabroche/common-express-health-check should not been in private mode[39m[22m
+
+    [2mexpect([22m[31mreceived[39m[2m).[22mtoBe[2m([22m[32mexpected[39m[2m) // Object.is equality[22m
+
+    Expected: [32m"to be in private mode"[39m
+    Received: [31m"/home/coco/Projects/stack-monitor/common/express-health-check/package.json"[39m
+[2m[22m
+[2m    [0m [90m 108 |[39m       [36mif[39m(workspace[33m.[39mpackageJSON[33m.[39mname [33m===[39m [32m'@iryu54/stack-monitor'[39m) [36mreturn[39m[0m[22m
+[2m    [0m [90m 109 |[39m       [36mif[39m([33m![39mworkspace[33m.[39mpackageJSON[33m.[39m[36mprivate[39m) {[0m[22m
+[2m    [0m[31m[1m>[22m[2m[39m[90m 110 |[39m         expect(workspace[33m.[39mpath[33m+[39m [32m'/package.json'[39m)[33m.[39mtoBe([32m'to be in private mode'[39m)[0m[22m
+[2m    [0m [90m     |[39m                                                 [31m[1m^[22m[2m[39m[0m[22m
+[2m    [0m [90m 111 |[39m       }[0m[22m
+[2m    [0m [90m 112 |[39m     })[33m;[39m[0m[22m
+[2m    [0m [90m 113 |[39m     it([32m`${workspace.packageJSON.name} should have a repository field`[39m[33m,[39m () [33m=>[39m {[0m[22m
+[2m[22m
+[2m      [2mat Object.toBe ([22m[2m[0m[36msrc/index.spec.js[39m[0m[2m:110:49)[22m[2m[22m
+
+[1m[31m  [1m● [22m[1mPublish config › @clabroche/common-express-http-error should not been in private mode[39m[22m
+
+    [2mexpect([22m[31mreceived[39m[2m).[22mtoBe[2m([22m[32mexpected[39m[2m) // Object.is equality[22m
+
+    Expected: [32m"to be in private mode"[39m
+    Received: [31m"/home/coco/Projects/stack-monitor/common/express-http-error/package.json"[39m
+[2m[22m
+[2m    [0m [90m 108 |[39m       [36mif[39m(workspace[33m.[39mpackageJSON[33m.[39mname [33m===[39m [32m'@iryu54/stack-monitor'[39m) [36mreturn[39m[0m[22m
+[2m    [0m [90m 109 |[39m       [36mif[39m([33m![39mworkspace[33m.[39mpackageJSON[33m.[39m[36mprivate[39m) {[0m[22m
+[2m    [0m[31m[1m>[22m[2m[39m[90m 110 |[39m         expect(workspace[33m.[39mpath[33m+[39m [32m'/package.json'[39m)[33m.[39mtoBe([32m'to be in private mode'[39m)[0m[22m
+[2m    [0m [90m     |[39m                                                 [31m[1m^[22m[2m[39m[0m[22m
+[2m    [0m [90m 111 |[39m       }[0m[22m
+[2m    [0m [90m 112 |[39m     })[33m;[39m[0m[22m
+[2m    [0m [90m 113 |[39m     it([32m`${workspace.packageJSON.name} should have a repository field`[39m[33m,[39m () [33m=>[39m {[0m[22m
+[2m[22m
+[2m      [2mat Object.toBe ([22m[2m[0m[36msrc/index.spec.js[39m[0m[2m:110:49)[22m[2m[22m
+
+[1m[31m  [1m● [22m[1mPublish config › @clabroche/common-express-logger should not been in private mode[39m[22m
+
+    [2mexpect([22m[31mreceived[39m[2m).[22mtoBe[2m([22m[32mexpected[39m[2m) // Object.is equality[22m
+
+    Expected: [32m"to be in private mode"[39m
+    Received: [31m"/home/coco/Projects/stack-monitor/common/express-logger/package.json"[39m
+[2m[22m
+[2m    [0m [90m 108 |[39m       [36mif[39m(workspace[33m.[39mpackageJSON[33m.[39mname [33m===[39m [32m'@iryu54/stack-monitor'[39m) [36mreturn[39m[0m[22m
+[2m    [0m [90m 109 |[39m       [36mif[39m([33m![39mworkspace[33m.[39mpackageJSON[33m.[39m[36mprivate[39m) {[0m[22m
+[2m    [0m[31m[1m>[22m[2m[39m[90m 110 |[39m         expect(workspace[33m.[39mpath[33m+[39m [32m'/package.json'[39m)[33m.[39mtoBe([32m'to be in private mode'[39m)[0m[22m
+[2m    [0m [90m     |[39m                                                 [31m[1m^[22m[2m[39m[0m[22m
+[2m    [0m [90m 111 |[39m       }[0m[22m
+[2m    [0m [90m 112 |[39m     })[33m;[39m[0m[22m
+[2m    [0m [90m 113 |[39m     it([32m`${workspace.packageJSON.name} should have a repository field`[39m[33m,[39m () [33m=>[39m {[0m[22m
+[2m[22m
+[2m      [2mat Object.toBe ([22m[2m[0m[36msrc/index.spec.js[39m[0m[2m:110:49)[22m[2m[22m
+
+[1m[31m  [1m● [22m[1mPublish config › @clabroche/common-jest should not been in private mode[39m[22m
+
+    [2mexpect([22m[31mreceived[39m[2m).[22mtoBe[2m([22m[32mexpected[39m[2m) // Object.is equality[22m
+
+    Expected: [32m"to be in private mode"[39m
+    Received: [31m"/home/coco/Projects/stack-monitor/common/jest/package.json"[39m
+[2m[22m
+[2m    [0m [90m 108 |[39m       [36mif[39m(workspace[33m.[39mpackageJSON[33m.[39mname [33m===[39m [32m'@iryu54/stack-monitor'[39m) [36mreturn[39m[0m[22m
+[2m    [0m [90m 109 |[39m       [36mif[39m([33m![39mworkspace[33m.[39mpackageJSON[33m.[39m[36mprivate[39m) {[0m[22m
+[2m    [0m[31m[1m>[22m[2m[39m[90m 110 |[39m         expect(workspace[33m.[39mpath[33m+[39m [32m'/package.json'[39m)[33m.[39mtoBe([32m'to be in private mode'[39m)[0m[22m
+[2m    [0m [90m     |[39m                                                 [31m[1m^[22m[2m[39m[0m[22m
+[2m    [0m [90m 111 |[39m       }[0m[22m
+[2m    [0m [90m 112 |[39m     })[33m;[39m[0m[22m
+[2m    [0m [90m 113 |[39m     it([32m`${workspace.packageJSON.name} should have a repository field`[39m[33m,[39m () [33m=>[39m {[0m[22m
+[2m[22m
+[2m      [2mat Object.toBe ([22m[2m[0m[36msrc/index.spec.js[39m[0m[2m:110:49)[22m[2m[22m
+
+[1m[31m  [1m● [22m[1mPublish config › @clabroche/common-mongo should not been in private mode[39m[22m
+
+    [2mexpect([22m[31mreceived[39m[2m).[22mtoBe[2m([22m[32mexpected[39m[2m) // Object.is equality[22m
+
+    Expected: [32m"to be in private mode"[39m
+    Received: [31m"/home/coco/Projects/stack-monitor/common/mongo/package.json"[39m
+[2m[22m
+[2m    [0m [90m 108 |[39m       [36mif[39m(workspace[33m.[39mpackageJSON[33m.[39mname [33m===[39m [32m'@iryu54/stack-monitor'[39m) [36mreturn[39m[0m[22m
+[2m    [0m [90m 109 |[39m       [36mif[39m([33m![39mworkspace[33m.[39mpackageJSON[33m.[39m[36mprivate[39m) {[0m[22m
+[2m    [0m[31m[1m>[22m[2m[39m[90m 110 |[39m         expect(workspace[33m.[39mpath[33m+[39m [32m'/package.json'[39m)[33m.[39mtoBe([32m'to be in private mode'[39m)[0m[22m
+[2m    [0m [90m     |[39m                                                 [31m[1m^[22m[2m[39m[0m[22m
+[2m    [0m [90m 111 |[39m       }[0m[22m
+[2m    [0m [90m 112 |[39m     })[33m;[39m[0m[22m
+[2m    [0m [90m 113 |[39m     it([32m`${workspace.packageJSON.name} should have a repository field`[39m[33m,[39m () [33m=>[39m {[0m[22m
+[2m[22m
+[2m      [2mat Object.toBe ([22m[2m[0m[36msrc/index.spec.js[39m[0m[2m:110:49)[22m[2m[22m
+
+[1m[31m  [1m● [22m[1mPublish config › @clabroche/common-retrigger-all-build should not been in private mode[39m[22m
+
+    [2mexpect([22m[31mreceived[39m[2m).[22mtoBe[2m([22m[32mexpected[39m[2m) // Object.is equality[22m
+
+    Expected: [32m"to be in private mode"[39m
+    Received: [31m"/home/coco/Projects/stack-monitor/common/retrigger-all-build/package.json"[39m
+[2m[22m
+[2m    [0m [90m 108 |[39m       [36mif[39m(workspace[33m.[39mpackageJSON[33m.[39mname [33m===[39m [32m'@iryu54/stack-monitor'[39m) [36mreturn[39m[0m[22m
+[2m    [0m [90m 109 |[39m       [36mif[39m([33m![39mworkspace[33m.[39mpackageJSON[33m.[39m[36mprivate[39m) {[0m[22m
+[2m    [0m[31m[1m>[22m[2m[39m[90m 110 |[39m         expect(workspace[33m.[39mpath[33m+[39m [32m'/package.json'[39m)[33m.[39mtoBe([32m'to be in private mode'[39m)[0m[22m
+[2m    [0m [90m     |[39m                                                 [31m[1m^[22m[2m[39m[0m[22m
+[2m    [0m [90m 111 |[39m       }[0m[22m
+[2m    [0m [90m 112 |[39m     })[33m;[39m[0m[22m
+[2m    [0m [90m 113 |[39m     it([32m`${workspace.packageJSON.name} should have a repository field`[39m[33m,[39m () [33m=>[39m {[0m[22m
+[2m[22m
+[2m      [2mat Object.toBe ([22m[2m[0m[36msrc/index.spec.js[39m[0m[2m:110:49)[22m[2m[22m
+
+[1m[31m  [1m● [22m[1mPublish config › @clabroche/common-socket-front should not been in private mode[39m[22m
+
+    [2mexpect([22m[31mreceived[39m[2m).[22mtoBe[2m([22m[32mexpected[39m[2m) // Object.is equality[22m
+
+    Expected: [32m"to be in private mode"[39m
+    Received: [31m"/home/coco/Projects/stack-monitor/common/socket-front/package.json"[39m
+[2m[22m
+[2m    [0m [90m 108 |[39m       [36mif[39m(workspace[33m.[39mpackageJSON[33m.[39mname [33m===[39m [32m'@iryu54/stack-monitor'[39m) [36mreturn[39m[0m[22m
+[2m    [0m [90m 109 |[39m       [36mif[39m([33m![39mworkspace[33m.[39mpackageJSON[33m.[39m[36mprivate[39m) {[0m[22m
+[2m    [0m[31m[1m>[22m[2m[39m[90m 110 |[39m         expect(workspace[33m.[39mpath[33m+[39m [32m'/package.json'[39m)[33m.[39mtoBe([32m'to be in private mode'[39m)[0m[22m
+[2m    [0m [90m     |[39m                                                 [31m[1m^[22m[2m[39m[0m[22m
+[2m    [0m [90m 111 |[39m       }[0m[22m
+[2m    [0m [90m 112 |[39m     })[33m;[39m[0m[22m
+[2m    [0m [90m 113 |[39m     it([32m`${workspace.packageJSON.name} should have a repository field`[39m[33m,[39m () [33m=>[39m {[0m[22m
+[2m[22m
+[2m      [2mat Object.toBe ([22m[2m[0m[36msrc/index.spec.js[39m[0m[2m:110:49)[22m[2m[22m
+
+[1m[31m  [1m● [22m[1mPublish config › @clabroche/common-socket-server should not been in private mode[39m[22m
+
+    [2mexpect([22m[31mreceived[39m[2m).[22mtoBe[2m([22m[32mexpected[39m[2m) // Object.is equality[22m
+
+    Expected: [32m"to be in private mode"[39m
+    Received: [31m"/home/coco/Projects/stack-monitor/common/socket-server/package.json"[39m
+[2m[22m
+[2m    [0m [90m 108 |[39m       [36mif[39m(workspace[33m.[39mpackageJSON[33m.[39mname [33m===[39m [32m'@iryu54/stack-monitor'[39m) [36mreturn[39m[0m[22m
+[2m    [0m [90m 109 |[39m       [36mif[39m([33m![39mworkspace[33m.[39mpackageJSON[33m.[39m[36mprivate[39m) {[0m[22m
+[2m    [0m[31m[1m>[22m[2m[39m[90m 110 |[39m         expect(workspace[33m.[39mpath[33m+[39m [32m'/package.json'[39m)[33m.[39mtoBe([32m'to be in private mode'[39m)[0m[22m
+[2m    [0m [90m     |[39m                                                 [31m[1m^[22m[2m[39m[0m[22m
+[2m    [0m [90m 111 |[39m       }[0m[22m
+[2m    [0m [90m 112 |[39m     })[33m;[39m[0m[22m
+[2m    [0m [90m 113 |[39m     it([32m`${workspace.packageJSON.name} should have a repository field`[39m[33m,[39m () [33m=>[39m {[0m[22m
+[2m[22m
+[2m      [2mat Object.toBe ([22m[2m[0m[36msrc/index.spec.js[39m[0m[2m:110:49)[22m[2m[22m
+
+[1m[31m  [1m● [22m[1mPublish config › @clabroche/common-swagger should not been in private mode[39m[22m
+
+    [2mexpect([22m[31mreceived[39m[2m).[22mtoBe[2m([22m[32mexpected[39m[2m) // Object.is equality[22m
+
+    Expected: [32m"to be in private mode"[39m
+    Received: [31m"/home/coco/Projects/stack-monitor/common/swagger/package.json"[39m
+[2m[22m
+[2m    [0m [90m 108 |[39m       [36mif[39m(workspace[33m.[39mpackageJSON[33m.[39mname [33m===[39m [32m'@iryu54/stack-monitor'[39m) [36mreturn[39m[0m[22m
+[2m    [0m [90m 109 |[39m       [36mif[39m([33m![39mworkspace[33m.[39mpackageJSON[33m.[39m[36mprivate[39m) {[0m[22m
+[2m    [0m[31m[1m>[22m[2m[39m[90m 110 |[39m         expect(workspace[33m.[39mpath[33m+[39m [32m'/package.json'[39m)[33m.[39mtoBe([32m'to be in private mode'[39m)[0m[22m
+[2m    [0m [90m     |[39m                                                 [31m[1m^[22m[2m[39m[0m[22m
+[2m    [0m [90m 111 |[39m       }[0m[22m
+[2m    [0m [90m 112 |[39m     })[33m;[39m[0m[22m
+[2m    [0m [90m 113 |[39m     it([32m`${workspace.packageJSON.name} should have a repository field`[39m[33m,[39m () [33m=>[39m {[0m[22m
+[2m[22m
+[2m      [2mat Object.toBe ([22m[2m[0m[36msrc/index.spec.js[39m[0m[2m:110:49)[22m[2m[22m
+
+[1m[31m  [1m● [22m[1mPublish config › @clabroche/common-typings should not been in private mode[39m[22m
+
+    [2mexpect([22m[31mreceived[39m[2m).[22mtoBe[2m([22m[32mexpected[39m[2m) // Object.is equality[22m
+
+    Expected: [32m"to be in private mode"[39m
+    Received: [31m"/home/coco/Projects/stack-monitor/common/typings/package.json"[39m
+[2m[22m
+[2m    [0m [90m 108 |[39m       [36mif[39m(workspace[33m.[39mpackageJSON[33m.[39mname [33m===[39m [32m'@iryu54/stack-monitor'[39m) [36mreturn[39m[0m[22m
+[2m    [0m [90m 109 |[39m       [36mif[39m([33m![39mworkspace[33m.[39mpackageJSON[33m.[39m[36mprivate[39m) {[0m[22m
+[2m    [0m[31m[1m>[22m[2m[39m[90m 110 |[39m         expect(workspace[33m.[39mpath[33m+[39m [32m'/package.json'[39m)[33m.[39mtoBe([32m'to be in private mode'[39m)[0m[22m
+[2m    [0m [90m     |[39m                                                 [31m[1m^[22m[2m[39m[0m[22m
+[2m    [0m [90m 111 |[39m       }[0m[22m
+[2m    [0m [90m 112 |[39m     })[33m;[39m[0m[22m
+[2m    [0m [90m 113 |[39m     it([32m`${workspace.packageJSON.name} should have a repository field`[39m[33m,[39m () [33m=>[39m {[0m[22m
+[2m[22m
+[2m      [2mat Object.toBe ([22m[2m[0m[36msrc/index.spec.js[39m[0m[2m:110:49)[22m[2m[22m
+
+[1m[31m  [1m● [22m[1mPublish config › @clabroche/common-workflow-conflict-resolver should not been in private mode[39m[22m
+
+    [2mexpect([22m[31mreceived[39m[2m).[22mtoBe[2m([22m[32mexpected[39m[2m) // Object.is equality[22m
+
+    Expected: [32m"to be in private mode"[39m
+    Received: [31m"/home/coco/Projects/stack-monitor/common/workflow-conflict-resolver/package.json"[39m
+[2m[22m
+[2m    [0m [90m 108 |[39m       [36mif[39m(workspace[33m.[39mpackageJSON[33m.[39mname [33m===[39m [32m'@iryu54/stack-monitor'[39m) [36mreturn[39m[0m[22m
+[2m    [0m [90m 109 |[39m       [36mif[39m([33m![39mworkspace[33m.[39mpackageJSON[33m.[39m[36mprivate[39m) {[0m[22m
+[2m    [0m[31m[1m>[22m[2m[39m[90m 110 |[39m         expect(workspace[33m.[39mpath[33m+[39m [32m'/package.json'[39m)[33m.[39mtoBe([32m'to be in private mode'[39m)[0m[22m
+[2m    [0m [90m     |[39m                                                 [31m[1m^[22m[2m[39m[0m[22m
+[2m    [0m [90m 111 |[39m       }[0m[22m
+[2m    [0m [90m 112 |[39m     })[33m;[39m[0m[22m
+[2m    [0m [90m 113 |[39m     it([32m`${workspace.packageJSON.name} should have a repository field`[39m[33m,[39m () [33m=>[39m {[0m[22m
+[2m[22m
+[2m      [2mat Object.toBe ([22m[2m[0m[36msrc/index.spec.js[39m[0m[2m:110:49)[22m[2m[22m
+
+[1m[31m  [1m● [22m[1mPublish config › @clabroche/common-workflows should not been in private mode[39m[22m
+
+    [2mexpect([22m[31mreceived[39m[2m).[22mtoBe[2m([22m[32mexpected[39m[2m) // Object.is equality[22m
+
+    Expected: [32m"to be in private mode"[39m
+    Received: [31m"/home/coco/Projects/stack-monitor/common/workflows/package.json"[39m
+[2m[22m
+[2m    [0m [90m 108 |[39m       [36mif[39m(workspace[33m.[39mpackageJSON[33m.[39mname [33m===[39m [32m'@iryu54/stack-monitor'[39m) [36mreturn[39m[0m[22m
+[2m    [0m [90m 109 |[39m       [36mif[39m([33m![39mworkspace[33m.[39mpackageJSON[33m.[39m[36mprivate[39m) {[0m[22m
+[2m    [0m[31m[1m>[22m[2m[39m[90m 110 |[39m         expect(workspace[33m.[39mpath[33m+[39m [32m'/package.json'[39m)[33m.[39mtoBe([32m'to be in private mode'[39m)[0m[22m
+[2m    [0m [90m     |[39m                                                 [31m[1m^[22m[2m[39m[0m[22m
+[2m    [0m [90m 111 |[39m       }[0m[22m
+[2m    [0m [90m 112 |[39m     })[33m;[39m[0m[22m
+[2m    [0m [90m 113 |[39m     it([32m`${workspace.packageJSON.name} should have a repository field`[39m[33m,[39m () [33m=>[39m {[0m[22m
+[2m[22m
+[2m      [2mat Object.toBe ([22m[2m[0m[36msrc/index.spec.js[39m[0m[2m:110:49)[22m[2m[22m
+
+[1m[31m  [1m● [22m[1mPublish config › @clabroche/fronts-app should not been in private mode[39m[22m
+
+    [2mexpect([22m[31mreceived[39m[2m).[22mtoBe[2m([22m[32mexpected[39m[2m) // Object.is equality[22m
+
+    Expected: [32m"to be in private mode"[39m
+    Received: [31m"/home/coco/Projects/stack-monitor/fronts/app/package.json"[39m
+[2m[22m
+[2m    [0m [90m 108 |[39m       [36mif[39m(workspace[33m.[39mpackageJSON[33m.[39mname [33m===[39m [32m'@iryu54/stack-monitor'[39m) [36mreturn[39m[0m[22m
+[2m    [0m [90m 109 |[39m       [36mif[39m([33m![39mworkspace[33m.[39mpackageJSON[33m.[39m[36mprivate[39m) {[0m[22m
+[2m    [0m[31m[1m>[22m[2m[39m[90m 110 |[39m         expect(workspace[33m.[39mpath[33m+[39m [32m'/package.json'[39m)[33m.[39mtoBe([32m'to be in private mode'[39m)[0m[22m
+[2m    [0m [90m     |[39m                                                 [31m[1m^[22m[2m[39m[0m[22m
+[2m    [0m [90m 111 |[39m       }[0m[22m
+[2m    [0m [90m 112 |[39m     })[33m;[39m[0m[22m
+[2m    [0m [90m 113 |[39m     it([32m`${workspace.packageJSON.name} should have a repository field`[39m[33m,[39m () [33m=>[39m {[0m[22m
+[2m[22m
+[2m      [2mat Object.toBe ([22m[2m[0m[36msrc/index.spec.js[39m[0m[2m:110:49)[22m[2m[22m
+
+[1m[31m  [1m● [22m[1mPublish config › @clabroche/fronts-docs should not been in private mode[39m[22m
+
+    [2mexpect([22m[31mreceived[39m[2m).[22mtoBe[2m([22m[32mexpected[39m[2m) // Object.is equality[22m
+
+    Expected: [32m"to be in private mode"[39m
+    Received: [31m"/home/coco/Projects/stack-monitor/fronts/docs/package.json"[39m
+[2m[22m
+[2m    [0m [90m 108 |[39m       [36mif[39m(workspace[33m.[39mpackageJSON[33m.[39mname [33m===[39m [32m'@iryu54/stack-monitor'[39m) [36mreturn[39m[0m[22m
+[2m    [0m [90m 109 |[39m       [36mif[39m([33m![39mworkspace[33m.[39mpackageJSON[33m.[39m[36mprivate[39m) {[0m[22m
+[2m    [0m[31m[1m>[22m[2m[39m[90m 110 |[39m         expect(workspace[33m.[39mpath[33m+[39m [32m'/package.json'[39m)[33m.[39mtoBe([32m'to be in private mode'[39m)[0m[22m
+[2m    [0m [90m     |[39m                                                 [31m[1m^[22m[2m[39m[0m[22m
+[2m    [0m [90m 111 |[39m       }[0m[22m
+[2m    [0m [90m 112 |[39m     })[33m;[39m[0m[22m
+[2m    [0m [90m 113 |[39m     it([32m`${workspace.packageJSON.name} should have a repository field`[39m[33m,[39m () [33m=>[39m {[0m[22m
+[2m[22m
+[2m      [2mat Object.toBe ([22m[2m[0m[36msrc/index.spec.js[39m[0m[2m:110:49)[22m[2m[22m
+
+
+[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mindex.spec.js[22m
+[K[1A[K[1A[999D[K[1mTest Suites: [22m[1m[31m1 failed[39m[22m, 1 total
+[1mTests:       [22m[1m[31m21 failed[39m[22m, [1m[32m133 passed[39m[22m, 154 total
+[1mSnapshots:   [22m0 total
+[1mTime:[22m        2.88 s
+[2mRan all test suites[22m[2m.[22m

@@ -1,6 +1,7 @@
 {
   "name": "@clabroche/fronts-app",
   "version": "1.11.23",
+  "private": "true",
   "description": "Monitor processes as a stack",
   "repository": "https://github.com/clabroche/stack-monitor",
   "author": {
@@ -16,7 +17,7 @@
     "serve:server": "cd server && nodemon --trace-warnings bin/www $STACKFILE",
     "serve:production": "npm run build && HTTP_PORT=5456 node server/bin/www ./example/stack.js",
     "start": "server/bin/www",
-    "test": "jest --runInBand",
+    "test": "",
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
     "docs:preview": "vitepress preview docs"

@@ -1,5 +1,6 @@
 {
   "name": "@clabroche/common-typings",
+  "private": "true",
   "version": "1.17.2",
   "description": "",
   "repository": "https://github.com/clabroche/stack-monitor",
