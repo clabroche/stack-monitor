@@ -30,7 +30,6 @@ const loggerPlugin = {
     await copyFile(path.resolve(__dirname, "../../modules/bugs/defaultJsConfig.json"), "dist/defaultJsConfig.json")
     await copyFile(path.resolve(__dirname, "./helpers/cpuFork.js"), "dist/cpuFork.js")
     await copyFile(path.resolve(__dirname, "./bin/www"), "dist/www")
-    await linkSync(path.resolve(__dirname, "../../lerna.json"), "dist/lerna.json")
   }
 }
 
