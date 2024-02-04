@@ -22,7 +22,7 @@ server.on('listening', () => {
   // Tips
   (() => {
     table([
-      { '': 'Version', Value: require('../../../lerna.json').version, 'Overrided By': '-' },
+      { '': 'Version', Value: require('../helpers/version').version, 'Overrided By': '-' },
       { '': 'Port', Value: ports.http, 'Overrided By': 'HTTP_PORT' },
       { '': 'Url', Value: `http://localhost:${ports.http}`, 'Overrided By': '-' },
     ])

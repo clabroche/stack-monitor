@@ -10,7 +10,7 @@ router.use('/stack', require('./stack'))
 router.use('/fs', require('./fs'))
 
 router.get('/version', async function (req, res) {
-  res.send(require('../../../lerna.json').version)
+  res.send(require('../helpers/version').version)
 })
 
 module.exports = router;

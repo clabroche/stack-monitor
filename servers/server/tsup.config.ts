@@ -1,4 +1,4 @@
-import { existsSync} from 'fs';
+import { existsSync, linkSync} from 'fs';
 import { copyFile, mkdir, rm } from 'fs/promises';
 import { defineConfig } from 'tsup';
 import path from 'path'
@@ -30,7 +30,7 @@ const loggerPlugin = {
     await copyFile(path.resolve(__dirname, "../../modules/bugs/checkJsFork.js"), "dist/checkJsFork.js")
     await copyFile(path.resolve(__dirname, "../../modules/bugs/defaultJsConfig.json"), "dist/defaultJsConfig.json")
     await copyFile(path.resolve(__dirname, "./helpers/cpuFork.js"), "dist/cpuFork.js")
-    await copyFile(path.resolve(__dirname, "./bin/www"), "dist/www")
+    await linkSync(path.resolve(__dirname, "../../lerna.json"), "dist/lerna.json")
   }
 }
 

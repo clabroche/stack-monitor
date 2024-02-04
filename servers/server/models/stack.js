@@ -39,7 +39,7 @@ class Stack {
   static Socket = Socket
   
   /** @type {string} */
-  static version = require('../../../lerna.json').version || ''
+  static version = require('../helpers/version').version || ''
   /** @type {string} */
   static url = `http://localhost:${ports.http}`
   /** @type {number} */
