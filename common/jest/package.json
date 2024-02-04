@@ -2,7 +2,6 @@
   "name": "@clabroche/common-jest",
   "version": "1.17.2",
   "description": "",
-  "private":"true",
   "repository": "https://github.com/clabroche/stack-monitor",
   "main": "src/index.js",
   "bin": {

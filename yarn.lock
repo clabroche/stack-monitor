@@ -3208,7 +3208,7 @@ __metadata:
     xterm-addon-search: "npm:^0.13.0"
     xterm-addon-web-links: "npm:^0.9.0"
   bin:
-    stack-monitor: dist/server.js
+    stack-monitor: dist/www
   languageName: unknown
   linkType: soft
 
