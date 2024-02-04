@@ -3,19 +3,10 @@
   "version": "1.0.0",
   "description": "",
   "main": "stack.js",
-  "publishConfig": {
-    "access": "public",
-    "tag": "",
-    "registry": "https://registry.npmjs.org"
-  },
-  "files": [
-    "./servers/server/dist"
-  ],
   "scripts": {
     "prepare": "husky install",
     "postinstall": "husky install && node prepare-monorepo.js || true",
-    "serve:v2": "cd v2/dev/stack && cross-env HTTP_PORT=6873 stack-monitor ./src/stack.js",
-    "serve:infra-updater": "cd infra/updater/stack && cross-env HTTP_PORT=6874 stack-monitor ./src/stack.js",
+    "serve": "cross-env HTTP_PORT=6874 stack-monitor ./stack.js",
     "check:monorepo": "cd common/check-monorepo && npm run start",
     "check:dependencies-consistency": "check-dependency-version-consistency .",
     "check:unused": "knip",

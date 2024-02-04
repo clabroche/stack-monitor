@@ -1,4 +1,5 @@
 const pathfs = require('path')
+require('dotenv').config()
 
 const groups = {
   ui: '01 - UIs',
@@ -24,7 +25,7 @@ const stack = (stackMonitor) => {
         spawnOptions: {
           cwd: pathfs.resolve(__dirname, './servers/server'),
           env: {
-            STACKFILE: pathfs.resolve(__dirname, '../clabroche/monorepo/v2/dev/stack/src/stack.js'),
+            STACKFILE: pathfs.resolve(__dirname, process.env.STACKFILE),
             NODE_ENV: 'DEV',
             HTTP_PORT: '5459',
           }
@@ -37,7 +38,7 @@ const stack = (stackMonitor) => {
           home: 'https://github.com/clabroche/stack-monitor',
           remote: 'git@github.com:clabroche/stack-monitor.git'
         },
-        url: `http://localhost:5459`,
+        url: `http://localhost:5174`,
         spawnCmd: 'yarn vite',
         spawnOptions: {
           cwd: pathfs.resolve(__dirname, './fronts/app'),
