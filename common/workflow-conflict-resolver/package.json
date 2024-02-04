@@ -1,7 +1,7 @@
 {
   "name": "@clabroche/common-workflow-conflict-resolver",
   "private": true,
-  "version": "1.17.9",
+  "version": "1.17.10",
   "description": "",
   "repository": "https://github.com/clabroche/stack-monitor",
   "main": "src/index.js",
