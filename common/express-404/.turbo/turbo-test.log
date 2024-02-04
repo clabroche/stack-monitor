@@ -26,5 +26,5 @@ File      | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s
 [1mTest Suites: [22m[1m[32m1 passed[39m[22m, 1 total
 [1mTests:       [22m[1m[32m1 passed[39m[22m, 1 total
 [1mSnapshots:   [22m0 total
-[1mTime:[22m        0.67 s
+[1mTime:[22m        0.577 s, estimated 1 s
 [2mRan all test suites[22m[2m.[22m

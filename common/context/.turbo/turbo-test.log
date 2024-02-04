@@ -23,19 +23,19 @@
 [K[1A[K[1A  Auth
 
 [0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mnodeCls.spec.js[22m
-[K[1A[K[1A    [32m✓[39m [2mshouldwork (5 ms)[22m
+[K[1A[K[1A    [32m✓[39m [2mshouldwork (4 ms)[22m
 
 [0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mnodeCls.spec.js[22m
-[K[1A[K[1A    [32m✓[39m [2mshould get correct jwt with node cls core implementation (242 ms)[22m
+[K[1A[K[1A    [32m✓[39m [2mshould get correct jwt with node cls core implementation (233 ms)[22m
 
 [0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mnodeCls.spec.js[22m
-[K[1A[K[1A    [32m✓[39m [2mshould get correct jwt with wrapper for express (206 ms)[22m
+[K[1A[K[1A    [32m✓[39m [2mshould get correct jwt with wrapper for express (209 ms)[22m
 
 [0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mnodeCls.spec.js[22m
-[K[1A[K[1A    [32m✓[39m [2mshould crud[22m
+[K[1A[K[1A    [32m✓[39m [2mshould crud (1 ms)[22m
 
 [0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mnodeCls.spec.js[22m
-[K[1A[K[1A    [32m✓[39m [2mshould make available an id[22m
+[K[1A[K[1A    [32m✓[39m [2mshould make available an id (1 ms)[22m
 
 [0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mnodeCls.spec.js[22m
 [K[1A[K[1A
@@ -50,5 +50,5 @@ File      | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s
 [1mTest Suites: [22m[1m[32m1 passed[39m[22m, 1 total
 [1mTests:       [22m[1m[32m5 passed[39m[22m, 5 total
 [1mSnapshots:   [22m0 total
-[1mTime:[22m        2.251 s
+[1mTime:[22m        1.356 s, estimated 2 s
 [2mRan all test suites[22m[2m.[22m
