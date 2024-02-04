@@ -30,6 +30,8 @@ jobs:
         node-version: 18
         cache: 'yarn'
 
+    - run: npm set "//registry.npmjs.org/:_authToken" ${{ secrets.NPM_TOKEN }}
+
     - name: Ensure access
       run: npm whoami
       env:
