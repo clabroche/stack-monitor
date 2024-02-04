@@ -1,6 +1,6 @@
 {
   "name": "@clabroche/common-express",
-  "private": "true",
+  "private": true,
   "version": "1.17.2",
   "description": "",
   "repository": "https://github.com/clabroche/stack-monitor",

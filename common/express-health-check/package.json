@@ -3,7 +3,7 @@
   "version": "1.17.2",
   "description": "",
   "repository": "https://github.com/clabroche/stack-monitor",
-  "private": "true",
+  "private": true,
   "main": "src/index.js",
   "scripts": {
     "test": "clabroche-jest"
