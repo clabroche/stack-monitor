@@ -1,4 +1,4 @@
-import { existsSync, linkSync} from 'fs';
+import { existsSync} from 'fs';
 import { copyFile, mkdir, rm } from 'fs/promises';
 import { defineConfig } from 'tsup';
 import path from 'path'
@@ -21,8 +21,8 @@ const makeAllPackagesExternalPlugin = {
   },
 };
 
-const loggerPlugin = {
-  name: 'loggerPluggin',
+const copyFilePlugin = {
+  name: 'copyFilePlugin',
   async setup(build) {
     if(!existsSync(path.resolve(__dirname, "dist"))) await mkdir(path.resolve(__dirname, "dist"))
     await copyFile(path.resolve(__dirname, "../../common/express-logger/src/transport.js"), "dist/transport.js")
@@ -33,8 +33,8 @@ const loggerPlugin = {
   }
 }
 
-const publicFiles = {
-  name: 'publicFilesPluggin',
+const integrateWebApp = {
+  name: 'integrateWebApp',
   async setup(build) {
     build.onEnd(async () => {
       console.log('Build front')
@@ -52,8 +52,8 @@ export default defineConfig({
   publicDir: './src/public',
   esbuildPlugins: [
     makeAllPackagesExternalPlugin,
-    loggerPlugin,
-    publicFiles,
+    copyFilePlugin,
+    integrateWebApp,
   ],
   noExternal: [
     /@clabroche\/.*/,
