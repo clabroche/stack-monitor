@@ -1,7 +1,7 @@
 {
   "name": "@clabroche/common-authentication",
   "private": true,
-  "version": "1.17.6",
+  "version": "1.17.7",
   "description": "",
   "repository": "https://github.com/clabroche/stack-monitor",
   "main": "src/index.js",
