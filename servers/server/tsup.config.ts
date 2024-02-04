@@ -29,7 +29,7 @@ const loggerPlugin = {
     await copyFile(path.resolve(__dirname, "../../common/express-logger/src/transport.js"), "dist/transport.js")
     await copyFile(path.resolve(__dirname, "../../modules/bugs/checkJsFork.js"), "dist/checkJsFork.js")
     await copyFile(path.resolve(__dirname, "../../modules/bugs/defaultJsConfig.json"), "dist/defaultJsConfig.json")
-    await copyFile(path.resolve(__dirname, "./helpers/cpuFork.js"), "dist")
+    await copyFile(path.resolve(__dirname, "./helpers/cpuFork.js"), "dist/cpuFork.js")
     await copyFile(path.resolve(__dirname, "./bin/www"), "dist/www")
   }
 }
