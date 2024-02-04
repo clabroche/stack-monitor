@@ -26,15 +26,10 @@ const loggerPlugin = {
   name: 'loggerPluggin',
   async setup(build) {
     if(!existsSync(path.resolve(__dirname, "dist"))) await mkdir(path.resolve(__dirname, "dist"))
-    if(existsSync(path.resolve(__dirname, "../../common/express-logger/src/transport.js"))) {
-      await copyFile(path.resolve(__dirname, "../../common/express-logger/src/transport.js"), "dist/transport.js")
-    }
-    if(existsSync(path.resolve(__dirname, "../../modules/bugs/checkJsFork.js"))) {
-      await copyFile(path.resolve(__dirname, "../../modules/bugs/checkJsFork.js"), "dist/checkJsFork.js")
-    }
-    if(existsSync(path.resolve(__dirname, "../../modules/bugs/defaultJsConfig.json"))) {
-      await copyFile(path.resolve(__dirname, "../../modules/bugs/checkJsFork.js"), "dist/defaultJsConfig.json")
-    }
+    await copyFile(path.resolve(__dirname, "../../common/express-logger/src/transport.js"), "dist/transport.js")
+    await copyFile(path.resolve(__dirname, "../../modules/bugs/checkJsFork.js"), "dist/checkJsFork.js")
+    await copyFile(path.resolve(__dirname, "../../modules/bugs/defaultJsConfig.json"), "dist/defaultJsConfig.json")
+    await copyFile(path.resolve(__dirname, "./helpers/cpuFork.js"), "dist")
     await copyFile(path.resolve(__dirname, "./bin/www"), "dist/www")
   }
 }
