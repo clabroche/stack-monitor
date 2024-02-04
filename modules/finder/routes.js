@@ -40,7 +40,7 @@ const routes = (stackMonitor) => {
         url: `/stack-single/${service.label}`
       }))
     
-    const plugins = require('../plugins');
+    const plugins = require('@clabroche/modules-plugins-loader');
     const _plugins = (await PromiseB
       .map(Object.keys(plugins), (/** @type {keyof typeof plugins}*/key) => plugins[key])
       .map(async plugin => {

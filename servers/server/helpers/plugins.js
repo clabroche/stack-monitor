@@ -1,5 +1,5 @@
 const Stack = require('../models/stack')
-const plugins = require('../../../modules/plugins');
+const plugins = require('@clabroche/modules-plugins-loader');
 
 /** @type {import('express').Router[]} */
 const routes = [];

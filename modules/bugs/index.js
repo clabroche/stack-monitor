@@ -1,7 +1,7 @@
 const fse = require('fs-extra')
 const pathfs = require('path')
 
-/** @type {import('../views').PluginSM<null>} */
+/** @type {import('@clabroche/modules-plugins-loader/views').PluginSM<null>} */
 const plugin = {
   name: 'Bugs',
   displayName: 'Bugs',

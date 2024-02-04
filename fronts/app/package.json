@@ -33,6 +33,7 @@
   "typings": "./typings/export.d.ts",
   "types": "./typings/export.d.ts",
   "dependencies": {
+    "@clabroche/modules-plugins-loader": "workspace:*",
     "ansi-to-html": "^0.7.2",
     "bluebird": "^3.7.2",
     "command-exists": "^1.2.9",

@@ -1,4 +1,4 @@
-/** @type {import('../views').PluginSM<null>} */
+/** @type {import('@clabroche/modules-plugins-loader/views').PluginSM<null>} */
 const plugin = {
   name: 'DevOps',
   displayName: 'Dev ops',

@@ -60,6 +60,7 @@ coverage
 yarn-error.log
 **/*.turbo
 **/*dist
+!**/*.turbo/config.json
 !.turbo/config.json
 sandbox
 lerna-debug.log

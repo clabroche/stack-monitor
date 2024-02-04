@@ -1,0 +1,12 @@
+{
+  "name": "@clabroche/modules-node-repl",
+  "version": "1.17.10",
+  "repository": "https://github.com/clabroche/stack-monitor",
+  "private": true,
+  "scripts": {
+    "test": ""
+  },
+  "devDependencies": {
+    "@clabroche/common-retrigger-all-build": "workspace:*"
+  }
+}

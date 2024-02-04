@@ -1,66 +1,0 @@
-
-[1m[2mDetermining test suites to run...[22m[22m[999D[K
-
-[1mTest Suites: [22m0 of 2 total
-[1mTests:       [22m0 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        0 s, estimated 2 s[K[1A[K[1A[K[1A[K[1A[K[1A[999D[K
-
-[1mTest Suites: [22m0 of 2 total
-[1mTests:       [22m0 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        0 s, estimated 2 s[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2mtests/[22m[1mgulpfile.spec.js[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1madditionalDeps.spec.js[22m
-
-[1mTest Suites: [22m0 of 2 total
-[1mTests:       [22m0 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        0 s, estimated 2 s[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2mtests/[22m[1mgulpfile.spec.js[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1madditionalDeps.spec.js[22m
-
-[1mTest Suites: [22m0 of 2 total
-[1mTests:       [22m0 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        1 s, estimated 2 s[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[0m[7m[1m[32m PASS [39m[22m[27m[0m ]8;;file:///home/coco/Projects/stack-monitor/common/express-gulp/src/additionalDeps.spec.js[2msrc/[22m[1madditionalDeps.spec.js[22m]8;;
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2mtests/[22m[1mgulpfile.spec.js[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1madditionalDeps.spec.js[22m
-
-[1mTest Suites: [22m0 of 2 total
-[1mTests:       [22m0 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        1 s, estimated 2 s[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2mtests/[22m[1mgulpfile.spec.js[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1madditionalDeps.spec.js[22m
-
-[1mTest Suites: [22m0 of 2 total
-[1mTests:       [22m0 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        1 s, estimated 2 s[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2mtests/[22m[1mgulpfile.spec.js[22m
-
-[1mTest Suites: [22m[1m[32m1 passed[39m[22m, 1 of 2 total
-[1mTests:       [22m[1m[32m2 passed[39m[22m, 2 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        1 s, estimated 2 s[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[0m[7m[1m[32m PASS [39m[22m[27m[0m ]8;;file:///home/coco/Projects/stack-monitor/common/express-gulp/tests/gulpfile.spec.js[2mtests/[22m[1mgulpfile.spec.js[22m]8;;
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2mtests/[22m[1mgulpfile.spec.js[22m
-
-[1mTest Suites: [22m[1m[32m1 passed[39m[22m, 1 of 2 total
-[1mTests:       [22m[1m[32m2 passed[39m[22m, 2 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        1 s, estimated 2 s[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[999D[K[1m[2mRunning coverage on untested files...[22m[22m[999D[K-------------------|---------|----------|---------|---------|-------------------
-File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
--------------------|---------|----------|---------|---------|-------------------
-[32;1mAll files         [0m | [32;1m  91.89[0m | [32;1m   80.95[0m | [32;1m    100[0m | [32;1m  91.42[0m | [31;1m                 [0m 
-[32;1m additionalDeps.js[0m | [32;1m    100[0m | [32;1m   80.95[0m | [32;1m    100[0m | [32;1m    100[0m | [33;1m16-18            [0m 
-[31;1m gulp.js          [0m | [31;1m      0[0m | [32;1m     100[0m | [32;1m    100[0m | [31;1m      0[0m | [31;1m2-5              [0m 
--------------------|---------|----------|---------|---------|-------------------
-
-[1mTest Suites: [22m[1m[32m2 passed[39m[22m, 2 total
-[1mTests:       [22m[1m[32m3 passed[39m[22m, 3 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        1.908 s, estimated 2 s
-[2mRan all test suites[22m[2m.[22m

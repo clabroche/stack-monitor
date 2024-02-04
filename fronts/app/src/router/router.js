@@ -1,5 +1,5 @@
 import { createRouter, createWebHashHistory } from "vue-router";
-import plugins from '../../../../modules/views'
+import plugins from '@clabroche/modules-plugins-loader/views'
 
 /**
  * @type {import('vue-router').RouteRecordRaw[]}

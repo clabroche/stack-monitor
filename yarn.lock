@@ -2411,6 +2411,7 @@ __metadata:
   resolution: "@clabroche/fronts-app@workspace:fronts/app"
   dependencies:
     "@clabroche/common-retrigger-all-build": "workspace:*"
+    "@clabroche/modules-plugins-loader": "workspace:*"
     "@fortawesome/fontawesome-free": "npm:^6.5.1"
     "@types/ansi-colors": "npm:^3.2.2"
     "@types/axios": "npm:^0.14.0"
@@ -2510,6 +2511,194 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@clabroche/modules-bugs@workspace:*, @clabroche/modules-bugs@workspace:modules/bugs":
+  version: 0.0.0-use.local
+  resolution: "@clabroche/modules-bugs@workspace:modules/bugs"
+  dependencies:
+    "@clabroche/common-retrigger-all-build": "workspace:*"
+  languageName: unknown
+  linkType: soft
+
+"@clabroche/modules-configuration@workspace:*, @clabroche/modules-configuration@workspace:modules/configuration":
+  version: 0.0.0-use.local
+  resolution: "@clabroche/modules-configuration@workspace:modules/configuration"
+  dependencies:
+    "@clabroche/common-retrigger-all-build": "workspace:*"
+  languageName: unknown
+  linkType: soft
+
+"@clabroche/modules-dev-ops@workspace:*, @clabroche/modules-dev-ops@workspace:modules/dev-ops":
+  version: 0.0.0-use.local
+  resolution: "@clabroche/modules-dev-ops@workspace:modules/dev-ops"
+  dependencies:
+    "@clabroche/common-retrigger-all-build": "workspace:*"
+  languageName: unknown
+  linkType: soft
+
+"@clabroche/modules-diff@workspace:*, @clabroche/modules-diff@workspace:modules/diff":
+  version: 0.0.0-use.local
+  resolution: "@clabroche/modules-diff@workspace:modules/diff"
+  dependencies:
+    "@clabroche/common-retrigger-all-build": "workspace:*"
+  languageName: unknown
+  linkType: soft
+
+"@clabroche/modules-documentation@workspace:*, @clabroche/modules-documentation@workspace:modules/documentation":
+  version: 0.0.0-use.local
+  resolution: "@clabroche/modules-documentation@workspace:modules/documentation"
+  dependencies:
+    "@clabroche/common-retrigger-all-build": "workspace:*"
+  languageName: unknown
+  linkType: soft
+
+"@clabroche/modules-finder@workspace:*, @clabroche/modules-finder@workspace:modules/finder":
+  version: 0.0.0-use.local
+  resolution: "@clabroche/modules-finder@workspace:modules/finder"
+  dependencies:
+    "@clabroche/common-retrigger-all-build": "workspace:*"
+  languageName: unknown
+  linkType: soft
+
+"@clabroche/modules-git@workspace:*, @clabroche/modules-git@workspace:modules/git":
+  version: 0.0.0-use.local
+  resolution: "@clabroche/modules-git@workspace:modules/git"
+  dependencies:
+    "@clabroche/common-retrigger-all-build": "workspace:*"
+  languageName: unknown
+  linkType: soft
+
+"@clabroche/modules-github@workspace:*, @clabroche/modules-github@workspace:modules/github":
+  version: 0.0.0-use.local
+  resolution: "@clabroche/modules-github@workspace:modules/github"
+  dependencies:
+    "@clabroche/common-retrigger-all-build": "workspace:*"
+  languageName: unknown
+  linkType: soft
+
+"@clabroche/modules-global-scripts@workspace:*, @clabroche/modules-global-scripts@workspace:modules/global-scripts":
+  version: 0.0.0-use.local
+  resolution: "@clabroche/modules-global-scripts@workspace:modules/global-scripts"
+  dependencies:
+    "@clabroche/common-retrigger-all-build": "workspace:*"
+  languageName: unknown
+  linkType: soft
+
+"@clabroche/modules-json-formatter@workspace:*, @clabroche/modules-json-formatter@workspace:modules/json-formatter":
+  version: 0.0.0-use.local
+  resolution: "@clabroche/modules-json-formatter@workspace:modules/json-formatter"
+  dependencies:
+    "@clabroche/common-retrigger-all-build": "workspace:*"
+  languageName: unknown
+  linkType: soft
+
+"@clabroche/modules-jwt@workspace:*, @clabroche/modules-jwt@workspace:modules/jwt":
+  version: 0.0.0-use.local
+  resolution: "@clabroche/modules-jwt@workspace:modules/jwt"
+  dependencies:
+    "@clabroche/common-retrigger-all-build": "workspace:*"
+  languageName: unknown
+  linkType: soft
+
+"@clabroche/modules-kanban@workspace:*, @clabroche/modules-kanban@workspace:modules/kanban":
+  version: 0.0.0-use.local
+  resolution: "@clabroche/modules-kanban@workspace:modules/kanban"
+  dependencies:
+    "@clabroche/common-retrigger-all-build": "workspace:*"
+  languageName: unknown
+  linkType: soft
+
+"@clabroche/modules-logs@workspace:*, @clabroche/modules-logs@workspace:modules/logs":
+  version: 0.0.0-use.local
+  resolution: "@clabroche/modules-logs@workspace:modules/logs"
+  dependencies:
+    "@clabroche/common-retrigger-all-build": "workspace:*"
+  languageName: unknown
+  linkType: soft
+
+"@clabroche/modules-mongo@workspace:*, @clabroche/modules-mongo@workspace:modules/mongo":
+  version: 0.0.0-use.local
+  resolution: "@clabroche/modules-mongo@workspace:modules/mongo"
+  dependencies:
+    "@clabroche/common-retrigger-all-build": "workspace:*"
+  languageName: unknown
+  linkType: soft
+
+"@clabroche/modules-node-repl@workspace:*, @clabroche/modules-node-repl@workspace:modules/node-repl":
+  version: 0.0.0-use.local
+  resolution: "@clabroche/modules-node-repl@workspace:modules/node-repl"
+  dependencies:
+    "@clabroche/common-retrigger-all-build": "workspace:*"
+  languageName: unknown
+  linkType: soft
+
+"@clabroche/modules-npm@workspace:*, @clabroche/modules-npm@workspace:modules/npm":
+  version: 0.0.0-use.local
+  resolution: "@clabroche/modules-npm@workspace:modules/npm"
+  dependencies:
+    "@clabroche/common-retrigger-all-build": "workspace:*"
+  languageName: unknown
+  linkType: soft
+
+"@clabroche/modules-openai@workspace:*, @clabroche/modules-openai@workspace:modules/openai":
+  version: 0.0.0-use.local
+  resolution: "@clabroche/modules-openai@workspace:modules/openai"
+  dependencies:
+    "@clabroche/common-retrigger-all-build": "workspace:*"
+  languageName: unknown
+  linkType: soft
+
+"@clabroche/modules-plugins-loader@workspace:*, @clabroche/modules-plugins-loader@workspace:modules/plugins-loader":
+  version: 0.0.0-use.local
+  resolution: "@clabroche/modules-plugins-loader@workspace:modules/plugins-loader"
+  dependencies:
+    "@clabroche/common-retrigger-all-build": "workspace:*"
+    "@clabroche/modules-bugs": "workspace:*"
+    "@clabroche/modules-configuration": "workspace:*"
+    "@clabroche/modules-dev-ops": "workspace:*"
+    "@clabroche/modules-diff": "workspace:*"
+    "@clabroche/modules-documentation": "workspace:*"
+    "@clabroche/modules-finder": "workspace:*"
+    "@clabroche/modules-git": "workspace:*"
+    "@clabroche/modules-github": "workspace:*"
+    "@clabroche/modules-global-scripts": "workspace:*"
+    "@clabroche/modules-json-formatter": "workspace:*"
+    "@clabroche/modules-jwt": "workspace:*"
+    "@clabroche/modules-kanban": "workspace:*"
+    "@clabroche/modules-logs": "workspace:*"
+    "@clabroche/modules-mongo": "workspace:*"
+    "@clabroche/modules-node-repl": "workspace:*"
+    "@clabroche/modules-npm": "workspace:*"
+    "@clabroche/modules-openai": "workspace:*"
+    "@clabroche/modules-regex": "workspace:*"
+    "@clabroche/modules-toolbox": "workspace:*"
+    "@clabroche/modules-uuid": "workspace:*"
+  languageName: unknown
+  linkType: soft
+
+"@clabroche/modules-regex@workspace:*, @clabroche/modules-regex@workspace:modules/regex":
+  version: 0.0.0-use.local
+  resolution: "@clabroche/modules-regex@workspace:modules/regex"
+  dependencies:
+    "@clabroche/common-retrigger-all-build": "workspace:*"
+  languageName: unknown
+  linkType: soft
+
+"@clabroche/modules-toolbox@workspace:*, @clabroche/modules-toolbox@workspace:modules/toolbox":
+  version: 0.0.0-use.local
+  resolution: "@clabroche/modules-toolbox@workspace:modules/toolbox"
+  dependencies:
+    "@clabroche/common-retrigger-all-build": "workspace:*"
+  languageName: unknown
+  linkType: soft
+
+"@clabroche/modules-uuid@workspace:*, @clabroche/modules-uuid@workspace:modules/uuid":
+  version: 0.0.0-use.local
+  resolution: "@clabroche/modules-uuid@workspace:modules/uuid"
+  dependencies:
+    "@clabroche/common-retrigger-all-build": "workspace:*"
+  languageName: unknown
+  linkType: soft
+
 "@clabroche/stack-monitor@workspace:.":
   version: 0.0.0-use.local
   resolution: "@clabroche/stack-monitor@workspace:."
@@ -2517,7 +2706,7 @@ __metadata:
     "@clabroche/common-retrigger-all-build": "workspace:*"
     "@commitlint/cli": "npm:^17.6.7"
     "@commitlint/config-conventional": "npm:^17.6.7"
-    "@iryu54/stack-monitor": "npm:^1.11.23"
+    "@iryu54/stack-monitor": "npm:^1.17.10"
     "@lerna-lite/changed": "npm:^2.5.0"
     "@lerna-lite/cli": "npm:^2.5.0"
     "@lerna-lite/diff": "npm:^2.5.0"
@@ -3082,47 +3271,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@iryu54/stack-monitor@npm:^1.11.23":
-  version: 1.11.23
-  resolution: "@iryu54/stack-monitor@npm:1.11.23"
-  dependencies:
-    ansi-to-html: "npm:^0.7.2"
-    bluebird: "npm:^3.7.2"
-    command-exists: "npm:^1.2.9"
-    cookie-parser: "npm:~1.4.6"
-    cors: "npm:^2.8.5"
-    dayjs: "npm:^1.11.10"
-    debounce: "npm:^2.0.0"
-    dot-object: "npm:^2.1.4"
-    express: "npm:^4.18.2"
-    express-async-errors: "npm:^3.1.1"
-    fast-sort: "npm:^3.4.0"
-    fs-extra: "npm:^11.2.0"
-    gpt-3-encoder: "npm:^1.1.4"
-    jsonwebtoken: "npm:^9.0.2"
-    kill-port: "npm:^2.0.1"
-    lodash: "npm:^4.17.21"
-    mongodb: "npm:^6.3.0"
-    octokit: "npm:^3.1.2"
-    open: "npm:^8"
-    openai: "npm:^4.26.0"
-    os-utils: "npm:0.0.14"
-    pidusage-tree: "npm:^2.0.5"
-    ps-tree: "npm:^1.2.0"
-    socket.io: "npm:^4.7.4"
-    typescript: "npm:^5.3.3"
-    uuid: "npm:^9.0.1"
-  bin:
-    stack-monitor: server/bin/www
-  checksum: 1f878529b0437fb18402c3032e938b8419ae61ccd12f5db3e4aab9ac59281948fd17c7718d1f9fa15b7579d70dab9bc5046f4b65a8c1c742201feae41ea3651d
-  languageName: node
-  linkType: hard
-
-"@iryu54/stack-monitor@workspace:servers/server":
+"@iryu54/stack-monitor@npm:^1.17.10, @iryu54/stack-monitor@workspace:servers/server":
   version: 0.0.0-use.local
   resolution: "@iryu54/stack-monitor@workspace:servers/server"
   dependencies:
     "@clabroche/common-retrigger-all-build": "workspace:*"
+    "@clabroche/modules-plugins-loader": "workspace:*"
     "@fortawesome/fontawesome-free": "npm:^6.5.1"
     "@types/ansi-colors": "npm:^3.2.2"
     "@types/axios": "npm:^0.14.0"
