@@ -28,11 +28,10 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: 18
-        registry-url: 'https://npm.pkg.github.com/'
         cache: 'yarn'
 
     - name: Ensure access
-      run: npm whoami --registry https://npm.pkg.github.com/
+      run: npm whoami
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
@@ -86,7 +85,7 @@ jobs:
           echo "type=staging" >> $GITHUB_OUTPUT
         else
           npx lerna version --conventional-commits --conventional-graduate --yes
-          npx lerna publish from-git --yes --registry https://npm.pkg.github.com/:_authToken=${{ secrets.NPM_TOKEN }} --force-publish
+          npx lerna publish from-git --yes --registry https://registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }} --force-publish
           git tag -fa v.latest -m "fix: set v.latest tag"
           git push origin v.latest -f
           echo "type=latest" >> $GITHUB_OUTPUT
