@@ -2,8 +2,7 @@ import { existsSync, linkSync} from 'fs';
 import { copyFile, mkdir, rm } from 'fs/promises';
 import { defineConfig } from 'tsup';
 import path from 'path'
-import {glob} from 'glob'
-import { execSync, spawnSync } from 'child_process';
+import { execSync } from 'child_process';
 import { copy } from 'fs-extra';
 
 const makeAllPackagesExternalPlugin = {
@@ -30,6 +29,7 @@ const loggerPlugin = {
     await copyFile(path.resolve(__dirname, "../../modules/bugs/checkJsFork.js"), "dist/checkJsFork.js")
     await copyFile(path.resolve(__dirname, "../../modules/bugs/defaultJsConfig.json"), "dist/defaultJsConfig.json")
     await copyFile(path.resolve(__dirname, "./helpers/cpuFork.js"), "dist/cpuFork.js")
+    await copyFile(path.resolve(__dirname, "./bin/www"), "dist/www")
     await linkSync(path.resolve(__dirname, "../../lerna.json"), "dist/lerna.json")
   }
 }
