@@ -54,7 +54,7 @@ export default {
     /** @type {import('vue').Ref<InstanceType<typeof Tabs> | null>} */
     const tabRef = ref(null)
     onMounted(async () => {
-      /** @type {{data: import('../../../modules/views').PluginSM<null>[]}} */
+      /** @type {{data: import('../../../modules/views').PluginSM[]}} */
       const {data: plugins} = await axios.get('/plugins/services')
       tabs.value = plugins
         .sort((a,b) => ((a.order || 0) - (b.order || 0)))
@@ -65,7 +65,7 @@ export default {
           if(tabRef?.value?.currentTab?.id) {
             const currentPlugin = tabRef.value.currentTab.id
             if(!service.enabled) return false
-            /** @type {{data: import('../../../modules/views').PluginSM<null>[]}} */
+            /** @type {{data: import('../../../modules/views').PluginSM[]}} */
             const {data: plugins} = await axios.get('/plugins/services/'+ service.label)
             const availablePlugins = plugins.map(a => a.name)
             const plugin = availablePlugins.find(plugin => plugin === currentPlugin)

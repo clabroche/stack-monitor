@@ -5,7 +5,7 @@ const globalScripts = []
 /**@type {Record<string, TrackStep>}*/
 const currentScriptsByCommunicationId = {}
 
-/** @param {import('../../typings/export').StackMonitor} stackMonitor */
+/** @param {import('../../fronts/app/typings/export').StackMonitor} stackMonitor */
 const GlobalScripts = (stackMonitor) => {
   const {Socket} = stackMonitor
   return {

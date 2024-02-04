@@ -8,7 +8,7 @@ import Socket from './helpers/Socket';
   const { createApp } = await import('vue');
   const {default: App} = await import('./App.vue')
   const {default: system} = await import('./models/system')
-  const {default: views} = await import('../modules/views')
+  const {default: views} = await import('../../../modules/views')
   const {default: Editor} = await import('./components/Editor.vue')
   const {default: Markdown} = await import('vue3-markdown-it')
   

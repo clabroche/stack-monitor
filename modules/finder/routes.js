@@ -22,7 +22,7 @@ function pluginToUrl(plugin) {
   }
 } 
 
-/** @param {import('../../typings/export').StackMonitor} stackMonitor */
+/** @param {import('../../fronts/app/typings/export').StackMonitor} stackMonitor */
 const routes = (stackMonitor) => {
   const {
     getServices,

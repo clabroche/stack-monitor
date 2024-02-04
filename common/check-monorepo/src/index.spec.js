@@ -23,6 +23,7 @@ describe('Workspaces naming', () => {
       const prefix = rootName.split('/').length === 2 // If is a scoped package
         ? rootName.split('/')[0]
         : null;
+      if(workspace.packageJSON.name === '@iryu54/stack-monitor') return
       if (prefix) {
         expect(workspace.packageJSON.name).toBe(`${prefix}/${expectedName}`);
       } else {
@@ -104,15 +105,16 @@ describe('Files', () => {
 describe('Publish config', () => {
   getWorkspaces().filter((workspace) => fse.existsSync(pathfs.resolve(workspace.path, 'package.json'))).forEach((workspace) => {
     it(`${workspace.packageJSON.name} should not been in private mode`, () => {
-      if (workspace.packageJSON.private) {
-        expect(true).toBe(false);
+      if(workspace.packageJSON.name === '@iryu54/stack-monitor') return
+      if(!workspace.packageJSON.private) {
+        expect(workspace.path+ '/package.json').toBe('to be in private mode')
       }
     });
     it(`${workspace.packageJSON.name} should have a repository field`, () => {
       if (!workspace.packageJSON.repository) {
-        expect(undefined).toBe('"repository": "https://github.com/addworking/monorepo",');
+        expect(undefined).toBe('"repository": "https://github.com/clabroche/stack-monitor",');
       }
-      expect(workspace.packageJSON.repository).toBe('https://github.com/addworking/monorepo');
+      expect(workspace.packageJSON.repository).toBe('https://github.com/clabroche/stack-monitor');
     });
   });
 });

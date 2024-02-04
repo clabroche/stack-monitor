@@ -57,9 +57,9 @@
 </template>
 
 <script setup>
-import SectionCmp from '../../src/components/Section.vue'
+import SectionCmp from '@/components/Section.vue'
 import { computed, onMounted, ref, watch } from 'vue';
-import axios from '../../src/helpers/axios'
+import axios from '@/helpers/axios'
 import Socket from '@/helpers/Socket';
 import Spinner from '@/components/Spinner.vue';
 import Multiselect from '@/components/Multiselect.vue';

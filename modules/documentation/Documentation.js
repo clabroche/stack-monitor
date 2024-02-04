@@ -34,12 +34,12 @@ async function walker(rootPath, pathToExplore, stripPath, leafs = []) {
   return dir
 }
 
-/** @param {import('../../typings/export').StackMonitor} stackMonitor */
+/** @param {import('../../fronts/app/typings/export').StackMonitor} stackMonitor */
 const Documentation = (stackMonitor) => {
   return {
     /** 
      * @param {string} path 
-     * @param {import('../../typings/export').Service} service 
+     * @param {import('../../fronts/app/typings/export').Service} service 
      * @param {import('./index').Leaf[]} leafs 
      */
     getTree(path, service, leafs = []) {
@@ -52,7 +52,7 @@ const Documentation = (stackMonitor) => {
     },
     /** 
      * @param {string} path 
-     * @param {import('../../typings/export').Service} service 
+     * @param {import('../../fronts/app/typings/export').Service} service 
      */
     async getFlatFiles(path, service) {
     /** @type {import('./index').Leaf[]} */
@@ -63,7 +63,7 @@ const Documentation = (stackMonitor) => {
 
     /** 
      * @param {string} path 
-     * @param {import('../../typings/export').Service} service 
+     * @param {import('../../fronts/app/typings/export').Service} service 
      */
     readFile(path, service) {
       return fse.readFile(pathfs.resolve(service.documentation, path), {encoding: 'utf-8'})

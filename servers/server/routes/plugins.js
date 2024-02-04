@@ -20,7 +20,7 @@ router.get("/services", async function (req, res) {
   res.send(services);
 });
 router.get("/:type", async function (req, res) {
-  /** @type {import("modules/views").PluginSM<null>[]} */
+  /** @type {import("../../../modules/views").PluginSM<null>[]} */
   // @ts-ignore
   const services = plugins[req.params.type];
   services.sort((a, b) => (a.order || 1000) - (b.order || 1000))

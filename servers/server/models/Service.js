@@ -23,7 +23,7 @@ const alias = {
 
 class Service {
   /**
-   * @param {import('../../typings/index').NonFunctionProperties<Service>} service
+   * @param {import('../../../fronts/app/typings/index').NonFunctionProperties<Service>} service
    * @param {import('./stack')} Stack
    */
   constructor(service, Stack) {
@@ -123,7 +123,7 @@ class Service {
     return res
   }
 
-  /** @return {Partial<import('../../typings/index').NonFunctionProperties<Service>>} */
+  /** @return {Partial<import('../../../fronts/app/typings/index').NonFunctionProperties<Service>>} */
   exportForDifference() {
     return {
       label: this.label,

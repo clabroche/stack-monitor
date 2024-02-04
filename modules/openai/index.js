@@ -21,8 +21,8 @@ module.exports = plugin
 
 /**
  * @typedef {Partial<
- * import('openai').ChatCompletionResponseMessage &
- * import('openai').CreateCompletionResponseUsage &
+ * import('openai').OpenAI.ChatCompletionMessage &
+ * import('openai').OpenAI.CompletionUsage &
  * {
  *  created_at: string,
  * _id: string

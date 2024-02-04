@@ -1,12 +1,12 @@
 const kanban = {
-  /** @param {import('../../typings/export').StackMonitor} stackMonitor */
+  /** @param {import('../../fronts/app/typings/export').StackMonitor} stackMonitor */
   getSave(stackMonitor) {
     return stackMonitor.getSave('kanban.json', {
-      /** @type {Partial<import('../../typings').NonFunctionProperties<import('./Kanban').BoardType>['prototype']>[]} */
+      /** @type {Partial<import('../../fronts/app/typings').NonFunctionProperties<import('./Kanban').BoardType>['prototype']>[]} */
       boards: [],
-      /** @type {Partial<import('../../typings').NonFunctionProperties<import('./Kanban').ColumnType>['prototype']>[]} */
+      /** @type {Partial<import('../../fronts/app/typings').NonFunctionProperties<import('./Kanban').ColumnType>['prototype']>[]} */
       columns: [],
-      /** @type {Partial<import('../../typings').NonFunctionProperties<import('./Kanban').CardType>['prototype']>[]} */
+      /** @type {Partial<import('../../fronts/app/typings').NonFunctionProperties<import('./Kanban').CardType>['prototype']>[]} */
       cards: [],
     }, {
       afterGet(data) {

@@ -10,7 +10,7 @@ const Octokit = require('octokit');
 
 router.get('/has-update', async function (req, res) {
   try {
-    const localVersion = `v${require('../../package.json').version}`
+    const localVersion = `v${require('../../../lerna.json').version}`
     const octokit = new Octokit.Octokit({ auth: process.env.GH_APIKEY });
     const { data: tags } = await octokit.rest.repos.listTags({ owner: 'clabroche', repo:'stack-monitor' })
     const remoteVersion = tags[0]?.name

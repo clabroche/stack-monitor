@@ -39,9 +39,9 @@ const route = useRoute()
 defineProps({
   plugin: {}
 })
-/** @type {import('vue').Ref<import('../../typings').NonFunctionProperties<import('./Kanban').BoardType>['prototype'][]>} */
+/** @type {import('vue').Ref<import('../../fronts/app/typings').NonFunctionProperties<import('./Kanban').BoardType>['prototype'][]>} */
 const boards = ref([])
-/** @type {import('vue').Ref<import('../../typings').NonFunctionProperties<import('./Kanban').BoardType>['prototype'] | null>} */
+/** @type {import('vue').Ref<import('../../fronts/app/typings').NonFunctionProperties<import('./Kanban').BoardType>['prototype'] | null>} */
 const selectedBoard = ref()
 const boardToCreate = ref('')
 const deleteBoardModal = ref('')

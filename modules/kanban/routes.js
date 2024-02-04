@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 
-/** @param {import('../../typings/export').StackMonitor} stackMonitor */
+/** @param {import('../../fronts/app/typings/export').StackMonitor} stackMonitor */
 module.exports = (stackMonitor) => {
     const {Board, Card, Column} = require('./Kanban')(stackMonitor)
 

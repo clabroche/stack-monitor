@@ -476,7 +476,7 @@ module.exports.initSwagger = async ({
           margin: 20px 0;
           padding: 10px;
         }
-        .addworking-title {
+        .clabroche-title {
           font-size: 2em;
           margin-left: 20px;
         }
@@ -558,7 +558,7 @@ module.exports.initSwagger = async ({
     </head>
     <body>
       <div class="header">
-        <h2 class="addworking-title">Documentation Addworking</h2>
+        <h2 class="clabroche-title">Documentation Clabroche</h2>
         <input oninput="onFilter()" id="addw-filter" placeholder="Filter...">
       </div>
       <div id="swagger"></div>

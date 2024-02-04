@@ -442,7 +442,7 @@ function difference(fromObject, toObject) {
  */
 
 /**
- * @typedef {Omit<import('../../typings/index').NonFunctionProperties<Service>, 'pids' | 'store' | 'enabled'>[]} StackArray
+ * @typedef {Omit<import('../../../fronts/app/typings/index').NonFunctionProperties<Service>, 'pids' | 'store' | 'enabled'>[]} StackArray
  */
 
 /**

@@ -58,7 +58,7 @@ export default {
   },
   setup() {
     const router = useRouter(); 
-    /** @type {import('vue').Ref<import('../../../modules/views').PluginSM<null>[]>} */
+    /** @type {import('vue').Ref<import('../../../../modules/views').PluginSM[]>} */
     const plugins = ref([])
     const cpu = ref(0)
     const mem = ref(0)

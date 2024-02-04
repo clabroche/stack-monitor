@@ -4,12 +4,12 @@ const jsonwebtoken = require('jsonwebtoken');
 module.exports = {
   /** @param {JWT} jwt */
   setJwt(jwt) {
-    context.setItem('addworking-jwt', jwt);
+    context.setItem('clabroche-jwt', jwt);
   },
 
   /** @return {JWT} */
   getJwt() {
-    return context.getItem('addworking-jwt');
+    return context.getItem('clabroche-jwt');
   },
 
   /** @return {JWT | undefined} */

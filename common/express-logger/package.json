@@ -1,8 +1,9 @@
 {
   "name": "@clabroche/common-express-logger",
   "version": "1.17.2",
+  "private":"true",
   "description": "",
-  "repository": "https://github.com/addworking/monorepo",
+  "repository": "https://github.com/clabroche/stack-monitor",
   "main": "src/index.js",
   "types": "src/index.js",
   "scripts": {

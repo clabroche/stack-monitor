@@ -1,8 +1,16 @@
 {
-  "name": "@clabroche/stackmonitor",
+  "name": "@clabroche/stack-monitor",
   "version": "1.0.0",
   "description": "",
   "main": "stack.js",
+  "publishConfig": {
+    "access": "public",
+    "tag": "",
+    "registry": "https://registry.npmjs.org"
+  },
+  "files": [
+    "./servers/server/dist"
+  ],
   "scripts": {
     "prepare": "husky install",
     "postinstall": "husky install && node prepare-monorepo.js || true",
@@ -15,19 +23,20 @@
     "ci:generate": "node ./common/workflows/src/index.js",
     "lint": "node runScriptWithEnv \"turbo run lint\"",
     "test": "node runScriptWithEnv \"turbo run test\"",
-    "build": "node runScriptWithEnv \"turbo run build\"",
+    "build": "node runScriptWithEnv \"turbo run build --filter @clabroche/servers-server\"",
+    "docs:build": "node runScriptWithEnv \"turbo run build --filter @clabroche/fronts-docs\"",
     "eslint": "eslint",
     "lerna": "npx lerna",
     "changed": "yarn lerna changed -pl --toposort",
     "resolve-conflicts": "cd common/workflow-conflict-resolver && node src/index.js"
   },
-  "repository": "git+https://github.com/addworking/monorepo.git",
+  "repository": "git+https://github.com/clabroche/stack-monitor.git",
   "author": "clabroche <corentinlabroche@gmail.com>",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/addworking/monorepo/issues"
+    "url": "https://github.com/clabroche/stack-monitor/issues"
   },
-  "homepage": "https://github.com/addworking/monorepo#readme",
+  "homepage": "https://github.com/clabroche/stack-monitor#readme",
   "workspaces": {
     "packages": [
       "./fronts/*",

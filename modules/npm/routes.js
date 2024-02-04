@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Npm = require('./Npm');
 
-/** @param {import('../../typings/export').StackMonitor} stackMonitor */
+/** @param {import('../../fronts/app/typings/export').StackMonitor} stackMonitor */
 module.exports = (stackMonitor) => {
   const { findService } = stackMonitor
 

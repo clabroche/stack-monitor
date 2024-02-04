@@ -1,0 +1,98 @@
+name: Release
+
+on:
+  push:
+    branches: 
+      - master
+      - develop
+      - staging
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    env:
+      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+      TURBO_TEAM: ${{ vars.TURBO_TEAM }}
+
+    outputs:
+      changed: ${{ steps.changes.outputs.changed }}
+      versionType: ${{ steps.version.outputs.type }}
+      lerna: ${{ steps.lerna.outputs.lernaJson }}
+    steps:
+    - name: "Checkout ${{ github.ref_name }}"
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+
+    - name: Setup Node.js environment
+      uses: actions/setup-node@v3
+      with:
+        node-version: 18
+        registry-url: 'https://npm.pkg.github.com/'
+        cache: 'yarn'
+
+    - name: Ensure access
+      run: npm whoami --registry https://npm.pkg.github.com/
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+    - name: Config git user
+      run: |
+        git config --global user.name "${{ github.actor }}"
+        git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+
+    - name: Install dependencies
+      run: yarn install --immutable
+
+    - name: Lint
+      run: yarn run lint
+
+    - name: Tests
+      run: yarn run test
+
+    - name: Build
+      run: yarn run build
+
+    - id: changes
+      name: "Export list of package has changed"
+      run: |
+        if [ ${GITHUB_REF##*/} = develop ]; then
+          echo -n changed=$(yarn turbo test --filter="...[v.dev]" --dry-run=json | jq -c '.packages') >> $GITHUB_OUTPUT
+        elif [ ${GITHUB_REF##*/} = staging ]; then
+          echo -n changed=$(yarn turbo test --filter="...[v.staging]" --dry-run=json | jq -c '.packages') >> $GITHUB_OUTPUT
+        else
+          echo -n changed=$(yarn turbo test --filter="...[v.latest]" --dry-run=json | jq -c '.packages') >> $GITHUB_OUTPUT
+        fi
+
+    - name: "Print changes"
+      run: echo "${{steps.changes.outputs.changed}}"
+
+    - name: "Version and publish ${{github.ref_name}}"
+      id: version
+      env:
+        GH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      run: |
+        git config user.name "${{ github.actor }}"
+        git config user.email "${{ github.actor}}@users.noreply.github.com"
+
+        if [ ${GITHUB_REF##*/} = develop ]; then
+          git tag -fa v.dev -m "fix: set v.dev tag"
+          git push origin v.dev -f
+          echo "type=dev" >> $GITHUB_OUTPUT
+        elif [ ${GITHUB_REF##*/} = staging ]; then
+          git tag -fa v.staging -m "fix: set v.staging tag"
+          git push origin v.staging -f
+          echo "type=staging" >> $GITHUB_OUTPUT
+        else
+          npx lerna version --conventional-commits --conventional-graduate --yes
+          npx lerna publish from-git --yes --registry https://npm.pkg.github.com/:_authToken=${{ secrets.NPM_TOKEN }} --force-publish
+          git tag -fa v.latest -m "fix: set v.latest tag"
+          git push origin v.latest -f
+          echo "type=latest" >> $GITHUB_OUTPUT
+        fi
+
+    - id: lerna
+      name: Export lerna config
+      run: |
+        echo lernaJson=$(cat lerna.json) >> $GITHUB_OUTPUT

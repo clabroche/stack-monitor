@@ -11,7 +11,7 @@ const plugin = {
   order: 4,
   /**
    * 
-   * @param {import('../../../servers/server/models/Service')} service 
+   * @param {import('../../servers/server/models/Service')} service 
    * @returns 
    */
   hidden: async (service) => {

@@ -34,12 +34,12 @@ import { useRouter } from 'vue-router';
 const router = useRouter(); 
 
 import { onMounted, ref, computed } from 'vue'
-/** @type {import('vue').Ref<import('../views').PluginSM<null>[]>} */
+/** @type {import('vue').Ref<import('../views').PluginSM[]>} */
 const plugins = ref([])
 const searchToolTerm = ref('')
 const searchToolRef = ref()
 onMounted(async () => {
-  /** @type {{data: import('../../../modules/views').PluginSM<null>[]}} */
+  /** @type {{data: import('../../modules/views').PluginSM[]}} */
   const { data: _plugins } = await axios.get('/plugins/dev-ops')
   plugins.value = _plugins?.flat() || []
   searchToolRef.value?.focus()
@@ -72,7 +72,7 @@ const buttonsPlugins = computed(() => ([
 function chooseFirst() {
   buttonsPlugins.value?.[0]?.click()
 }
-/**@param {import('../views').PluginSM<null> | undefined} plugin */
+/**@param {import('../views').PluginSM | undefined} plugin */
 function isActive(plugin) {
   return router.currentRoute.value.params.plugin === plugin?.name
 }

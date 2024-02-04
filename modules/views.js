@@ -89,12 +89,12 @@ export default plugins
  *  icon?: string,
  *  order?: number,
  *  hidden?: (
- *    service: import('../server/models/Service') | null,
- *    stack: typeof import('../server/models/stack'),
+ *    service: import('../servers/server/models/Service') | null,
+ *    stack: typeof import('../servers/server/models/stack'),
  *  ) => Promise<boolean> | boolean,
- *  routes?: (stackMonitor: import('../server/models/stack')) => import('express').Router,
+ *  routes?: (stackMonitor: import('../servers/server/models/stack')) => import('express').Router,
  *  export: T,
- *  finder?: (search: string, stackMonitor: typeof import('../server/models/stack')) => import('./finder/routes').FinderChoice[] | Promise<import('./finder/routes').FinderChoice[]>
+ *  finder?: (search: string, stackMonitor: typeof import('../servers/server/models/stack')) => import('./finder/routes').FinderChoice[] | Promise<import('./finder/routes').FinderChoice[]>
  *  placements: ({
  *    label: string,
  *    position?: 'toolbox' | 'sidebar' | 'dev-ops',

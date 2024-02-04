@@ -2,13 +2,14 @@
   "name": "@clabroche/common-express-gulp",
   "version": "1.17.2",
   "description": "",
-  "repository": "https://github.com/addworking/monorepo",
+  "private":"true",
+  "repository": "https://github.com/clabroche/stack-monitor",
   "main": "src/gulpfile.js",
   "bin": {
-    "addworking-gulp": "./src/gulp.js"
+    "clabroche-gulp": "./src/gulp.js"
   },
   "scripts": {
-    "test": "addworking-jest"
+    "test": "clabroche-jest"
   },
   "author": "",
   "license": "ISC",

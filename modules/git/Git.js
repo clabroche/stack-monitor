@@ -2,10 +2,10 @@ const { existsSync } = require('fs')
 const { execAsync, execAsyncWithoutErr } = require('../../servers/server/helpers/exec')
 const pathfs = require('path')
 
-/** @param {import('../../typings/export').StackMonitor} stackMonitor */
+/** @param {import('../../fronts/app/typings/export').StackMonitor} stackMonitor */
 const Git = (stackMonitor) => {
   const {findService} = stackMonitor
-  /** @param {import('../../../servers/server/models/Service')} service */
+  /** @param {import('../../servers/server/models/Service')} service */
   async function requirements(service) {
     if (!service) throw new Error('Git Error: Service not found') 
     if (!service.git) throw new Error('Git Error - ' + service?.label + ': Git option not set')

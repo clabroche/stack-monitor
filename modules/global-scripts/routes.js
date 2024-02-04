@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 
-/** @param {import('../../typings/export').StackMonitor} Stack */
+/** @param {import('../../fronts/app/typings/export').StackMonitor} Stack */
 module.exports = (Stack) => {
   const {globalScripts} = Stack
   router.get("/global-scripts/", async (req, res) => {

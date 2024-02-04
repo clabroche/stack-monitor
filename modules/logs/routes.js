@@ -2,7 +2,7 @@ const express = require('express');
 const { v4 } = require('uuid');
 const router = express.Router();
 
-/** @param {import('../../typings/export').StackMonitor} stackMonitor */
+/** @param {import('../../fronts/app/typings/export').StackMonitor} stackMonitor */
 module.exports = (stackMonitor) => {
   const history = stackMonitor.getSave('history.json', {
     /** @type {History[]} */

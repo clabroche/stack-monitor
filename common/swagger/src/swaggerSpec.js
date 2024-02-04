@@ -36,7 +36,7 @@ async function getOpenApi({
   appVersion, baseUrl, appName, additionalSwaggerPaths = [],
 }) {
   const packageJson = readJsonSync(path.resolve(baseUrl, 'package.json'));
-  const addworkingPackages = getDependencies(baseUrl, packageJson.name);
+  const clabrochePackages = getDependencies(baseUrl, packageJson.name);
 
   const readme = `
     <details>
@@ -60,7 +60,7 @@ async function getOpenApi({
       ...additionalSwaggerPaths,
       `${__dirname}/auth.js`,
       ...['.ts', '.js', '.swagger.yml', '.swagger.yaml'].map((ext) => `${baseUrl}/src/**/*${ext}`),
-      ...addworkingPackages.flatMap((packageName) => [
+      ...clabrochePackages.flatMap((packageName) => [
         ...['.ts', '.js', '.swagger.yml', '.swagger.yaml'].map((ext) => `${baseUrl}/node_modules/${packageName}/src/**/*${ext}`),
         ...['.ts', '.js', '.swagger.yml', '.swagger.yaml'].map((ext) => `${baseUrl}/../../../node_modules/${packageName}/src/**/*${ext}`),
       ]),

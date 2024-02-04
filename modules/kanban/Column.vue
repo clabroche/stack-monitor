@@ -103,7 +103,7 @@ const deleteColumnModal = ref(null)
 const drag = ref(false)
 /** @type {import('vue').Ref<InstanceType<import('./Kanban').CardType>[]>} */
 const cards = ref([])
-/** @type {import('vue').Ref<import('../../typings').NonFunctionProperties<import('./Kanban').ColumnType>['prototype'] | undefined | null>} */
+/** @type {import('vue').Ref<import('../../fronts/app/typings').NonFunctionProperties<import('./Kanban').ColumnType>['prototype'] | undefined | null>} */
 const column = ref()
 
 

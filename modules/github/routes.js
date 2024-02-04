@@ -19,7 +19,7 @@ let octokit = githubconf.GH_TOKEN
 
 
 
-/** @param {import('../../typings/export').StackMonitor} stackMonitor */
+/** @param {import('../../fronts/app/typings/export').StackMonitor} stackMonitor */
 module.exports = (stackMonitor) => {
   const { findService } = stackMonitor
 

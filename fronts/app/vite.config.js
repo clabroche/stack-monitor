@@ -14,7 +14,7 @@ export default defineConfig({
     })
   ],
   build: {
-    outDir: path.resolve(__dirname, 'server', 'public'),
+    outDir: path.resolve(__dirname, 'dist'),
     // watch: {
     //   include: [
     //     'src/**',
@@ -25,7 +25,7 @@ export default defineConfig({
   resolve: {
     alias: [{
       find: /~(.+)/,
-      replacement: path.join(__dirname, 'node_modules/$1'),
+      replacement: path.join(__dirname, '../../node_modules/$1'),
     }, {
       find: /@\//,
       replacement: path.join(__dirname, 'src') + '/',
