@@ -1,7 +1,7 @@
 {
   "name": "@clabroche/common-context",
   "private": true,
-  "version": "1.17.5",
+  "version": "1.17.6",
   "description": "",
   "repository": "https://github.com/clabroche/stack-monitor",
   "main": "src/index.js",
