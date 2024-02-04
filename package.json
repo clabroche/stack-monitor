@@ -23,7 +23,7 @@
     "ci:generate": "node ./common/workflows/src/index.js",
     "lint": "node runScriptWithEnv \"turbo run lint\"",
     "test": "node runScriptWithEnv \"turbo run test\"",
-    "build": "node runScriptWithEnv \"turbo run build --filter @clabroche/servers-server\"",
+    "build": "node runScriptWithEnv \"turbo run build --filter @iryu54/stack-monitor\"",
     "docs:build": "node runScriptWithEnv \"turbo run build --filter @clabroche/fronts-docs\"",
     "eslint": "eslint",
     "lerna": "npx lerna",
