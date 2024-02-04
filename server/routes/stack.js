@@ -71,6 +71,15 @@ router.get('/', function (req, res) {
   const stack = Stack.getStack()
   res.json(stack ? stack.exportInApi() : null)
 });
+
+router.get('/open-link-in-vs-code', function (req, res) {
+  let command = (commandExists('code') ? 'code' : null) || (commandExists('code-insiders') ? 'code-insiders' : null)
+  if(command) {
+    exec(`${command} --goto "${req.query.link}" .`, {cwd: req.query.root?.toString() || '.', env: process.env })
+  }
+  res.send(command)
+});
+
 router.get('/services', function (req, res) {
   res.json(Stack.getServices().map(s => s.exportInApi()))
 });

@@ -16,6 +16,20 @@ const plugin = {
       active: "GlobalScripts",
     },
   ],
+  finder: (search, stackMonitor) => {
+    const scripts = stackMonitor.globalScripts.getScripts()
+      .filter(script => script.label.toUpperCase()?.includes(search?.toUpperCase()))
+    return [
+      ...scripts.map(script => ({
+        icon: 'fas fa-cog',
+        title: script.label,
+        group: 'Global scripts',
+        description: ``,
+        secondaryTitle: '',
+        url: {path: `/DevOps/GlobalScripts`, query: {script: script.label}},
+      })),
+    ]
+  },
   routes: require('./routes'),
 };
 module.exports = plugin

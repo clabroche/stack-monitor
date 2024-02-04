@@ -31,11 +31,13 @@
                     :options="track.steps[track.currentStep].promptOptions"
                     customLabel="label"
                     :single="true"
+                    :initialValue="track.steps[track.currentStep].promptValue ? [track.steps[track.currentStep].promptValue] : []"
                     @update:value="track.steps[track.currentStep].promptValue = $event[0]?.value"
                   />
                 <Multiselect v-else-if="step.prompt.type === 'multi-select'"
                   :options="track.steps[track.currentStep].promptOptions"
                   customLabel="label"
+                  :initialValue="track.steps[track.currentStep].promptValue"
                   @update:value="track.steps[track.currentStep].promptValue = $event.map((/**@type {{value: any}}*/a) => a?.value)"
                 />
                 <input type="text" v-else v-model="track.steps[track.currentStep].promptValue">
@@ -56,11 +58,15 @@
 
 <script setup>
 import SectionCmp from '../../src/components/Section.vue'
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import axios from '../../src/helpers/axios'
 import Socket from '@/helpers/Socket';
 import Spinner from '@/components/Spinner.vue';
 import Multiselect from '@/components/Multiselect.vue';
+import {useRouter, useRoute} from 'vue-router';
+
+const router = useRouter()
+const route = useRoute()
 
 /** @type {import('vue').Ref<GlobalScript[]>} */
 const globalScripts = ref([])
@@ -81,11 +87,24 @@ const communicationId = ref('')
 const currentScript = ref(null)
 
 onMounted(reload)
+watch(route, () => {
+  const currentQueryScript = router.currentRoute.value.query.script
+    if(currentQueryScript) {
+      selectScript(globalScripts.value.find(script => script.label === currentQueryScript) || globalScripts.value[0])
+    } 
+})
 Socket.socket.on('reloadScripts', reload);
 async function reload() {
   const { data: scripts } = await axios.get('/global-scripts/')
   globalScripts.value = scripts || []
-  if (!currentScript.value && globalScripts.value?.length) await selectScript(globalScripts.value[0])
+  if (!currentScript.value && globalScripts.value?.length) {
+    const currentQueryScript = router.currentRoute.value.query.script
+    if(currentQueryScript) {
+      await selectScript(globalScripts.value.find(script => script.label === currentQueryScript) || globalScripts.value[0])
+    } else {
+      await selectScript(globalScripts.value[0])
+    }
+  }
 }
 
 const displayedSteps = computed(() => {
@@ -95,6 +114,7 @@ const displayedSteps = computed(() => {
 
 /** @param {GlobalScript} script */
 async function selectScript(script) {
+  router.push({query: {script: script.label}})
   currentScript.value = script
   track.value = {
     currentStep: '',

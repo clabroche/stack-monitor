@@ -114,8 +114,9 @@ const GlobalScripts = (stackMonitor) => {
           if (step.print) {
             try {
               track.steps[track.currentStep].printData = await step.print(track.output, track.prompts)
+              await new Promise(resolve => setTimeout(() => {resolve(null)}, 0)) // It will not pass to next step without this if step is very fast
             } catch (error) {
-              console.error('Script error')
+              console.error('Print error')
               console.error(error)
               track.steps[track.currentStep].error = error.message || error
               break;
@@ -160,6 +161,8 @@ async function prompt(step, track, event, data) {
         track.steps[track.currentStep].error = error.message || error
         return true
       }
+    } else {
+      track.prompts[track.currentStep] = data
     }
     return false
   }

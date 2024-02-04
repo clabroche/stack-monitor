@@ -73,6 +73,7 @@ export default {
   props: {
     options: { default: () => [] },
     value: { default: () => [] },
+    initialValue: { default: () => [] },
     customLabel: { default: null },
     customKey: { default: null },
     width: { default: "auto" },
@@ -99,6 +100,7 @@ export default {
     const opening = ref(false)
     const filterRef = ref(null)
     const localValue = ref(props.value)
+    localValue.value.push(...props.initialValue)
     watch(() => props.value, () => localValue.value = props.value, { deep: true })
     function emit() {
       comp.emit('update:value', props.value)

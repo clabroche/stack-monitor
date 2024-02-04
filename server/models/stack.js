@@ -11,6 +11,7 @@ const PromiseB = require('bluebird')
 const dot = require('dot-object')
 const pathfs = require('path')
 const { existsSync } = require('fs-extra')
+const ports = require('../models/ports');
 
 class Stack {
   /**@type {Stack | null} */
@@ -36,6 +37,13 @@ class Stack {
   }
   static getSave = require('../models/saves')
   static Socket = Socket
+  
+  /** @type {string} */
+  static version = require('../../package.json').version || ''
+  /** @type {string} */
+  static url = `http://localhost:${ports.http}`
+  /** @type {number} */
+  static port = +ports.http
 
   static helpers = require('../helpers/exportedHelpers')
 
