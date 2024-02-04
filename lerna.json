@@ -1,0 +1,45 @@
+{
+  "useWorkspaces": true,
+  "npmClient": "yarn",
+  "version": "1.11.23",
+  "commands": {
+    "version": {
+      "ignore": [
+        "**/*.md",
+        "**/*.json",
+        "./*.json"
+      ],
+      "ignore-changes": [
+        "**/*.md",
+        "**/*.json",
+        "./*.json"
+      ]
+    },
+    "changed": {
+      "ignore": [
+        "**/*.md",
+        "**/*.json",
+        "./*.json"
+      ],
+      "ignore-changes": [
+        "**/CHANGELOG.md",
+        "**/package.json",
+        "**/*lerna.json",
+        "package.json",
+        "yarn.lock"
+      ]
+    },
+    "diff": {
+      "ignore": [
+        "**/*.md",
+        "**/*.json",
+        "./*.json"
+      ],
+      "ignore-changes": [
+        "**/*.md",
+        "**/*.json",
+        "./*.json"
+      ]
+    }
+  }
+}

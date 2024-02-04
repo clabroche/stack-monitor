@@ -1,8 +1,8 @@
 const fse = require('fs-extra')
 const pathfs = require('path')
-const { execAsync } = require('../../server/helpers/exec')
+const { execAsync } = require('../../servers/server/helpers/exec')
 
-/** @param {import('../../server/models/Service')} service*/
+/** @param {import('../../../servers/server/models/Service')} service*/
 function Npm(service) {
   this.service = service
 }

@@ -1,0 +1,19 @@
+{
+  "name": "@clabroche/common-authentication",
+  "version": "1.17.2",
+  "description": "",
+  "repository": "https://github.com/addworking/monorepo",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"no test\""
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@clabroche/common-context": "workspace:*",
+    "jsonwebtoken": "^9.0.2"
+  },
+  "devDependencies": {
+    "@clabroche/common-retrigger-all-build": "workspace:*"
+  }
+}

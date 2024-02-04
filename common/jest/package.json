@@ -1,0 +1,24 @@
+{
+  "name": "@clabroche/common-jest",
+  "version": "1.17.2",
+  "description": "",
+  "repository": "https://github.com/addworking/monorepo",
+  "main": "src/index.js",
+  "bin": {
+    "addworking-jest": "./src/index.js"
+  },
+  "scripts": {
+    "test": "echo \"no test\""
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@swc/core": "^1.3.99",
+    "@swc/jest": "^0.2.29",
+    "fix-esm": "^1.0.1",
+    "jest": "^27.5.1"
+  },
+  "devDependencies": {
+    "@clabroche/common-retrigger-all-build": "workspace:*"
+  }
+}

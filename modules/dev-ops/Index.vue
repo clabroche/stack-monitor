@@ -39,7 +39,7 @@ const plugins = ref([])
 const searchToolTerm = ref('')
 const searchToolRef = ref()
 onMounted(async () => {
-  /** @type {{data: import('../../modules/views').PluginSM<null>[]}} */
+  /** @type {{data: import('../../../modules/views').PluginSM<null>[]}} */
   const { data: _plugins } = await axios.get('/plugins/dev-ops')
   plugins.value = _plugins?.flat() || []
   searchToolRef.value?.focus()

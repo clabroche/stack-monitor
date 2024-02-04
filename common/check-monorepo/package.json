@@ -1,0 +1,23 @@
+{
+  "name": "@clabroche/common-check-monorepo",
+  "version": "1.17.2",
+  "description": "",
+  "repository": "https://github.com/addworking/monorepo",
+  "main": "src/index.spec.js",
+  "scripts": {
+    "start": "jest",
+    "serve": "jest --watch",
+    "test": "jest"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "fs-extra": "^10.1.0"
+  },
+  "devDependencies": {
+    "@clabroche/common-jest": "workspace:*",
+    "@clabroche/common-retrigger-all-build": "workspace:*",
+    "jest": "^28.1.3",
+    "jest-sonar-reporter": "^2.0.0"
+  }
+}

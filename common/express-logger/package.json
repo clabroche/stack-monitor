@@ -1,0 +1,23 @@
+{
+  "name": "@clabroche/common-express-logger",
+  "version": "1.17.2",
+  "description": "",
+  "repository": "https://github.com/addworking/monorepo",
+  "main": "src/index.js",
+  "types": "src/index.js",
+  "scripts": {
+    "test": "echo \"no test\""
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@clabroche/common-express-http-error": "workspace:*",
+    "dayjs": "^1.11.9",
+    "pino": "^8.14.1",
+    "rotating-file-stream": "^3.1.0",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "@clabroche/common-retrigger-all-build": "workspace:*"
+  }
+}

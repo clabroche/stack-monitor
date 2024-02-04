@@ -5,9 +5,10 @@ const groups = {
   api: '02 - APIs',
 }
 
-/** @type {import('./typings/export').StackFile} */
+/** @type {import('./fronts/app/typings/export').StackFile} */
 const stack = (stackMonitor) => {
   return {
+    monorepo: true,
     services: [
       {
         label: 'Server',
@@ -18,11 +19,12 @@ const stack = (stackMonitor) => {
           remote: 'git@github.com:clabroche/stack-monitor.git'
         },
         url: `http://localhost:5459`,
-        spawnCmd: 'npm',
-        spawnArgs: ['run', 'serve:server'],
+        spawnCmd: 'nodemon',
+        spawnArgs: ['--trace-warnings bin/www $STACKFILE'],
         spawnOptions: {
-          cwd: pathfs.resolve(__dirname, 'server'),
+          cwd: pathfs.resolve(__dirname, './servers/server'),
           env: {
+            STACKFILE: pathfs.resolve(__dirname, '../addworking/monorepo/v2/dev/stack/src/stack.js'),
             NODE_ENV: 'DEV',
             HTTP_PORT: '5459',
           }
@@ -36,9 +38,9 @@ const stack = (stackMonitor) => {
           remote: 'git@github.com:clabroche/stack-monitor.git'
         },
         url: `http://localhost:5459`,
-        spawnCmd: 'vite',
+        spawnCmd: 'yarn vite',
         spawnOptions: {
-          cwd: __dirname,
+          cwd: pathfs.resolve(__dirname, './fronts/app'),
           env: {
             NODE_ENV: 'DEV',
             VITE_HTTP_PORT: '5459',

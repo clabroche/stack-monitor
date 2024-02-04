@@ -1,0 +1,19 @@
+{
+  "name": "@clabroche/common-workflows",
+  "version": "1.17.2",
+  "description": "",
+  "repository": "https://github.com/addworking/monorepo",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"No test specified\""
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@clabroche/common-retrigger-all-build": "workspace:*"
+  },
+  "dependencies": {
+    "bluebird": "^3.7.2",
+    "fs-extra": "^10.1.0"
+  }
+}

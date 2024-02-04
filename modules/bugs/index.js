@@ -19,7 +19,7 @@ const plugin = {
 }
 module.exports = plugin
 
-/** @param {import('../../server/models/Service')} service*/
+/** @param {import('../../../servers/server/models/Service')} service*/
 async function isNpm (service) {
   const path = service?.spawnOptions?.cwd
   return path 

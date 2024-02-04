@@ -1,0 +1,22 @@
+{
+  "name": "@clabroche/common-express-error-handler",
+  "version": "1.17.2",
+  "description": "",
+  "repository": "https://github.com/addworking/monorepo",
+  "main": "src/index.js",
+  "types": "src/index.js",
+  "scripts": {
+    "test": "addworking-jest"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@clabroche/common-express-http-error": "workspace:*",
+    "@clabroche/common-express-logger": "workspace:*"
+  },
+  "devDependencies": {
+    "@clabroche/common-jest": "workspace:*",
+    "@clabroche/common-retrigger-all-build": "workspace:*",
+    "jest-sonar-reporter": "^2.0.0"
+  }
+}

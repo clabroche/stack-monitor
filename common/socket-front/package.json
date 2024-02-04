@@ -1,0 +1,22 @@
+{
+  "name": "@clabroche/common-socket-front",
+  "version": "1.17.2",
+  "description": "",
+  "repository": "https://github.com/addworking/monorepo",
+  "main": "src/index.js",
+  "scripts": {
+    "test": ""
+  },
+  "author": "",
+  "license": "ISC",
+  "peerDependencies": {
+    "vue": "^3.2.45"
+  },
+  "dependencies": {
+    "axios": "^1.6.2",
+    "socket.io-client": "^4.7.2"
+  },
+  "devDependencies": {
+    "@clabroche/common-retrigger-all-build": "workspace:*"
+  }
+}

@@ -19,7 +19,6 @@ let openai = new OpenAIApi({
 
 
 module.exports = () => {
-
   router.get('/openai/', async (req, res) => {
     res.json('hello')
   })

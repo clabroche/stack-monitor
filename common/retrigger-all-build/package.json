@@ -1,0 +1,12 @@
+{
+  "name": "@clabroche/common-retrigger-all-build",
+  "version": "1.17.2",
+  "description": "",
+  "repository": "https://github.com/addworking/monorepo",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"No test specified\""
+  },
+  "author": "",
+  "license": "ISC"
+}

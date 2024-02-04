@@ -12,7 +12,7 @@ const plugin = {
   export: Documentation,
   placements: ['service'],
   order: 6,
-  /** @param {import('../../server/models/Service')} service*/
+  /** @param {import('../../../servers/server/models/Service')} service*/
   hidden: (service) => {
     if(!service) return false
     return !service?.documentation

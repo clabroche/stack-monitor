@@ -1,0 +1,19 @@
+PASS src/index.spec.js
+  Middleware: ErrorHandler
+    ✓ should set 500 status and change message (14 ms)
+    ✓ should set 500 status when err.code is not valid (2 ms)
+    ✓ should set 400 status with simple object (1 ms)
+    ✓ should set 400 status with HTTPErrror (1 ms)
+
+---------------|---------|----------|---------|---------|-------------------
+File           | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+---------------|---------|----------|---------|---------|-------------------
+All files      |     100 |    59.57 |     100 |     100 |                   
+ errorCodes.js |     100 |      100 |     100 |     100 |                   
+ index.js      |     100 |    59.57 |     100 |     100 | 15-26             
+---------------|---------|----------|---------|---------|-------------------
+Test Suites: 1 passed, 1 total
+Tests:       4 passed, 4 total
+Snapshots:   0 total
+Time:        0.81 s, estimated 1 s
+Ran all test suites.

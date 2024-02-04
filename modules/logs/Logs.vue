@@ -668,7 +668,7 @@ function setSelectedLine(line) {
   selectedLine.value = line
 }
 /**
- * @typedef {import('../../server/models/Service').LogMessage} LogMessage
+ * @typedef {import('../../../servers/server/models/Service').LogMessage} LogMessage
  */
 </script>
 

@@ -1,0 +1,26 @@
+{
+  "name": "@clabroche/common-express-gulp",
+  "version": "1.17.2",
+  "description": "",
+  "repository": "https://github.com/addworking/monorepo",
+  "main": "src/gulpfile.js",
+  "bin": {
+    "addworking-gulp": "./src/gulp.js"
+  },
+  "scripts": {
+    "test": "addworking-jest"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.0.3",
+    "gulp": "^4.0.2",
+    "kill-port": "^2.0.1"
+  },
+  "devDependencies": {
+    "@clabroche/common-jest": "workspace:*",
+    "@clabroche/common-retrigger-all-build": "workspace:*",
+    "@types/gulp": "^4.0.13",
+    "jest-sonar-reporter": "^2.0.0"
+  }
+}
