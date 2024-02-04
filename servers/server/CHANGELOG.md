@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.17.12](https://github.com/clabroche/stack-monitor/compare/v1.17.11...v1.17.12) (2024-02-04)
+
+**Note:** Version bump only for package @iryu54/stack-monitor
+
 ## [1.17.11](https://github.com/clabroche/stack-monitor/compare/v1.17.10...v1.17.11) (2024-02-04)
 
 ### Bug Fixes
