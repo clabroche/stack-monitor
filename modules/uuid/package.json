@@ -1,6 +1,6 @@
 {
   "name": "@clabroche/modules-uuid",
-  "version": "1.17.10",
+  "version": "1.17.11",
   "repository": "https://github.com/clabroche/stack-monitor",
   "private": true,
   "scripts": {
