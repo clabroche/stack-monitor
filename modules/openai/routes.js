@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const fse = require('fs-extra')
 const pathfs = require('path')
-const { Configuration, OpenAIApi } = require('openai');
+const OpenAIApi = require('openai').OpenAI;
 const { existsSync, mkdirSync } = require('fs');
 const homedir = require('os').homedir();
 const confDir = pathfs.resolve(homedir, '.stack-monitor')
@@ -13,9 +13,9 @@ const openaiConfPath = pathfs.resolve(confDir, 'openaiconf.json')
 if(!fse.existsSync(openaiConfPath)) fse.writeJSONSync(openaiConfPath, {})
 const openaiconf = fse.readJsonSync(openaiConfPath)
 /** @type {OpenAIApi} */
-let openai = new OpenAIApi(new Configuration({
+let openai = new OpenAIApi({
   apiKey: openaiconf.apikey,
-}));
+});
 
 
 module.exports = () => {
@@ -25,9 +25,7 @@ module.exports = () => {
   })
   
   router.get('/openai/models', async (req, res) => {
-    const models = await openai.listModels({
-  
-    })
+    const models = await openai.models.list({})
     res.json(models.data)
   })
   
@@ -40,7 +38,7 @@ module.exports = () => {
   })
   
   router.post('/openai/review', async (req, res) => {
-    const { data: result } = await openai.createChatCompletion({
+    const result = await openai.chat.completions.create({
       model: "gpt-3.5-turbo",
       temperature: 0,
       n: 1,
@@ -56,7 +54,7 @@ module.exports = () => {
     res.json(result.choices[0]?.message?.content || 'Cannot respond')
   })
   router.post('/openai/error', async (req, res) => {
-    const { data: result } = await openai.createChatCompletion({
+    const result = await openai.chat.completions.create({
       model: "gpt-3.5-turbo",
       temperature: 0,
       n: 1,
@@ -87,7 +85,7 @@ module.exports = () => {
       content: message,
       created_at: new Date().toISOString()
     })
-    const result = await openai.createChatCompletion({
+    const result = await openai.chat.completions.create({
       model: model || "gpt-3.5-turbo",
       temperature: Number.isNaN(+temperature) ? 0 : +temperature,
       n:1,
@@ -97,12 +95,11 @@ module.exports = () => {
         .map(a => ({ role: a.role || 'user', content: a.content || ''}))
         .slice(-15)
     }).catch(err => {
-      console.error(err.response.data)
       return Promise.reject(err)
     });
-    if (result?.data?.choices?.[0]?.message) {
-      const { usage } = result.data
-      const { message } = result.data.choices[0]
+    if (result?.choices?.[0]?.message) {
+      const { usage } = result
+      const { message } = result.choices[0]
       messages.push({
         ...message,
         ...usage,
@@ -144,9 +141,9 @@ module.exports = () => {
     const {apikey} = req.body
     openaiconf.apikey = apikey
     save()
-    openai = new OpenAIApi(new Configuration({
+    openai = new OpenAIApi({
       apiKey: openaiconf.apikey,
-    }));
+    });
   
     res.json(true)
   })

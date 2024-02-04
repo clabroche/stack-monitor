@@ -52,7 +52,7 @@
 <script setup>
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import axios from '@/helpers/axios'
-import { debounce } from 'debounce';
+import debounce from 'debounce';
 import { useRouter } from 'vue-router';
 const router = useRouter()
 

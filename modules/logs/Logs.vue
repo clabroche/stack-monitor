@@ -291,7 +291,7 @@ import notification from '@/helpers/notification';
 import Popover from '@/components/Popover.vue';
 import dayjs from 'dayjs'
 import fs from '@/models/fs';
-import { debounce } from 'debounce';
+import debounce from 'debounce';
 import Spinner from '@/components/Spinner.vue';
 import PassThrough from './PassThrough.vue';
 

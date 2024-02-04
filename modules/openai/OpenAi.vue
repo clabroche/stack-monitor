@@ -1,6 +1,9 @@
 <template>
   <div class="openai-root">
     <h1>Open ai</h1>
+    <div>
+      <input type="text" @change="changeApikey(/**@type {HTMLInputElement}*/($event.target)?.value, $event)" placeholder="Apikey...">
+    </div>
     <div v-if="!ready">
       <input type="text" @change="changeApikey(/**@type {HTMLInputElement}*/($event.target)?.value, $event)" placeholder="Apikey...">
       Vous ne pouvez pas encore communiquer avec l'assistant
@@ -25,8 +28,8 @@
             </div>
             <div>
               Model:
-              <select v-model="model">
-                <option value="gpt-3.5-turbo">gpt-3.5-turbo</option>
+              <select v-model="model" default="gpt-3.5-turbo">
+                <option v-for="_model of models" :value="_model.id">{{_model.id}}</option>
               </select>
             </div>
           </div>
@@ -48,6 +51,7 @@ const loading = ref(false)
 /** @type {import('vue').Ref<import('./index').OpenAiChat[]>} */
 const messages = ref([])
 const rooms = ref([])
+const models = ref([])
 const room = ref()
 const model = ref('gpt-3.5-turbo')
 const availableModels = ref([])
@@ -60,6 +64,8 @@ async function reload() {
   ready.value = _ready
   const { data: _rooms } = await axios.get('/openai/rooms')
   rooms.value = _rooms
+  const { data: _models } = await axios.get('/openai/models')
+  models.value = _models.filter(m => m.id.startsWith('gpt') && (m.id.split('-')?.length == 2 || Number.isNaN(+m.id.split('-').pop())))
   if(!room.value) {
     room.value = rooms.value?.[0]
   }
