@@ -12,10 +12,10 @@ if (!existsSync(confDir)) mkdirSync(confDir)
 const openaiConfPath = pathfs.resolve(confDir, 'openaiconf.json')
 if(!fse.existsSync(openaiConfPath)) fse.writeJSONSync(openaiConfPath, {})
 const openaiconf = fse.readJsonSync(openaiConfPath)
-/** @type {OpenAIApi} */
-let openai = new OpenAIApi({
+/** @type {OpenAIApi | null} */
+let openai = openaiconf.apikey ? new OpenAIApi({
   apiKey: openaiconf.apikey,
-});
+}) : null;
 
 
 module.exports = () => {
@@ -140,9 +140,9 @@ module.exports = () => {
     const {apikey} = req.body
     openaiconf.apikey = apikey
     save()
-    openai = new OpenAIApi({
+    openai = openaiconf.apikey ? new OpenAIApi({
       apiKey: openaiconf.apikey,
-    });
+    }) : null;
   
     res.json(true)
   })
