@@ -2406,7 +2406,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@clabroche/fronts-app@workspace:fronts/app":
+"@clabroche/fronts-app@workspace:*, @clabroche/fronts-app@workspace:fronts/app":
   version: 0.0.0-use.local
   resolution: "@clabroche/fronts-app@workspace:fronts/app"
   dependencies:
@@ -2706,7 +2706,7 @@ __metadata:
     "@clabroche/common-retrigger-all-build": "workspace:*"
     "@commitlint/cli": "npm:^17.6.7"
     "@commitlint/config-conventional": "npm:^17.6.7"
-    "@iryu54/stack-monitor": "npm:^1.17.10"
+    "@iryu54/stack-monitor": "npm:^1.17.13"
     "@lerna-lite/changed": "npm:^2.5.0"
     "@lerna-lite/cli": "npm:^2.5.0"
     "@lerna-lite/diff": "npm:^2.5.0"
@@ -3271,11 +3271,48 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@iryu54/stack-monitor@npm:^1.17.10, @iryu54/stack-monitor@workspace:servers/server":
+"@iryu54/stack-monitor@npm:^1.17.13":
+  version: 1.17.13
+  resolution: "@iryu54/stack-monitor@npm:1.17.13"
+  dependencies:
+    ansi-to-html: "npm:^0.7.2"
+    bluebird: "npm:^3.7.2"
+    command-exists: "npm:^1.2.9"
+    cookie-parser: "npm:~1.4.6"
+    cors: "npm:^2.8.5"
+    dayjs: "npm:^1.11.10"
+    debounce: "npm:^2.0.0"
+    dot-object: "npm:^2.1.4"
+    express: "npm:^4.18.2"
+    express-async-errors: "npm:^3.1.1"
+    fast-sort: "npm:^3.4.0"
+    fs-extra: "npm:^11.2.0"
+    gpt-3-encoder: "npm:^1.1.4"
+    jsonwebtoken: "npm:^9.0.2"
+    kill-port: "npm:^2.0.1"
+    lodash: "npm:^4.17.21"
+    mongodb: "npm:^6.3.0"
+    octokit: "npm:^3.1.2"
+    open: "npm:^8"
+    openai: "npm:^4.26.0"
+    os-utils: "npm:0.0.14"
+    pidusage-tree: "npm:^2.0.5"
+    ps-tree: "npm:^1.2.0"
+    socket.io: "npm:^4.7.4"
+    typescript: "npm:^5.3.3"
+    uuid: "npm:^9.0.1"
+  bin:
+    stack-monitor: dist/www
+  checksum: 2a4c9407ee7bd55636b4c83d908c5b7a09c6c2a92b599e59074b9b773fc34e81e0616dfac503bb04bb63946af11687a3507f05f293f63f75b4c204d0e91da7d0
+  languageName: node
+  linkType: hard
+
+"@iryu54/stack-monitor@workspace:servers/server":
   version: 0.0.0-use.local
   resolution: "@iryu54/stack-monitor@workspace:servers/server"
   dependencies:
     "@clabroche/common-retrigger-all-build": "workspace:*"
+    "@clabroche/fronts-app": "workspace:*"
     "@clabroche/modules-plugins-loader": "workspace:*"
     "@fortawesome/fontawesome-free": "npm:^6.5.1"
     "@types/ansi-colors": "npm:^3.2.2"
@@ -3353,7 +3390,6 @@ __metadata:
     vue-loader: "npm:^17.4.2"
     vue-router: "npm:^4.2.5"
     vue3-markdown-it: "npm:^1.0.10"
-    vuedraggable: "npm:^4.1.0"
     webpack: "npm:^5.90.1"
     xterm: "npm:^5.3.0"
     xterm-addon-canvas: "npm:^0.5.0"

@@ -4,7 +4,8 @@
       <template #default="{tab}">
           <div class="tab" >
             <draggableVue v-model="services"
-              v-bind="{animation: 800,}"
+              v-bind="{animation: 300}"
+              :setData="setData"
               item-key="label"
               class="services">
               <template #item="{element: service}">
@@ -54,7 +55,7 @@ export default {
     /** @type {import('vue').Ref<InstanceType<typeof Tabs> | null>} */
     const tabRef = ref(null)
     onMounted(async () => {
-      /** @type {{data: import('../../../modules/views').PluginSM[]}} */
+      /** @type {{data: import('@clabroche/modules-plugins-loader/views').PluginSM<null>[]}} */
       const {data: plugins} = await axios.get('/plugins/services')
       tabs.value = plugins
         .sort((a,b) => ((a.order || 0) - (b.order || 0)))
@@ -65,7 +66,7 @@ export default {
           if(tabRef?.value?.currentTab?.id) {
             const currentPlugin = tabRef.value.currentTab.id
             if(!service.enabled) return false
-            /** @type {{data: import('../../../modules/views').PluginSM[]}} */
+            /** @type {{data: import('@clabroche/modules-plugins-loader/views').PluginSM<null>[]}} */
             const {data: plugins} = await axios.get('/plugins/services/'+ service.label)
             const availablePlugins = plugins.map(a => a.name)
             const plugin = availablePlugins.find(plugin => plugin === currentPlugin)
@@ -81,6 +82,9 @@ export default {
       tabRef,
       services,
       tabs,
+      setData: function(dataTransfer, element) {
+        dataTransfer.setDragImage(document.createElement('div'), 100 ,100)
+      },
       /** @param {import('@/models/service').default} service */
       async restart(service) {
         await service.restart()
@@ -153,8 +157,5 @@ export default {
     min-width: 300px;
     width: 100%;
   }
-}
-.sortable-ghost {
-  display: none;
 }
 </style>

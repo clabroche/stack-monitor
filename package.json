@@ -90,6 +90,6 @@
     "node": ">=16.0.0"
   },
   "dependencies": {
-    "@iryu54/stack-monitor": "^1.17.10"
+    "@iryu54/stack-monitor": "^1.17.13"
   }
 }
