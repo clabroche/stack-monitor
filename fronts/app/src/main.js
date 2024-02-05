@@ -10,7 +10,7 @@ import Socket from './helpers/Socket';
   const {default: system} = await import('./models/system')
   const {default: views} = await import('@clabroche/modules-plugins-loader/views')
   const {default: Editor} = await import('./components/Editor.vue')
-  const {default: Markdown} = await import('vue3-markdown-it')
+  const {default: Markdown} = await import('./components/Markdown.vue')
   
   system.getVersion().catch(err => {
     console.error(err)

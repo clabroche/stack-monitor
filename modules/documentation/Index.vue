@@ -8,7 +8,7 @@
     <div class="container">
       <Tree :tree="tree" @go="goTo" :activeLeaf="activeLeaf"></Tree>
       <div class="markdown">
-        <Markdown :source="currentPage || ''"/>
+        <Markdown :modelValue="currentPage" @update:modelValue="updateCurrentPage"/>
       </div>
     </div>
   </section-cmp>
@@ -22,7 +22,7 @@ import { onMounted, ref, watch } from 'vue'
 // @ts-ignore
 import Tree from './Tree.vue'
 // @ts-ignore
-import Markdown from 'vue3-markdown-it'
+import Markdown from '@/components/Markdown.vue'
 import {useRoute} from 'vue-router'
 const route = useRoute()
 
@@ -42,6 +42,12 @@ const flatTree = ref([])
 const currentPage = ref(null)
 /** @type {import('vue').Ref<Leaf | null | undefined>} */
 const activeLeaf = ref(null)
+
+async function updateCurrentPage(page) {
+  if(!activeLeaf.value?.path) return
+  const { data } = await axios.post(`/documentation/service/${props.service.label}/${encodeURIComponent(activeLeaf.value.path)}`, {page})
+  currentPage.value = data
+}
 
 watch(() => route.query.leaf, () => {
   const leaf = flatTree.value.find((leaf) => leaf.path === route.query.leaf?.toString())

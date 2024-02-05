@@ -67,6 +67,15 @@ const Documentation = (stackMonitor) => {
      */
     readFile(path, service) {
       return fse.readFile(pathfs.resolve(service.documentation, path), {encoding: 'utf-8'})
+    },
+    /** 
+     * @param {string} path 
+     * @param {import('../../fronts/app/typings/export').Service} service 
+     * @param {string} page 
+     */
+    async writeFile(path, service, page) {
+      await fse.writeFile(pathfs.resolve(service.documentation, path), page, {encoding: 'utf-8'})
+      return fse.readFile(pathfs.resolve(service.documentation, path), {encoding: 'utf-8'})
     }
   }
 }

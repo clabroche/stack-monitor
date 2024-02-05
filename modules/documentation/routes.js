@@ -21,5 +21,10 @@ module.exports = (stackMonitor) => {
     const file = await stackMonitor.documentation.readFile(req.params.path, service)
     res.send(file)
   })
+  router.post('/documentation/service/:label/:path', async (req, res) => {
+    const service = findService(req.params.label)
+    const file = await stackMonitor.documentation.writeFile(req.params.path, service, req.body.page)
+    res.send(file)
+  })
   return router
 };
