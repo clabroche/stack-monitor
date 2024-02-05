@@ -1,6 +1,6 @@
 {
   "name": "@iryu54/stack-monitor",
-  "version": "1.17.13",
+  "version": "1.17.14",
   "description": "Monitor processes as a stack",
   "git": "https://github.com/clabroche/stack-monitor",
   "repository": "https://github.com/clabroche/stack-monitor",

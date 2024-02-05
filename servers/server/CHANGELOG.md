@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.17.14](https://github.com/clabroche/stack-monitor/compare/v1.17.13...v1.17.14) (2024-02-05)
+
+### Bug Fixes
+
+* **front:** fix drag n drop ([39f5d4b](https://github.com/clabroche/stack-monitor/commit/39f5d4b2c9d69500402a8cf76e373836c5e9b596))
+
 ## [1.17.13](https://github.com/clabroche/stack-monitor/compare/v1.17.12...v1.17.13) (2024-02-05)
 
 **Note:** Version bump only for package @iryu54/stack-monitor
