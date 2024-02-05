@@ -1,6 +1,6 @@
 {
   "name": "@clabroche/modules-plugins-loader",
-  "version": "1.17.11",
+  "version": "1.17.13",
   "repository": "https://github.com/clabroche/stack-monitor",
   "private": true,
   "main": "./plugins.js",

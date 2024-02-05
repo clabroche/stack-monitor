@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.17.13](https://github.com/clabroche/stack-monitor/compare/v1.17.12...v1.17.13) (2024-02-05)
+
+### Bug Fixes
+
+* **openai:** dont initialize openai if no apikey is configured ([0746e78](https://github.com/clabroche/stack-monitor/commit/0746e786fc54ae832b09ba5b99a33dc1d741da6f))
+
 ## [1.17.12](https://github.com/clabroche/stack-monitor/compare/v1.17.11...v1.17.12) (2024-02-04)
 
 **Note:** Version bump only for package @clabroche/stack-monitor
