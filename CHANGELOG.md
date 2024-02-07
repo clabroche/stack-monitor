@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.17.15](https://github.com/clabroche/stack-monitor/compare/v1.17.14...v1.17.15) (2024-02-07)
+
+### Bug Fixes
+
+* **logs:** fix json load on ui ([bae5dd8](https://github.com/clabroche/stack-monitor/commit/bae5dd829faf72d59215a3a9941155af6413a3eb))
+
 ## [1.17.14](https://github.com/clabroche/stack-monitor/compare/v1.17.13...v1.17.14) (2024-02-05)
 
 ### Bug Fixes
