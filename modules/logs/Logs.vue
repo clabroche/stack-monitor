@@ -110,7 +110,7 @@
               <div v-if="selectedLine.cmd" class="more-info-container">
                 <div class="more-info-label">Options:</div>
                 <div class="more-info-content">
-                  <JsonTreeView :maxDepth="1" :data="transformerJSON(selectedLine.cmd)" :copyable="true" :expand-depth="1" :show-double-quotes="true"/>
+                  <JsonTreeView :maxDepth="1" :json="transformerJSON(selectedLine.cmd)" :copyable="true" :expand-depth="1" :show-double-quotes="true"/>
                 </div>
               </div>
             </div> 
@@ -161,7 +161,7 @@
                           Find a solution
                         </button>
                       </div>
-                      <JsonTreeView :maxDepth="1" :data="transformerJSON(line.debug)" :copyable="true" :expand-depth="1" :show-double-quotes="true"/>
+                      <JsonTreeView :maxDepth="1" :json="transformerJSON(line.debug)" :copyable="true" :expand-depth="1" :show-double-quotes="true"/>
                     </div>
                   </div>
                   <div v-else-if="line.json != null"  >
@@ -179,7 +179,7 @@
                           Find a solution
                         </button>
                       </div>
-                      <JsonTreeView :maxDepth="1" :data="transformerJSON(line.json)" :copyable="true" :expand-depth="1" :show-double-quotes="true"/>
+                      <JsonTreeView :maxDepth="1" :json="transformerJSON(line.json)" :copyable="true" :expand-depth="1" :show-double-quotes="true"/>
                     </div>
                   </div>
                   <div v-html="line.msg" v-else></div>
@@ -281,6 +281,7 @@ import Socket from '@/helpers/Socket';
 import sectionCmp from '@/components/Section.vue';
 // @ts-ignore
 import { JsonTreeView } from "json-tree-view-vue3";
+import 'json-tree-view-vue3/dist/style.css'
 // @ts-ignore
 import jsonpath from 'jsonpath'
 import 'vue-json-viewer/style.css'
@@ -352,13 +353,13 @@ function transformerJSON(json) {
   if (jsonPathSearch.value) {
     try {
       const res = jsonpath.query(json, jsonPathSearch.value)
-      if (res.length === 1) return JSON.stringify(res['0'])
-      else return JSON.stringify(res)
+      if (res.length === 1) return JSON.stringify(res['0']|| '{}') 
+      else return JSON.stringify(res || '{}')
     } catch (error) {
-      // console.error(error)
+      console.error(error)
     }
   } 
-  return JSON.stringify(json)
+  return JSON.stringify(json || '{}')
 }
 const displayedLines = computed(() => {
   /** @type {LogMessage[]} */
