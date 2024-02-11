@@ -34,12 +34,12 @@ import { onMounted, ref, computed } from 'vue';
 import axios from '../../../../fronts/app/src/helpers/axios';
 
 const router = useRouter();
-/** @type {import('vue').Ref<import('@clabroche/modules-plugins-loader-front/src/views').PluginSM<undefined>[]>} */
+/** @type {import('vue').Ref<import('../../../plugins-loader/front/src/views').PluginSM<undefined>[]>} */
 const plugins = ref([]);
 const searchToolTerm = ref('');
 const searchToolRef = ref();
 onMounted(async () => {
-  /** @type {{data: import('@clabroche/modules-plugins-loader-front/src/views').PluginSM<undefined>[]}} */
+  /** @type {{data: import('../../../plugins-loader/front/src/views').PluginSM<undefined>[]}} */
   const { data: _plugins } = await axios.get('/plugins/toolbox');
   plugins.value = _plugins?.flat() || [];
   searchToolRef.value?.focus();
@@ -71,7 +71,7 @@ const buttonsPlugins = computed(() => ([
 function chooseFirst() {
   buttonsPlugins.value?.[0]?.click();
 }
-/** @param {import('@clabroche/modules-plugins-loader-front/src/views').PluginSM<undefined> | undefined | null} plugin */
+/** @param {import('../../../plugins-loader/front/src/views').PluginSM<undefined> | undefined | null} plugin */
 function isActive(plugin) {
   return router.currentRoute.value.params.plugin === plugin?.name;
 }

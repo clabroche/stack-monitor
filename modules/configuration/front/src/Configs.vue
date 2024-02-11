@@ -1,4 +1,4 @@
-<template>
+<template> 
   <section-cmp
     class="configs-root"
     v-if="service" :key="service.label">

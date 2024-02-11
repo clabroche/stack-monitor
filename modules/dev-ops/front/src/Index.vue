@@ -35,12 +35,12 @@ import { onMounted, ref, computed } from 'vue';
 import axios from '../../../../fronts/app/src/helpers/axios';
 
 const router = useRouter();
-/** @type {import('vue').Ref<import('@clabroche/modules-plugins-loader-front/src/views').PluginSM<null>[]>} */
+/** @type {import('vue').Ref<import('../../../plugins-loader/front/src/views').PluginSM<null>[]>} */
 const plugins = ref([]);
 const searchToolTerm = ref('');
 const searchToolRef = ref();
 onMounted(async () => {
-  /** @type {{data: import('@clabroche/modules-plugins-loader-front/src/views').PluginSM<null>[]}} */
+  /** @type {{data: import('../../../plugins-loader/front/src/views').PluginSM<null>[]}} */
   const { data: _plugins } = await axios.get('/plugins/dev-ops');
   plugins.value = _plugins?.flat() || [];
   searchToolRef.value?.focus();

@@ -17,7 +17,8 @@
       "import/no-extraneous-dependencies": "off"
     }
   },
-  "peerDependencies": {
+  "devDependencies": {
+    "@clabroche/common-retrigger-all-build": "workspace:*",
     "@clabroche/modules-bugs-front": "workspace:*",
     "@clabroche/modules-configuration-front": "workspace:*",
     "@clabroche/modules-dev-ops-front": "workspace:*",
@@ -37,10 +38,7 @@
     "@clabroche/modules-openai-front": "workspace:*",
     "@clabroche/modules-regex-front": "workspace:*",
     "@clabroche/modules-toolbox-front": "workspace:*",
-    "@clabroche/modules-uuid-front": "workspace:*"
-  },
-  "devDependencies": {
-    "@clabroche/common-retrigger-all-build": "workspace:*",
+    "@clabroche/modules-uuid-front": "workspace:*",
     "@types/express": "^4.17.21",
     "express": "^4.18.2",
     "vue": "^3.4.18",
