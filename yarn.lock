@@ -873,7 +873,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@clabroche/common-typings@workspace:common/typings":
+"@clabroche/common-typings@workspace:*, @clabroche/common-typings@workspace:^, @clabroche/common-typings@workspace:common/typings":
   version: 0.0.0-use.local
   resolution: "@clabroche/common-typings@workspace:common/typings"
   dependencies:
@@ -910,10 +910,7 @@ __metadata:
   resolution: "@clabroche/fronts-app@workspace:fronts/app"
   dependencies:
     "@clabroche/common-retrigger-all-build": "workspace:*"
-    "@clabroche/modules-documentation-backend": "workspace:*"
-    "@clabroche/modules-global-scripts-backend": "workspace:*"
-    "@clabroche/modules-npm-backend": "workspace:*"
-    "@clabroche/modules-openai-backend": "workspace:*"
+    "@clabroche/common-typings": "workspace:*"
     "@clabroche/modules-plugins-loader-front": "workspace:*"
     "@fortawesome/fontawesome-free": "npm:^6.5.1"
     "@vitejs/plugin-vue": "npm:^5.0.3"
@@ -970,7 +967,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@clabroche/modules-bugs-front@workspace:*, @clabroche/modules-bugs-front@workspace:modules/bugs/front":
+"@clabroche/modules-bugs-front@workspace:modules/bugs/front":
   version: 0.0.0-use.local
   resolution: "@clabroche/modules-bugs-front@workspace:modules/bugs/front"
   dependencies:
@@ -990,7 +987,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@clabroche/modules-configuration-front@workspace:*, @clabroche/modules-configuration-front@workspace:modules/configuration/front":
+"@clabroche/modules-configuration-front@workspace:modules/configuration/front":
   version: 0.0.0-use.local
   resolution: "@clabroche/modules-configuration-front@workspace:modules/configuration/front"
   dependencies:
@@ -1011,7 +1008,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@clabroche/modules-dev-ops-front@workspace:*, @clabroche/modules-dev-ops-front@workspace:modules/dev-ops/front":
+"@clabroche/modules-dev-ops-front@workspace:modules/dev-ops/front":
   version: 0.0.0-use.local
   resolution: "@clabroche/modules-dev-ops-front@workspace:modules/dev-ops/front"
   dependencies:
@@ -1037,7 +1034,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@clabroche/modules-diff-front@workspace:*, @clabroche/modules-diff-front@workspace:modules/diff/front":
+"@clabroche/modules-diff-front@workspace:modules/diff/front":
   version: 0.0.0-use.local
   resolution: "@clabroche/modules-diff-front@workspace:modules/diff/front"
   dependencies:
@@ -1065,7 +1062,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@clabroche/modules-documentation-front@workspace:*, @clabroche/modules-documentation-front@workspace:modules/documentation/front":
+"@clabroche/modules-documentation-front@workspace:modules/documentation/front":
   version: 0.0.0-use.local
   resolution: "@clabroche/modules-documentation-front@workspace:modules/documentation/front"
   dependencies:
@@ -1094,7 +1091,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@clabroche/modules-finder-front@workspace:*, @clabroche/modules-finder-front@workspace:modules/finder/front":
+"@clabroche/modules-finder-front@workspace:modules/finder/front":
   version: 0.0.0-use.local
   resolution: "@clabroche/modules-finder-front@workspace:modules/finder/front"
   dependencies:
@@ -1120,7 +1117,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@clabroche/modules-git-front@workspace:*, @clabroche/modules-git-front@workspace:modules/git/front":
+"@clabroche/modules-git-front@workspace:modules/git/front":
   version: 0.0.0-use.local
   resolution: "@clabroche/modules-git-front@workspace:modules/git/front"
   dependencies:
@@ -1151,7 +1148,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@clabroche/modules-github-front@workspace:*, @clabroche/modules-github-front@workspace:modules/github/front":
+"@clabroche/modules-github-front@workspace:modules/github/front":
   version: 0.0.0-use.local
   resolution: "@clabroche/modules-github-front@workspace:modules/github/front"
   dependencies:
@@ -1177,7 +1174,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@clabroche/modules-global-scripts-front@workspace:*, @clabroche/modules-global-scripts-front@workspace:modules/global-scripts/front":
+"@clabroche/modules-global-scripts-front@workspace:modules/global-scripts/front":
   version: 0.0.0-use.local
   resolution: "@clabroche/modules-global-scripts-front@workspace:modules/global-scripts/front"
   dependencies:
@@ -1198,7 +1195,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@clabroche/modules-json-formatter-front@workspace:*, @clabroche/modules-json-formatter-front@workspace:modules/json-formatter/front":
+"@clabroche/modules-json-formatter-front@workspace:modules/json-formatter/front":
   version: 0.0.0-use.local
   resolution: "@clabroche/modules-json-formatter-front@workspace:modules/json-formatter/front"
   dependencies:
@@ -1225,7 +1222,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@clabroche/modules-jwt-front@workspace:*, @clabroche/modules-jwt-front@workspace:modules/jwt/front":
+"@clabroche/modules-jwt-front@workspace:modules/jwt/front":
   version: 0.0.0-use.local
   resolution: "@clabroche/modules-jwt-front@workspace:modules/jwt/front"
   dependencies:
@@ -1251,7 +1248,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@clabroche/modules-kanban-front@workspace:*, @clabroche/modules-kanban-front@workspace:modules/kanban/front":
+"@clabroche/modules-kanban-front@workspace:modules/kanban/front":
   version: 0.0.0-use.local
   resolution: "@clabroche/modules-kanban-front@workspace:modules/kanban/front"
   dependencies:
@@ -1279,7 +1276,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@clabroche/modules-logs-front@workspace:*, @clabroche/modules-logs-front@workspace:modules/logs/front":
+"@clabroche/modules-logs-front@workspace:modules/logs/front":
   version: 0.0.0-use.local
   resolution: "@clabroche/modules-logs-front@workspace:modules/logs/front"
   dependencies:
@@ -1306,7 +1303,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@clabroche/modules-mongo-front@workspace:*, @clabroche/modules-mongo-front@workspace:modules/mongo/front":
+"@clabroche/modules-mongo-front@workspace:modules/mongo/front":
   version: 0.0.0-use.local
   resolution: "@clabroche/modules-mongo-front@workspace:modules/mongo/front"
   dependencies:
@@ -1334,7 +1331,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@clabroche/modules-node-repl-front@workspace:*, @clabroche/modules-node-repl-front@workspace:modules/node-repl/front":
+"@clabroche/modules-node-repl-front@workspace:modules/node-repl/front":
   version: 0.0.0-use.local
   resolution: "@clabroche/modules-node-repl-front@workspace:modules/node-repl/front"
   dependencies:
@@ -1361,7 +1358,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@clabroche/modules-npm-front@workspace:*, @clabroche/modules-npm-front@workspace:modules/npm/front":
+"@clabroche/modules-npm-front@workspace:modules/npm/front":
   version: 0.0.0-use.local
   resolution: "@clabroche/modules-npm-front@workspace:modules/npm/front"
   dependencies:
@@ -1390,7 +1387,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@clabroche/modules-openai-front@workspace:*, @clabroche/modules-openai-front@workspace:modules/openai/front":
+"@clabroche/modules-openai-front@workspace:modules/openai/front":
   version: 0.0.0-use.local
   resolution: "@clabroche/modules-openai-front@workspace:modules/openai/front"
   dependencies:
@@ -1435,26 +1432,6 @@ __metadata:
   resolution: "@clabroche/modules-plugins-loader-front@workspace:modules/plugins-loader/front"
   dependencies:
     "@clabroche/common-retrigger-all-build": "workspace:*"
-    "@clabroche/modules-bugs-front": "workspace:*"
-    "@clabroche/modules-configuration-front": "workspace:*"
-    "@clabroche/modules-dev-ops-front": "workspace:*"
-    "@clabroche/modules-diff-front": "workspace:*"
-    "@clabroche/modules-documentation-front": "workspace:*"
-    "@clabroche/modules-finder-front": "workspace:*"
-    "@clabroche/modules-git-front": "workspace:*"
-    "@clabroche/modules-github-front": "workspace:*"
-    "@clabroche/modules-global-scripts-front": "workspace:*"
-    "@clabroche/modules-json-formatter-front": "workspace:*"
-    "@clabroche/modules-jwt-front": "workspace:*"
-    "@clabroche/modules-kanban-front": "workspace:*"
-    "@clabroche/modules-logs-front": "workspace:*"
-    "@clabroche/modules-mongo-front": "workspace:*"
-    "@clabroche/modules-node-repl-front": "workspace:*"
-    "@clabroche/modules-npm-front": "workspace:*"
-    "@clabroche/modules-openai-front": "workspace:*"
-    "@clabroche/modules-regex-front": "workspace:*"
-    "@clabroche/modules-toolbox-front": "workspace:*"
-    "@clabroche/modules-uuid-front": "workspace:*"
     "@types/express": "npm:^4.17.21"
     express: "npm:^4.18.2"
     vue: "npm:^3.4.18"
@@ -1472,7 +1449,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@clabroche/modules-regex-front@workspace:*, @clabroche/modules-regex-front@workspace:modules/regex/front":
+"@clabroche/modules-regex-front@workspace:modules/regex/front":
   version: 0.0.0-use.local
   resolution: "@clabroche/modules-regex-front@workspace:modules/regex/front"
   dependencies:
@@ -1494,7 +1471,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@clabroche/modules-toolbox-front@workspace:*, @clabroche/modules-toolbox-front@workspace:modules/toolbox/front":
+"@clabroche/modules-toolbox-front@workspace:modules/toolbox/front":
   version: 0.0.0-use.local
   resolution: "@clabroche/modules-toolbox-front@workspace:modules/toolbox/front"
   dependencies:
@@ -1521,7 +1498,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@clabroche/modules-uuid-front@workspace:*, @clabroche/modules-uuid-front@workspace:modules/uuid/front":
+"@clabroche/modules-uuid-front@workspace:modules/uuid/front":
   version: 0.0.0-use.local
   resolution: "@clabroche/modules-uuid-front@workspace:modules/uuid/front"
   dependencies:
@@ -1537,6 +1514,7 @@ __metadata:
   resolution: "@clabroche/stack-monitor@workspace:."
   dependencies:
     "@clabroche/common-retrigger-all-build": "workspace:*"
+    "@clabroche/common-typings": "workspace:^"
     "@commitlint/cli": "npm:^17.6.7"
     "@commitlint/config-conventional": "npm:^17.6.7"
     "@iryu54/stack-monitor": "npm:^1.17.14"

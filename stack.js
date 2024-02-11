@@ -9,7 +9,7 @@ const groups = {
   api: '02 - APIs',
 };
 
-/** @type {import('./fronts/app/typings/export').StackFile} */
+/** @type {import('@clabroche/common-typings').StackFile} */
 const stack = (stackMonitor) => ({
   monorepo: true,
   services: [

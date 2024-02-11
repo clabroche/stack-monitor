@@ -40,8 +40,10 @@
   "packageManager": "yarn@4.0.2",
   "devDependencies": {
     "@clabroche/common-retrigger-all-build": "workspace:*",
+    "@clabroche/common-typings": "workspace:^",
     "@commitlint/cli": "^17.6.7",
     "@commitlint/config-conventional": "^17.6.7",
+    "@iryu54/stack-monitor": "^1.17.14",
     "@lerna-lite/changed": "^2.5.0",
     "@lerna-lite/cli": "^2.5.0",
     "@lerna-lite/diff": "^2.5.0",
@@ -83,8 +85,5 @@
   },
   "engines": {
     "node": ">=16.0.0"
-  },
-  "dependencies": {
-    "@iryu54/stack-monitor": "^1.17.14"
   }
 }

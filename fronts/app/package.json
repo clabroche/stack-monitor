@@ -36,10 +36,7 @@
   },
   "devDependencies": {
     "@clabroche/common-retrigger-all-build": "workspace:*",
-    "@clabroche/modules-documentation-backend": "workspace:*",
-    "@clabroche/modules-global-scripts-backend": "workspace:*",
-    "@clabroche/modules-npm-backend": "workspace:*",
-    "@clabroche/modules-openai-backend": "workspace:*",
+    "@clabroche/common-typings": "workspace:*",
     "@clabroche/modules-plugins-loader-front": "workspace:*",
     "@fortawesome/fontawesome-free": "^6.5.1",
     "@vitejs/plugin-vue": "^5.0.3",
