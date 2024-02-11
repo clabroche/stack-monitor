@@ -18,6 +18,7 @@
     "@clabroche/modules-git-backend": "workspace:*",
     "@clabroche/modules-github-backend": "workspace:*",
     "@clabroche/modules-global-scripts-backend": "workspace:*",
+    "@clabroche/modules-help-backend": "workspace:*",
     "@clabroche/modules-json-formatter-backend": "workspace:*",
     "@clabroche/modules-jwt-backend": "workspace:*",
     "@clabroche/modules-kanban-backend": "workspace:*",

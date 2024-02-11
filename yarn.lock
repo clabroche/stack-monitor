@@ -1170,6 +1170,23 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@clabroche/modules-help-backend@workspace:*, @clabroche/modules-help-backend@workspace:modules/help/backend":
+  version: 0.0.0-use.local
+  resolution: "@clabroche/modules-help-backend@workspace:modules/help/backend"
+  dependencies:
+    "@clabroche/common-retrigger-all-build": "workspace:*"
+  languageName: unknown
+  linkType: soft
+
+"@clabroche/modules-help-front@workspace:modules/help/front":
+  version: 0.0.0-use.local
+  resolution: "@clabroche/modules-help-front@workspace:modules/help/front"
+  dependencies:
+    "@clabroche/common-retrigger-all-build": "workspace:*"
+    vue-eslint-parser: "npm:^9.4.2"
+  languageName: unknown
+  linkType: soft
+
 "@clabroche/modules-json-formatter-backend@workspace:*, @clabroche/modules-json-formatter-backend@workspace:modules/json-formatter/backend":
   version: 0.0.0-use.local
   resolution: "@clabroche/modules-json-formatter-backend@workspace:modules/json-formatter/backend"
@@ -1387,6 +1404,7 @@ __metadata:
     "@clabroche/modules-git-backend": "workspace:*"
     "@clabroche/modules-github-backend": "workspace:*"
     "@clabroche/modules-global-scripts-backend": "workspace:*"
+    "@clabroche/modules-help-backend": "workspace:*"
     "@clabroche/modules-json-formatter-backend": "workspace:*"
     "@clabroche/modules-jwt-backend": "workspace:*"
     "@clabroche/modules-kanban-backend": "workspace:*"

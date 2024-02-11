@@ -19,6 +19,7 @@ import Github from '@clabroche/modules-github-front/src/Index.vue';
 import Kanban from '@clabroche/modules-kanban-front/src/Index.vue';
 import GlobalScripts from '@clabroche/modules-global-scripts-front/src/Index.vue';
 import Finder from '@clabroche/modules-finder-front/src/Index.vue';
+import Help from '@clabroche/modules-help-front/src/Index.vue';
 import DynamicComponent from './DynamicComponent.vue';
 
 const toolboxPlugins = [
@@ -31,6 +32,7 @@ const toolboxPlugins = [
   { name: 'Diff', component: Diff },
   { name: 'NodeREPL', component: NodeREPL },
   { name: 'Mongo', component: Mongo },
+  { name: 'Help', component: Help },
   { name: 'OpenAI', component: OpenAI },
   { name: 'GlobalScripts', component: GlobalScripts },
   { name: 'Kanban', component: Kanban },
@@ -77,6 +79,7 @@ const plugins = [
       },
     ],
   })),
+  { name: 'Help', cmp: Help },
   { name: 'Logs', cmp: LogsVue },
   { name: 'Git', cmp: GitVue },
   { name: 'Github', cmp: Github },

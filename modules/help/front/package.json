@@ -1,0 +1,22 @@
+{
+  "name": "@clabroche/modules-help-front",
+  "version": "1.17.24",
+  "repository": "https://github.com/clabroche/stack-monitor",
+  "private": true,
+  "scripts": {
+    "test": ""
+  },
+  "eslintConfig": {
+    "parser": "vue-eslint-parser",
+    "env": {
+      "browser": true
+    },
+    "rules": {
+      "import/no-extraneous-dependencies": "off"
+    }
+  },
+  "devDependencies": {
+    "@clabroche/common-retrigger-all-build": "workspace:*",
+    "vue-eslint-parser": "^9.4.2"
+  }
+}

@@ -19,4 +19,5 @@ module.exports = {
   regex: require('@clabroche/modules-regex-backend'),
   toolbox: require('@clabroche/modules-toolbox-backend'),
   uuid: require('@clabroche/modules-uuid-backend'),
+  help: require('@clabroche/modules-help-backend'),
 };
