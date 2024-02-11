@@ -1,6 +1,6 @@
 {
   "name": "@clabroche/modules-logs-front",
-  "version": "1.17.11",
+  "version": "1.17.18",
   "repository": "https://github.com/clabroche/stack-monitor",
   "private": true,
   "scripts": {

@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.17.18](https://github.com/clabroche/stack-monitor/compare/v1.17.15...v1.17.18) (2024-02-11)
+
+### Bug Fixes
+
+* build for npm ([0c07b41](https://github.com/clabroche/stack-monitor/commit/0c07b410a237412c1c73bbb42fe45c1f9c220482))
+* no cyclic dependencies ([496f153](https://github.com/clabroche/stack-monitor/commit/496f153c9492fc25873f1498a0b1f22556601eed))
+
 ## [1.17.11](https://github.com/clabroche/stack-monitor/compare/v1.17.10...v1.17.11) (2024-02-04)
 
 ### Bug Fixes

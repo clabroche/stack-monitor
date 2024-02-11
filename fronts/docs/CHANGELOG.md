@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.17.18](https://github.com/clabroche/stack-monitor/compare/v1.17.15...v1.17.18) (2024-02-11)
+
+### Bug Fixes
+
+* resolve conflict ([e29ed8c](https://github.com/clabroche/stack-monitor/commit/e29ed8c50536109b0a05ec24d212b03a0f0b7922))
+
 ## [1.17.11](https://github.com/clabroche/stack-monitor/compare/v1.17.10...v1.17.11) (2024-02-04)
 
 **Note:** Version bump only for package @clabroche/fronts-docs

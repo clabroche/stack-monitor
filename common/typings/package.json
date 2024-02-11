@@ -1,7 +1,7 @@
 {
   "name": "@clabroche/common-typings",
   "private": true,
-  "version": "1.17.11",
+  "version": "1.17.18",
   "description": "",
   "repository": "https://github.com/clabroche/stack-monitor",
   "types": "src/index.ts",
