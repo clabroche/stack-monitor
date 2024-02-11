@@ -971,7 +971,6 @@ __metadata:
   resolution: "@clabroche/modules-bugs-front@workspace:modules/bugs/front"
   dependencies:
     "@clabroche/common-retrigger-all-build": "workspace:*"
-    "@clabroche/fronts-app": "workspace:*"
     vue: "npm:^3.4.18"
     vue-eslint-parser: "npm:^9.4.2"
   languageName: unknown
@@ -991,7 +990,6 @@ __metadata:
   resolution: "@clabroche/modules-configuration-front@workspace:modules/configuration/front"
   dependencies:
     "@clabroche/common-retrigger-all-build": "workspace:*"
-    "@clabroche/fronts-app": "workspace:*"
     fast-sort: "npm:^3.4.0"
     vue: "npm:^3.4.18"
     vue-eslint-parser: "npm:^9.4.2"
@@ -1012,7 +1010,6 @@ __metadata:
   resolution: "@clabroche/modules-dev-ops-front@workspace:modules/dev-ops/front"
   dependencies:
     "@clabroche/common-retrigger-all-build": "workspace:*"
-    "@clabroche/fronts-app": "workspace:*"
     "@clabroche/modules-plugins-loader-front": "workspace:*"
     vue: "npm:^3.4.18"
     vue-eslint-parser: "npm:^9.4.2"
@@ -1038,7 +1035,6 @@ __metadata:
   resolution: "@clabroche/modules-diff-front@workspace:modules/diff/front"
   dependencies:
     "@clabroche/common-retrigger-all-build": "workspace:*"
-    "@clabroche/fronts-app": "workspace:*"
     vue-eslint-parser: "npm:^9.4.2"
   languageName: unknown
   linkType: soft
@@ -1065,7 +1061,6 @@ __metadata:
   resolution: "@clabroche/modules-documentation-front@workspace:modules/documentation/front"
   dependencies:
     "@clabroche/common-retrigger-all-build": "workspace:*"
-    "@clabroche/fronts-app": "workspace:*"
     vue: "npm:^3.4.18"
     vue-eslint-parser: "npm:^9.4.2"
     vue-router: "npm:^4.2.5"
@@ -1093,7 +1088,6 @@ __metadata:
   resolution: "@clabroche/modules-finder-front@workspace:modules/finder/front"
   dependencies:
     "@clabroche/common-retrigger-all-build": "workspace:*"
-    "@clabroche/fronts-app": "workspace:*"
     vue: "npm:^3.4.18"
     vue-eslint-parser: "npm:^9.4.2"
     vue-router: "npm:^4.2.5"
@@ -1118,7 +1112,6 @@ __metadata:
   resolution: "@clabroche/modules-git-front@workspace:modules/git/front"
   dependencies:
     "@clabroche/common-retrigger-all-build": "workspace:*"
-    "@clabroche/fronts-app": "workspace:*"
     vue: "npm:^3.4.18"
     vue-eslint-parser: "npm:^9.4.2"
     vue-router: "npm:^4.2.5"
@@ -1148,7 +1141,6 @@ __metadata:
   resolution: "@clabroche/modules-github-front@workspace:modules/github/front"
   dependencies:
     "@clabroche/common-retrigger-all-build": "workspace:*"
-    "@clabroche/fronts-app": "workspace:*"
     vue: "npm:^3.4.18"
     vue-eslint-parser: "npm:^9.4.2"
   languageName: unknown
@@ -1173,7 +1165,6 @@ __metadata:
   resolution: "@clabroche/modules-global-scripts-front@workspace:modules/global-scripts/front"
   dependencies:
     "@clabroche/common-retrigger-all-build": "workspace:*"
-    "@clabroche/fronts-app": "workspace:*"
     vue: "npm:^3.4.18"
     vue-eslint-parser: "npm:^9.4.2"
     vue-router: "npm:^4.2.5"
@@ -1194,7 +1185,6 @@ __metadata:
   resolution: "@clabroche/modules-json-formatter-front@workspace:modules/json-formatter/front"
   dependencies:
     "@clabroche/common-retrigger-all-build": "workspace:*"
-    "@clabroche/fronts-app": "workspace:*"
     json-tree-view-vue3: "npm:^1.0.1"
     jsonrepair: "npm:^3.5.1"
     vue: "npm:^3.4.18"
@@ -1221,7 +1211,6 @@ __metadata:
   resolution: "@clabroche/modules-jwt-front@workspace:modules/jwt/front"
   dependencies:
     "@clabroche/common-retrigger-all-build": "workspace:*"
-    "@clabroche/fronts-app": "workspace:*"
     json-tree-view-vue3: "npm:^1.0.1"
     vue: "npm:^3.4.18"
     vue-eslint-parser: "npm:^9.4.2"
@@ -1246,7 +1235,6 @@ __metadata:
   resolution: "@clabroche/modules-kanban-front@workspace:modules/kanban/front"
   dependencies:
     "@clabroche/common-retrigger-all-build": "workspace:*"
-    "@clabroche/fronts-app": "workspace:*"
     vue: "npm:^3.4.18"
     vue-eslint-parser: "npm:^9.4.2"
     vue-router: "npm:^4.2.5"
@@ -1273,7 +1261,6 @@ __metadata:
   resolution: "@clabroche/modules-logs-front@workspace:modules/logs/front"
   dependencies:
     "@clabroche/common-retrigger-all-build": "workspace:*"
-    "@clabroche/fronts-app": "workspace:*"
     dayjs: "npm:^1.11.10"
     json-tree-view-vue3: "npm:^1.0.1"
     jsonpath: "npm:^1.1.1"
@@ -1300,7 +1287,6 @@ __metadata:
   resolution: "@clabroche/modules-mongo-front@workspace:modules/mongo/front"
   dependencies:
     "@clabroche/common-retrigger-all-build": "workspace:*"
-    "@clabroche/fronts-app": "workspace:*"
     dayjs: "npm:^1.11.10"
     vue: "npm:^3.4.18"
     vue-eslint-parser: "npm:^9.4.2"
@@ -1327,7 +1313,6 @@ __metadata:
   resolution: "@clabroche/modules-node-repl-front@workspace:modules/node-repl/front"
   dependencies:
     "@clabroche/common-retrigger-all-build": "workspace:*"
-    "@clabroche/fronts-app": "workspace:*"
     vue: "npm:^3.4.18"
     vue-eslint-parser: "npm:^9.4.2"
     xterm: "npm:^5.3.0"
@@ -1355,7 +1340,6 @@ __metadata:
   resolution: "@clabroche/modules-npm-front@workspace:modules/npm/front"
   dependencies:
     "@clabroche/common-retrigger-all-build": "workspace:*"
-    "@clabroche/fronts-app": "workspace:*"
     vue: "npm:^3.4.18"
     vue-eslint-parser: "npm:^9.4.2"
     vue-router: "npm:^4.2.5"
@@ -1384,7 +1368,6 @@ __metadata:
   resolution: "@clabroche/modules-openai-front@workspace:modules/openai/front"
   dependencies:
     "@clabroche/common-retrigger-all-build": "workspace:*"
-    "@clabroche/fronts-app": "workspace:*"
     dayjs: "npm:^1.11.10"
     vue: "npm:^3.4.18"
     vue-eslint-parser: "npm:^9.4.2"
@@ -1467,7 +1450,6 @@ __metadata:
   resolution: "@clabroche/modules-regex-front@workspace:modules/regex/front"
   dependencies:
     "@clabroche/common-retrigger-all-build": "workspace:*"
-    "@clabroche/fronts-app": "workspace:*"
     json-tree-view-vue3: "npm:^1.0.1"
     monaco-editor: "npm:^0.46.0"
     vue: "npm:^3.4.18"
@@ -1489,7 +1471,6 @@ __metadata:
   resolution: "@clabroche/modules-toolbox-front@workspace:modules/toolbox/front"
   dependencies:
     "@clabroche/common-retrigger-all-build": "workspace:*"
-    "@clabroche/fronts-app": "workspace:*"
     "@clabroche/modules-plugins-loader-front": "workspace:*"
     vue: "npm:^3.4.18"
     vue-eslint-parser: "npm:^9.4.2"
@@ -1515,7 +1496,6 @@ __metadata:
   resolution: "@clabroche/modules-uuid-front@workspace:modules/uuid/front"
   dependencies:
     "@clabroche/common-retrigger-all-build": "workspace:*"
-    "@clabroche/fronts-app": "workspace:*"
     vue: "npm:^3.4.18"
     vue-eslint-parser: "npm:^9.4.2"
   languageName: unknown
@@ -1538,7 +1518,6 @@ __metadata:
     debounce: "npm:^2.0.0"
     dot-object: "npm:^2.1.4"
     dotenv: "npm:^16.4.2"
-    dts-generator: "npm:^3.0.0"
     express: "npm:^4.18.2"
     express-async-errors: "npm:^3.1.1"
     fast-sort: "npm:^3.4.0"
@@ -1554,9 +1533,6 @@ __metadata:
     socket.io: "npm:^4.7.4"
     supertest: "npm:^6.3.4"
     uuid: "npm:^9.0.1"
-  dependenciesMeta:
-    "@clabroche/fronts-app":
-      optional: true
   bin:
     servers-server: bin/www
   languageName: unknown
@@ -7706,18 +7682,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dts-generator@npm:^3.0.0":
-  version: 3.0.0
-  resolution: "dts-generator@npm:3.0.0"
-  dependencies:
-    glob: "npm:^7.1.3"
-    mkdirp: "npm:^0.5.1"
-  bin:
-    dts-generator: bin/dts-generator
-  checksum: 61b265b82eea6187f0648be08fcf07da96abec7c6f8fad6943a3fb824b7c7c3cee813997c700a7b7245acf23e8a6e707311a7f55f62a38f0348a63cc57b47dc1
-  languageName: node
-  linkType: hard
-
 "duplexer@npm:^0.1.1, duplexer@npm:~0.1.1":
   version: 0.1.2
   resolution: "duplexer@npm:0.1.2"
@@ -12946,17 +12910,6 @@ __metadata:
     for-in: "npm:^1.0.2"
     is-extendable: "npm:^1.0.1"
   checksum: 820d5a51fcb7479f2926b97f2c3bb223546bc915e6b3a3eb5d906dda871bba569863595424a76682f2b15718252954644f3891437cb7e3f220949bed54b1750d
-  languageName: node
-  linkType: hard
-
-"mkdirp@npm:^0.5.1":
-  version: 0.5.6
-  resolution: "mkdirp@npm:0.5.6"
-  dependencies:
-    minimist: "npm:^1.2.6"
-  bin:
-    mkdirp: bin/cmd.js
-  checksum: 0c91b721bb12c3f9af4b77ebf73604baf350e64d80df91754dc509491ae93bf238581e59c7188360cec7cb62fc4100959245a42cfe01834efedc5e9d068376c2
   languageName: node
   linkType: hard
 

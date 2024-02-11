@@ -25,9 +25,6 @@
   "main": "bin/server.js",
   "typings": "./typings/export.d.ts",
   "types": "./typings/export.d.ts",
-  "optionalDependencies": {
-    "@clabroche/fronts-app": "workspace:*"
-  },
   "dependencies": {
     "@clabroche/modules-plugins-loader-backend": "workspace:*",
     "ansi-to-html": "^0.7.2",
@@ -55,8 +52,8 @@
   },
   "devDependencies": {
     "@clabroche/common-retrigger-all-build": "workspace:*",
+    "@clabroche/fronts-app": "workspace:*",
     "@clabroche/modules-plugins-loader-front": "workspace:*",
-    "dts-generator": "^3.0.0",
     "nodemon": "^3.0.3",
     "supertest": "^6.3.4"
   },

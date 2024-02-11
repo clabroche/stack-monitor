@@ -18,6 +18,7 @@
     }
   },
   "peerDependencies": {
+    "@clabroche/modules-bugs-front": "workspace:*",
     "@clabroche/modules-configuration-front": "workspace:*",
     "@clabroche/modules-dev-ops-front": "workspace:*",
     "@clabroche/modules-diff-front": "workspace:*",
@@ -36,10 +37,9 @@
     "@clabroche/modules-openai-front": "workspace:*",
     "@clabroche/modules-regex-front": "workspace:*",
     "@clabroche/modules-toolbox-front": "workspace:*",
-    "@clabroche/modules-bugs-front": "workspace:*"
+    "@clabroche/modules-uuid-front": "workspace:*"
   },
   "devDependencies": {
-    "@clabroche/modules-uuid-front": "workspace:*",
     "@clabroche/common-retrigger-all-build": "workspace:*",
     "@types/express": "^4.17.21",
     "express": "^4.18.2",

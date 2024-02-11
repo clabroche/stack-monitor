@@ -17,7 +17,6 @@
   },
   "devDependencies": {
     "@clabroche/common-retrigger-all-build": "workspace:*",
-
     "vue-eslint-parser": "^9.4.2"
   }
 }
