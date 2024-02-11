@@ -1,6 +1,6 @@
 {
   "name": "@clabroche/modules-configuration-front",
-  "version": "1.17.18",
+  "version": "1.17.21",
   "repository": "https://github.com/clabroche/stack-monitor",
   "private": true,
   "scripts": {

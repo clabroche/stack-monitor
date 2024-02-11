@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.17.21](https://github.com/clabroche/stack-monitor/compare/v1.17.20...v1.17.21) (2024-02-11)
+
+### Bug Fixes
+
+* link front to backend deps ([91b2dce](https://github.com/clabroche/stack-monitor/commit/91b2dcefddc5d51520f7cd8ec31b4289461a9077))
+
 ## [1.17.18](https://github.com/clabroche/stack-monitor/compare/v1.17.15...v1.17.18) (2024-02-11)
 
 ### Bug Fixes
