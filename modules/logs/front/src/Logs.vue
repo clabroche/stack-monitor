@@ -283,29 +283,27 @@
 </template>
 
 <script setup>
-import Socket from '@clabroche/fronts-app/src/helpers/Socket';
-import sectionCmp from '@clabroche/fronts-app/src/components/Section.vue';
-// @ts-ignore
 import { JsonTreeView } from 'json-tree-view-vue3';
 import 'json-tree-view-vue3/dist/style.css';
-// @ts-ignore
 import jsonpath from 'jsonpath';
 import {
   computed, onMounted, ref, nextTick, onBeforeUnmount,
 } from 'vue';
-import Modal from '@clabroche/fronts-app/src/components/Modal.vue';
-import Service from '@clabroche/fronts-app/src/models/service';
-import notification from '@clabroche/fronts-app/src/helpers/notification';
-import Popover from '@clabroche/fronts-app/src/components/Popover.vue';
 import dayjs from 'dayjs';
-import fs from '@clabroche/fronts-app/src/models/fs';
 import debounce from 'debounce';
-import Spinner from '@clabroche/fronts-app/src/components/Spinner.vue';
+import Socket from '../../../../fronts/app/src/helpers/Socket';
+import sectionCmp from '../../../../fronts/app/src/components/Section.vue';
+import Modal from '../../../../fronts/app/src/components/Modal.vue';
+import Service from '../../../../fronts/app/src/models/service';
+import notification from '../../../../fronts/app/src/helpers/notification';
+import Popover from '../../../../fronts/app/src/components/Popover.vue';
+import fs from '../../../../fronts/app/src/models/fs';
+import Spinner from '../../../../fronts/app/src/components/Spinner.vue';
 import PassThrough from './PassThrough.vue';
 
 const props = defineProps({
   service: {
-    /** @type {import('@clabroche/fronts-app/src/models/service').default | null} */
+    /** @type {import('../../../../fronts/app/src/models/service').default | null} */
     default: null,
   },
   noStyle: { default: false },

@@ -10,7 +10,7 @@
 </template>
 
 <script setup>
-import SectionCmp from '@clabroche/fronts-app/src/components/Section.vue';
+import SectionCmp from '../../../../fronts/app/src/components/Section.vue';
 </script>
 
 <style scoped lang="scss">

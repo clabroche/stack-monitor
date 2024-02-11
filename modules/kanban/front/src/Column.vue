@@ -64,12 +64,12 @@
 </template>
 
 <script setup>
-import Modal from '@clabroche/fronts-app/src/components/Modal.vue';
-import axios from '@clabroche/fronts-app/src/helpers/axios';
 import { cloneDeep } from 'lodash';
 import { ref, onMounted, watch } from 'vue';
 import draggableComponent from 'vuedraggable';
 import { useRoute, useRouter } from 'vue-router';
+import axios from '../../../../fronts/app/src/helpers/axios';
+import Modal from '../../../../fronts/app/src/components/Modal.vue';
 
 const route = useRoute();
 const router = useRouter();

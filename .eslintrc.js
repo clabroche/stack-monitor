@@ -25,6 +25,7 @@ module.exports = {
     project: ['./tsconfig.json', './**/tsconfig.json'],
   },
   rules: {
+    "import/no-relative-packages":"off",
     "camelcase": "off",
     "no-restricted-syntax": "off",
     "class-methods-use-this": "off",

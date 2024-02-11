@@ -20,11 +20,11 @@
 </template>
 
 <script>
-import Service from '@clabroche/fronts-app/src/models/service';
-import SectionVue from '@clabroche/fronts-app/src/components/Section.vue';
 import { onMounted, ref, watch } from 'vue';
-import SpinnerVue from '@clabroche/fronts-app/src/components/Spinner.vue';
-import notification from '@clabroche/fronts-app/src/helpers/notification';
+import Service from '../../../../fronts/app/src/models/service';
+import SectionVue from '../../../../fronts/app/src/components/Section.vue';
+import SpinnerVue from '../../../../fronts/app/src/components/Spinner.vue';
+import notification from '../../../../fronts/app/src/helpers/notification';
 
 export default {
   components: {
@@ -33,7 +33,7 @@ export default {
   },
   props: {
     service: {
-      /** @type {import('@clabroche/fronts-app/src/models/service').default | null} */
+      /** @type {import('../../../../fronts/app/src/models/service').default | null} */
       default: null,
       required: true,
       type: Service,

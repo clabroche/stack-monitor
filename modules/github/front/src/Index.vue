@@ -92,12 +92,12 @@
 </template>
 
 <script setup>
-import Service from '@clabroche/fronts-app/src/models/service';
-import SectionCmp from '@clabroche/fronts-app/src/components/Section.vue';
 import { computed, onMounted, ref } from 'vue';
-import axios from '@clabroche/fronts-app/src/helpers/axios';
-import notification from '@clabroche/fronts-app/src/helpers/notification';
-import TableGeneric from '@clabroche/fronts-app/src/components/TableGeneric.vue';
+import Service from '../../../../fronts/app/src/models/service';
+import SectionCmp from '../../../../fronts/app/src/components/Section.vue';
+import axios from '../../../../fronts/app/src/helpers/axios';
+import notification from '../../../../fronts/app/src/helpers/notification';
+import TableGeneric from '../../../../fronts/app/src/components/TableGeneric.vue';
 
 const props = defineProps({
   service: {

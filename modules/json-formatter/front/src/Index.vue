@@ -34,12 +34,12 @@
 </template>
 
 <script setup>
-import SectionCmp from '@clabroche/fronts-app/src/components/Section.vue';
 import { computed, ref } from 'vue';
 import { JsonTreeView } from 'json-tree-view-vue3';
 import { useRouter } from 'vue-router';
 import { jsonrepair } from 'jsonrepair';
-import notification from '@clabroche/fronts-app/src/helpers/notification';
+import SectionCmp from '../../../../fronts/app/src/components/Section.vue';
+import notification from '../../../../fronts/app/src/helpers/notification';
 
 const router = useRouter();
 

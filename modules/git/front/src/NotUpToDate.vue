@@ -125,21 +125,21 @@
 </template>
 
 <script setup>
-import stack from '@clabroche/fronts-app/src/models/stack';
 import { computed, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
-import SectionCmp from '@clabroche/fronts-app/src/components/Section.vue';
 import PromiseB from 'bluebird';
-import notification from '@clabroche/fronts-app/src/helpers/notification';
-import Spinner from '@clabroche/fronts-app/src/components/Spinner.vue';
+import SectionCmp from '../../../../fronts/app/src/components/Section.vue';
+import stack from '../../../../fronts/app/src/models/stack';
+import notification from '../../../../fronts/app/src/helpers/notification';
+import Spinner from '../../../../fronts/app/src/components/Spinner.vue';
 
 const router = useRouter();
 
-/** @type {import('vue').Ref<import('@clabroche/fronts-app/src/models/service').default[]>} */
+/** @type {import('vue').Ref<import('../../../../fronts/app/src/models/service').default[]>} */
 const services = ref(stack.services.value.sort((a, b) => a.label?.localeCompare(b?.label || '') || 0));
-/** @type {import('vue').Ref<import('@clabroche/fronts-app/src/models/service').default[]>} */
+/** @type {import('vue').Ref<import('../../../../fronts/app/src/models/service').default[]>} */
 const servicesToPull = ref([]);
-/** @type {import('vue').Ref<import('@clabroche/fronts-app/src/models/service').default[]>} */
+/** @type {import('vue').Ref<import('../../../../fronts/app/src/models/service').default[]>} */
 const servicesToPush = ref([]);
 async function updateGit() {
   const result = await PromiseB.map(stack.services.value, async (service) => {
@@ -206,7 +206,7 @@ const checkUpdates = async () => {
     });
 };
 
-/** @param {import('@clabroche/fronts-app/src/models/service').default} service */
+/** @param {import('../../../../fronts/app/src/models/service').default} service */
 async function pull(service) {
   checkUpdatePending.value = true;
   await service.pull()
@@ -244,7 +244,7 @@ async function changeAllBranches(branchName) {
 }
 
 /**
- * @param {import('@clabroche/fronts-app/src/models/service').default} service
+ * @param {import('../../../../fronts/app/src/models/service').default} service
  * @param {string} branchName
 */
 async function changeBranch(service, branchName) {
@@ -255,14 +255,14 @@ async function changeBranch(service, branchName) {
   await updateGit();
   await checkUpdates();
 }
-/** @param {import('@clabroche/fronts-app/src/models/service').default} service */
+/** @param {import('../../../../fronts/app/src/models/service').default} service */
 async function stash(service) {
   await service.stash()
     .then(() => notification.next('success', 'All changes is in stash'))
     .catch((err) => notification.next('error', err.response.data));
   return service.updateGit();
 }
-/** @param {import('@clabroche/fronts-app/src/models/service').default} service */
+/** @param {import('../../../../fronts/app/src/models/service').default} service */
 async function stashPop(service) {
   await service.stashPop()
     .then(() => notification.next('success', 'All changes unstashed'))

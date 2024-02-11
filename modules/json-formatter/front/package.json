@@ -17,7 +17,7 @@
   },
   "devDependencies": {
     "@clabroche/common-retrigger-all-build": "workspace:*",
-    "@clabroche/fronts-app": "workspace:*",
+
     "json-tree-view-vue3": "^1.0.1",
     "jsonrepair": "^3.5.1",
     "vue": "^3.4.18",

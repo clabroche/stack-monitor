@@ -29,10 +29,10 @@
 </template>
 
 <script setup>
-import axios from '@clabroche/fronts-app/src/helpers/axios';
 import { useRouter } from 'vue-router';
 
 import { onMounted, ref, computed } from 'vue';
+import axios from '../../../../fronts/app/src/helpers/axios';
 
 const router = useRouter();
 /** @type {import('vue').Ref<import('@clabroche/modules-plugins-loader-front/src/views').PluginSM<null>[]>} */

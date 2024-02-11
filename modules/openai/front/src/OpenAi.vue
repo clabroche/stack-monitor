@@ -46,9 +46,9 @@
 </template>
 
 <script setup>
-import axios from '@clabroche/fronts-app/src/helpers/axios';
 import { computed, ref, onMounted } from 'vue';
-import notification from '@clabroche/fronts-app/src/helpers/notification';
+import axios from '../../../../fronts/app/src/helpers/axios';
+import notification from '../../../../fronts/app/src/helpers/notification';
 import Chat from './Chat.vue';
 
 const ready = ref(false);

@@ -64,15 +64,15 @@
 </template>
 
 <script setup>
-import SectionCmp from '@clabroche/fronts-app/src/components/Section.vue';
 import {
   computed, onMounted, ref, watch,
 } from 'vue';
-import axios from '@clabroche/fronts-app/src/helpers/axios';
-import Socket from '@clabroche/fronts-app/src/helpers/Socket';
-import Spinner from '@clabroche/fronts-app/src/components/Spinner.vue';
-import Multiselect from '@clabroche/fronts-app/src/components/Multiselect.vue';
 import { useRouter, useRoute } from 'vue-router';
+import SectionCmp from '../../../../fronts/app/src/components/Section.vue';
+import axios from '../../../../fronts/app/src/helpers/axios';
+import Socket from '../../../../fronts/app/src/helpers/Socket';
+import Spinner from '../../../../fronts/app/src/components/Spinner.vue';
+import Multiselect from '../../../../fronts/app/src/components/Multiselect.vue';
 
 const router = useRouter();
 const route = useRoute();

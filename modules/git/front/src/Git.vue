@@ -143,15 +143,15 @@
 </template>
 
 <script>
-import notification from '@clabroche/fronts-app/src/helpers/notification';
-import Service from '@clabroche/fronts-app/src/models/service';
-import ModalVue from '@clabroche/fronts-app/src/components/Modal.vue';
-import SectionVue from '@clabroche/fronts-app/src/components/Section.vue';
-// @ts-ignore
 import { Terminal } from 'xterm/lib/xterm';
 import { FitAddon } from 'xterm-addon-fit';
 import { CanvasAddon } from 'xterm-addon-canvas';
 import { SearchAddon } from 'xterm-addon-search';
+import notification from '../../../../fronts/app/src/helpers/notification';
+import Service from '../../../../fronts/app/src/models/service';
+import ModalVue from '../../../../fronts/app/src/components/Modal.vue';
+import SectionVue from '../../../../fronts/app/src/components/Section.vue';
+// @ts-ignore
 
 export default {
   components: {
@@ -162,14 +162,14 @@ export default {
     noStyle: { default: false },
     customGit: { default: null },
     service: {
-      /** @type {import('@clabroche/fronts-app/src/models/service').default | null} */
+      /** @type {import('../../../../fronts/app/src/models/service').default | null} */
       default: null,
       required: true,
       type: Service,
     },
   },
   computed: {
-    /** @return {import('@clabroche/fronts-app/src/models/service').default['git']} */
+    /** @return {import('../../../../fronts/app/src/models/service').default['git']} */
     git() {
       return this.service.git;
     },

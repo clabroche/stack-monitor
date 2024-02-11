@@ -26,9 +26,9 @@
 </template>
 
 <script setup>
-import SectionCmp from '@clabroche/fronts-app/src/components/Section.vue';
 import { ref, watchEffect } from 'vue';
 import { JsonTreeView } from 'json-tree-view-vue3';
+import SectionCmp from '../../../../fronts/app/src/components/Section.vue';
 
 const showRaw = ref(false);
 const json = ref({});

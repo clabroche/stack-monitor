@@ -15,12 +15,12 @@
 </template>
 
 <script setup>
-import Service from '@clabroche/fronts-app/src/models/service';
-import SectionCmp from '@clabroche/fronts-app/src/components/Section.vue';
-import axios from '@clabroche/fronts-app/src/helpers/axios';
 import { onMounted, ref, watch } from 'vue';
-import Markdown from '@clabroche/fronts-app/src/components/Markdown.vue';
 import { useRoute } from 'vue-router';
+import Service from '../../../../fronts/app/src/models/service';
+import SectionCmp from '../../../../fronts/app/src/components/Section.vue';
+import axios from '../../../../fronts/app/src/helpers/axios';
+import Markdown from '../../../../fronts/app/src/components/Markdown.vue';
 import Tree from './Tree.vue';
 
 const route = useRoute();

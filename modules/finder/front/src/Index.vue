@@ -61,9 +61,9 @@
 import {
   computed, nextTick, onBeforeUnmount, onMounted, ref, watch,
 } from 'vue';
-import axios from '@clabroche/fronts-app/src/helpers/axios';
 import debounce from 'debounce';
 import { useRouter } from 'vue-router';
+import axios from '../../../../fronts/app/src/helpers/axios';
 
 const router = useRouter();
 

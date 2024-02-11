@@ -27,13 +27,13 @@
 </template>
 
 <script setup>
-import axios from '@clabroche/fronts-app/src/helpers/axios';
-import Socket from '@clabroche/fronts-app/src/helpers/Socket';
-import SectionCmp from '@clabroche/fronts-app/src/components/Section.vue';
 import { nextTick, onMounted, ref } from 'vue';
-// @ts-ignore
 import { Terminal } from 'xterm/lib/xterm';
 import { FitAddon } from 'xterm-addon-fit';
+import axios from '../../../../fronts/app/src/helpers/axios';
+import Socket from '../../../../fronts/app/src/helpers/Socket';
+import SectionCmp from '../../../../fronts/app/src/components/Section.vue';
+// @ts-ignore
 
 const defaultCode = `
 ;(async () => {

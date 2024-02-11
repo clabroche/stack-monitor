@@ -30,10 +30,10 @@
 </template>
 
 <script setup>
-import axios from '@clabroche/fronts-app/src/helpers/axios';
 import { ref, onMounted, watch } from 'vue';
-import Modal from '@clabroche/fronts-app/src/components/Modal.vue';
 import { useRoute, useRouter } from 'vue-router';
+import axios from '../../../../fronts/app/src/helpers/axios';
+import Modal from '../../../../fronts/app/src/components/Modal.vue';
 import Column from './Column.vue';
 
 const route = useRoute();

@@ -20,10 +20,10 @@
 </template>
 
 <script setup>
-import SectionCmp from '@clabroche/fronts-app/src/components/Section.vue';
 import { ref, watchEffect } from 'vue';
 import { JsonTreeView } from 'json-tree-view-vue3';
-import axios from '@clabroche/fronts-app/src/helpers/axios';
+import SectionCmp from '../../../../fronts/app/src/components/Section.vue';
+import axios from '../../../../fronts/app/src/helpers/axios';
 
 const showRaw = ref(false);
 const json = ref({});
