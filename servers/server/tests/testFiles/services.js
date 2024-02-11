@@ -1,11 +1,12 @@
-require('dotenv').config({path: require('path').resolve(__dirname, '.env')})
-const path = __dirname
+require('dotenv').config({ path: require('path').resolve(__dirname, '.env') });
+
+const path = __dirname;
 
 const groups = {
   API: 'api',
   UI: 'ui',
-  MISC: 'misc'
-}
+  MISC: 'misc',
+};
 
 /** @type {import('../../models/stack').StackArray} */
 const services = [
@@ -13,12 +14,12 @@ const services = [
     label: 'Server',
     description: 'This is the backend of an unbelievable project',
     groups: [groups.API],
-    documentation: path + '/documentation/server',
+    documentation: `${path}/documentation/server`,
     git: {
       home: 'https://<an-awesome-url>',
-      remote: 'git@github.com:<your-beautiful-profile>/<your-excellent-project>.git'
+      remote: 'git@github.com:<your-beautiful-profile>/<your-excellent-project>.git',
     },
-    url: `http://localhost:3000`,
+    url: 'http://localhost:3000',
     spawnCmd: 'echo',
     spawnArgs: ['server', '$PORT', '$mongoDbURL'],
     spawnOptions: {
@@ -26,8 +27,8 @@ const services = [
       env: {
         PORT: process.env.SERVER_PORT,
         mongoDbURL: process.env.mongoDbURL,
-      }
-    }
+      },
+    },
   },
   {
     label: 'Front',
@@ -38,9 +39,9 @@ const services = [
       env: {
         PORT: process.env.SERVER_PORT,
         mongoDbURL: process.env.mongoDbURL,
-      }
-    }
+      },
+    },
   },
-]
+];
 
-module.exports = services
+module.exports = services;

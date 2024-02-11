@@ -1,0 +1,36 @@
+{
+  "name": "@clabroche/modules-plugins-loader-backend",
+  "version": "1.17.14",
+  "repository": "https://github.com/clabroche/stack-monitor",
+  "private": true,
+  "main": "./plugins.js",
+  "types": "./plugins.js",
+  "scripts": {
+    "test": ""
+  },
+  "dependencies": {
+    "@clabroche/modules-bugs-backend": "workspace:*",
+    "@clabroche/modules-configuration-backend": "workspace:*",
+    "@clabroche/modules-dev-ops-backend": "workspace:*",
+    "@clabroche/modules-diff-backend": "workspace:*",
+    "@clabroche/modules-documentation-backend": "workspace:*",
+    "@clabroche/modules-finder-backend": "workspace:*",
+    "@clabroche/modules-git-backend": "workspace:*",
+    "@clabroche/modules-github-backend": "workspace:*",
+    "@clabroche/modules-global-scripts-backend": "workspace:*",
+    "@clabroche/modules-json-formatter-backend": "workspace:*",
+    "@clabroche/modules-jwt-backend": "workspace:*",
+    "@clabroche/modules-kanban-backend": "workspace:*",
+    "@clabroche/modules-logs-backend": "workspace:*",
+    "@clabroche/modules-mongo-backend": "workspace:*",
+    "@clabroche/modules-node-repl-backend": "workspace:*",
+    "@clabroche/modules-npm-backend": "workspace:*",
+    "@clabroche/modules-openai-backend": "workspace:*",
+    "@clabroche/modules-regex-backend": "workspace:*",
+    "@clabroche/modules-toolbox-backend": "workspace:*",
+    "@clabroche/modules-uuid-backend": "workspace:*"
+  },
+  "devDependencies": {
+    "@clabroche/common-retrigger-all-build": "workspace:*"
+  }
+}

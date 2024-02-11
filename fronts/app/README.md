@@ -50,7 +50,7 @@ Launch multiples command at once. You can monitor projects.(like npm projects, g
  - Show Mem percentage for each commands
 
 ## Usage
-Create a config file like [this](./example/stack.js)
+Create a config file
 
 Then, in a terminal, type:
 ``` bash

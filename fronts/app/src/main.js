@@ -8,7 +8,7 @@ import Socket from './helpers/Socket';
   const { createApp } = await import('vue');
   const {default: App} = await import('./App.vue')
   const {default: system} = await import('./models/system')
-  const {default: views} = await import('@clabroche/modules-plugins-loader/views')
+  const {default: views} = await import('@clabroche/modules-plugins-loader-front/src/views')
   const {default: Editor} = await import('./components/Editor.vue')
   const {default: Markdown} = await import('./components/Markdown.vue')
   

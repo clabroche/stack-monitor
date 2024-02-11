@@ -31,7 +31,7 @@
   "workspaces": {
     "packages": [
       "./fronts/*",
-      "./modules/*",
+      "./modules/*/*",
       "./common/*",
       "./servers/*"
     ]
@@ -55,16 +55,15 @@
     "@types/kill-port": "^2",
     "@types/lodash": "^4.14.201",
     "@types/node": "^20.8.9",
+    "@types/ps-tree": "^1",
     "@typescript-eslint/eslint-plugin": "^6.10.0",
     "@typescript-eslint/parser": "^6.10.0",
     "bluebird": "^3.7.2",
-    "chalk": "^5.3.0",
     "check-dependency-version-consistency": "^4.1.0",
     "chokidar": "^3.5.3",
     "cross-env": "^7.0.3",
-    "debounce": "^1.2.1",
-    "dotenv": "^16.0.3",
-    "esbuild-plugin-eslint": "^0.3.7",
+    "debounce": "^2.0.0",
+    "dotenv": "^16.4.2",
     "eslint": "^8.53.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-plugin-import": "^2.29.0",
@@ -72,24 +71,20 @@
     "eslint-plugin-jsx-a11y": "^6.8.0",
     "eslint-plugin-react": "^7.33.2",
     "eslint-plugin-react-hooks": "^4.6.0",
-    "fix-esm": "^1.0.1",
-    "fix-esm-candy": "^2.0.2",
+    "eslint-plugin-vue": "^9.21.1",
     "husky": "^8.0.3",
     "kill-port": "^2.0.1",
-    "knip": "^2.41.0",
-    "loose-ts-check": "^2.0.0",
-    "pg-native": "^3.0.1",
-    "pure-rand": "^6.0.4",
-    "ts-node": "^10.9.1",
+    "knip": "^4.5.0",
+    "ps-tree": "^1.2.0",
     "tsup": "^8.0.1",
-    "turbo": "^1.11.3",
-    "typescript": "^5.2.2",
+    "turbo": "^1.12.3",
+    "typescript": "^5.3.3",
     "workspace-tools": "^0.36.3"
   },
   "engines": {
     "node": ">=16.0.0"
   },
   "dependencies": {
-    "@iryu54/stack-monitor": "^1.17.13"
+    "@iryu54/stack-monitor": "^1.17.14"
   }
 }

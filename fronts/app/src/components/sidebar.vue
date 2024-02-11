@@ -15,8 +15,8 @@ import System from '../models/system'
 import { sort } from 'fast-sort'
 import sidebarItemVue from './sidebarItem.vue'
 import { computed, onMounted, ref } from 'vue'
-import Socket from '@/helpers/Socket'
-import notification from '@/helpers/notification'
+import Socket from '../helpers/Socket'
+import notification from '../helpers/notification'
 import { useRouter } from 'vue-router';
 
 export default {

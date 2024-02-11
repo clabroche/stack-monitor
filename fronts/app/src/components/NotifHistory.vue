@@ -15,9 +15,8 @@
 </template>
 
 <script>
-import { ref } from '@vue/reactivity'
 import Modal from './Modal.vue'
-import { onMounted } from '@vue/runtime-core'
+import { onMounted, ref } from 'vue'
 import notification from '../helpers/notification'
 import Notification from './Notification.vue'
 export default {

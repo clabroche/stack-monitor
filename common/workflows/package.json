@@ -11,10 +11,11 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@clabroche/common-retrigger-all-build": "workspace:*"
+    "@clabroche/common-retrigger-all-build": "workspace:*",
+    "@types/fs-extra": "^11.0.4"
   },
   "dependencies": {
     "bluebird": "^3.7.2",
-    "fs-extra": "^10.1.0"
+    "fs-extra": "^11.2.0"
   }
 }

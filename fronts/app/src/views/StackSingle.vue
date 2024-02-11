@@ -88,7 +88,7 @@ export default {
       }
     })
 
-    /** @type {NodeJS.Timer} */
+    /** @type {number} */
     let interval
     const tabs = ref([])
 
@@ -123,6 +123,7 @@ export default {
 
     onMounted(async () => {
       await reload()
+      // @ts-ignore
       interval = setInterval(async () => {
         if(!currentService.value?.label) return
         const {cpu: _cpu, mem: _mem} = await System.getInfos(currentService.value.label.toString())
@@ -131,7 +132,7 @@ export default {
       }, 1000);
     })
     onBeforeUnmount(()=> {
-      clearInterval(interval)
+      if(interval) clearInterval(interval)
     })
     return {
       stack,

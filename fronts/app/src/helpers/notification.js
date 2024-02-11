@@ -1,82 +1,88 @@
-import { ref } from '@vue/reactivity';
-import Observable from './CustomObservable';
+import { ref } from 'vue';
 import { v4 as uuid } from 'uuid';
-import router from "../router/router"
+import Observable from './CustomObservable';
+import router from '../router/router';
+
 class Notification {
   constructor() {
     /** @type {import('vue').Ref<Notif[]>} */
-    this.notifs = ref([])
+    this.notifs = ref([]);
     /** @type {import('vue').Ref<Notif[]>} */
-    this.notifsHistory = ref([])
-    this.openHistory = new Observable()
+    this.notifsHistory = ref([]);
+    this.openHistory = new Observable();
   }
+
   /**
-   * 
-   * @param {'error' | 'success'} type 
-   * @param {string} msg 
-   * @param {string | undefined} serviceLabel 
-   * @param {Notif[] | null} notifAggregator 
+   *
+   * @param {'error' | 'success'} type
+   * @param {string} msg
+   * @param {string | undefined} serviceLabel
+   * @param {Notif[] | null} notifAggregator
    */
   next(type, msg, serviceLabel = undefined, notifAggregator = null) {
-    if(!notifAggregator) {
-      this.next(type,msg, serviceLabel, this.notifsHistory.value)
-      notifAggregator = this.notifs.value
+    if (!notifAggregator) {
+      this.next(type, msg, serviceLabel, this.notifsHistory.value);
+      notifAggregator = this.notifs.value;
     }
-    let notif = notifAggregator.find(n => n.type === type && n.serviceLabel === serviceLabel && serviceLabel)
+    let notif = notifAggregator.find((n) => n.type === type && n.serviceLabel === serviceLabel && serviceLabel);
     if (notif) {
-      const existingMsg = notif.msgs.find(n => n.label === msg)
-      const newMsg =  existingMsg || {
+      const existingMsg = notif.msgs.find((n) => n.label === msg);
+      const newMsg = existingMsg || {
         label: msg,
-        nb: 0
-      }
-      newMsg.nb++
+        nb: 0,
+      };
+      newMsg.nb += 1;
       if (!existingMsg) {
-        notif.msgs.unshift(newMsg)
+        notif.msgs.unshift(newMsg);
       }
     } else {
       const existingNotifWithLabel = notifAggregator
-        .find(n => n.type === type && !n.serviceLabel && n.msgs.find(_n => _n.label === msg))
+        .find((n) => n.type === type && !n.serviceLabel && n.msgs.find((_n) => _n.label === msg));
       notif = existingNotifWithLabel || {
         id: uuid(),
-        type, msgs: [],
+        type,
+        msgs: [],
         serviceLabel,
-        nb: 0
-      }
-      const existingMsg = notif.msgs.find(n => n.label === msg)
+        nb: 0,
+      };
+      const existingMsg = notif.msgs.find((n) => n.label === msg);
       const newMsg = existingMsg || {
         label: msg,
-        nb: 0
-      }
-      newMsg.nb++
+        nb: 0,
+      };
+      newMsg.nb += 1;
       if (!existingMsg) {
-        notif.msgs.unshift(newMsg)
+        notif.msgs.unshift(newMsg);
       }
       if (!existingNotifWithLabel) {
-        notifAggregator.unshift(notif)
+        notifAggregator.unshift(notif);
       }
     }
-    clearTimeout(notif.timeout)
+    // @ts-ignore
+    clearTimeout(notif.timeout);
     notif.timeout = setTimeout(() => {
-      if(notif) this.remove(notif)
+      if (notif) this.remove(notif);
     }, 5000);
   }
+
   /**
-   * @param {Notif} notif 
-   * @param {boolean} hasClicked 
+   * @param {Notif} notif
+   * @param {boolean} hasClicked
    */
   remove(notif, hasClicked = false) {
-    const index = this.notifs.value.indexOf(notif)
-    if (index > -1) this.notifs.value.splice(index, 1)
-    if (hasClicked && notif.serviceLabel) router.push({ name: 'stack-single', params: { label: notif.serviceLabel } })
+    const index = this.notifs.value.indexOf(notif);
+    if (index > -1) this.notifs.value.splice(index, 1);
+    if (hasClicked && notif.serviceLabel) router.push({ name: 'stack-single', params: { label: notif.serviceLabel } });
   }
+
   /**
-   * @param {Notif} notif 
-   * @param {boolean} hasClicked 
+   * @param {Notif} notif
+   * @param {boolean} hasClicked
    */
   removeHistory(notif, hasClicked) {
-    const index = this.notifsHistory.value.indexOf(notif)
-    if (index > -1) this.notifsHistory.value.splice(index, 1)
-    if (hasClicked && notif.serviceLabel) router.push({ name: 'stack-single', params: { label: notif.serviceLabel } })
+    const index = this.notifsHistory.value.indexOf(notif);
+    if (index > -1) this.notifsHistory.value.splice(index, 1);
+    if (hasClicked && notif.serviceLabel) router.push({ name: 'stack-single', params: { label: notif.serviceLabel } });
   }
 }
 
@@ -94,4 +100,4 @@ class Notification {
  *  timeout?: NodeJS.Timer
  * }} Notif
  */
-export default new Notification()
+export default new Notification();

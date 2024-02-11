@@ -14,7 +14,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "dotenv": "^16.0.3",
+    "dotenv": "^16.4.2",
     "gulp": "^4.0.2",
     "kill-port": "^2.0.1"
   },

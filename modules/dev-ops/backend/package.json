@@ -1,0 +1,13 @@
+{
+  "name": "@clabroche/modules-dev-ops-backend",
+  "version": "1.17.11",
+  "repository": "https://github.com/clabroche/stack-monitor",
+  "private": true,
+  "scripts": {
+    "test": ""
+  },
+  "devDependencies": {
+    "@clabroche/common-retrigger-all-build": "workspace:*",
+    "@clabroche/modules-plugins-loader-front": "workspace:*"
+  }
+}

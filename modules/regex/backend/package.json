@@ -1,0 +1,13 @@
+{
+  "name": "@clabroche/modules-regex-backend",
+  "version": "1.17.15",
+  "repository": "https://github.com/clabroche/stack-monitor",
+  "private": true,
+  "scripts": {
+    "test": ""
+  },
+  "devDependencies": {
+    "@clabroche/common-retrigger-all-build": "workspace:*",
+    "@clabroche/modules-plugins-loader-front": "workspace:*"
+  }
+}

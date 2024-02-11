@@ -44,8 +44,8 @@ import { computed, onMounted, ref } from 'vue'
 import SidebarViewModeItemVue from './SidebarViewModeItem.vue'
 import stack from '../models/stack'
 import DoughtnutChart from './DoughtnutChart.vue'
-import axios from '@/helpers/axios'
-import Socket from '@/helpers/Socket';
+import axios from '../helpers/axios'
+import Socket from '../helpers/Socket';
 import { useRouter } from 'vue-router';
 
 export default {
@@ -58,7 +58,7 @@ export default {
   },
   setup() {
     const router = useRouter(); 
-    /** @type {import('vue').Ref<import('../../../../modules/views').PluginSM[]>} */
+    /** @type {import('vue').Ref<import('@clabroche/modules-plugins-loader-front/src/views').PluginSM<null>[]>} */
     const plugins = ref([])
     const cpu = ref(0)
     const mem = ref(0)

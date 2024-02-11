@@ -1,2 +1,2 @@
 /** @type {import('../../models/stack').StackFile} */
-module.exports = () => require('./stackObject')
+module.exports = () => require('./stackObject');

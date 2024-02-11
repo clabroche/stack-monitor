@@ -1,0 +1,11 @@
+/node_modules/*
+/bin/*
+package.json
+package-lock.json
+**/build/*
+**/dist/*
+**/node_modules/*
+sandbox/*
+commitlint.config.js
+.eslintrc.js
+**/tsup.config.ts

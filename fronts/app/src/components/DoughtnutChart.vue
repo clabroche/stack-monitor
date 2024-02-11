@@ -72,7 +72,7 @@ export default {
     'subtitle': { default: '' },
     'width': {default: 'auto'},
     'textAlign': {
-      /** @type {import('csstype').TextAlignProperty} */
+      /** @type {"start" | "right" | "left" | "-webkit-match-parent" | "center" | "end" | "justify" | "match-parent"} */
       default: 'left'
     },
     'noSubtitle': {default: false},

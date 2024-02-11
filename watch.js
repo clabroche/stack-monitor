@@ -5,6 +5,7 @@ const pathfs = require('path');
 const { spawn } = require('node:child_process');
 const debounce = require('debounce');
 const killport = require('kill-port');
+const psTree = require('ps-tree');
 const net = require('net');
 
 const command = {
@@ -40,6 +41,19 @@ function mainProcessDaemon() {
     }
   }, 0);
 }
+/**
+ *
+ * @param {number} pid
+ * @returns {Promise<readonly psTree.PS[]>}
+ */
+function psTreeAsync(pid) {
+  return new Promise((resolve, reject) => {
+    psTree(pid, (err, children) => {
+      if (err) return reject(err);
+      return resolve(children);
+    });
+  });
+}
 async function runMainProcess() {
   if (restartInProgress) {
     waitingRestart = () => runMainProcess();
@@ -47,9 +61,13 @@ async function runMainProcess() {
   }
   restartInProgress = true;
   if (pid) {
-    try { process.kill(pid, 'SIGKILL'); } catch (error) {}
+    try {
+      const children = await psTreeAsync(pid);
+      children.map(({ PID }) => process.kill(+PID, 'SIGKILL'));
+      process.kill(pid, 'SIGKILL');
+    } catch (error) {}
   }
-  const port = +(process.env.PORT || '');
+  const port = +(process.env.PORT || process.env.HTTP_PORT || '');
   if (port && !Number.isNaN(port)) {
     await new Promise((resolve) => {
       setTimeout(resolve, 100);
@@ -83,7 +101,7 @@ function watchDeps(watchableDeps, cb = (
       .filter((f) => {
         if (!watchableDeps.find((w) => w.name === f)) return false;
         const changedPath = path.replace(`${__dirname}/`, '').replaceAll('/', '-');
-        const packageName = f.replace('@clabroche/', '');
+        const packageName = f.replace('@clabroche/', '').replace('@iryu54/', '');
         return changedPath.startsWith(packageName);
       }).pop();
     if (packageChanged) {
@@ -110,7 +128,7 @@ function getDependencies(packageName, recursiveAggr = []) {
   const deps = [
     ...Object.keys(dependencies),
     ...Object.keys(devDependencies),
-  ].filter((f) => f.startsWith('@clabroche') && (dependencies[f] === 'workspace:*' || devDependencies[f] === 'workspace:*'));
+  ].filter((f) => (f.startsWith('@clabroche') || f.startsWith('@iryu54')) && (dependencies[f] === 'workspace:*' || devDependencies[f] === 'workspace:*'));
   deps.forEach((f) => {
     if (!recursiveAggr.includes(f)) {
       recursiveAggr.push(f);
@@ -122,14 +140,15 @@ function getDependencies(packageName, recursiveAggr = []) {
 
 function getPackageInfoFromPath(path) {
   const packagesInfos = getPackageInfos(__dirname);
+  if (path.endsWith('/servers/server')) {
+    return Object.values(packagesInfos).filter((f) => f.name === '@iryu54/stack-monitor').pop();
+  }
   return Object.values(packagesInfos)
-    .filter((f) => (
-      path.replace(`${__dirname}/`, '')
-        .replaceAll('/', '-')
-        .startsWith(
-          f.name.replace('@clabroche/', ''),
-        )
-    )).pop();
+    .filter((f) => {
+      const packageName = path.replace(`${__dirname}/`, '').replaceAll('/', '-');
+      return packageName.startsWith(f.name.replace('@clabroche/', ''))
+        || packageName.startsWith(f.name.replace('@iryu54/', ''));
+    }).pop();
 }
 
 function checkport(_port) {

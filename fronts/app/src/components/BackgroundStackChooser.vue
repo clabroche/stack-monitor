@@ -19,8 +19,8 @@
 </template>
 
 <script>
-import { ref } from '@vue/reactivity'
-import { onBeforeUnmount, onMounted } from '@vue/runtime-core'
+import { ref, onBeforeUnmount, onMounted } from 'vue'
+
 export default {
   props: {
     lowResources: {default: false}
@@ -85,6 +85,7 @@ export default {
         })
       }, 300);
     }
+    // @ts-ignore
     onBeforeUnmount(()=> clearInterval(interval))
     return {
       barsLeft,

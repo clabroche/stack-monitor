@@ -1,15 +1,15 @@
 const supertest = require('supertest');
-const  util = require('util');
+const util = require('util');
 
 // @ts-ignore
-const Test = supertest.Test
+const { Test } = supertest;
 
 Object.defineProperties(Test.prototype, {
   _assert: {
     value: Test.prototype.assert,
   },
   assert: {
-    value: function (resError, res, fn) {
+    value(resError, res, fn) {
       this._assert(resError, res, (err, res) => {
         if (err) {
           const originalMessage = err.message;
@@ -19,6 +19,6 @@ Object.defineProperties(Test.prototype, {
         }
         fn.call(Test.prototype.assert, err, res);
       });
-    }
-  }
+    },
+  },
 });

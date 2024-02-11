@@ -16,7 +16,7 @@
     "bluebird": "^3.7.2",
     "express": "^4.18.2",
     "jest-sonar-reporter": "^2.0.0",
-    "supertest": "^6.2.2"
+    "supertest": "^6.3.4"
   },
   "dependencies": {
     "uuid": "^9.0.1"

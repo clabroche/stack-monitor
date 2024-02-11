@@ -18,7 +18,6 @@
     "@clabroche/common-express-health-check": "workspace:*",
     "@clabroche/common-express-logger": "workspace:*",
     "@clabroche/common-swagger": "workspace:*",
-    "bluebird": "^3.7.2",
     "compression": "^1.7.4",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
@@ -29,7 +28,6 @@
     "pino-http": "^8.3.3"
   },
   "devDependencies": {
-    "@clabroche/common-retrigger-all-build": "workspace:*",
-    "@types/bluebird": "^3.5.38"
+    "@clabroche/common-retrigger-all-build": "workspace:*"
   }
 }

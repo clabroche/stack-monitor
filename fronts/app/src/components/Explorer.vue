@@ -28,14 +28,14 @@
 </template>
 
 <script>
-import { computed, onMounted, ref } from '@vue/runtime-core'
+import { computed, onMounted, ref } from 'vue'
 import fs from '../models/fs'
 export default {
   name: 'explorer',
   props: {
   },
   setup() {
-    /** @type {import('vue').Ref<import('../../../servers/server/routes/fs').Entry[]>} */
+    /** @type {import('vue').Ref<import('../../../../servers/server/routes/fs').Entry[]>} */
     const dir = ref([])
     const currentPath = ref('')
     /** @param {string} path */

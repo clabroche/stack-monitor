@@ -45,21 +45,22 @@ import { ref, onMounted } from 'vue'
 import Stack from '../models/stack'
 import notification from '../helpers/notification'
 import Spinner from './Spinner.vue';
-import Modal from '@/components/Modal.vue';
+import Modal from '../components/Modal.vue';
 
 /** @type {import('vue').Ref<import('../../../../servers/server/models/stack').Environment | null>} */
 const currentEnvironment = ref(null)
 /** @type {import('vue').Ref<Record<string, import('../../../../servers/server/models/stack').Environment | null>>} */
 const environments = ref({})
 const loading = ref(false)
-const overrideModalRef = ref('')
+/** @type {import('vue').Ref<InstanceType<typeof import('../components/Modal.vue')['default']> | null>} */
+const overrideModalRef = ref(null)
 onMounted(async () => {
   currentEnvironment.value = await Stack.getEnvironment()
   environments.value = await Stack.getEnvironments()
 })
 
 function getOverridedEnvsServices () {
-  return Stack.services.value?.filter(s => s.enabled).reduce((agg, service) => {
+  return Stack.services.value?.filter(s => s.enabled).reduce((/**@type {import('../models/service').default[]}*/agg, service) => {
     const overrideEnvs = Object.keys(service?.spawnOptions?.overrideEnvs || {})
     const envs = Object.keys(service?.spawnOptions?.env || {})
     if(envs.some((key => overrideEnvs.includes(key)))) {
@@ -71,10 +72,10 @@ function getOverridedEnvsServices () {
 /**@param {string} env*/
 async function changeEnvironment(env, $ev) {
   const servicesOverrided = getOverridedEnvsServices()
-  if(servicesOverrided?.length) {
+  if(servicesOverrided?.length && overrideModalRef.value) {
     const res = await overrideModalRef.value.open(servicesOverrided).promise
     if(!res) {
-      $ev.target.value = currentEnvironment.value.id
+      $ev.target.value = currentEnvironment.value?.id
       return 
     }
   }

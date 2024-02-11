@@ -14,7 +14,7 @@
     "@clabroche/common-jest": "workspace:*",
     "@clabroche/common-retrigger-all-build": "workspace:*",
     "jest-sonar-reporter": "^2.0.0",
-    "supertest": "^6.2.2"
+    "supertest": "^6.3.4"
   },
   "dependencies": {
     "express": "^4.18.2"

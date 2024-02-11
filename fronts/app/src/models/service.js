@@ -309,5 +309,5 @@ class Service {
 export default Service
 
 /**
- * @typedef {import('../../../servers/server/models/Service').LogMessage} LogMessage
+ * @typedef {import('../../../../servers/server/models/Service').LogMessage} LogMessage
  */

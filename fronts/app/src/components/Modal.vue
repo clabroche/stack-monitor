@@ -48,7 +48,7 @@ export default {
     return {
       /** @type {((...args: any[]) => any) | null} */
       resolve: null,
-      /** @type {Subject | null} */
+      /** @type {Subject & {promise: Promise} | null} */
       result: null,
       uuid: uuid(),
       data: null,
@@ -85,15 +85,20 @@ export default {
         this.resolve(data)
       }
     },
-    /** @param {*} data */
+    /** 
+     * @param {*} data
+     * @return {Subject & {promise: Promise}}
+     */
     open(data = null) {
       this.isOpen = true
       this.data = data
+      // @ts-ignore
       this.result = new Subject()
       // @ts-ignore
       this.result.promise = new Promise((resolve) => {
         this.resolve = resolve
       });
+      // @ts-ignore
       return this.result
     }
   }

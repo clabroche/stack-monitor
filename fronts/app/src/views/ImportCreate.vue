@@ -26,10 +26,9 @@
 </template>
 
 <script>
-import { ref } from '@vue/reactivity'
 import BackgroundStackChooser from '../components/BackgroundStackChooser.vue'
 import Section from '../components/Section.vue'
-import { onMounted } from '@vue/runtime-core'
+import { onMounted, ref } from 'vue'
 import Stack from '../models/stack'
 import Modal from '../components/Modal.vue'
 import Explorer from '../components/Explorer.vue'

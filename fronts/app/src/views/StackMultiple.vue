@@ -31,12 +31,11 @@
 </template>
 
 <script>
-import { ref } from '@vue/reactivity'
+import { ref, onMounted, watch } from 'vue'
 import Section from '../components/Section.vue'
 import stack from '../models/stack'
 import Tabs from '../components/Tabs.vue'
 import draggableVue from 'vuedraggable'
-import { onMounted, watch } from '@vue/runtime-core'
 import PromiseB from 'bluebird'
 import axios from '../helpers/axios'
 
@@ -48,14 +47,14 @@ export default {
   },
   name: 'StackSingle',
   setup() {
-    /** @type {import('vue').Ref<import('@/models/service').default[]>} */
+    /** @type {import('vue').Ref<import('../models/service').default[]>} */
     const services = ref([])
     /** @type {import('vue').Ref<Tab[]>} */
     const tabs = ref([])
     /** @type {import('vue').Ref<InstanceType<typeof Tabs> | null>} */
     const tabRef = ref(null)
     onMounted(async () => {
-      /** @type {{data: import('@clabroche/modules-plugins-loader/views').PluginSM<null>[]}} */
+      /** @type {{data: import('@clabroche/modules-plugins-loader-front/src/views').PluginSM<null>[]}} */
       const {data: plugins} = await axios.get('/plugins/services')
       tabs.value = plugins
         .sort((a,b) => ((a.order || 0) - (b.order || 0)))
@@ -66,7 +65,7 @@ export default {
           if(tabRef?.value?.currentTab?.id) {
             const currentPlugin = tabRef.value.currentTab.id
             if(!service.enabled) return false
-            /** @type {{data: import('@clabroche/modules-plugins-loader/views').PluginSM<null>[]}} */
+            /** @type {{data: import('@clabroche/modules-plugins-loader-front/src/views').PluginSM<null>[]}} */
             const {data: plugins} = await axios.get('/plugins/services/'+ service.label)
             const availablePlugins = plugins.map(a => a.name)
             const plugin = availablePlugins.find(plugin => plugin === currentPlugin)
@@ -85,11 +84,11 @@ export default {
       setData: function(dataTransfer, element) {
         dataTransfer.setDragImage(document.createElement('div'), 100 ,100)
       },
-      /** @param {import('@/models/service').default} service */
+      /** @param {import('../models/service').default} service */
       async restart(service) {
         await service.restart()
       },
-      /** @param {import('@/models/service').default} service */
+      /** @param {import('../models/service').default} service */
       async stop(service) {
         await service.stop()
       },
@@ -97,11 +96,11 @@ export default {
       goTo(url) {
         window.open(url, '_blank')?.focus();
       },
-      /** @param {import('@/models/service').default} service */
+      /** @param {import('../models/service').default} service */
       async openInVsCode(service) {
         service.openInVsCode()
       },
-      /** @param {import('@/models/service').default} service */
+      /** @param {import('../models/service').default} service */
       async openFolder(service) {
         service.openFolder()
       },
