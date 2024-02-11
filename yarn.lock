@@ -1505,6 +1505,7 @@ __metadata:
   resolution: "@clabroche/servers-server@workspace:servers/server"
   dependencies:
     "@clabroche/common-retrigger-all-build": "workspace:*"
+    "@clabroche/fronts-app": "workspace:*"
     "@clabroche/modules-plugins-loader-backend": "workspace:*"
     "@clabroche/modules-plugins-loader-front": "workspace:*"
     ansi-to-html: "npm:^0.7.2"
@@ -1532,6 +1533,9 @@ __metadata:
     socket.io: "npm:^4.7.4"
     supertest: "npm:^6.3.4"
     uuid: "npm:^9.0.1"
+  dependenciesMeta:
+    "@clabroche/fronts-app":
+      optional: true
   bin:
     servers-server: bin/www
   languageName: unknown

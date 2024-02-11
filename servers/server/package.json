@@ -25,6 +25,9 @@
   "main": "bin/server.js",
   "typings": "./typings/export.d.ts",
   "types": "./typings/export.d.ts",
+  "optionalDependencies": {
+    "@clabroche/fronts-app": "workspace:*"
+  },
   "dependencies": {
     "@clabroche/modules-plugins-loader-backend": "workspace:*",
     "ansi-to-html": "^0.7.2",
