@@ -20,7 +20,6 @@
     "start": "node bin/www $STACKFILE",
     "serve": "nodemon -e js,ts,jsx,tsx,vue,swagger.yml,swagger.yaml -x 'node ../../watch.js npm run start'",
     "build": "tsup",
-    "publish": "cd dist && npm publish --access public",
     "test": ""
   },
   "main": "bin/server.js",
