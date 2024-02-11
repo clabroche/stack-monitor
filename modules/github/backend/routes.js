@@ -19,7 +19,7 @@ let octokit = githubconf.GH_TOKEN
   ? new Octokit.Octokit({ auth: githubconf.GH_TOKEN })
   : null;
 
-/** @param {import('@clabroche/fronts-app/typings/export').StackMonitor} stackMonitor */
+/** @param {import('@clabroche/common-typings').StackMonitor} stackMonitor */
 module.exports = (stackMonitor) => {
   const { findService } = stackMonitor;
 

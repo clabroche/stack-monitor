@@ -34,12 +34,12 @@ async function walker(rootPath, pathToExplore, stripPath, leafs = []) {
   return dir;
 }
 
-/** @param {import('@clabroche/fronts-app/typings/export').StackMonitor} stackMonitor */
+/** @param {import('@clabroche/common-typings').StackMonitor} stackMonitor */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const Documentation = (stackMonitor) => ({
   /**
      * @param {string} path
-     * @param {import('@clabroche/fronts-app/typings/export').Service} service
+     * @param {import('@clabroche/common-typings').Service} service
      * @param {import('./index').Leaf[]} leafs
      */
   getTree(path, service, leafs = []) {
@@ -52,7 +52,7 @@ const Documentation = (stackMonitor) => ({
   },
   /**
      * @param {string} path
-     * @param {import('@clabroche/fronts-app/typings/export').Service} service
+     * @param {import('@clabroche/common-typings').Service} service
      */
   async getFlatFiles(path, service) {
     /** @type {import('./index').Leaf[]} */
@@ -63,14 +63,14 @@ const Documentation = (stackMonitor) => ({
 
   /**
      * @param {string} path
-     * @param {import('@clabroche/fronts-app/typings/export').Service} service
+     * @param {import('@clabroche/common-typings').Service} service
      */
   readFile(path, service) {
     return fse.readFile(pathfs.resolve(service.documentation, path), { encoding: 'utf-8' });
   },
   /**
      * @param {string} path
-     * @param {import('@clabroche/fronts-app/typings/export').Service} service
+     * @param {import('@clabroche/common-typings').Service} service
      * @param {string} page
      */
   async writeFile(path, service, page) {

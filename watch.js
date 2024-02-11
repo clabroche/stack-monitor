@@ -140,9 +140,6 @@ function getDependencies(packageName, recursiveAggr = []) {
 
 function getPackageInfoFromPath(path) {
   const packagesInfos = getPackageInfos(__dirname);
-  if (path.endsWith('/servers/server')) {
-    return Object.values(packagesInfos).filter((f) => f.name === '@iryu54/stack-monitor').pop();
-  }
   return Object.values(packagesInfos)
     .filter((f) => {
       const packageName = path.replace(`${__dirname}/`, '').replaceAll('/', '-');

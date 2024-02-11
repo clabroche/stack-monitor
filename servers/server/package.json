@@ -1,6 +1,7 @@
 {
-  "name": "@iryu54/stack-monitor",
+  "name": "@clabroche/servers-server",
   "version": "1.17.17",
+  "private": true,
   "description": "Monitor processes as a stack",
   "git": "https://github.com/clabroche/stack-monitor",
   "repository": "https://github.com/clabroche/stack-monitor",
@@ -19,16 +20,13 @@
     "start": "node bin/www $STACKFILE",
     "serve": "nodemon -e js,ts,jsx,tsx,vue,swagger.yml,swagger.yaml -x 'node ../../watch.js npm run start'",
     "build": "tsup",
+    "publish": "cd dist && npm publish --access public",
     "test": ""
   },
   "main": "bin/server.js",
-  "files": [
-    "dist"
-  ],
   "typings": "./typings/export.d.ts",
   "types": "./typings/export.d.ts",
   "dependencies": {
-    "@clabroche/fronts-app": "workspace:*",
     "@clabroche/modules-plugins-loader-backend": "workspace:*",
     "ansi-to-html": "^0.7.2",
     "bluebird": "^3.7.2",
@@ -56,6 +54,7 @@
   "devDependencies": {
     "@clabroche/common-retrigger-all-build": "workspace:*",
     "@clabroche/modules-plugins-loader-front": "workspace:*",
+    "dts-generator": "^3.0.0",
     "nodemon": "^3.0.3",
     "supertest": "^6.3.4"
   },

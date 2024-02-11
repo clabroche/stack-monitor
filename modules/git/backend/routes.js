@@ -2,7 +2,7 @@ const express = require('express');
 
 const router = express.Router();
 
-/** @param {import('@clabroche/fronts-app/typings/export').StackMonitor} stackMonitor */
+/** @param {import('@clabroche/common-typings').StackMonitor} stackMonitor */
 module.exports = (stackMonitor) => {
   const { git } = stackMonitor;
   router.get('/git/:service/graph', async (req, res) => {

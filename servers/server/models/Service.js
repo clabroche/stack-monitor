@@ -1,4 +1,4 @@
-/// <reference path="@clabroche/fronts-app/typings/index.d.ts">
+/// <reference path="@clabroche/common-typings.d.ts">
 const { spawn } = require('child_process');
 const killport = require('kill-port');
 const URL = require('url');
@@ -23,7 +23,7 @@ const alias = {
 
 class Service {
   /**
-   * @param {import('@clabroche/fronts-app/typings/index').NonFunctionProperties<Service>} service
+   * @param {import('@clabroche/common-typings').NonFunctionProperties<Service>} service
    * @param {import('./stack')} Stack
    */
   constructor(service, Stack) {
@@ -124,7 +124,7 @@ class Service {
     return res;
   }
 
-  /** @return {Partial<import('@clabroche/fronts-app/typings/index').NonFunctionProperties<Service>>} */
+  /** @return {Partial<import('@clabroche/common-typings').NonFunctionProperties<Service>>} */
   exportForDifference() {
     return {
       label: this.label,

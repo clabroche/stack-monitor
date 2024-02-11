@@ -23,7 +23,6 @@ describe('Workspaces naming', () => {
       const prefix = rootName.split('/').length === 2 // If is a scoped package
         ? rootName.split('/')[0]
         : null;
-      if(workspace.packageJSON.name === '@iryu54/stack-monitor') return
       if (prefix) {
         expect(workspace.packageJSON.name).toBe(`${prefix}/${expectedName}`);
       } else {
@@ -105,9 +104,8 @@ describe('Files', () => {
 describe('Publish config', () => {
   getWorkspaces().filter((workspace) => fse.existsSync(pathfs.resolve(workspace.path, 'package.json'))).forEach((workspace) => {
     it(`${workspace.packageJSON.name} should be in private mode`, () => {
-      if(workspace.packageJSON.name === '@iryu54/stack-monitor') return
-      if(!workspace.packageJSON.private) {
-        expect(workspace.path+ '/package.json').toBe('to be in private mode')
+      if (!workspace.packageJSON.private) {
+        expect(`${workspace.path}/package.json`).toBe('to be in private mode');
       }
     });
     it(`${workspace.packageJSON.name} should have a repository field`, () => {

@@ -2,7 +2,7 @@
 const { v4 } = require('uuid');
 const { getSave: _getSave } = require('./save');
 
-/** @type {import('@clabroche/fronts-app/typings/export').StackMonitor | null} */
+/** @type {import('@clabroche/common-typings').StackMonitor | null} */
 let stackMonitor = null;
 
 function getSave() {
@@ -11,9 +11,9 @@ function getSave() {
   return { data, save };
 }
 
-/** @param {import('@clabroche/fronts-app/typings/export').StackMonitor} stackMonitor */
+/** @param {import('@clabroche/common-typings').StackMonitor} stackMonitor */
 class Board {
-  /** @param {Partial<import('@clabroche/fronts-app/typings').NonFunctionProperties<Board>>} board */
+  /** @param {Partial<import('@clabroche/common-typings').NonFunctionProperties<Board>>} board */
   constructor(board = {}) {
     /** @type {string} */
     this.id = board.id || v4();
@@ -58,10 +58,9 @@ class Board {
     return this.getColumns().find((c) => c?.id === id);
   }
 
-  /** @param {Partial<import('@clabroche/fronts-app/typings').NonFunctionProperties<Column>>} column */
+  /** @param {Partial<import('@clabroche/common-typings').NonFunctionProperties<Column>>} column */
   addColumn(column) {
     const savedColumn = new Column({ ...column, boardId: this.id }).save();
-    console.log(savedColumn);
     this.columnIds = [...new Set([...this.columnIds, savedColumn.id])];
     this.save();
     return savedColumn;
@@ -81,7 +80,7 @@ class Board {
 }
 
 class Column {
-  /** @param {Partial<import('@clabroche/fronts-app/typings').NonFunctionProperties<Column>>} column */
+  /** @param {Partial<import('@clabroche/common-typings').NonFunctionProperties<Column>>} column */
   constructor(column = {}) {
     /** @type {string} */
     this.id = column.id || v4();
@@ -113,7 +112,7 @@ class Column {
     return this.getCards().find((c) => c?.id === id);
   }
 
-  /** @param {Partial<import('@clabroche/fronts-app/typings').NonFunctionProperties<Card>>} card */
+  /** @param {Partial<import('@clabroche/common-typings').NonFunctionProperties<Card>>} card */
   addCard(card) {
     const savedColumn = new Card({ ...card, boardId: this.boardId, columnId: this.id }).save();
     this.cardIds = [...new Set([...this.cardIds, savedColumn.id])];
@@ -142,7 +141,7 @@ class Column {
 }
 
 class Card {
-  /** @param {Partial<import('@clabroche/fronts-app/typings').NonFunctionProperties<Card>>} card */
+  /** @param {Partial<import('@clabroche/common-typings').NonFunctionProperties<Card>>} card */
   constructor(card = {}) {
     /** @type {string} */
     this.id = card.id || v4();
@@ -182,7 +181,7 @@ class Card {
     return this;
   }
 }
-/** @param {import('@clabroche/fronts-app/typings/export').StackMonitor} _stackMonitor */
+/** @param {import('@clabroche/common-typings').StackMonitor} _stackMonitor */
 const Kanban = (_stackMonitor) => {
   stackMonitor = _stackMonitor;
   return {

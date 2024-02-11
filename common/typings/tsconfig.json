@@ -1,8 +1,9 @@
 {
-  "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "outDir": "dist",
+    "outFile": "dist/index.js",
+    "module": "AMD",
     "noEmit": false,
+    "declaration": true,
   },
   "include": ["."],
   "exclude": [

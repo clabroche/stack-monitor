@@ -96,6 +96,10 @@ jobs:
           git tag -fa v.latest -m "fix: set v.latest tag"
           git push origin v.latest -f
           echo "type=latest" >> $GITHUB_OUTPUT
+          cd servers/server
+          npm run build
+          cd dist
+          npm publish --access public
         fi
 
     - id: lerna

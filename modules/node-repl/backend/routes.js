@@ -16,7 +16,7 @@ const confPath = pathfs.resolve(confDir, 'node-repl');
 if (!fse.existsSync(confPath)) fse.writeJSONSync(confPath, {});
 const conf = fse.readJsonSync(confPath);
 
-/** @param {import('@clabroche/fronts-app/typings/export').StackMonitor} stackMonitor */
+/** @param {import('@clabroche/common-typings').StackMonitor} stackMonitor */
 module.exports = (stackMonitor) => {
   const { Socket } = stackMonitor;
   router.post('/node-repl/open-repl', async (req, res) => {

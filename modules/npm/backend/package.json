@@ -6,9 +6,11 @@
   "scripts": {
     "test": ""
   },
+  "peerDependencies": {
+    "@clabroche/servers-server": "workspace:*"
+  },
   "devDependencies": {
     "@clabroche/common-retrigger-all-build": "workspace:*",
-    "@clabroche/fronts-app": "workspace:*",
     "@clabroche/modules-plugins-loader-front": "workspace:*",
     "@types/express": "^4.17.21",
     "@types/fs-extra": "^11.0.4"

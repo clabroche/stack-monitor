@@ -2,7 +2,7 @@ const { existsSync } = require('fs');
 const pathfs = require('path');
 const { execAsync, execAsyncWithoutErr } = require('../../../servers/server/helpers/exec');
 
-/** @param {import('@clabroche/fronts-app/typings/export').StackMonitor} stackMonitor */
+/** @param {import('@clabroche/common-typings').StackMonitor} stackMonitor */
 const Git = (stackMonitor) => {
   const { findService } = stackMonitor;
   /** @param {import('../../../servers/server/models/Service')} service */

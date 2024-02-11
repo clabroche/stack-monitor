@@ -912,6 +912,7 @@ __metadata:
     "@clabroche/common-retrigger-all-build": "workspace:*"
     "@clabroche/common-typings": "workspace:*"
     "@clabroche/modules-plugins-loader-front": "workspace:*"
+    "@clabroche/servers-server": "workspace:*"
     "@fortawesome/fontawesome-free": "npm:^6.5.1"
     "@vitejs/plugin-vue": "npm:^5.0.3"
     autoprefixer: "npm:^10.4.17"
@@ -952,12 +953,11 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@clabroche/modules-bugs-backend@workspace:*, @clabroche/modules-bugs-backend@workspace:modules/bugs/backend":
+"@clabroche/modules-bugs-backend@workspace:modules/bugs/backend":
   version: 0.0.0-use.local
   resolution: "@clabroche/modules-bugs-backend@workspace:modules/bugs/backend"
   dependencies:
     "@clabroche/common-retrigger-all-build": "workspace:*"
-    "@clabroche/fronts-app": "workspace:*"
     "@clabroche/modules-plugins-loader-front": "workspace:*"
     "@types/express": "npm:^4.17.21"
     "@types/fs-extra": "npm:^11.0.4"
@@ -978,7 +978,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@clabroche/modules-configuration-backend@workspace:*, @clabroche/modules-configuration-backend@workspace:modules/configuration/backend":
+"@clabroche/modules-configuration-backend@workspace:modules/configuration/backend":
   version: 0.0.0-use.local
   resolution: "@clabroche/modules-configuration-backend@workspace:modules/configuration/backend"
   dependencies:
@@ -999,7 +999,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@clabroche/modules-dev-ops-backend@workspace:*, @clabroche/modules-dev-ops-backend@workspace:modules/dev-ops/backend":
+"@clabroche/modules-dev-ops-backend@workspace:modules/dev-ops/backend":
   version: 0.0.0-use.local
   resolution: "@clabroche/modules-dev-ops-backend@workspace:modules/dev-ops/backend"
   dependencies:
@@ -1021,7 +1021,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@clabroche/modules-diff-backend@workspace:*, @clabroche/modules-diff-backend@workspace:modules/diff/backend":
+"@clabroche/modules-diff-backend@workspace:modules/diff/backend":
   version: 0.0.0-use.local
   resolution: "@clabroche/modules-diff-backend@workspace:modules/diff/backend"
   dependencies:
@@ -1044,12 +1044,11 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@clabroche/modules-documentation-backend@workspace:*, @clabroche/modules-documentation-backend@workspace:modules/documentation/backend":
+"@clabroche/modules-documentation-backend@workspace:modules/documentation/backend":
   version: 0.0.0-use.local
   resolution: "@clabroche/modules-documentation-backend@workspace:modules/documentation/backend"
   dependencies:
     "@clabroche/common-retrigger-all-build": "workspace:*"
-    "@clabroche/fronts-app": "workspace:*"
     "@clabroche/modules-plugins-loader-front": "workspace:*"
     "@types/bluebird": "npm:^3.5.38"
     "@types/express": "npm:^4.17.21"
@@ -1074,12 +1073,11 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@clabroche/modules-finder-backend@workspace:*, @clabroche/modules-finder-backend@workspace:modules/finder/backend":
+"@clabroche/modules-finder-backend@workspace:modules/finder/backend":
   version: 0.0.0-use.local
   resolution: "@clabroche/modules-finder-backend@workspace:modules/finder/backend"
   dependencies:
     "@clabroche/common-retrigger-all-build": "workspace:*"
-    "@clabroche/fronts-app": "workspace:*"
     "@clabroche/modules-plugins-loader-front": "workspace:*"
     "@types/bluebird": "npm:^3.5.38"
     "@types/command-exists": "npm:^1.2.3"
@@ -1103,12 +1101,11 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@clabroche/modules-git-backend@workspace:*, @clabroche/modules-git-backend@workspace:modules/git/backend":
+"@clabroche/modules-git-backend@workspace:modules/git/backend":
   version: 0.0.0-use.local
   resolution: "@clabroche/modules-git-backend@workspace:modules/git/backend"
   dependencies:
     "@clabroche/common-retrigger-all-build": "workspace:*"
-    "@clabroche/fronts-app": "workspace:*"
     "@clabroche/modules-plugins-loader-front": "workspace:*"
     "@types/command-exists": "npm:^1.2.3"
     "@types/express": "npm:^4.17.21"
@@ -1133,12 +1130,11 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@clabroche/modules-github-backend@workspace:*, @clabroche/modules-github-backend@workspace:modules/github/backend":
+"@clabroche/modules-github-backend@workspace:modules/github/backend":
   version: 0.0.0-use.local
   resolution: "@clabroche/modules-github-backend@workspace:modules/github/backend"
   dependencies:
     "@clabroche/common-retrigger-all-build": "workspace:*"
-    "@clabroche/fronts-app": "workspace:*"
     "@clabroche/modules-plugins-loader-front": "workspace:*"
     "@types/express": "npm:^4.17.21"
     "@types/fs-extra": "npm:^11.0.4"
@@ -1159,12 +1155,11 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@clabroche/modules-global-scripts-backend@workspace:*, @clabroche/modules-global-scripts-backend@workspace:modules/global-scripts/backend":
+"@clabroche/modules-global-scripts-backend@workspace:modules/global-scripts/backend":
   version: 0.0.0-use.local
   resolution: "@clabroche/modules-global-scripts-backend@workspace:modules/global-scripts/backend"
   dependencies:
     "@clabroche/common-retrigger-all-build": "workspace:*"
-    "@clabroche/fronts-app": "workspace:*"
     "@clabroche/modules-plugins-loader-front": "workspace:*"
     "@types/express": "npm:^4.17.21"
     "@types/uuid": "npm:^9.0.8"
@@ -1186,7 +1181,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@clabroche/modules-json-formatter-backend@workspace:*, @clabroche/modules-json-formatter-backend@workspace:modules/json-formatter/backend":
+"@clabroche/modules-json-formatter-backend@workspace:modules/json-formatter/backend":
   version: 0.0.0-use.local
   resolution: "@clabroche/modules-json-formatter-backend@workspace:modules/json-formatter/backend"
   dependencies:
@@ -1209,7 +1204,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@clabroche/modules-jwt-backend@workspace:*, @clabroche/modules-jwt-backend@workspace:modules/jwt/backend":
+"@clabroche/modules-jwt-backend@workspace:modules/jwt/backend":
   version: 0.0.0-use.local
   resolution: "@clabroche/modules-jwt-backend@workspace:modules/jwt/backend"
   dependencies:
@@ -1234,12 +1229,11 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@clabroche/modules-kanban-backend@workspace:*, @clabroche/modules-kanban-backend@workspace:modules/kanban/backend":
+"@clabroche/modules-kanban-backend@workspace:modules/kanban/backend":
   version: 0.0.0-use.local
   resolution: "@clabroche/modules-kanban-backend@workspace:modules/kanban/backend"
   dependencies:
     "@clabroche/common-retrigger-all-build": "workspace:*"
-    "@clabroche/fronts-app": "workspace:*"
     "@clabroche/modules-plugins-loader-front": "workspace:*"
     "@types/express": "npm:^4.17.21"
     "@types/uuid": "npm:^9.0.8"
@@ -1261,12 +1255,11 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@clabroche/modules-logs-backend@workspace:*, @clabroche/modules-logs-backend@workspace:modules/logs/backend":
+"@clabroche/modules-logs-backend@workspace:modules/logs/backend":
   version: 0.0.0-use.local
   resolution: "@clabroche/modules-logs-backend@workspace:modules/logs/backend"
   dependencies:
     "@clabroche/common-retrigger-all-build": "workspace:*"
-    "@clabroche/fronts-app": "workspace:*"
     "@clabroche/modules-plugins-loader-front": "workspace:*"
     "@types/express": "npm:^4.17.21"
     "@types/uuid": "npm:^9.0.8"
@@ -1291,7 +1284,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@clabroche/modules-mongo-backend@workspace:*, @clabroche/modules-mongo-backend@workspace:modules/mongo/backend":
+"@clabroche/modules-mongo-backend@workspace:modules/mongo/backend":
   version: 0.0.0-use.local
   resolution: "@clabroche/modules-mongo-backend@workspace:modules/mongo/backend"
   dependencies:
@@ -1315,12 +1308,11 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@clabroche/modules-node-repl-backend@workspace:*, @clabroche/modules-node-repl-backend@workspace:modules/node-repl/backend":
+"@clabroche/modules-node-repl-backend@workspace:modules/node-repl/backend":
   version: 0.0.0-use.local
   resolution: "@clabroche/modules-node-repl-backend@workspace:modules/node-repl/backend"
   dependencies:
     "@clabroche/common-retrigger-all-build": "workspace:*"
-    "@clabroche/fronts-app": "workspace:*"
     "@clabroche/modules-plugins-loader-front": "workspace:*"
     "@types/express": "npm:^4.17.21"
     "@types/fs-extra": "npm:^11.0.4"
@@ -1344,13 +1336,13 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@clabroche/modules-npm-backend@workspace:*, @clabroche/modules-npm-backend@workspace:modules/npm/backend":
+"@clabroche/modules-npm-backend@workspace:modules/npm/backend":
   version: 0.0.0-use.local
   resolution: "@clabroche/modules-npm-backend@workspace:modules/npm/backend"
   dependencies:
     "@clabroche/common-retrigger-all-build": "workspace:*"
-    "@clabroche/fronts-app": "workspace:*"
     "@clabroche/modules-plugins-loader-front": "workspace:*"
+    "@clabroche/servers-server": "workspace:*"
     "@types/express": "npm:^4.17.21"
     "@types/fs-extra": "npm:^11.0.4"
     express: "npm:^4.18.2"
@@ -1370,7 +1362,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@clabroche/modules-openai-backend@workspace:*, @clabroche/modules-openai-backend@workspace:modules/openai/backend":
+"@clabroche/modules-openai-backend@workspace:modules/openai/backend":
   version: 0.0.0-use.local
   resolution: "@clabroche/modules-openai-backend@workspace:modules/openai/backend"
   dependencies:
@@ -1404,26 +1396,6 @@ __metadata:
   resolution: "@clabroche/modules-plugins-loader-backend@workspace:modules/plugins-loader/backend"
   dependencies:
     "@clabroche/common-retrigger-all-build": "workspace:*"
-    "@clabroche/modules-bugs-backend": "workspace:*"
-    "@clabroche/modules-configuration-backend": "workspace:*"
-    "@clabroche/modules-dev-ops-backend": "workspace:*"
-    "@clabroche/modules-diff-backend": "workspace:*"
-    "@clabroche/modules-documentation-backend": "workspace:*"
-    "@clabroche/modules-finder-backend": "workspace:*"
-    "@clabroche/modules-git-backend": "workspace:*"
-    "@clabroche/modules-github-backend": "workspace:*"
-    "@clabroche/modules-global-scripts-backend": "workspace:*"
-    "@clabroche/modules-json-formatter-backend": "workspace:*"
-    "@clabroche/modules-jwt-backend": "workspace:*"
-    "@clabroche/modules-kanban-backend": "workspace:*"
-    "@clabroche/modules-logs-backend": "workspace:*"
-    "@clabroche/modules-mongo-backend": "workspace:*"
-    "@clabroche/modules-node-repl-backend": "workspace:*"
-    "@clabroche/modules-npm-backend": "workspace:*"
-    "@clabroche/modules-openai-backend": "workspace:*"
-    "@clabroche/modules-regex-backend": "workspace:*"
-    "@clabroche/modules-toolbox-backend": "workspace:*"
-    "@clabroche/modules-uuid-backend": "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -1440,7 +1412,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@clabroche/modules-regex-backend@workspace:*, @clabroche/modules-regex-backend@workspace:modules/regex/backend":
+"@clabroche/modules-regex-backend@workspace:modules/regex/backend":
   version: 0.0.0-use.local
   resolution: "@clabroche/modules-regex-backend@workspace:modules/regex/backend"
   dependencies:
@@ -1462,7 +1434,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@clabroche/modules-toolbox-backend@workspace:*, @clabroche/modules-toolbox-backend@workspace:modules/toolbox/backend":
+"@clabroche/modules-toolbox-backend@workspace:modules/toolbox/backend":
   version: 0.0.0-use.local
   resolution: "@clabroche/modules-toolbox-backend@workspace:modules/toolbox/backend"
   dependencies:
@@ -1484,12 +1456,11 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@clabroche/modules-uuid-backend@workspace:*, @clabroche/modules-uuid-backend@workspace:modules/uuid/backend":
+"@clabroche/modules-uuid-backend@workspace:modules/uuid/backend":
   version: 0.0.0-use.local
   resolution: "@clabroche/modules-uuid-backend@workspace:modules/uuid/backend"
   dependencies:
     "@clabroche/common-retrigger-all-build": "workspace:*"
-    "@clabroche/fronts-app": "workspace:*"
     "@clabroche/modules-plugins-loader-front": "workspace:*"
     "@types/express": "npm:^4.17.21"
     "@types/uuid": "npm:^9.0.8"
@@ -1506,6 +1477,43 @@ __metadata:
     "@clabroche/fronts-app": "workspace:*"
     vue: "npm:^3.4.18"
     vue-eslint-parser: "npm:^9.4.2"
+  languageName: unknown
+  linkType: soft
+
+"@clabroche/servers-server@workspace:*, @clabroche/servers-server@workspace:servers/server":
+  version: 0.0.0-use.local
+  resolution: "@clabroche/servers-server@workspace:servers/server"
+  dependencies:
+    "@clabroche/common-retrigger-all-build": "workspace:*"
+    "@clabroche/modules-plugins-loader-backend": "workspace:*"
+    "@clabroche/modules-plugins-loader-front": "workspace:*"
+    ansi-to-html: "npm:^0.7.2"
+    bluebird: "npm:^3.7.2"
+    command-exists: "npm:^1.2.9"
+    cookie-parser: "npm:^1.4.6"
+    cors: "npm:^2.8.5"
+    dayjs: "npm:^1.11.10"
+    debounce: "npm:^2.0.0"
+    dot-object: "npm:^2.1.4"
+    dotenv: "npm:^16.4.2"
+    dts-generator: "npm:^3.0.0"
+    express: "npm:^4.18.2"
+    express-async-errors: "npm:^3.1.1"
+    fast-sort: "npm:^3.4.0"
+    fs-extra: "npm:^11.2.0"
+    kill-port: "npm:^2.0.1"
+    lodash: "npm:^4.17.21"
+    nodemon: "npm:^3.0.3"
+    octokit: "npm:^3.1.2"
+    open: "npm:^8"
+    os-utils: "npm:0.0.14"
+    pidusage-tree: "npm:^2.0.5"
+    ps-tree: "npm:^1.2.0"
+    socket.io: "npm:^4.7.4"
+    supertest: "npm:^6.3.4"
+    uuid: "npm:^9.0.1"
+  bin:
+    servers-server: bin/www
   languageName: unknown
   linkType: soft
 
@@ -2112,43 +2120,6 @@ __metadata:
   checksum: 0f08624fb5c888cefc7e686069a22a86da0eb27f0460c0f96e600ce6a7775afaad0e0199cfba3ef4a3e59208f857c699503a5df8fc5a97193bbef01b16411c8a
   languageName: node
   linkType: hard
-
-"@iryu54/stack-monitor@workspace:servers/server":
-  version: 0.0.0-use.local
-  resolution: "@iryu54/stack-monitor@workspace:servers/server"
-  dependencies:
-    "@clabroche/common-retrigger-all-build": "workspace:*"
-    "@clabroche/fronts-app": "workspace:*"
-    "@clabroche/modules-plugins-loader-backend": "workspace:*"
-    "@clabroche/modules-plugins-loader-front": "workspace:*"
-    ansi-to-html: "npm:^0.7.2"
-    bluebird: "npm:^3.7.2"
-    command-exists: "npm:^1.2.9"
-    cookie-parser: "npm:^1.4.6"
-    cors: "npm:^2.8.5"
-    dayjs: "npm:^1.11.10"
-    debounce: "npm:^2.0.0"
-    dot-object: "npm:^2.1.4"
-    dotenv: "npm:^16.4.2"
-    express: "npm:^4.18.2"
-    express-async-errors: "npm:^3.1.1"
-    fast-sort: "npm:^3.4.0"
-    fs-extra: "npm:^11.2.0"
-    kill-port: "npm:^2.0.1"
-    lodash: "npm:^4.17.21"
-    nodemon: "npm:^3.0.3"
-    octokit: "npm:^3.1.2"
-    open: "npm:^8"
-    os-utils: "npm:0.0.14"
-    pidusage-tree: "npm:^2.0.5"
-    ps-tree: "npm:^1.2.0"
-    socket.io: "npm:^4.7.4"
-    supertest: "npm:^6.3.4"
-    uuid: "npm:^9.0.1"
-  bin:
-    stack-monitor: bin/www
-  languageName: unknown
-  linkType: soft
 
 "@isaacs/cliui@npm:^8.0.2":
   version: 8.0.2
@@ -7690,6 +7661,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"dts-generator@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "dts-generator@npm:3.0.0"
+  dependencies:
+    glob: "npm:^7.1.3"
+    mkdirp: "npm:^0.5.1"
+  bin:
+    dts-generator: bin/dts-generator
+  checksum: 61b265b82eea6187f0648be08fcf07da96abec7c6f8fad6943a3fb824b7c7c3cee813997c700a7b7245acf23e8a6e707311a7f55f62a38f0348a63cc57b47dc1
+  languageName: node
+  linkType: hard
+
 "duplexer@npm:^0.1.1, duplexer@npm:~0.1.1":
   version: 0.1.2
   resolution: "duplexer@npm:0.1.2"
@@ -12918,6 +12901,17 @@ __metadata:
     for-in: "npm:^1.0.2"
     is-extendable: "npm:^1.0.1"
   checksum: 820d5a51fcb7479f2926b97f2c3bb223546bc915e6b3a3eb5d906dda871bba569863595424a76682f2b15718252954644f3891437cb7e3f220949bed54b1750d
+  languageName: node
+  linkType: hard
+
+"mkdirp@npm:^0.5.1":
+  version: 0.5.6
+  resolution: "mkdirp@npm:0.5.6"
+  dependencies:
+    minimist: "npm:^1.2.6"
+  bin:
+    mkdirp: bin/cmd.js
+  checksum: 0c91b721bb12c3f9af4b77ebf73604baf350e64d80df91754dc509491ae93bf238581e59c7188360cec7cb62fc4100959245a42cfe01834efedc5e9d068376c2
   languageName: node
   linkType: hard
 

@@ -103,7 +103,7 @@ const deleteColumnModal = ref(null);
 const drag = ref(false);
 /** @type {import('vue').Ref<InstanceType<import('../../backend/Kanban').CardType>[]>} */
 const cards = ref([]);
-/** @type {import('vue').Ref<import('@clabroche/fronts-app/typings').NonFunctionProperties<import('../../backend/Kanban').ColumnType>['prototype'] | undefined | null>} */
+/** @type {import('vue').Ref<import('@clabroche/common-typings').NonFunctionProperties<import('../../backend/Kanban').ColumnType>['prototype'] | undefined | null>} */
 const column = ref();
 
 watch(() => route.query.cardId, () => {

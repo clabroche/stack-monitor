@@ -465,7 +465,7 @@ function difference(fromObject, toObject) {
  */
 
 /**
- * @typedef {Omit<import('@clabroche/fronts-app/typings/index').NonFunctionProperties<Service>, 'pids' | 'store' | 'enabled'>[]} StackArray
+ * @typedef {Omit<import('@clabroche/common-typings').NonFunctionProperties<Service>, 'pids' | 'store' | 'enabled'>[]} StackArray
  */
 
 /**

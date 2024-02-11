@@ -61,7 +61,6 @@ const rooms = ref([]);
 const models = ref([]);
 const room = ref();
 const model = ref('gpt-3.5-turbo');
-const availableModels = ref([]);
 const temperature = ref(0);
 
 onMounted(reload);
@@ -69,8 +68,7 @@ onMounted(reload);
 async function reload() {
   const { data: _ready } = await axios.get('/openai/ready');
   ready.value = _ready;
-  console.log(ready.value)
-  if(!ready.value) return;
+  if (!ready.value) return;
   const { data: _rooms } = await axios.get('/openai/rooms');
   rooms.value = _rooms;
   if (!room.value) {
@@ -78,8 +76,7 @@ async function reload() {
   }
   const { data: _messages } = await axios.get(`/openai/chat/${room.value}`);
   messages.value = _messages;
-  const { data: _models } = await axios.get('/openai/models');
-  models.value = _models.filter((/** @type {*} */m) => m.id.startsWith('gpt') && (m.id.split('-')?.length === 2 || Number.isNaN(+m.id.split('-').pop())));
+  await getModels();
 }
 
 /**
@@ -110,9 +107,10 @@ async function changeApikey(apikey, $event) {
 }
 
 async function getModels() {
-  const { data } = await axios.get('/openai/models');
-  availableModels.value = data;
+  const { data: _models } = await axios.get('/openai/models');
+  models.value = _models.filter((/** @type {*} */m) => m.id.startsWith('gpt') && (m.id.split('-')?.length === 2 || Number.isNaN(+m.id.split('-').pop())));
 }
+
 /** @param {string} message */
 async function sendMessage(message) {
   if (!messages.value) messages.value = [];

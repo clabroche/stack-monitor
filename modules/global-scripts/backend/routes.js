@@ -2,7 +2,7 @@ const express = require('express');
 
 const router = express.Router();
 
-/** @param {import('@clabroche/fronts-app/typings/export').StackMonitor} Stack */
+/** @param {import('@clabroche/common-typings').StackMonitor} Stack */
 module.exports = (Stack) => {
   const { globalScripts } = Stack;
   router.get('/global-scripts/', async (req, res) => {

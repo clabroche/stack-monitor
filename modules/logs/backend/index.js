@@ -11,7 +11,7 @@ const plugin = {
   order: 1,
   /**
    * @param {*} search
-   * @param {import('@clabroche/fronts-app/typings/export').StackMonitor} stackMonitor
+   * @param {import('@clabroche/common-typings').StackMonitor} stackMonitor
    */
   finder: (search, stackMonitor) => {
     const services = stackMonitor.getServices()

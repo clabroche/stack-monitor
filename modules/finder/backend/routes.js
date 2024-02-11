@@ -24,7 +24,7 @@ function pluginToUrl(plugin) {
   return '';
 }
 
-/** @param {import('@clabroche/fronts-app/typings/export').StackMonitor} stackMonitor */
+/** @param {import('@clabroche/common-typings').StackMonitor} stackMonitor */
 const routes = (stackMonitor) => {
   const {
     getServices,

@@ -3,7 +3,7 @@ const { v4 } = require('uuid');
 
 const router = express.Router();
 
-/** @param {import('@clabroche/fronts-app/typings/export').StackMonitor} stackMonitor */
+/** @param {import('@clabroche/common-typings').StackMonitor} stackMonitor */
 module.exports = (stackMonitor) => {
   const history = stackMonitor.getSave('history.json', {
     /** @type {History[]} */
