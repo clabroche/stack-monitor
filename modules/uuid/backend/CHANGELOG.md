@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.17.23](https://github.com/clabroche/stack-monitor/compare/v1.17.21...v1.17.23) (2024-02-11)
+
+**Note:** Version bump only for package @clabroche/modules-uuid-backend
+
 ## [1.17.21](https://github.com/clabroche/stack-monitor/compare/v1.17.20...v1.17.21) (2024-02-11)
 
 **Note:** Version bump only for package @clabroche/modules-uuid-backend

@@ -1,6 +1,6 @@
 {
   "name": "@clabroche/modules-dev-ops-front",
-  "version": "1.17.21",
+  "version": "1.17.23",
   "repository": "https://github.com/clabroche/stack-monitor",
   "private": true,
   "scripts": {
