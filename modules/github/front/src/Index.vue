@@ -1,5 +1,5 @@
 <template>
-  <section-cmp class="configs-root" v-if="service" :key="service.label">
+  <section-cmp v-if="service" :key="service.label">
     <div class="header">
       <h2>Github</h2>
       <div class="actions">
@@ -314,22 +314,6 @@ h3 {
   align-items: center;
 }
 
-.container {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  width: 100%;
-  margin: auto;
-  height: calc(100vh - 400px - 40px);
-
-  @media (max-width: 1300px) {
-    height: calc(100vh - 500px - 40px);
-  }
-
-  @media (max-width: 800px) {
-    height: calc(100vh - 650px - 40px);
-  }
-}
 .chooser {
   .avatars {
     display: flex;
@@ -343,9 +327,6 @@ h3 {
   }
 }
 .content {
-  .section {
-    margin: 40px 10px;
-  }
   .avatars>a {
     display: flex;
     align-items: center;

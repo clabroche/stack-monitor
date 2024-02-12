@@ -1,14 +1,23 @@
 <template>
-  <div class="tabs">
+  <div class="tabs" :class="{[direction]: true}">
     <div class="buttons" :class="{invert:invertColor}">
-      <button @click="currentTab = tab;save()" v-for="tab of availableTabs" :key="tab.label" :class="{active: tab?.id === currentTab?.id}">
-        <div v-if="tab.label && !tab.icon">{{tab.label}}</div>
-        <i v-if="tab.icon" :class="tab.icon" aria-hidden="true"></i>
-        <label v-if="showLabels">{{tab?.data?.value?.length || tab?.data?.length || 0}}</label>
-        <div v-if="tab?.warning" class="badge warning">{{ tab.warning }}</div>
-      </button>
+      <template v-for="tab of availableTabs" :key="tab.label" >
+        <Popover appendTo="parent" trigger="mouseenter" placement="right" :fullWidth="true">
+          <template #trigger>
+            <button @click="currentTab = tab;save()" :class="{active: tab?.id === currentTab?.id}">
+              <div v-if="tab.label && !tab.icon">{{tab.label}}</div>
+              <i v-if="tab.icon" :class="tab.icon" aria-hidden="true"></i>
+              <label v-if="showLabels">{{tab?.data?.value?.length || tab?.data?.length || 0}}</label>
+              <div v-if="tab?.warning" class="badge warning">{{ tab.warning }}</div>
+            </button>
+          </template>
+          <template #content>
+            {{ tab.label }}
+          </template>
+        </Popover>
+      </template>
     </div>
-    <div class="content">
+    <div class="content" :style="contentCss">
       <slot :key="currentTab?.id" :data="currentTab?.data?.value || currentTab?.data" :tab="currentTab" v-if="currentTab"/>
     </div>
   </div>
@@ -17,6 +26,8 @@
 <script setup>
 import { ref, onMounted, computed, watch } from 'vue'
 import { useRouter } from 'vue-router';
+import Popover from './Popover.vue';
+
 const router = useRouter(); 
 
 
@@ -25,7 +36,9 @@ const props = defineProps({
     /** @type {Tab[]} */
     default: []
   },
+  direction: {default: ''},
   showLabels: {default: true},
+  contentCss: {default: () => ({})},
   invertColor: {default: false}
 })
 /** @type {import('vue').Ref<Tab | undefined>} */
@@ -80,44 +93,75 @@ defineExpose({
 </script>
 
 <style lang="scss" scoped>
+
+@mixin card($mainColor, $secondaryColor, $shadow) {
+  background: $mainColor;
+  background: linear-gradient(93deg, $mainColor 0%, $secondaryColor 100%);
+  color: white;
+  box-shadow:
+    0 0 5px 0 $shadow;
+  &::before, &::after {
+    box-shadow:
+      inset 0 0 50px $mainColor,
+      inset -20px 0 300px $mainColor,
+      0 0 50px #fff,
+      -10px 0 80px $mainColor,
+      10px 0 80px $mainColor;
+  }
+}
 .tabs {
   margin-top: 10px;
   display: flex;
   flex-direction: column;
   flex-grow: 1;
+  height: calc(100vh - 220px);
+  &.left {
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: flex-start;
+    .buttons {
+      flex-direction: column;
+      height: auto;
+      align-items: flex-start;
+      justify-content: flex-start;
+      width: max-content;
+      height: max-content;
+      max-height: 100%;
+      position: sticky;
+      top: 40px;
+      margin: 0;
+      button {
+        height: 45px;
+        width: 100%;
+        &.active {
+          background-color: rgba(0,0,0,0.5);
+          color: white;
+          border: 0;
+          @include card(rgb(168, 38, 180), rgb(157, 27, 209), rgb(211, 22, 229))
+        }
+      }
+    }
+  }
 }
 .buttons {
   display: flex;
   justify-content: center;
+  top: 0;
   align-items: flex-end;
   margin: auto;
   margin-bottom: 10px;
-  height: 45px;
   flex-shrink: 0;
-  width: 90%;
-  &.invert {
-    button.active {
-      color: #fff;
-      border-bottom-color: #fff;
-      background: transparent;
-      box-shadow: 2px 2px 5px rgba(0,0,0,0.2) inset,
-      -2px -2px 5px rgba(255,255,255,0.2) inset;
-    }
-    button {
-      color: #ccc;
-      border-color: rgba(0,0,0,0.1);
-      border-color: transparent;
-      box-shadow: 2px 2px 5px rgba(0,0,0,0.2),
-      -2px -2px 5px rgba(255,255,255,0.2);
-    }
-  }
+  width: max-content;
+  gap: 5px;
+  background-color: rgba(0,0,0,0.06);
+  z-index: 1;
+  border: 1px solid rgba(0,0,0,0.05);
   button {
     position: relative;
     outline: none;
-    color: #999;
-    border-radius: 5px 5px 0 0;
+    margin: 0;
+    color: #777;
     transition: 200ms;
-    transition-property: font-size, box-shadow;
     border-bottom: 0;
     height: 40px;
     padding: 0 20px;
@@ -125,25 +169,16 @@ defineExpose({
     justify-content: center;
     align-items: center;
     background: transparent;
-    margin: 0 5px;
     font-size: 1em;
-    box-shadow: 5px 5px 10px rgba(0,0,0,0.2),
-      -5px -5px 10px rgba(255,255,255,0.8);
-    border: 1px solid #efefef;
-    &:hover {
-      box-shadow: none;
-      transform: none;
-    }
+    box-shadow: none;
     i {
       font-size: 1.2em;
     }
     &.active {
-      border-radius: 5px 5px 0 0;
+      border-radius: 0;
       color: #777;
-      margin-bottom: -1px;
-      border-bottom: 3px solid #0076bc;
-      box-shadow: 2px 2px 7px rgba(0,0,0,0.2) inset,
-      -5px -5px 7px rgba(255,255,255,0.6) inset;
+      @include card(rgb(168, 38, 180), rgb(157, 27, 209), rgb(211, 22, 229))
+
     }
     label {
       background-color: #fff;

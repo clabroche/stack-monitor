@@ -113,16 +113,21 @@ function watchDeps(watchableDeps, cb = (
 function getWatchableDeps(path) {
   const currentPackage = getPackageInfoFromPath(path);
   if (currentPackage) {
-    const depsName = getDependencies(currentPackage?.name);
-    /** @type {import('workspace-tools').PackageInfos[number][]} */
+    const ignoreDependencies = [];
+    if (currentPackage.name === '@clabroche/servers-server') {
+      ignoreDependencies.push('@clabroche/fronts-app');
+      ignoreDependencies.push('@clabroche/modules-plugins-loader-front');
+      ignoreDependencies.push((name) => name.endsWith('-front'));
+    }
+    console.log(JSON.stringify(['stack-monitor', ignoreDependencies], (_, v) => (typeof v === 'function' ? '[func]' : v)));
+    const depsName = getDependencies(currentPackage?.name, ignoreDependencies);
     const deps = depsName.map((depName) => getPackageInfos('.')[depName]);
-    // if(currentPackage.scripts?.watch)deps.push(currentPackage);
     return deps;
   }
   return [];
 }
 
-function getDependencies(packageName, recursiveAggr = []) {
+function getDependencies(packageName, ignoreDependencies = [], recursiveAggr = []) {
   const dependencies = (getPackageInfos(__dirname)[packageName].dependencies || {});
   const devDependencies = (getPackageInfos(__dirname)[packageName].devDependencies || {});
   const deps = [
@@ -130,9 +135,14 @@ function getDependencies(packageName, recursiveAggr = []) {
     ...Object.keys(devDependencies),
   ].filter((f) => (f.startsWith('@clabroche') || f.startsWith('@iryu54')) && (dependencies[f] === 'workspace:*' || devDependencies[f] === 'workspace:*'));
   deps.forEach((f) => {
-    if (!recursiveAggr.includes(f)) {
+    const isIgnored = !ignoreDependencies.some((ignoreCondition) => (
+      typeof ignoreCondition === 'function'
+        ? ignoreCondition(f)
+        : f === ignoreCondition
+    ));
+    if (!recursiveAggr.includes(f) && isIgnored) {
       recursiveAggr.push(f);
-      deps.map((dep) => getDependencies(dep, recursiveAggr)).flat();
+      deps.map((dep) => getDependencies(dep, ignoreDependencies, recursiveAggr)).flat();
     }
   });
   return recursiveAggr;

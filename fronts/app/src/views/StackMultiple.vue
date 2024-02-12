@@ -154,6 +154,8 @@ export default {
   height: max-content;
   .service-container {
     min-width: 300px;
+    height: 500px;
+    overflow: auto;
     width: 100%;
   }
 }

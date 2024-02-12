@@ -25,7 +25,7 @@ export default {
 .progress {
   padding: 3px;
   box-sizing: border-box;
-  border-radius: 4px;
+  border-radius: 100px;
   background: #dfdfdf;  
   box-shadow: inset 0 1px 2px 2px #ccc;
 }

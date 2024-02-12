@@ -1,6 +1,6 @@
 <template>
-  <div header="Npm" v-if="isNpm && packageJson">
-    <section-cmp  :key="service.label" header="Scripts" maxHeight="400px">
+  <div class="npm-root" v-if="isNpm && packageJson">
+    <section-cmp class="scripts-container" :key="service.label" header="Scripts">
       <div class="command-container">
         <div class=button-container>
           <button @click="run('install')">
@@ -26,7 +26,7 @@
         </div>
       </div>
     </section-cmp>
-    <section-cmp  :key="service.label" v-if="!isInMultiMode">
+    <section-cmp class="dependencies-container" :key="service.label" v-if="!isInMultiMode">
       <div class="categ"
       v-for="categ of ['dependencies','devDependencies'].filter(categ => packageJson[categ])"
       :key="categ">
@@ -141,6 +141,21 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+.npm-root {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.scripts-container {
+  flex-grow: 1;
+  width: auto;
+  height: max-content;
+  min-width: 300px;
+}
+.dependencies-container {
+  flex-grow: 4;
+  width: auto;
+}
 button {
   width: 20px;
   height: 20px;

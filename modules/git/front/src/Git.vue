@@ -1,82 +1,91 @@
 <template>
-  <button @click="openReview">Review from AI</button>
-  <div class="git-section" v-if="service.git">
-    <section-cmp v-if="git && git.branches" class="section-branches"
-      :key="service.label"
-      header="Branches"
-      :noStyle="noStyle"
-      :actions="[
-        { label: '', click: () => addBranch(), icon: 'fas fa-plus', small: true },
-        { label: '', click: () => gitFetch(), icon: 'fas fa-sync' },
-        { label: pullLabel, hidden: git.delta != null && git.delta >= 0, click: () => pull(), icon: 'fas fa-download' }
-      ]">
-      <div>
-        <input type="text" placeholder="Search branch..." v-model="searchBranch">
-      </div>
-      <div>
-        <input type="checkbox" v-model="displayOnlyLocalBranches">
-        Display only local branches
-      </div>
-      <ul class="branches">
-        <li v-for="(branch, i) of displayBranches" :key="'branch' +i"
-          @click="branch?.name ? changeBranch(branch.name) : null" :class="{
-          active: branch?.name === service?.git?.currentBranch,
-          merged: branch?.merged
-        }">
-          <div class="actions">
-            <div v-if="branch?.merged" title="Already merged into develop">
-              <i class="fas fa-object-group" aria-hidden="true"></i>
+  <div class="git-root">
+    <div class="git-section" v-if="service.git">
+      <section-cmp v-if="git && git.branches" class="section-branches"
+        :key="service.label"
+        header="Branches"
+        :noStyle="noStyle"
+        :actions="[
+          { hover: 'Create branch', label: '', click: () => addBranch(), icon: 'fas fa-plus', small: true },
+          { hover: 'Fetch all', label: '', click: () => gitFetch(), icon: 'fas fa-sync' },
+          {
+            hover: 'Pull',
+            label: pullLabel,
+            hidden: git.delta != null && git.delta >= 0,
+            click: () => pull(),
+            icon: 'fas fa-download'
+          }
+        ]">
+        <div>
+          <input type="text" placeholder="Search branch..." v-model="searchBranch">
+        </div>
+        <div>
+          <input type="checkbox" v-model="displayOnlyLocalBranches">
+          Display only local branches
+        </div>
+        <ul class="branches">
+          <li v-for="(branch, i) of displayBranches" :key="'branch' +i"
+            @click="branch?.name ? changeBranch(branch.name) : null" :class="{
+            active: branch?.name === service?.git?.currentBranch,
+            merged: branch?.merged
+          }">
+            <div class="actions">
+              <div v-if="branch?.merged" title="Already merged into develop">
+                <i class="fas fa-object-group" aria-hidden="true"></i>
+              </div>
+              <div v-if="branch?.isRemote" title="Is in remote not local">
+                <i class="fas fa-cloud-download-alt" aria-hidden="true"></i>
+              </div>
+              {{branch?.name}}
             </div>
-            <div v-if="branch?.isRemote" title="Is in remote not local">
-              <i class="fas fa-cloud-download-alt" aria-hidden="true"></i>
+            <div class="actions">
+              <button class="small" @click.stop="branch?.name ? deleteBranch(branch.name) : null" v-if="branch.canDelete">
+                <i class="fas fa-trash" aria-hidden="true"></i>
+              </button>
             </div>
-            {{branch?.name}}
-          </div>
-          <div class="actions">
-            <button class="small" @click.stop="branch?.name ? deleteBranch(branch.name) : null" v-if="branch.canDelete">
-              <i class="fas fa-trash" aria-hidden="true"></i>
-            </button>
-          </div>
-        </li>
-      </ul>
-    </section-cmp>
-    <section-cmp v-if="git?.status" class="section-status" header="Status" :noStyle="noStyle" :actions="[
-      {label: 'Stash', click: () => stash(), icon: 'fas fa-sun',hidden: !git.status.filter(a =>a).length},
-      {label: 'Unstash', click: () => stashPop(), icon: 'far fa-sun', hidden: !git.stash},
-      {label: 'Reset', click: () => reset(), icon: 'fas fa-eraser'}
-      ]">
-      <ul v-if="git.status.filter(a =>a).length">
-        <li v-for="(status, i) of git.status" :key="'status-' + i">
-          <span v-html="colorStatus(status)"></span>
-          <div class="actions">
-            <i class="fas fa-external-link-alt" aria-hidden="true" @click.stop="openInVsCode(status)"></i>
-            <i class="fas fa-times" aria-hidden="true" @click.stop="checkoutFile(status)"></i>
-          </div>
-        </li>
-      </ul>
-      <div v-else class="check">
-        <i class="fas fa-check" aria-hidden="true"></i>
+          </li>
+        </ul>
+      </section-cmp>
+      <section-cmp v-if="git?.status" class="section-status" header="Status" :noStyle="noStyle" :animateActions="true" :actions="[
+        {small: true, hover: 'Stash', click: () => stash(), icon: 'fas fa-sun',hidden: !git.status.filter(a =>a).length},
+        {small: true, hover: 'Unstash', click: () => stashPop(), icon: 'far fa-sun', hidden: !git.stash},
+        {small: true, hover: 'Reset', click: () => reset(), icon: 'fas fa-eraser'},
+        {small: true, hover: 'Review from AI', click: () => openReview(), icon: 'fas fa-brain'}
+        ]">
+        <ul v-if="git.status.filter(a =>a).length">
+          <li v-for="(status, i) of git.status" :key="'status-' + i">
+            <span v-html="colorStatus(status)"></span>
+            <div class="actions">
+              <i class="fas fa-external-link-alt" aria-hidden="true" @click.stop="openInVsCode(status)"></i>
+              <i class="fas fa-times" aria-hidden="true" @click.stop="checkoutFile(status)"></i>
+            </div>
+          </li>
+        </ul>
+        <div v-else class="check">
+          <i class="fas fa-check" aria-hidden="true"></i>
+        </div>
+      </section-cmp>
+    </div>
+    <div class="loader" v-if="loader">
+      <i class="fas fa-spinner"></i>
+    </div>
+    <section-cmp class="section-history">
+      <div>
+        Display all branches:
+        <input type="checkbox" v-model="graphOnAll" @change="updateGraph">
       </div>
+      <div class="input-container">
+        <i class="fas fa-search"></i>
+        <input type="text" v-model="search" placeholder="Search..." @keypress.enter="nextSearch">
+        <div>
+          <button @click="previousSearch"><i class="fas fa-chevron-up"></i></button>
+          <button @click="nextSearch"><i class="fas fa-chevron-down"></i></button>
+        </div>
+      </div>
+      <div ref="terminalRef"></div>
     </section-cmp>
   </div>
-  <div class="loader" v-if="loader">
-    <i class="fas fa-spinner"></i>
-  </div>
-  <section-cmp class="section-branches">
-    <div>
-      Display all branches:
-      <input type="checkbox" v-model="graphOnAll" @change="updateGraph">
-    </div>
-    <div class="input-container">
-      <i class="fas fa-search"></i>
-      <input type="text" v-model="search" placeholder="Search..." @keypress.enter="nextSearch">
-      <div>
-        <button @click="previousSearch"><i class="fas fa-chevron-up"></i></button>
-        <button @click="nextSearch"><i class="fas fa-chevron-down"></i></button>
-      </div>
-    </div>
-    <div ref="terminalRef"></div>
-  </section-cmp>
+
   <modal ref="reset-modal" cancelString="No" validateString="Yes">
     <template #header>
       Reset
@@ -434,6 +443,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.git-root {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  box-sizing: border-box;
+}
 button {
   position: relative;
   z-index: 2;
@@ -459,9 +474,12 @@ button {
   align-items: stretch;
   margin: auto;
   height: 100%;
-  gap: 10px;
+  width: 100%;
+  flex-grow: 1;
+  gap: 20px;
+  z-index: 100;
   &>* {
-    max-height: 190px;
+    max-height: 400px;
   }
   .check {
     display: flex;

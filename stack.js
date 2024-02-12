@@ -12,6 +12,11 @@ const groups = {
 /** @type {import('@clabroche/common-typings').StackFile} */
 const stack = (stackMonitor) => ({
   monorepo: true,
+  logParsers: [
+    stackMonitor.parsers.links,
+    stackMonitor.parsers.jsons,
+    stackMonitor.parsers.debug,
+  ],
   services: [
     {
       label: 'Server',

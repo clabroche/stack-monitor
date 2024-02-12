@@ -23,20 +23,28 @@
           </section-cmp>
         </div>
         <div v-else class="system-cards">
-          <card class="card">
-            <h2>Memory</h2>
+          <card class="card to-hide-for-small-screen" :mini="true">
+            <i class="fas fa-memory"></i>
+            <div class="hovered">Memory</div>
             <progress-cmp :percent="mem"></progress-cmp>
           </card>
-          <card class="card purple">
-            <h2>CPU</h2>
+          <card class="card to-hide-for-small-screen" color="purple" :mini="true">
+            <i class="fas fa-microchip"></i>
+            <div class="hovered">CPU</div>
             <progress-cmp :percent="cpu"></progress-cmp>
           </card>
-          <card class="card orange">
-            <button @click="restart()" :disabled="restartInProgress"><i class="fas fa-sync" aria-hidden="true" :class="{rotate: restartInProgress}"></i> Restart</button>
-            <button @click="stop()"><i class="fas fa-stop" aria-hidden="true"></i> Stop</button>
+          <card class="card restart-stop-card" color="orange" :mini="true">
+            <button class="small" @click="restart()" :disabled="restartInProgress">
+              <i class="fas fa-sync" aria-hidden="true" :class="{rotate: restartInProgress}"></i>
+              <span>Restart</span>
+            </button>
+            <button class="small" @click="stop()">
+              <i class="fas fa-stop" aria-hidden="true"></i>
+              <span>Stop</span>
+            </button>
           </card>
         </div>
-        <tabs class="tabs" :tabs="tabs" :showLabels="false">
+        <tabs class="tabs" :tabs="tabs" :showLabels="false" direction="left" :contentCss="{height: '100%'}">
           <template #default="{tab}">
             <div class="tab">
               <component :is="tab.id" :service="currentService" :key="currentService.label"></component>
@@ -101,15 +109,15 @@ export default {
             /** @type {any} */ a,
             /** @type {any} */ b
           ) => a.order - b.order)
-          .map((/** @type {{ name: any; icon: any; hidden: any; }} */ service) => {
+          .map((/** @type {{ name: any; icon: any; hidden: any; }} */ plugin) => {
             const tab = {
-              label: service.name,
-              id: service.name,
-              icon:service.icon,
-              hidden: service.hidden,
+              label: plugin.name,
+              id: plugin.name,
+              icon:plugin.icon,
+              hidden: plugin.hidden,
               warning: 0
             }
-            if(service.name === "Configuration") {
+            if(plugin.name === "Configuration") {
               const overrideEnvs = Object.keys(currentService.value?.spawnOptions?.overrideEnvs || {})
               const envs = Object.keys(currentService.value?.spawnOptions?.env || {})
               if(envs.some((key => overrideEnvs.includes(key)))) {
@@ -178,6 +186,7 @@ export default {
     margin: auto;
     overflow: auto;
     scroll-behavior: smooth;
+    margin-bottom: 20px;
     .header {
       width: 100%;
       height: 85px;
@@ -239,8 +248,10 @@ export default {
       }
     }
     .sections {
-      width: 90%;
       margin: auto;
+      overflow: auto;
+      padding: 0 20px;
+      box-sizing: border-box;
     }
   }
 }
@@ -250,12 +261,63 @@ export default {
   justify-content: center;
   flex-wrap: wrap;
   gap: 10px;
+  @media (max-width: 1300px) {
+    .to-hide-for-small-screen {
+      display: none;
+    }
+  }
   .card {
+    i {
+      font-size: 20px;
+      padding: 0 10px;
+      box-sizing: border-box;
+    }
+    &:hover {
+      .hovered {
+        max-width: 100px;
+      }
+    }
+    .hovered {
+      position: absolute;
+      top: 0;
+      left: 0;
+      transition: 300ms;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      width: 100%;
+      height: 100%;
+      backdrop-filter: blur(10px) brightness(0.5);
+      z-index: 1;
+      font-weight: bold;
+      max-width: 0;
+      overflow: hidden;
+
+    }
+  }
+  .restart-stop-card {
     button {
+      border-radius: 1000px;
       background: #0000003d;
       width: 100%;
-      box-shadow: 4px 4px 8px rgba(0,0,0,0.3),
-        -4px -4px 8px rgba(255,255,255,0.2);
+      text-align: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      &:hover {
+        span {
+          visibility: visible;
+          max-width: 100px;
+        
+        }
+      }
+      span {
+        visibility: hidden;
+        max-width: 0;
+        overflow: hidden;
+        transition: 300ms;
+      }
       &:hover {
         box-shadow: 2px 2px 0px rgba(0,0,0,0.3);
       }
@@ -273,7 +335,10 @@ export default {
 .tabs {
   margin-top: 20px;
   .tab {
+    padding-left: 20px;
+    box-sizing: border-box;
     transform: translateZ(0);
+    height: 100%;
   }
 }
 

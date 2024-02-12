@@ -1,17 +1,16 @@
 <template>
-  <div class="card-root" :class="color">
+  <div class="card-root" :class="{[color]: true, mini}">
     <div class="card-container">
       <slot></slot>
     </div>
   </div>
 </template>
 
-<script>
-export default {
-  props: {
-    color: {default: 'blue'}
-  }
-}
+<script setup>
+defineProps({
+  color: {default: 'blue'},
+  mini: {default: false},
+})
 </script>
 
 <style lang="scss" scoped>
@@ -33,7 +32,13 @@ export default {
 }
 .card-root {
   width: 300px;
-  height: 100px;
+  height: auto;
+  &.mini {
+    border-radius: 1000px;
+    .card-container {
+      flex-direction: row;
+    }
+  }
   display: flex;
   align-items: center;
   position: relative;
@@ -54,10 +59,6 @@ export default {
     height: 45%;
   }
   .card-container {
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100%;
     width: 100%;
     z-index: 1;
     display: flex;

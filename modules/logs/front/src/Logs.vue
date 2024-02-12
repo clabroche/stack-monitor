@@ -1,57 +1,5 @@
 <template>
-  <div  v-if="service.enabled"
-    :style="{ maxHeight: isInMultiMode ? '400px' : 'inherit' }"
-  >
-    <div class="header">
-      <template v-if="countJSON || countDebug">
-        <div class="input-container">
-          <i class="fas fa-search"></i>
-          <input type="text" v-model="jsonPathSearch" placeholder="JSON path...">
-        </div>
-        <div class="separator"></div>
-      </template>
-      <div class="input-container">
-        <i class="fas fa-times"></i>
-        <input
-          type="text" v-model="filterSearch"
-          :placeholder="isInclude ? 'Include...' : 'Exclude...'">
-        <div class="radios">
-          <div>
-            <input type="radio" id="include" :checked="isInclude" :value="isInclude" @input="isInclude = true">
-            <label for="include">Include</label>
-          </div>
-          <div>
-            <input type="radio" id="exclude" :checked="!isInclude" :value="!isInclude" @input="isInclude = false">
-            <label for="exclude">Exclude</label>
-          </div>
-        </div>
-      </div>
-      <div class="separator"></div>
-      <div class="input-container">
-        <div class="radios">
-          <div>
-            <div>Display</div>
-            <select v-model="numberToDisplay">
-              <option :value="10">10</option>
-              <option :value="50">50</option>
-              <option :value="100">100</option>
-              <option :value="150">150</option>
-              <option :value="200">200</option>
-              <option :value="500">500</option>
-              <option :value="800">800</option>
-              <option :value="1000">1000</option>
-              <option :value="1500">1500</option>
-              <option :value="2000">2000</option>
-            </select>
-            <div>lines</div>
-          </div>
-          <div>
-            <input type="checkbox" :checked="simplifiedMode" v-model="simplifiedMode">
-            <label for="exclude">Simplified mode</label>
-          </div>
-        </div>
-      </div>
-    </div>
+  <div  v-if="service.enabled" class="logs-root">
     <div class="main-content">
       <div class="pids-container" v-if="pids">
         <div class="pid" :class="{active: !currentPidView}" @click="currentPidView = null; scroll(true)">All</div>
@@ -73,7 +21,7 @@
           </template>
         </Popover>
       </div>
-      <sectionCmp :header="'Logs' + (currentPidView?.raw ? `: ${currentPidView?.raw}` : '')" :noStyle="noStyle"
+      <sectionCmp :noStyle="noStyle"
         :actions="[
           { icon: 'fas fa-list', label: `${countLine}`, small: true, hidden: !countLine, active: !mode, click: () => mode = '' },
           { icon: 'fas fa-bug', label: `${countDebug}`, small: true, hidden: !countDebug, active: mode === 'debug', click: () => mode = 'debug' },
@@ -81,6 +29,61 @@
           { icon: 'fas fa-chevron-down', click: () => scroll(true) },
           { icon: 'fas fa-trash', click: () => clear() },
         ]" class="terminal-container">
+          <template #header>
+            <h4 class="header-title">{{ 'Logs' + (currentPidView?.raw ? `: ${currentPidView?.raw}` : '') }}</h4>
+            <div class="header">
+              <template v-if="countJSON || countDebug">
+                <div class="input-container">
+                  <i class="fas fa-search"></i>
+                  <input type="text" v-model="jsonPathSearch" placeholder="JSON path...">
+                </div>
+                <div class="separator"></div>
+              </template>
+              <div class="input-container">
+                <input
+                  type="text" v-model="filterSearch"
+                  :placeholder="isInclude ? 'Include...' : 'Exclude...'">
+                <div class="radios">
+                  <div>
+                    <input type="radio" id="include" :checked="isInclude" :value="isInclude"
+                      @input="isInclude = true">
+                    <label for="include">Include</label>
+                  </div>
+                  <div>
+                    <input type="radio" id="exclude" :checked="!isInclude" :value="!isInclude"
+                      @input="isInclude = false">
+                    <label for="exclude">Exclude</label>
+                  </div>
+                </div>
+              </div>
+              <div class="separator"></div>
+              <div class="input-container">
+                <div class="radios">
+                  <div>
+                    <div>Display</div>
+                    <select v-model="numberToDisplay">
+                      <option :value="10">10</option>
+                      <option :value="50">50</option>
+                      <option :value="100">100</option>
+                      <option :value="150">150</option>
+                      <option :value="200">200</option>
+                      <option :value="500">500</option>
+                      <option :value="800">800</option>
+                      <option :value="1000">1000</option>
+                      <option :value="1500">1500</option>
+                      <option :value="2000">2000</option>
+                    </select>
+                    <div>lines</div>
+                  </div>
+                  <div>
+                    <input type="checkbox" :checked="simplifiedMode" v-model="simplifiedMode">
+                    <label for="exclude">Simplified mode</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            </template>
           <Transition name="slide-fade">
           <div class="terminal-panel" v-if="selectedLine">
             <div class="terminal-panel-bg" @click="selectedLine = null"></div>
@@ -707,6 +710,9 @@ function setSelectedLine(line) {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
+.logs-root {
+  height: 100%;
+}
 #terminal {
   width: 100%;
   position: relative;
@@ -719,14 +725,21 @@ function setSelectedLine(line) {
   font-size: 2em;
   color: #777
 }
+
+.header-title {
+  margin: 0;
+
+}
 .header {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   gap: 20px;
+  font-weight: normal !important;
   position: relative;
   z-index: 1;
-  margin: 10px 0;
+  margin: 0;
+  font-size: 0.7em !important;
   &>.separator {
     border-left: 1px solid lightgrey;
     height: 40px;
@@ -735,15 +748,13 @@ function setSelectedLine(line) {
 .terminal-container {
   width: 100%;
   margin: auto;
-  height: calc(100vh - 400px - 40px);
   position: relative;
-  @media (max-width: 1300px) {
-    height: calc(100vh - 500px - 40px);
-  }
-  @media (max-width: 800px) {
-    height: calc(100vh - 650px - 40px);
-  }
+  border-left: none;
+  border-right: none;
+  border-bottom: none;
   box-sizing: border-box;
+  overflow: auto;
+  flex-grow: 1;
   .terminal-panel {
     position: absolute;
     z-index: 2;
@@ -792,6 +803,7 @@ function setSelectedLine(line) {
 .main-content {
   display: flex;
   flex-direction: column;
+  height: 100%;
   .pids-container {
     display: flex;
     flex-wrap: wrap;
@@ -844,8 +856,8 @@ function setSelectedLine(line) {
   background: none;
   right: 3px;
   top: 0;
-  width: calc(100% - 6px);
-  box-shadow: 0 0 10px 0 rgba(0,0,0,0.2);
+  border: 1px solid #dbdbdb;
+  box-sizing: border-box;
   margin: 0;
   z-index: 100;
   .section {

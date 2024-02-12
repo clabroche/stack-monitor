@@ -1,11 +1,14 @@
 <template>
-  <div class="popover-root">
+  <div class="popover-root" v-if="!disable" :class="{fullWidth}">
     <div ref="refTrigger" class="trigger">
       <slot name="trigger" ></slot>
     </div>
     <div ref="refContent" class="content" :style="{maxHeight, overflow: maxHeight !== 'auto' ? 'auto' : 'inherit'}">
       <slot name="content"/>
     </div>
+  </div>
+  <div class="popover-root" v-else>
+    <slot name="trigger"/>
   </div>
 </template>
 
@@ -24,6 +27,8 @@ export default {
     trigger: { default: 'click' },
     placement: { default: 'bottom' },
     appendTo: {default: 'parent'},
+    disable: {default: false},
+    fullWidth: {default: false},
   },
   setup(props) {
     /** @type {import('vue').Ref<Element | import('tippy.js').MultipleTargets | null>} */
@@ -57,5 +62,9 @@ export default {
 </script>
 
 <style scoped lang="scss">
-
+.fullWidth {
+  &.popover-root, .trigger {
+    width: 100%;
+  }
+}
 </style>

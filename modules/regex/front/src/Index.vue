@@ -95,6 +95,9 @@ watchEffect(async () => {
 </script>
 
 <style scoped lang="scss">
+h1 {
+  flex-grow: 0 !important;
+}
 .json-root,.section-content {
   display: flex;
   flex: 1 1;

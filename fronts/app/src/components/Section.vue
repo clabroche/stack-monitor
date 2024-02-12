@@ -2,21 +2,29 @@
   <div class="section" :class="{noStyle, noBodyPadding, headerBold,  headerCenter}">
     <div class="background">
     </div>
-    <div class="title" v-if="header || actions">
+    <div class="title" v-if="header || actions?.length">
       <div v-if="header">
         {{header}}
       </div>
       <slot v-else name="header">
       </slot>
       <div class="actions">
-        <button
-          @click="action?.click?.()"
-          v-for="action of activeActions"
-          :key="action.label"
-          class="action small" :class="{mini: !action.label && action.icon || action.small, active: action.active}">
-          <i :class="action.icon" v-if="action.icon"  aria-hidden="true"></i>
-          <span class="text" v-if="action.label">{{action.label}}</span>
-        </button>
+        <template v-for="action of activeActions" :key="action.label">
+          <Popover appendTo="parent" trigger="mouseenter" placement="top" :disable="!action.hover">
+            <template #trigger>
+              <button
+                @click="action?.click?.()"
+                class="action small" :class="{mini: !action.label && action.icon || action.small, active: action.active}">
+                <i :class="action.icon" v-if="action.icon"  aria-hidden="true"></i>
+                <span class="text" v-if="action.label">{{action.label}}</span>
+              </button>
+            </template>
+            <template #content>
+              <span class="text" v-if="action.hover">{{action.hover}}</span>
+            </template>
+          </Popover>
+        </template>
+        
       </div>
     </div>
     <div class="content" :style="{maxHeight}">
@@ -27,6 +35,7 @@
 
 <script setup>
 import { computed } from 'vue';
+import Popover from './Popover.vue';
 
 const props = defineProps({
   header: {default: ''},
@@ -50,6 +59,7 @@ const activeActions = computed(() => {
  *   icon?: string,
  *   hidden?: boolean,
  *   label?: string,
+ *   hover?: string,
  *   small?: boolean,
  *   active?: boolean,
  * }} Action
@@ -57,21 +67,18 @@ const activeActions = computed(() => {
 </script>
 
 <style lang="scss" scoped>
-$mainColor: rgb(235, 235, 235);
-$secondaryColor: rgb(238, 238, 238);
+$mainColor: rgb(240, 240, 240);
+$secondaryColor: rgb(255, 255, 255);
 $shadow: rgb(165, 177, 179);
 .section {
   min-width: 0;
   width: calc(100%);
-  margin: 5px 0;
   box-sizing: border-box;
   border-right: 0;
   display: flex;
   flex-direction: column;
-  border: 1px solid #e8e8e8;
-  box-shadow: 10px 10px 20px rgba(0,0,0,0.1),
-    -10px -10px 20px rgba(255,255,255, 1);
-    border-radius: 2px;
+  border: 1px solid #dbdbdb;
+  border-radius: 2px;
   position: relative;
   .background{
     background: $mainColor;
@@ -124,8 +131,10 @@ $shadow: rgb(165, 177, 179);
     flex-wrap: wrap;
     width: max-content;
     justify-content: flex-end;
+    gap: 5px;
     .action {
       gap: 5px;
+      margin: 0;
     }
     .action.mini {
       width: max-content;

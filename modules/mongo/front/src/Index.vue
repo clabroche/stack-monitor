@@ -1,26 +1,28 @@
 <template>
   <div class="uuid-root">
     <h1>MongoDB</h1>
-    <section-cmp header="ObjectId">
-      <div class="section-content">
-        <h2>ObjectId('{{ uuid }}')</h2>
-        <button @click="generate">
-          <i class="fas fa-random"></i>
-          Regenerate
-        </button>
-      </div>
-    </section-cmp>
-    <section-cmp header="Decode ObjectId">
-      <div class="section-content">
-        <h2>{{ decodedObjectId?.date?.format?.('YYYY-MM-DD hh:mm:ss') }}</h2>
-        <input type="text" v-model="uuid">
-      </div>
-    </section-cmp>
-    <section-cmp header="Encode Date">
-      <div class="section-content">
-        <input type="datetime-local" v-model="date">
-      </div>
-    </section-cmp>
+    <div class="sections">
+      <section-cmp header="ObjectId">
+        <div class="section-content">
+          <h2>ObjectId('{{ uuid }}')</h2>
+          <button @click="generate">
+            <i class="fas fa-random"></i>
+            Regenerate
+          </button>
+        </div>
+      </section-cmp>
+      <section-cmp header="Decode ObjectId">
+        <div class="section-content">
+          <h2>{{ decodedObjectId?.date?.format?.('YYYY-MM-DD hh:mm:ss') }}</h2>
+          <input type="text" v-model="uuid">
+        </div>
+      </section-cmp>
+      <section-cmp header="Encode Date">
+        <div class="section-content">
+          <input type="datetime-local" v-model="date">
+        </div>
+      </section-cmp>
+    </div>
   </div>
 </template>
 
@@ -63,6 +65,11 @@ function decodeObjectId(objectId) {
 </script>
 
 <style scoped lang="scss">
+.sections {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
 .uuid-root,.section-content {
   display: flex;
   flex-direction: column;

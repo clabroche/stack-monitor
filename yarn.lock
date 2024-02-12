@@ -1561,7 +1561,7 @@ __metadata:
     "@clabroche/common-typings": "workspace:^"
     "@commitlint/cli": "npm:^17.6.7"
     "@commitlint/config-conventional": "npm:^17.6.7"
-    "@iryu54/stack-monitor": "npm:^1.17.14"
+    "@iryu54/stack-monitor": "npm:^1.17.24"
     "@lerna-lite/changed": "npm:^2.5.0"
     "@lerna-lite/cli": "npm:^2.5.0"
     "@lerna-lite/diff": "npm:^2.5.0"
@@ -2121,18 +2121,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@iryu54/stack-monitor@npm:^1.17.14":
-  version: 1.17.14
-  resolution: "@iryu54/stack-monitor@npm:1.17.14"
+"@iryu54/stack-monitor@npm:^1.17.24":
+  version: 1.17.24
+  resolution: "@iryu54/stack-monitor@npm:1.17.24"
   dependencies:
     ansi-to-html: "npm:^0.7.2"
     bluebird: "npm:^3.7.2"
     command-exists: "npm:^1.2.9"
-    cookie-parser: "npm:~1.4.6"
+    cookie-parser: "npm:^1.4.6"
     cors: "npm:^2.8.5"
     dayjs: "npm:^1.11.10"
     debounce: "npm:^2.0.0"
     dot-object: "npm:^2.1.4"
+    dotenv: "npm:^16.4.2"
     express: "npm:^4.18.2"
     express-async-errors: "npm:^3.1.1"
     fast-sort: "npm:^3.4.0"
@@ -2144,16 +2145,17 @@ __metadata:
     mongodb: "npm:^6.3.0"
     octokit: "npm:^3.1.2"
     open: "npm:^8"
-    openai: "npm:^4.26.0"
+    openai: "npm:^4.26.1"
     os-utils: "npm:0.0.14"
     pidusage-tree: "npm:^2.0.5"
     ps-tree: "npm:^1.2.0"
     socket.io: "npm:^4.7.4"
     typescript: "npm:^5.3.3"
     uuid: "npm:^9.0.1"
+    vue-router: "npm:^4.2.5"
   bin:
-    stack-monitor: dist/www
-  checksum: 0f08624fb5c888cefc7e686069a22a86da0eb27f0460c0f96e600ce6a7775afaad0e0199cfba3ef4a3e59208f857c699503a5df8fc5a97193bbef01b16411c8a
+    stack-monitor: www
+  checksum: 412e5a6aab596f17af26c4885f6e483ef83b25d049c767bb7b60d5bc03c0cbbed78dc0499dd217cf7d86ea3c3dca86d422a8a4de8d55e2783418f95b01377404
   languageName: node
   linkType: hard
 
@@ -7043,7 +7045,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cookie-parser@npm:^1.4.6, cookie-parser@npm:~1.4.6":
+"cookie-parser@npm:^1.4.6":
   version: 1.4.6
   resolution: "cookie-parser@npm:1.4.6"
   dependencies:
@@ -13713,25 +13715,6 @@ __metadata:
     is-docker: "npm:^2.1.1"
     is-wsl: "npm:^2.2.0"
   checksum: acd81a1d19879c818acb3af2d2e8e9d81d17b5367561e623248133deb7dd3aefaed527531df2677d3e6aaf0199f84df57b6b2262babff8bf46ea0029aac536c9
-  languageName: node
-  linkType: hard
-
-"openai@npm:^4.26.0":
-  version: 4.26.0
-  resolution: "openai@npm:4.26.0"
-  dependencies:
-    "@types/node": "npm:^18.11.18"
-    "@types/node-fetch": "npm:^2.6.4"
-    abort-controller: "npm:^3.0.0"
-    agentkeepalive: "npm:^4.2.1"
-    digest-fetch: "npm:^1.3.0"
-    form-data-encoder: "npm:1.7.2"
-    formdata-node: "npm:^4.3.2"
-    node-fetch: "npm:^2.6.7"
-    web-streams-polyfill: "npm:^3.2.1"
-  bin:
-    openai: bin/cli
-  checksum: 19171092d2cbdb1d596ca63cd640ee911a932109b648abead1198f3c6fbefe070f229977bcababfc30f70ca184d43d8aee4c7d7f1b457eb38559bafe552f31ff
   languageName: node
   linkType: hard
 

@@ -92,20 +92,6 @@ async function goTo(leaf) {
 h2 {
   margin-top: 0;
 }
-.container {
-  display: flex;
-  gap: 10px;
-  width: 100%;
-  margin: auto;
-  height: calc(100vh - 400px - 40px);
-  @media (max-width: 1300px) {
-    height: calc(100vh - 500px - 40px);
-  }
-  @media (max-width: 800px) {
-    height: calc(100vh - 650px - 40px);
-  }
-  box-sizing: border-box;
-}
 .markdown {
   background-color: #fff;
   border-radius: 10px;
