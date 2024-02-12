@@ -1,7 +1,7 @@
 {
   "useWorkspaces": true,
   "npmClient": "yarn",
-  "version": "1.17.24",
+  "version": "1.17.25",
   "commands": {
     "version": {
       "ignore": [
