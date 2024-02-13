@@ -1,11 +1,12 @@
 const dayjs = require('dayjs');
 const { v4: uuid } = require('uuid');
 
-module.exports.statusMessage = {
+const statusMessage = {
   403: 'Not allowed',
   404: 'Resource not found',
   500: 'We cannot respond to your request for moment. Contact support for more information',
 };
+module.exports.statusMessage = statusMessage;
 
 class HTTPError extends Error {
   /**
@@ -28,8 +29,8 @@ class HTTPError extends Error {
     this.errorId = errorId;
     this.date = date;
     this.message = process.env.NODE_ENV === 'production'
-      ? module.exports.statusMessage[this.code] || message?.toString() || message
-      : message?.toString() || message || module.exports.statusMessage[this.code];
+      ? statusMessage[this.code] || message?.toString() || message
+      : message?.toString() || message || statusMessage[this.code];
     this.originalMessage = message;
     this.originalStack = stack || new Error().stack;
   }
