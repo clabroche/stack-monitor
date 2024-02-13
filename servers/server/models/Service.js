@@ -54,6 +54,8 @@ class Service {
     this.enabled = service.enabled || false;
     /** @type {boolean} */
     this.crashed = service.crashed || false;
+    /** @type {boolean} */
+    this.exited = service.exited || false;
     /**
      * @type {{
      *  spawnArgs?: string[],
@@ -333,7 +335,12 @@ class Service {
           this.Stack.getStack()?.triggerOnServiceCrash(this, code);
           this.crashed = true;
         }
-      } else if (launchMessage.cmd) launchMessage.cmd.status = 'exited';
+      } else if (launchMessage.cmd) {
+        launchMessage.cmd.status = 'exited';
+        if (isMainProcess) {
+          this.exited = true;
+        }
+      }
       sockets.io?.emit('service:exit', {
         label: this.label, code, signal, pid: spawnProcess.pid,
       });
@@ -364,7 +371,12 @@ class Service {
    */
   async launchHealthChecker(spawnProcess) {
     if (!spawnProcess.pid || !this.health?.check) return;
-    if (!(await psTreeAsync(spawnProcess.pid))?.length) return;
+    await new Promise((res) => { setTimeout(res, this.health.interval); });
+    if (!(await psTreeAsync(spawnProcess.pid))?.length) {
+      this.crashed = true;
+      sockets.io?.emit('service:healthcheck:down', { label: this.label, pid: spawnProcess.pid });
+      return;
+    }
     let healthy;
     try { healthy = await this.health.check(this); } catch (error) {
       console.error(`Service health failed:${error}`);
@@ -376,7 +388,6 @@ class Service {
       this.crashed = false;
       sockets.io?.emit('service:healthcheck:up', { label: this.label, pid: spawnProcess.pid });
     }
-    await new Promise((res) => { setTimeout(res, this.health.interval); });
     this.launchHealthChecker(spawnProcess);
   }
 

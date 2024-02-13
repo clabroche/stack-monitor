@@ -49,8 +49,12 @@ export default {
     onMounted(async () => {
       await Stack.loadServices()
       groups.value = []
-      Socket.socket.on('service:crash', async ({label, code, signal}) => {
+      Socket.socket.on('service:crash', async ({ label, code, signal }) => {
         notification.next('error', `${label} has crashed with code ${code}`)
+        await Stack.loadServices()
+      });
+
+      Socket.socket.on('service:exit', async ({ label, code, signal }) => {
         await Stack.loadServices()
       });
       Socket.socket.on('service:healthcheck:down', async ({label, code, signal}) => {

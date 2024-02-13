@@ -56,6 +56,8 @@ class Service {
     this.enabled = service.enabled || false;
     /** @type {boolean} */
     this.crashed = service.crashed || false;
+    /** @type {boolean} */
+    this.exited = service.exited || false;
     /** @type {string} */
     this.rootPath = service.rootPath || '';
   }

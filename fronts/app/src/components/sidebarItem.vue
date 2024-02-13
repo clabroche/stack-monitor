@@ -4,7 +4,8 @@
     :class="{active: isActive, disabled: !service.enabled, crashed: service.crashed}">
       <span>
         <template v-if="service.crashed"><i class="fas fa-exclamation"></i></template>
-        <template v-else-if="service.enabled"><spinner size="15"></spinner> </template>
+        <template v-else-if="service.enabled && !service.exited"><spinner size="15"></spinner> </template>
+        <template v-else-if="service.exited"><i class="fas fa-times warning"></i> </template>
         <template v-else><i class="fas fa-square"></i></template>
         {{service.label}}
       </span>
@@ -69,6 +70,10 @@ const isActive = computed(() => {
   }
   &.crashed {
     color: red;
+  }
+
+  .warning {
+    color: orange;
   }
 }
 </style>

@@ -100,11 +100,16 @@ module.exports = {
       path: pathfs.resolve(baseUrl, 'logs-express'),
     });
     let accessLogger = (req, res, next) => next();
-    if (process.env.NODE_ENV === 'DEV') {
+    if (process.env.NODE_ENV === 'DEV' && process.env.DEBUG === 'stack-monitor') {
       console.log('Dev mode detected, enable access logger');
       accessLogger = pinoHttp.default({
         autoLogging: {
-          ignore: (req) => !!(req.url?.endsWith('/health')),
+          ignore: (req) => !!(
+            req.url?.endsWith('/health')
+            || req.url?.endsWith('/infos')
+            || req.url?.endsWith('/status')
+            || req.url?.endsWith('/current-branch')
+          ),
         },
         logger: logger.getConf().accessLogger,
         serializers: {
