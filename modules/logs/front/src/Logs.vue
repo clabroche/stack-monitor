@@ -21,7 +21,7 @@
           </template>
         </Popover>
       </div>
-      <sectionCmp :noStyle="noStyle"
+      <sectionCmp :noStyle="noStyle" :noRadius="true"
         :actions="[
           { icon: 'fas fa-list', label: `${countLine}`, small: true, hidden: !countLine, active: !mode, click: () => mode = '' },
           { icon: 'fas fa-bug', label: `${countDebug}`, small: true, hidden: !countDebug, active: mode === 'debug', click: () => mode = 'debug' },
@@ -32,55 +32,63 @@
           <template #header>
             <h4 class="header-title">{{ 'Logs' + (currentPidView?.raw ? `: ${currentPidView?.raw}` : '') }}</h4>
             <div class="header">
-              <template v-if="countJSON || countDebug">
-                <div class="input-container">
-                  <i class="fas fa-search"></i>
-                  <input type="text" v-model="jsonPathSearch" placeholder="JSON path...">
-                </div>
-                <div class="separator"></div>
-              </template>
-              <div class="input-container">
-                <input
-                  type="text" v-model="filterSearch"
-                  :placeholder="isInclude ? 'Include...' : 'Exclude...'">
-                <div class="radios">
-                  <div>
-                    <input type="radio" id="include" :checked="isInclude" :value="isInclude"
-                      @input="isInclude = true">
-                    <label for="include">Include</label>
+              <Popover appendTo="parent" trigger="mouseenter">
+                <template #trigger>
+                  <button class="small config"><i class="fas fa-cog"></i></button>
+                </template>
+                <template #content>
+                  <template v-if="countJSON || countDebug">
+                    <div class="input-container">
+                      <i class="fas fa-search"></i>
+                      <input type="text" v-model="jsonPathSearch" placeholder="JSON path...">
+                    </div>
+                    <hr>
+                  </template>
+                  <div class="input-container">
+                    <input
+                      type="text" v-model="filterSearch"
+                      :placeholder="isInclude ? 'Include...' : 'Exclude...'">
+                    <div class="radios">
+                      <div>
+                        <input type="radio" id="include" :checked="isInclude" :value="isInclude"
+                          @input="isInclude = true">
+                        <label for="include">Include</label>
+                      </div>
+                      <div>
+                        <input type="radio" id="exclude" :checked="!isInclude" :value="!isInclude"
+                          @input="isInclude = false">
+                        <label for="exclude">Exclude</label>
+                      </div>
+                    </div>
                   </div>
-                  <div>
-                    <input type="radio" id="exclude" :checked="!isInclude" :value="!isInclude"
-                      @input="isInclude = false">
-                    <label for="exclude">Exclude</label>
+                  <hr>
+                  <div class="input-container">
+                    <div class="radios">
+                      <div>
+                        <div>Display</div>
+                        <select v-model="numberToDisplay">
+                          <option :value="10">10</option>
+                          <option :value="50">50</option>
+                          <option :value="100">100</option>
+                          <option :value="150">150</option>
+                          <option :value="200">200</option>
+                          <option :value="500">500</option>
+                          <option :value="800">800</option>
+                          <option :value="1000">1000</option>
+                          <option :value="1500">1500</option>
+                          <option :value="2000">2000</option>
+                        </select>
+                        <div>lines</div>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-              <div class="separator"></div>
-              <div class="input-container">
-                <div class="radios">
+                  <hr>
                   <div>
-                    <div>Display</div>
-                    <select v-model="numberToDisplay">
-                      <option :value="10">10</option>
-                      <option :value="50">50</option>
-                      <option :value="100">100</option>
-                      <option :value="150">150</option>
-                      <option :value="200">200</option>
-                      <option :value="500">500</option>
-                      <option :value="800">800</option>
-                      <option :value="1000">1000</option>
-                      <option :value="1500">1500</option>
-                      <option :value="2000">2000</option>
-                    </select>
-                    <div>lines</div>
+                    <input id="simplified" type="checkbox" :checked="simplifiedMode" v-model="simplifiedMode">
+                    <label for="simplified">Simplified mode</label>
                   </div>
-                  <div>
-                    <input type="checkbox" :checked="simplifiedMode" v-model="simplifiedMode">
-                    <label for="exclude">Simplified mode</label>
-                  </div>
-                </div>
-              </div>
+                </template>
+              </Popover>
             </div>
 
             </template>
@@ -230,8 +238,6 @@
                     </div>
                   </label>
                 </div>
-              </div>
-              <div class="right">
               </div>
             </div>
             <div class="input-content-terminal">
@@ -755,6 +761,8 @@ function setSelectedLine(line) {
   box-sizing: border-box;
   overflow: auto;
   flex-grow: 1;
+  border-top-left-radius: 0 !important;
+  border-top-right-radius: 0 !important;
   .terminal-panel {
     position: absolute;
     z-index: 2;
@@ -809,6 +817,7 @@ function setSelectedLine(line) {
     flex-wrap: wrap;
     position: relative;
     z-index: 1;
+    background-color: white;
     .pids {
       max-height: 400px;
       overflow: auto;
@@ -832,11 +841,6 @@ function setSelectedLine(line) {
     }
   }
 
-  .right {
-    flex-shrink: 0;
-    width: 300px;
-    overflow: auto;
-  }
 }
 
 .radios {
@@ -1264,6 +1268,12 @@ function setSelectedLine(line) {
     button {
       transform: scale(1.1)
     }
+  }
+}
+button.config {
+  width: max-content !important;
+  i {
+    margin: 0 !important;
   }
 }
 </style>

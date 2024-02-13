@@ -72,7 +72,6 @@ async function write() {
     script: code.value,
   });
 }
-
 async function reload() {
   const { data: _rooms } = await axios.get('/node-repl/rooms');
   rooms.value = _rooms;

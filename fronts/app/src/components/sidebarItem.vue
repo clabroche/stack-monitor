@@ -2,14 +2,20 @@
   <div @click="$router.push({name: 'stack-single', params: {label: service.label}})"
     class="sidebar-item"
     :class="{active: isActive, disabled: !service.enabled, crashed: service.crashed}">
-      {{service.label}}
-      <i class="fas fa-chevron-right"  aria-hidden="true"></i>
+      <span>
+        <template v-if="service.crashed"><i class="fas fa-exclamation"></i></template>
+        <template v-else-if="service.enabled"><spinner size="15"></spinner> </template>
+        <template v-else><i class="fas fa-square"></i></template>
+        {{service.label}}
+      </span>
+      <i class="fas fa-chevron-right hover"  aria-hidden="true"></i>
   </div>
 </template>
 
 <script setup>
 import { computed } from 'vue';
 import { useRouter } from 'vue-router';
+import Spinner from '../components/Spinner.vue'
 const router = useRouter()
 
 const props = defineProps({
@@ -34,7 +40,17 @@ const isActive = computed(() => {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  border-left: 3px solid transparent; 
+  span {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
   i {
+    width: 15px;
+    text-align: center;
+  }
+  i.hover {
     opacity: 0;
     transition: 300ms
   }

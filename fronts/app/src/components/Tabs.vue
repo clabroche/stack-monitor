@@ -147,15 +147,16 @@ defineExpose({
   display: flex;
   justify-content: center;
   top: 0;
+  border-radius: 5px;
   align-items: flex-end;
   margin: auto;
   margin-bottom: 10px;
   flex-shrink: 0;
   width: max-content;
   gap: 5px;
-  background-color: rgba(0,0,0,0.06);
+  background-color: white;
   z-index: 1;
-  border: 1px solid rgba(0,0,0,0.05);
+  border: 1px solid #dbdbdb;
   button {
     position: relative;
     outline: none;

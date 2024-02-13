@@ -12,8 +12,19 @@ const command = {
   cmd: process.argv[2],
   args: process.argv.slice(3),
 };
-
-const ignored = ['**/*node_modules', '**/*dist', '**/*.git', '**/*.yarn'];
+const ignored = [
+  '**/*node_modules',
+  '**/*dist',
+  '**/*.git',
+  '**/*.yarn',
+  '**/*.turbo',
+  '**/*test-report.xml',
+  '**/*tsup*',
+  '**/*vite*',
+  '**/*logs-express',
+  '**/*coverage',
+  '**/*sandbox-node-repl',
+];
 let restartInProgress = false;
 let pid;
 let waitingRestart;
@@ -119,7 +130,6 @@ function getWatchableDeps(path) {
       ignoreDependencies.push('@clabroche/modules-plugins-loader-front');
       ignoreDependencies.push((name) => name.endsWith('-front'));
     }
-    console.log(JSON.stringify(['stack-monitor', ignoreDependencies], (_, v) => (typeof v === 'function' ? '[func]' : v)));
     const depsName = getDependencies(currentPackage?.name, ignoreDependencies);
     const deps = depsName.map((depName) => getPackageInfos('.')[depName]);
     return deps;

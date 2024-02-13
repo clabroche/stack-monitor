@@ -1,4 +1,4 @@
-const express = require('express');
+const { express } = require('@clabroche/common-express');
 
 const router = express.Router();
 const plugins = require('../helpers/plugins');

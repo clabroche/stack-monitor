@@ -1,5 +1,5 @@
 <template>
-  <div class="chat">
+  <SectionCmp class="chat">
     <div class="messages" ref="messagesRef">
       <div v-for="message of messages" :key="message._id" class="message-container"
         :class="{ 'me': message.role === 'user' }">
@@ -25,7 +25,7 @@
         @input="input"></textarea>
       <button @click="send"><i class="fas fa-envelope"></i></button>
     </div>
-  </div>
+  </SectionCmp>
 </template>
 
 <script setup>
@@ -35,6 +35,7 @@ import {
 import relativeTime from 'dayjs/plugin/relativeTime';
 import duration from 'dayjs/plugin/duration';
 import dayjs from 'dayjs';
+import SectionCmp from '../../../../fronts/app/src/components/Section.vue';
 
 dayjs.extend(relativeTime);
 dayjs.extend(duration);
@@ -109,9 +110,6 @@ onBeforeUnmount(() => clearInterval(interval));
   flex-direction: column;
   width: 100%;
   height: calc(100vh - 200px);
-  background: white;
-  border-radius: 10px;
-  box-shadow: 0 0 10px 0 rgba(0,0,0,0.1);
 }
 
 .messages {

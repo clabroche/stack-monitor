@@ -17,6 +17,7 @@
     "@clabroche/common-express-error-handler": "workspace:*",
     "@clabroche/common-express-health-check": "workspace:*",
     "@clabroche/common-express-logger": "workspace:*",
+    "@clabroche/common-socket-server": "workspace:*",
     "@clabroche/common-swagger": "workspace:*",
     "compression": "^1.7.4",
     "cookie-parser": "^1.4.6",

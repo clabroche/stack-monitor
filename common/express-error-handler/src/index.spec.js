@@ -7,7 +7,7 @@ jest.mock('@clabroche/common-express-logger', () => {
     error: jest.fn().mockImplementation(() => mockError),
   };
 });
-const { default: HTTPError } = require('@clabroche/common-express-http-error');
+const HTTPError = require('@clabroche/common-express-http-error');
 const ErrorHandler = require('./index');
 
 const mockRes = {

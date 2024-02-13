@@ -10,10 +10,10 @@ const { v4 } = require('uuid');
 const { existsSync, readFileSync } = require('fs-extra');
 const pathfs = require('path');
 const net = require('net');
+const { sockets } = require('@clabroche/common-socket-server');
 const CreateInterface = require('../helpers/readline');
 const { stripAnsi, ansiconvert, unescapeAnsi } = require('../helpers/ansiconvert');
 const isWindows = require('../helpers/isWindows');
-const Socket = require('./socket');
 
 /** @type {Record<string, {cmd: string, args: string[]}>} */
 const alias = {
@@ -148,7 +148,7 @@ class Service {
   }
 
   sendHasBeenModified() {
-    Socket.io?.emit('conf:update', [this.label]);
+    sockets.io?.emit('conf:update', [this.label]);
   }
 
   async kill(triggerEvent = true, keepEnabled = false) {
@@ -178,7 +178,7 @@ class Service {
       });
     }
     this.pids = [];
-    Socket.io?.emit('logs:clear', { label: this.label });
+    sockets.io?.emit('logs:clear', { label: this.label });
     this.store = [];
     await new Promise((resolve) => { setTimeout(resolve, 100); });
     this.enabled = keepEnabled;
@@ -268,7 +268,7 @@ class Service {
       if (line.hide) return;
 
       if (line.source === 'stderr' && isMainProcess) {
-        Socket.io?.emit('alert', { label: this.label, message: line.raw.toString(), type: 'error' });
+        sockets.io?.emit('alert', { label: this.label, message: line.raw.toString(), type: 'error' });
       }
 
       if (timestamp > lastDatePrinted + 2000) {
@@ -290,7 +290,7 @@ class Service {
     const intervalId = setInterval(() => {
       if (queue.length) {
         const messages = queue.splice(0, queue.length);
-        Socket.io?.emit('logs:update', messages);
+        sockets.io?.emit('logs:update', messages);
       }
     }, 0);
     new CreateInterface({
@@ -327,17 +327,17 @@ class Service {
       if (code) {
         if (launchMessage.cmd) launchMessage.cmd.status = 'error';
         if (isMainProcess) {
-          Socket.io?.emit('service:crash', {
+          sockets.io?.emit('service:crash', {
             label: this.label, code, signal, pid: spawnProcess.pid,
           });
           this.Stack.getStack()?.triggerOnServiceCrash(this, code);
           this.crashed = true;
         }
       } else if (launchMessage.cmd) launchMessage.cmd.status = 'exited';
-      Socket.io?.emit('service:exit', {
+      sockets.io?.emit('service:exit', {
         label: this.label, code, signal, pid: spawnProcess.pid,
       });
-      Socket.io?.emit('logs:update:lines', [launchMessage]);
+      sockets.io?.emit('logs:update:lines', [launchMessage]);
     });
 
     const date = `🕑  ${dayjs().format('YYYY-MM-DD HH:mm:ss')}`;
@@ -346,7 +346,7 @@ class Service {
       id: v4(), raw: date, label: this.label, msg: date, timestamp: lastDatePrinted, isSeparator: true,
     };
     this.store.push(line, launchMessage);
-    Socket.io?.emit('logs:update', [line, launchMessage]);
+    sockets.io?.emit('logs:update', [line, launchMessage]);
 
     if (isMainProcess) {
       this.launchHealthChecker(spawnProcess);
@@ -371,10 +371,10 @@ class Service {
     }
     if (!healthy && !this.crashed) {
       this.crashed = true;
-      Socket.io?.emit('service:healthcheck:down', { label: this.label, pid: spawnProcess.pid });
+      sockets.io?.emit('service:healthcheck:down', { label: this.label, pid: spawnProcess.pid });
     } else if (healthy && this.crashed) {
       this.crashed = false;
-      Socket.io?.emit('service:healthcheck:up', { label: this.label, pid: spawnProcess.pid });
+      sockets.io?.emit('service:healthcheck:up', { label: this.label, pid: spawnProcess.pid });
     }
     await new Promise((res) => { setTimeout(res, this.health.interval); });
     this.launchHealthChecker(spawnProcess);
@@ -401,7 +401,7 @@ class Service {
       pid,
     };
     this.store.push(line);
-    Socket.io?.emit('logs:update', [line]);
+    sockets.io?.emit('logs:update', [line]);
     return null;
   }
 
@@ -421,6 +421,11 @@ class Service {
 
   enable() {
     this.enabled = true;
+    this.sendHasBeenModified();
+  }
+
+  disable() {
+    this.enabled = false;
     this.sendHasBeenModified();
   }
 

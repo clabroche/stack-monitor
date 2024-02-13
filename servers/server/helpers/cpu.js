@@ -1,7 +1,7 @@
 const os = require('os');
 const { fork } = require('node:child_process');
 const path = require('path');
-const Socket = require('../models/socket');
+const { sockets } = require('@clabroche/common-socket-server');
 
 const nbCpus = os.cpus().length;
 
@@ -14,7 +14,7 @@ const { signal } = controller;
 child = fork(path.resolve(__dirname, './cpuFork.js'), [], { signal });
 child.on('message', (message) => {
   const { ram, cpu } = JSON.parse(message.toString());
-  Socket?.io?.emit('infos:global', {
+  sockets.io?.emit('infos:global', {
     nbCpus,
     memPercentage: ram.memPercentage,
     totalmem: ram.totalmem,

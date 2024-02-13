@@ -77,10 +77,16 @@ export default {
     return {
       buttons:computed(() => ([
         {
+          text: 'Overview',
+          active: 'overview',
+          icon: 'fas fa-home',
+          click: () => router.push({ name: 'overview' })
+        },
+        {
           text: 'Single View',
           active: 'single',
           icon: 'fas fa-columns',
-          click: () => router.push({name:'stack-single', params: {label: stack.services.value[0]?.label}})
+          click: () => router.push({ name: 'stack-single', params: { label: stack.services.value[0]?.label } })
         },
         {
           text: 'Multiple view',

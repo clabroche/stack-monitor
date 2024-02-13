@@ -1,11 +1,23 @@
 <template>
-  <div class="sidebar">
-    <ul>
-      <input type="text" v-model="search" placeholder="Search service..." @keypress.enter="launchService" >
-      <template v-if="sortedStack.length">
-        <sidebar-item v-for="service of sortedStack" :key="service.label" :service="service"/>
-      </template>
-    </ul>
+  <div class="sidebar-root" :class="{ minimized, mouseInAnchor }" @mouseenter="mouseInAnchor = true" @mouseleave="mouseInAnchor = false">
+    <div class="sidebar">
+      <ul>
+        <div class="header">
+          <input type="text" v-model="search" @input="openGroup = 'All'" placeholder="Search service..." @keypress.enter="launchService" >
+          <i class="fas fa-chevron-left" @click="minimized = true"></i>
+        </div>
+        <sidebar-group header="All" :open="openGroup === 'All'" @open="openGroup = 'All'">
+          <sidebar-item v-for="service of sortedStack" :key="service.label" :service="service"/>
+        </sidebar-group>
+        <sidebar-group :header="group.label" v-for="(group) of groups" :open="openGroup === group.label" @open="openGroup = group.label" @close="openGroup = 'All'">
+          <sidebar-item v-for="service of group.services" :key="service.label" :service="service"/>
+        </sidebar-group>
+      </ul>
+    </div>
+    <div class="minimized anchor" @click="minimized = false" >
+      <i class="fas fa-thumbtack" v-if="mouseInAnchor"></i>
+      <i class="fas fa-chevron-right" v-else></i>
+    </div>
   </div>
 </template>
 
@@ -14,6 +26,7 @@ import Stack from '../models/stack'
 import System from '../models/system'
 import { sort } from 'fast-sort'
 import sidebarItemVue from './sidebarItem.vue'
+import sidebarGroup from './sidebarGroup.vue'
 import { computed, onMounted, ref } from 'vue'
 import Socket from '../helpers/Socket'
 import notification from '../helpers/notification'
@@ -21,7 +34,8 @@ import { useRouter } from 'vue-router';
 
 export default {
   components: {
-    sidebarItem: sidebarItemVue
+    sidebarItem: sidebarItemVue,
+    sidebarGroup
   },
   props: {
     currentService: {default: null}
@@ -29,9 +43,12 @@ export default {
   setup() {
     const router = useRouter(); 
     const search = ref('')
-
+    const openGroup = ref('All');
+    const minimized = ref(false);
+    const mouseInAnchor = ref(false);
     onMounted(async () => {
       await Stack.loadServices()
+      groups.value = []
       Socket.socket.on('service:crash', async ({label, code, signal}) => {
         notification.next('error', `${label} has crashed with code ${code}`)
         await Stack.loadServices()
@@ -46,7 +63,26 @@ export default {
       });
     })
     const sortedStack = computed(() => sort(Stack.services.value.filter(a => (a.label || '').toUpperCase().includes(search.value.toUpperCase()))).desc((a) => a.enabled))
+
+    const groups = computed(() => {
+      const groupObject = sortedStack.value.reduce((agg, service) => {
+        if (service.groups?.length) {
+          service.groups.forEach((group) => {
+            if (!agg[group]) agg[group] = []
+            agg[group].push(service)
+          })
+        }
+        return agg
+      }, {})
+      return Object.keys(groupObject)
+        .map(key => ({label: key, services: groupObject[key]}))
+        .sort((a,b) => a.label.localeCompare(b.label))
+    })
     return {
+      groups,
+      minimized,
+      mouseInAnchor,
+      openGroup,
       search,
       sortedStack,
       System,
@@ -64,23 +100,106 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
+@mixin card($mainColor, $secondaryColor, $shadow) {
+  background: $mainColor;
+  background: linear-gradient(93deg, $mainColor 0%, $secondaryColor 100%);
+  color: white;
+  box-shadow:
+    0 0 5px 0 $shadow;
+  &::before, &::after {
+    box-shadow:
+      inset 0 0 50px $mainColor,
+      inset -20px 0 300px $mainColor,
+      0 0 50px #fff,
+      -10px 0 80px $mainColor,
+      10px 0 80px $mainColor;
+  }
+}
+.sidebar-root {
+  height: 100vh;
+  display: flex;
+
+  &.minimized {
+    .sidebar {
+      max-width: 0;
+      overflow: hidden;
+      opacity: 0;
+
+    }
+    .anchor {
+      max-width: 25px;
+    }
+    &.mouseInAnchor {
+      .sidebar {
+        max-width: 250px;
+        overflow: hidden;
+        opacity: 1;
+      }
+      .anchor {
+        max-width: 50px;
+        width: 50px;
+      }
+    }
+  }
+  .anchor  {
+    transition: 300ms;
+    max-width: 0;
+    overflow: hidden;
+    display: flex;
+    width: 25px;
+    justify-content: center;
+    align-items: center;
+    @include card(rgb(57, 42, 59), rgb(156, 22, 209), rgb(141, 58, 148));
+    &:hover {
+      @include card(rgb(81, 56, 84), rgb(156, 22, 209), rgb(141, 58, 148));
+    }
+    color: white;
+    cursor: pointer;
+    &:hover {
+      background-color: #666;
+    }
+    i {
+      width: 100%;
+      font-size: 25px;
+      text-align: center;
+    }
+  }
+}
+.header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  i {
+    width: 15px;
+    height: 15px;
+  }
+}
 input {
-  width: 90%;
+  flex-grow: 1;
   box-sizing: border-box;
   margin: 5px auto;
   justify-self: center;
 }
 .sidebar {
+    transform-origin: left;
+    transform: scaleX(1);
+    opacity: 1;
+    transition: 300ms;
     display: flex;
     overflow: auto;
     flex-direction: column;
     justify-content: space-between;
     box-shadow: 0px 0px 4px 0px black;
-    width: 150px;
+    width: 250px;
+    max-width: 250px;
     background-color: white;
     height: 100%;
     flex-shrink: 0;
     z-index: 3;
+    
     ul {
       list-style: none;
       padding: 0;
@@ -113,5 +232,4 @@ input {
 .system .title {
   justify-content: center;
 }
-
 </style>

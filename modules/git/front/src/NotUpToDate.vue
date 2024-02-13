@@ -1,126 +1,128 @@
 <template>
   <div class="git-section">
     <h1>Git</h1>
-    <section-cmp class="section" v-if="servicesToPull?.length || checkUpdatePending" :actions="[
-      {label: 'Pull all', icon:'fas fa-download', click: pullAll, hidden: checkUpdatePending}
-    ]">
-      <template #header>
-        <div class="custom-header">
-          <div class="loader" v-if="checkUpdatePending">
-            <Spinner size="15"></Spinner>
+    <div class="sections">
+      <section-cmp class="section" v-if="servicesToPull?.length || checkUpdatePending" :actions="[
+        {label: 'Pull all', icon:'fas fa-download', click: pullAll, hidden: checkUpdatePending}
+      ]">
+        <template #header>
+          <div class="custom-header">
+            <div class="loader" v-if="checkUpdatePending">
+              <Spinner size="15"></Spinner>
+            </div>
+            Services to pull
+            <div class="loader" v-if="checkUpdatePending">
+              ({{nbServiceChecked}}/{{ services?.length }})
+              {{ currentServiceChecking }}
+            </div>
           </div>
-          Services to pull
-          <div class="loader" v-if="checkUpdatePending">
-            ({{nbServiceChecked}}/{{ services?.length }})
-            {{ currentServiceChecking }}
-          </div>
-        </div>
-      </template>
-      <table>
-        <caption>All services to pull</caption>
-        <tr v-for="service of servicesToPull" :key="service?.label">
-          <td><h3>{{ service.label }}</h3></td>
-          <td><div class="badge">{{ service.git?.currentBranch }}</div></td>
-          <td>
-            <button @click="pull(service)" :disabled="checkUpdatePending || !!service.git?.status?.length">
-              <i class="fas fa-download"></i>
-              {{ 'Pull ' + '(' + (service.git?.delta || 0) + ')' }}
-            </button>
-          </td>
-          <td>
-            <div class="line" v-if="service.git">
-              <div v-if="service.git.status?.length">
-                <i class="fas fa-exclamation-triangle"></i>
-                Pending changes... Pull may not work. Stash or reset your changes before.
+        </template>
+        <table>
+          <caption>All services to pull</caption>
+          <tr v-for="service of servicesToPull" :key="service?.label">
+            <td><h3>{{ service.label }}</h3></td>
+            <td><div class="badge">{{ service.git?.currentBranch }}</div></td>
+            <td>
+              <button @click="pull(service)" :disabled="checkUpdatePending || !!service.git?.status?.length">
+                <i class="fas fa-download"></i>
+                {{ 'Pull ' + '(' + (service.git?.delta || 0) + ')' }}
+              </button>
+            </td>
+            <td>
+              <div class="line" v-if="service.git">
+                <div v-if="service.git.status?.length">
+                  <i class="fas fa-exclamation-triangle"></i>
+                  Pending changes... Pull may not work. Stash or reset your changes before.
+                </div>
+                <button class="small" :disabled="checkUpdatePending || !service.git?.status?.filter(a => a).length"
+                  @click="stash(service)">
+                  <i class="fas fa-sun"></i>
+                  Stash
+                </button>
+                <button class="small" :disabled="checkUpdatePending || !service.git.stash" @click="stashPop(service)">
+                  <i class="far fa-sun"></i>
+                  Unstash
+                </button>
               </div>
-              <button class="small" :disabled="checkUpdatePending || !service.git?.status?.filter(a => a).length"
-                @click="stash(service)">
-                <i class="fas fa-sun"></i>
-                Stash
-              </button>
-              <button class="small" :disabled="checkUpdatePending || !service.git.stash" @click="stashPop(service)">
-                <i class="far fa-sun"></i>
-                Unstash
-              </button>
-            </div>
-          </td>
-        </tr>
-      </table>
-    </section-cmp>
+            </td>
+          </tr>
+        </table>
+      </section-cmp>
 
-    <section-cmp class="section" v-if="servicesToPush?.length || checkUpdatePending">
-      <template #header>
-        <div class="custom-header">
-          <div class="loader" v-if="checkUpdatePending">
-            <Spinner size="15"></Spinner>
+      <section-cmp class="section" v-if="servicesToPush?.length || checkUpdatePending">
+        <template #header>
+          <div class="custom-header">
+            <div class="loader" v-if="checkUpdatePending">
+              <Spinner size="15"></Spinner>
+            </div>
+            Services to push
+            <div class="loader" v-if="checkUpdatePending">
+              ({{nbServiceChecked }}/{{ services?.length }})
+            </div>
           </div>
-          Services to push
-          <div class="loader" v-if="checkUpdatePending">
-            ({{nbServiceChecked }}/{{ services?.length }})
-          </div>
-        </div>
-      </template>
-      <table>
+        </template>
+        <table>
 
-        <caption>All services to push</caption>
-        <tr v-for="service of servicesToPush" :key="service?.label">
-          <td><h3>{{ service.label }}</h3></td>
-          <td><div class="badge">{{ service.git?.currentBranch }}</div></td>
-          <td>
-            {{ service.git?.delta }} commits to push
-          </td>
-        </tr>
-      </table>
-    </section-cmp>
+          <caption>All services to push</caption>
+          <tr v-for="service of servicesToPush" :key="service?.label">
+            <td><h3>{{ service.label }}</h3></td>
+            <td><div class="badge">{{ service.git?.currentBranch }}</div></td>
+            <td>
+              {{ service.git?.delta }} commits to push
+            </td>
+          </tr>
+        </table>
+      </section-cmp>
 
-    <section-cmp header="Services">
-      Change all branches to:
-      <select @input="// @ts-ignore
-                      changeAllBranches($event?.target?.value ||'')" :disabled="checkUpdatePending">
-        <option default></option>
-        <option v-for="branch of allBranches" :key="branch?.name" :value="branch?.name">{{ branch?.name }}</option>
-      </select>
-      <table>
-        <caption>Manage all services</caption>
-        <tr v-for="service of services" :key="service?.label">
-          <td>
-            <h3>
-              {{ service.label }}
-              <i class="fas fa-external-link-alt" @click="router.push({
-                name: 'stack-single', params: {label: service.label}
-              })"></i>
-            </h3>
-          </td>
-          <td><div class="badge">{{ service.git?.currentBranch }}</div></td>
-          <td>
-            <select @input="changeBranch(// @ts-ignore
-              service, $event.target.value)"
-              v-if="service.git?.branches?.filter(a => a?.name !== service.git?.currentBranch)?.length"
-              :disabled="checkUpdatePending">
-              <option default></option>
-              <option v-for="branch of service.git?.branches?.filter(a => a?.name !== service.git?.currentBranch)"
-                :key="branch?.name" :value="branch?.name">{{ branch?.name }}</option>
-            </select>
-            <div v-else>
-              Unique branch, cannot change branch for this service
-            </div>
-          </td>
-          <td>
-            <div class="line">
-              <button class="small" :disabled="checkUpdatePending || !service.git?.status?.filter(a => a).length"
-                @click="stash(service)">
-                <i class="fas fa-sun"></i>
-                Stash
-              </button>
-              <button class="small" :disabled="checkUpdatePending || !service.git?.stash" @click="stashPop(service)">
-                <i class="far fa-sun"></i>
-                Unstash
-              </button>
-            </div>
-          </td>
-        </tr>
-      </table>
-    </section-cmp>
+      <section-cmp header="Services">
+        Change all branches to:
+        <select @input="// @ts-ignore
+                        changeAllBranches($event?.target?.value ||'')" :disabled="checkUpdatePending">
+          <option default></option>
+          <option v-for="branch of allBranches" :key="branch?.name" :value="branch?.name">{{ branch?.name }}</option>
+        </select>
+        <table>
+          <caption>Manage all services</caption>
+          <tr v-for="service of services" :key="service?.label">
+            <td>
+              <h3>
+                {{ service.label }}
+                <i class="fas fa-external-link-alt" @click="router.push({
+                  name: 'stack-single', params: {label: service.label}
+                })"></i>
+              </h3>
+            </td>
+            <td><div class="badge">{{ service.git?.currentBranch }}</div></td>
+            <td>
+              <select @input="changeBranch(// @ts-ignore
+                service, $event.target.value)"
+                v-if="service.git?.branches?.filter(a => a?.name !== service.git?.currentBranch)?.length"
+                :disabled="checkUpdatePending">
+                <option default></option>
+                <option v-for="branch of service.git?.branches?.filter(a => a?.name !== service.git?.currentBranch)"
+                  :key="branch?.name" :value="branch?.name">{{ branch?.name }}</option>
+              </select>
+              <div v-else>
+                Unique branch, cannot change branch for this service
+              </div>
+            </td>
+            <td>
+              <div class="line">
+                <button class="small" :disabled="checkUpdatePending || !service.git?.status?.filter(a => a).length"
+                  @click="stash(service)">
+                  <i class="fas fa-sun"></i>
+                  Stash
+                </button>
+                <button class="small" :disabled="checkUpdatePending || !service.git?.stash" @click="stashPop(service)">
+                  <i class="far fa-sun"></i>
+                  Unstash
+                </button>
+              </div>
+            </td>
+          </tr>
+        </table>
+      </section-cmp>
+    </div>
   </div>
 </template>
 
@@ -278,6 +280,11 @@ async function stashPop(service) {
   width: 100%;
   padding: 20px;
   box-sizing: border-box;
+}
+.sections {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 .custom-header {
   display: flex;

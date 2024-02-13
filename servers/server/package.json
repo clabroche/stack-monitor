@@ -26,6 +26,8 @@
   "typings": "./typings/export.d.ts",
   "types": "./typings/export.d.ts",
   "dependencies": {
+    "@clabroche/common-express": "workspace:*",
+    "@clabroche/common-socket-server": "workspace:*",
     "@clabroche/modules-plugins-loader-backend": "workspace:*",
     "ansi-to-html": "^0.7.2",
     "bluebird": "^3.7.2",

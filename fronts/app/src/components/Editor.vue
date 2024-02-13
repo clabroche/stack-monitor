@@ -15,6 +15,7 @@ import cssWorker from 'monaco-editor/esm/vs/language/css/css.worker?worker';
 import htmlWorker from 'monaco-editor/esm/vs/language/html/html.worker?worker';
 // @ts-ignore
 import tsWorker from 'monaco-editor/esm/vs/language/typescript/ts.worker?worker';
+import monokai from './Editor-monokai.json'
 
 const props = defineProps({
   modelValue: { default: '' },
@@ -52,13 +53,16 @@ self.MonacoEnvironment = {
 onMounted(async() => {
   /** @type {import('monaco-editor/esm/vs/editor/editor.api').editor.IStandaloneDiffEditorConstructionOptions} */
   const options = {
-    theme: 'vs-dark',
+    theme: 'monokai',
     readOnly: false,
     automaticLayout: true,
     autoIndent: 'brackets',
     formatOnPaste: true,
     formatOnType: true,
   }
+  // @ts-ignore
+  monaco.editor.defineTheme("monokai", monokai);
+  monaco.editor.setTheme("myTheme");
   if(props.diff) {
     const _editor = monaco.editor.createDiffEditor(monacoRef.value, options)
     _editor.setModel({

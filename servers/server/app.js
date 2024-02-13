@@ -1,34 +1,13 @@
 // @ts-ignore
 require('express-async-errors');
-const express = require('express');
-const path = require('path');
-const cookieParser = require('cookie-parser');
+const { express } = require('@clabroche/common-express');
 const indexRouter = require('./routes/index');
 const { stopCpu } = require('./helpers/cpu');
 const { stopWatchers } = require('./models/stack');
 
 const app = express();
 
-app.use(require('cors')());
-
-app.use(express.json({ limit: '100mb' }));
-app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
-
 app.use('/', indexRouter);
-
-app.use(express.static(path.join(__dirname, 'public')));
-
-app.get('*', (req, res) => {
-  res.sendFile(path.resolve(__dirname, 'public', 'index.html'));
-});
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-app.use(/** @type {ExpressMiddlewareError} */ ((err, req, res, _next) => {
-  console.error(err?.message || err);
-  if (err?.stack) console.error(err.stack);
-  res.status(500).send(err?.message || err);
-}));
 
 // @ts-ignore
 app.stopWorkers = async () => {
@@ -36,5 +15,3 @@ app.stopWorkers = async () => {
   stopWatchers();
 };
 module.exports = app;
-
-/** @type {import('./dist/index.d.ts')} */

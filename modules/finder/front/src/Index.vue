@@ -7,7 +7,7 @@
       <input type="text" autofocus v-model="search"
         placeholder="Type to find something..." ref="inputRef" @keyup="keyup">
       <div class="groups">
-        <div class="group" v-for="group of displayedGroups" :key="`${group}`">
+        <SectionCmp class="group" v-for="group of displayedGroups" :key="`${group}`">
           <h2>{{ group.label }}</h2>
           <div class="choices">
             <div class="choice" v-for="choice of group.choices" :key="`${choice}`"
@@ -51,7 +51,7 @@
               </div>
             </div>
           </div>
-        </div>
+        </SectionCmp>
       </div>
     </div>
   </div>
@@ -64,6 +64,7 @@ import {
 import debounce from 'debounce';
 import { useRouter } from 'vue-router';
 import axios from '../../../../fronts/app/src/helpers/axios';
+import SectionCmp from '../../../../fronts/app/src/components/Section.vue';
 
 const router = useRouter();
 
@@ -160,7 +161,6 @@ async function keyup($event) {
 .finder-root {
   position: fixed;
   z-index: 100000000000;
-  background-color: rgba(0,0,0,0.8);
   top: 0;
   left: 0;
   width: 100vw;
@@ -169,14 +169,27 @@ async function keyup($event) {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  backdrop-filter: blur(10px);
+  background-color: rgba(0,0,0,0.2);
   .hint {
     margin: 10px;
-    background-color: #aaa;
+    background-color: white;
+    border: 1px solid #bdbdbd;
+    box-sizing: border-box;
     border-radius: 10px;
     padding: 5px;
   }
   &.isComponent {
     position: relative;
+    justify-content: flex-start;
+    height: calc(100vh);
+    .finder-container {
+      height: auto;
+      flex-grow: 1;
+      .groups {
+        max-height: inherit;
+      }
+    }
   }
   .finder-container {
     overflow: auto;
@@ -184,7 +197,8 @@ async function keyup($event) {
     border-radius: 10px;
     max-width: 1000px;
     height: max-content;
-    background-color: #eee;
+    background-color: white;
+    border: 1px solid #bdbdbd;
     padding: 10px;
     box-sizing: border-box;
     input {
@@ -236,13 +250,7 @@ async function keyup($event) {
   flex-direction: column;
   overflow: auto;
   max-height: 50vh;
-  gap: 10px;
-  .group {
-    border-radius: 10px;
-    padding: 10px;
-    box-sizing: border-box;
-    background-color: rgba(0,0,0,0.1);
-  }
+  gap: 20px;
   h2 {
     margin: 0;
   }

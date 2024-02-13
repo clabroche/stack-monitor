@@ -1,3 +1,4 @@
+const { sockets } = require('@clabroche/common-socket-server');
 const path = require('path');
 const { watch } = require('fs');
 const debounce = require('debounce');
@@ -10,8 +11,9 @@ const pathfs = require('path');
 const { existsSync } = require('fs-extra');
 const Service = require('./Service');
 const myConfs = require('./myConfs');
-const Socket = require('./socket');
 const ports = require('./ports');
+
+if (!sockets.io) throw new Error('Stack monitor seems not fully inialized: Socket is empty, check if socket connection is launched before require this file');
 
 class Stack {
   /** @type {Stack | null} */
@@ -46,7 +48,7 @@ class Stack {
 
   static getSave = require('./saves');
 
-  static Socket = Socket;
+  static Socket = sockets;
 
   static plugins = plugins;
 
@@ -79,12 +81,22 @@ class Stack {
     this.helpers = require('../helpers/exportedHelpers');
   }
 
-  /** @param {string[]} servicesLabelSelected */
-  enable(servicesLabelSelected) {
-    this.getServices().forEach((service) => {
-      if (servicesLabelSelected.includes(service.label)) {
-        service.enable();
+  /** @param {{label: string, enabled: boolean}[]} servicesLabelSelected */
+  async enable(servicesLabelSelected) {
+    const services = this.getServices();
+    await PromiseB.map(servicesLabelSelected, (serviceConf) => {
+      const service = services.find((service) => serviceConf.label === service.label);
+      if (!service) return null;
+      const hasChanged = serviceConf.enabled !== service.enabled;
+      if (hasChanged) {
+        if (serviceConf.enabled) {
+          service.enable();
+          return service.launch();
+        }
+        service.disable();
+        return service.kill();
       }
+      return null;
     });
   }
 
@@ -144,7 +156,7 @@ class Stack {
       if (microservice.enabled) {
         return microservice.launch();
       }
-      return null;
+      return microservice.kill();
     });
     Stack.#onLaunchCallback();
   }
@@ -242,7 +254,7 @@ class Stack {
     }
     this.environments = env;
     console.log('Environment changed, reload page...');
-    Socket.io?.emit('forceReload');
+    sockets.io?.emit('forceReload');
     return /** @type {never} */(this.environments?.[this.#currentEnvironment]?.envs);
   }
 
@@ -367,7 +379,7 @@ async function reloadService(originalStack, newStack) {
     return false;
   });
 
-  Socket.io?.emit('conf:update', updatedServices.map((s) => s.label));
+  sockets.io?.emit('conf:update', updatedServices.map((s) => s.label));
   await PromiseB.map(updatedServices, async (service) => {
     if (service.pids?.length) {
       console.log('Restart', service.label);
@@ -391,7 +403,7 @@ async function reloadGloblalConf(originalStack, newStack) {
   });
   console.log('Global changes, restart all...');
   await originalStack.restart();
-  Socket.io?.emit('forceReload');
+  sockets.io?.emit('forceReload');
   return null;
 }
 

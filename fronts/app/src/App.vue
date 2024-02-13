@@ -126,7 +126,7 @@ body {
   margin: 0;
   width: 100vw;
   height: 100vh;
-  background-color: #eee;
+  background-color: #f2f4f7;
   color: #4c4c4c;
   font-size: 0.9em;
   font-family: JOST, sans-serif;

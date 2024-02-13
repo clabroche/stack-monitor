@@ -1,8 +1,8 @@
 <template>
-  <div class="section" :class="{noStyle, noBodyPadding, headerBold,  headerCenter}">
+  <div class="section" :class="{noStyle, noBodyPadding, headerBold,  headerCenter, noRadius}">
     <div class="background">
     </div>
-    <div class="title" v-if="header || actions?.length">
+    <div class="title" v-if="header || actions?.length || $slots.header">
       <div v-if="header">
         {{header}}
       </div>
@@ -47,6 +47,7 @@ const props = defineProps({
   noBodyPadding: {default: false},
   headerBold: {default: false},
   headerCenter: {default: false},
+  noRadius: { default: false },
 })
 
 const activeActions = computed(() => {
@@ -67,7 +68,7 @@ const activeActions = computed(() => {
 </script>
 
 <style lang="scss" scoped>
-$mainColor: rgb(240, 240, 240);
+$mainColor: rgb(234, 234, 234);
 $secondaryColor: rgb(255, 255, 255);
 $shadow: rgb(165, 177, 179);
 .section {
@@ -78,11 +79,11 @@ $shadow: rgb(165, 177, 179);
   display: flex;
   flex-direction: column;
   border: 1px solid #dbdbdb;
-  border-radius: 2px;
+  border-radius: 5px;
   position: relative;
   .background{
-    background: $mainColor;
-    background: linear-gradient(93deg, $mainColor 0%, $secondaryColor 100%);
+    border-radius: 5px;
+    background: white;
     position: absolute;
     width: 100%;
     height: 100%;
@@ -93,25 +94,28 @@ $shadow: rgb(165, 177, 179);
       top: 0;
       left: 0;
     }
+    $borderRadius: 100px;
     &::before, &::after {
       content: "";
-      width: 150%;
-      height: 75%;
-      border-radius: 100%;
+      width: 100000px;
+      height: 100000px;
+      border-radius: 100px;
       position: absolute;
-      top: 0;
-      right: -100%;
+      bottom: calc(50%);
+      left: calc(50%);
       transform: rotate(20deg);
-      transform-origin: top;
-      box-shadow:
-        inset 0 0 50px $mainColor,
-        inset -20px 0 300px $mainColor,
-        0 0 50px #fff,
-        -10px 0 80px $mainColor,
-        10px 0 80px $mainColor;
+      transform-origin: bottom left;
+      box-shadow: inset 0 10px 100px #f7f7f7;
     }
     &::after {
-      height: 45%;
+      left: calc(50%);
+      bottom: calc(50%);
+      transform: rotate(200deg);
+      // right: 100px;
+      // bottom: calc(50% + 100px);
+
+      // transform: rotate(80deg);
+      // transform-origin: bottom left;
     }
   }
   .title {
@@ -184,6 +188,14 @@ $shadow: rgb(165, 177, 179);
     .title {
       font-size: 1.2em;
     }
+  }
+}
+
+.noRadius {
+  border-radius: 0;  
+  .background {
+    border-radius: 0;  
+
   }
 }
 </style>

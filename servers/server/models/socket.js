@@ -1,4 +1,4 @@
-const express = require('express');
+const { express } = require('@clabroche/common-express');
 const { Server } = require('socket.io');
 const CustomObservable = require('../helpers/CustomObservable');
 

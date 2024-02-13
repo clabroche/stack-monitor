@@ -20,6 +20,7 @@
         ></Column>
         <div class="add-column" @click="createColumn"><i class="fas fa-plus"></i>New column</div>
       </div>
+      <div v-else>Choose a board...</div>
     </div>
   </div>
   <Modal ref="deleteBoardModal" cancelString="No" validateString="Yes">

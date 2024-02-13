@@ -12,6 +12,7 @@ export default {
   init(url, id, path, auth) {
     return new Promise((resolve, reject) => {
       const socket = io(url, { path });
+      this.socket = socket;
       socket.on('connect', () => socket.emit('socket:register', id, auth, (response) => {
         if (response.result === 'ok') {
           resolve(socket);

@@ -79,6 +79,7 @@ export default {
     NotificationBell,
   },
   setup() {
+    console.log('hey')
     const router = useRouter(); 
     /** @type {import('vue').Ref<import('../models/service').default[]>} */
     const stack = ref([])

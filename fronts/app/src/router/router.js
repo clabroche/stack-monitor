@@ -22,6 +22,12 @@ const routes = [
     component: () => import('../views/StackSingle.vue'),
   },
   {
+    path: '/overview',
+    name: 'overview',
+    // @ts-ignore
+    component: () => import('../views/Overview.vue'),
+  },
+  {
     path: '/stack-multiple',
     name: 'stack-multiple',
     // @ts-ignore

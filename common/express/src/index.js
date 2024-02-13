@@ -9,11 +9,12 @@ const fs = require('fs');
 const context = require('@clabroche/common-context').init;
 const healthCheck = require('@clabroche/common-express-health-check');
 const helmet = require('helmet').default;
-const path = require('path');
 const cookieParser = require('cookie-parser');
 const compression = require('compression');
 const pino = require('pino');
 const pinoHttp = require('pino-http');
+const http = require('http');
+const Socket = require('@clabroche/common-socket-server');
 
 require('express-async-errors');
 
@@ -26,8 +27,10 @@ module.exports = {
    *  corsConf?: import('cors').CorsOptions,
    *  beforeAll?: () => any,
    *  afterAll?: () => any,
-   *  controllers?: import('express').RequestHandler,
-   *  staticController?: import('express').RequestHandler,
+   *  socket?: boolean,
+   *  onListening?: (server: http.Server<typeof http.IncomingMessage, typeof http.ServerResponse>) => any,
+   *  controllers?: () => import('express').RequestHandler,
+   *  staticController?: string,
    *  additionalSwaggerPaths?: string[]
    *  noGreetings?: boolean,
    *  apiPrefix?: string
@@ -44,9 +47,11 @@ module.exports = {
     corsConf = {},
     beforeAll = () => {},
     afterAll = () => {},
-    controllers = () => {},
+    onListening = () => {},
+    controllers = () => () => {},
     staticController = undefined,
     noGreetings = false,
+    socket = false,
     additionalSwaggerPaths = [],
     apiPrefix = '/api',
     bodyLimit = '50mb',
@@ -63,6 +68,12 @@ module.exports = {
     console.log(`v${appVersion} started, listening on port ${port}.`);
 
     const app = express();
+
+    const server = http.createServer(app);
+    if (socket) {
+      console.log('Enable socket...');
+      Socket.sockets.connect(server, '*', '/socket.io');
+    }
     app.use(helmet(
       helmetConf,
     ));
@@ -88,22 +99,26 @@ module.exports = {
     logger.init({
       path: pathfs.resolve(baseUrl, 'logs-express'),
     });
-    const accessLogger = pinoHttp.default({
-      autoLogging: {
-        ignore: (req) => !!(req.url?.endsWith('/health')),
-      },
-      logger: logger.getConf().accessLogger,
-      serializers: {
-        req: pino.stdSerializers.wrapRequestSerializer((r) => {
-          r.headers = {
-            ...r.headers,
-            cookie: '',
-            authorization: '',
-          };
-          return r;
-        }),
-      },
-    });
+    let accessLogger = (req, res, next) => next();
+    if (process.env.NODE_ENV === 'DEV') {
+      console.log('Dev mode detected, enable access logger');
+      accessLogger = pinoHttp.default({
+        autoLogging: {
+          ignore: (req) => !!(req.url?.endsWith('/health')),
+        },
+        logger: logger.getConf().accessLogger,
+        serializers: {
+          req: pino.stdSerializers.wrapRequestSerializer((r) => {
+            r.headers = {
+              ...r.headers,
+              cookie: '',
+              authorization: '',
+            };
+            return r;
+          }),
+        },
+      });
+    }
     console.log('Enable swagger...');
     app.use(swagger);
     await initSwagger({
@@ -115,16 +130,12 @@ module.exports = {
     console.log('Apply additional routes...');
     app.use(context);
 
-    app.use(apiPrefix, accessLogger, controllers);
+    if (staticController) {
+      app.use('/', accessLogger, express.static(staticController));
+    }
+    app.use(apiPrefix, accessLogger, controllers());
     if (!noGreetings) {
       app.get('/', (req, res) => res.json({ appName, appVersion }));
-    }
-
-    if (staticController) {
-      app.use(accessLogger, staticController);
-      app.use(accessLogger, (req, res) => {
-        res.sendFile(path.resolve(__dirname, 'public', 'index.html'));
-      });
     }
 
     console.log('Enable error handling...');
@@ -137,7 +148,8 @@ module.exports = {
     await beforeAll();
 
     console.log('Launch...');
-    const server = app.listen(port, async () => {
+    server.on('listening', () => onListening(server));
+    server.listen(port, async () => {
       console.log('<h1>✓ Launched</h1>');
     });
     server.on('close', async () => {

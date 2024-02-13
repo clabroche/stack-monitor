@@ -1,7 +1,7 @@
 const uuid = require('uuid').v4;
 const dayjs = require('dayjs');
 const pathfs = require('path');
-const { default: HTTPError } = require('@clabroche/common-express-http-error');
+const HTTPError = require('@clabroche/common-express-http-error');
 const pino = require('pino');
 
 dayjs.locale('fr');
@@ -82,15 +82,24 @@ module.exports = {
     return conf;
   },
   info(obj) {
+    if (process.env.NODE_ENV !== 'DEV') return;
     const date = dayjs().format('YYYY-MM-DD HH:mm:ss');
     const data = JSON.stringify({ date, ...obj });
     conf.infoLogger.info(data);
   },
   /** @param {HTTPError | Error | string} err */
   error(err) {
-    if (!conf) throw new Error('Logger not inited');
     const errorId = uuid();
     const date = dayjs().format('YYYY-MM-DD HH:mm:ss');
+    if (process.env.NODE_ENV !== 'DEV') {
+      console.log(err?.message || err);
+      return {
+        errorId,
+        date,
+      };
+    }
+
+    if (!conf) throw new Error('Logger not inited');
     let message = '';
     if (typeof err === 'string') message = err;
     else if (err instanceof HTTPError) message = err.originalMessage;

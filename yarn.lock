@@ -787,7 +787,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@clabroche/common-express@workspace:common/express":
+"@clabroche/common-express@workspace:*, @clabroche/common-express@workspace:common/express":
   version: 0.0.0-use.local
   resolution: "@clabroche/common-express@workspace:common/express"
   dependencies:
@@ -797,6 +797,7 @@ __metadata:
     "@clabroche/common-express-health-check": "workspace:*"
     "@clabroche/common-express-logger": "workspace:*"
     "@clabroche/common-retrigger-all-build": "workspace:*"
+    "@clabroche/common-socket-server": "workspace:*"
     "@clabroche/common-swagger": "workspace:*"
     compression: "npm:^1.7.4"
     cookie-parser: "npm:^1.4.6"
@@ -838,7 +839,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@clabroche/common-socket-front@workspace:common/socket-front":
+"@clabroche/common-socket-front@workspace:*, @clabroche/common-socket-front@workspace:common/socket-front":
   version: 0.0.0-use.local
   resolution: "@clabroche/common-socket-front@workspace:common/socket-front"
   dependencies:
@@ -850,7 +851,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@clabroche/common-socket-server@workspace:common/socket-server":
+"@clabroche/common-socket-server@workspace:*, @clabroche/common-socket-server@workspace:common/socket-server":
   version: 0.0.0-use.local
   resolution: "@clabroche/common-socket-server@workspace:common/socket-server"
   dependencies:
@@ -910,6 +911,7 @@ __metadata:
   resolution: "@clabroche/fronts-app@workspace:fronts/app"
   dependencies:
     "@clabroche/common-retrigger-all-build": "workspace:*"
+    "@clabroche/common-socket-front": "workspace:*"
     "@clabroche/common-typings": "workspace:*"
     "@clabroche/modules-plugins-loader-front": "workspace:*"
     "@fortawesome/fontawesome-free": "npm:^6.5.1"
@@ -1520,6 +1522,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@clabroche/servers-server@workspace:servers/server"
   dependencies:
+    "@clabroche/common-express": "workspace:*"
     "@clabroche/common-retrigger-all-build": "workspace:*"
     "@clabroche/fronts-app": "workspace:*"
     "@clabroche/modules-plugins-loader-backend": "workspace:*"

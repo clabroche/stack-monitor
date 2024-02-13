@@ -1,4 +1,4 @@
-const express = require('express');
+const { express } = require('@clabroche/common-express');
 const { exec } = require('child_process');
 const open = require('open');
 const commandExists = require('command-exists').sync;
@@ -61,13 +61,12 @@ router.post('/delete-conf', async (req, res) => {
   res.json(path);
 });
 router.post('/choose', async (req, res) => {
-  /** @type {string[]} */
+  /** @type {{label: string, enabled: boolean}[]} */
   const servicesLabelSelected = req.body;
   if (!Array.isArray(servicesLabelSelected)) return res.status(400).send('you should provide an array as body with all service label you want to launch');
   const stack = Stack.getStack();
   if (!stack) return res.status(500).send('Stack not configured');
-  stack.enable(servicesLabelSelected);
-  await stack.launch();
+  await stack.enable(servicesLabelSelected);
   return res.json(stack.getEnabledServices().map((s) => s.exportInApi()));
 });
 router.get('/', (req, res) => {

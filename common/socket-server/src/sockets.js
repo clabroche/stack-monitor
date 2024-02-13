@@ -1,4 +1,8 @@
 const { Server } = require('socket.io');
+const CustomObservable = require('./CustomObservable');
+
+/** @type {Record<string, CustomObservable>} */
+const events = {};
 
 module.exports = {
   /** @type {Server | null} */
@@ -7,6 +11,10 @@ module.exports = {
     if (this.io) {
       this.io.to(room).emit(channel, ...data);
     }
+  },
+  on: (event, cb) => {
+    if (!events[event]) events[event] = new CustomObservable();
+    events[event].subscribe(cb);
   },
   /**
    *
@@ -22,6 +30,11 @@ module.exports = {
         origin,
         methods: ['GET', 'POST'],
       },
+    });
+    this.io.on('connection', (_socket) => {
+      _socket.onAny((event, ...data) => {
+        events[event]?.next(_socket, ...data);
+      });
     });
     this.io.on('connect', (socket) => {
       socket.on('socket:register', async (id, auth, callback) => {

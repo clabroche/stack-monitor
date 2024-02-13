@@ -39,7 +39,7 @@
             </div>
           </div>
         </div>
-        <Chat :messages="messagesToDisplay" :loading="loading" @send="sendMessage($event)"></Chat>
+        <Chat class="chat" :messages="messagesToDisplay" :loading="loading" @send="sendMessage($event)"></Chat>
       </div>
     </div>
   </div>
@@ -137,6 +137,9 @@ const messagesToDisplay = computed(() => messages.value?.filter?.((f) => f.role 
  */
 </script>
 <style lang="scss" scoped>
+h2 {
+  margin: 0;
+}
 .header{
   display: flex;
   justify-content: space-between;
@@ -201,6 +204,10 @@ $leftSize: 200px;
         display: flex;
         justify-content: space-between;
         align-items: center;
+        background-color: white;
+        padding: 5px 10px ;
+        border: 1px solid #dbdbdb;
+        border-bottom: 0;
         .toolbar {
           display: flex;
           &>div {
@@ -208,6 +215,9 @@ $leftSize: 200px;
             flex-direction: column;
           }
         }
+      }
+      .chat {
+        border-radius: 0;
       }
     }
 

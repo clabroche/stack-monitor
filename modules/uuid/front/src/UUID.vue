@@ -1,7 +1,7 @@
 <template>
   <div class="uuid-root">
     <h1>Generate UUID</h1>
-    <section-cmp>
+    <SectionCmp>
       <div class="section-content">
         <h2>{{ uuid }}</h2>
         <button @click="generate">
@@ -9,7 +9,7 @@
           Regenerate
         </button>
       </div>
-    </section-cmp>
+    </SectionCmp>
   </div>
 </template>
 

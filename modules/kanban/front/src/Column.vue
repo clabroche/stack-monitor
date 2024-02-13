@@ -1,5 +1,5 @@
 <template>
-  <div class="column-root" v-if="column">
+  <SectionCmp class="column-root" v-if="column">
     <div class="column-header">
       <h2>
         <input class="invisible" type="text" v-model="column.name"
@@ -31,7 +31,7 @@
         </template>
       </draggableComponent>
     </div>
-  </div>
+  </SectionCmp>
 
   <Modal ref="createCardModal" cancelString="No" validateString="Yes">
     <template #header="{data: card}">
@@ -70,6 +70,7 @@ import draggableComponent from 'vuedraggable';
 import { useRoute, useRouter } from 'vue-router';
 import axios from '../../../../fronts/app/src/helpers/axios';
 import Modal from '../../../../fronts/app/src/components/Modal.vue';
+import SectionCmp from '../../../../fronts/app/src/components/Section.vue';
 
 const route = useRoute();
 const router = useRouter();
@@ -81,7 +82,7 @@ function resizeInput($ev) {
   // eslint-disable-next-line prefer-destructuring
   const target = /** @type {HTMLInputElement} */($ev.target);
   if (!target) return;
-  target.style.width = `${target.value.length}em`;
+  target.style.width = `${target.value.length / 2}em`;
 }
 
 const props = defineProps({
@@ -180,12 +181,9 @@ async function saveColumn($ev) {
   display: flex;
   flex-direction: column;
   width: 300px;
-  background-color: white;
-  padding: 10px;
-  box-sizing: border-box;
-  border-radius: 10px;
 }
 .column-root {
+  border: 1px solid #dbdbdb;
   height: calc(100% - 100px);
   &:hover {
     .actions {
@@ -225,8 +223,8 @@ button.small {
   overflow: auto;
   .card {
     border-radius: 10px;
-    box-shadow: 0 0 3px 2px rgba(0,0,0,0.1);
     padding: 10px;
+    border: 1px solid #dbdbdb;
     display: flex;
     align-items: center;
     justify-content: space-between;

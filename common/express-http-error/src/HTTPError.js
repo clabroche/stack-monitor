@@ -1,30 +1,24 @@
-import dayjs from 'dayjs';
-import { v4 as uuid } from 'uuid';
+const dayjs = require('dayjs');
+const { v4: uuid } = require('uuid');
 
-export const statusMessage = {
+module.exports.statusMessage = {
   403: 'Not allowed',
   404: 'Resource not found',
   500: 'We cannot respond to your request for moment. Contact support for more information',
 };
 
 class HTTPError extends Error {
-  public message: string;
-
-  public code: number;
-
-  public errorId: string;
-
-  public date: string;
-
-  public originalMessage: string;
-
-  public originalStack?: string;
-
-  public details?: string;
-
+  /**
+   *
+   * @param {string} message
+   * @param {number} code
+   * @param {string} errorId
+   * @param {string} date
+   * @param {string} stack
+   */
   constructor(
-    message: string,
-    code?: number,
+    message,
+    code = 500,
     errorId = uuid(),
     date = dayjs().format('YYYY-MM-DD HH:mm:ss'),
     stack = '',
@@ -34,11 +28,11 @@ class HTTPError extends Error {
     this.errorId = errorId;
     this.date = date;
     this.message = process.env.NODE_ENV === 'production'
-      ? statusMessage[this.code] || message?.toString() || message
-      : message?.toString() || message || statusMessage[this.code];
+      ? module.exports.statusMessage[this.code] || message?.toString() || message
+      : message?.toString() || message || module.exports.statusMessage[this.code];
     this.originalMessage = message;
     this.originalStack = stack || new Error().stack;
   }
 }
 
-export default HTTPError;
+module.exports = HTTPError;

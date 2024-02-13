@@ -1,4 +1,4 @@
-const { default: HTTPError } = require('@clabroche/common-express-http-error');
+const HTTPError = require('@clabroche/common-express-http-error');
 const logger = require('@clabroche/common-express-logger');
 const errorCodes = require('./errorCodes');
 
