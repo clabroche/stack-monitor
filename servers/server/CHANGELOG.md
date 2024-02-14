@@ -5,7 +5,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ## [1.17.26](https://github.com/clabroche/stack-monitor/compare/v1.17.25...v1.17.26) (2024-02-14)
 
-### Bug Fixes
+### Bug Fixes 
 
 * **server:** healthcheck working ([13d2960](https://github.com/clabroche/stack-monitor/commit/13d2960ffa5125aff7792d95a9306fe6e04d2889))
 * **server:** resolve dependencies ([7a15ef0](https://github.com/clabroche/stack-monitor/commit/7a15ef01ba9946fb2662c0f15a6da758f0c40280))

@@ -4,7 +4,7 @@
     :class="{active: isActive, disabled: !service.enabled, crashed: service.crashed}">
       <span>
         <template v-if="service.crashed"><i class="fas fa-exclamation"></i></template>
-        <template v-else-if="service.enabled && !service.exited"><spinner size="15"></spinner> </template>
+        <template v-else-if="service.enabled && !service.exited"><i class="fas fa-heartbeat success"></i></template>
         <template v-else-if="service.exited"><i class="fas fa-times warning"></i> </template>
         <template v-else><i class="fas fa-square"></i></template>
         {{service.label}}
@@ -16,7 +16,6 @@
 <script setup>
 import { computed } from 'vue';
 import { useRouter } from 'vue-router';
-import Spinner from '../components/Spinner.vue'
 const router = useRouter()
 
 const props = defineProps({
@@ -74,6 +73,9 @@ const isActive = computed(() => {
 
   .warning {
     color: orange;
+  }
+  .success {
+    color: green;
   }
 }
 </style>
