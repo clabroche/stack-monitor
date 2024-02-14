@@ -37,7 +37,7 @@ const isActive = computed(() => {
   z-index: 2;
   
   &:hover {
-    background-color: #eee;
+    background-color: var(--system-secondary-sidebar-backgroundColor);
     i {
       opacity: 1;
     }
@@ -62,22 +62,17 @@ button {
   background: transparent;
   margin: 0 5px;
   font-size: 1em;
-  border: 1px solid #efefef;
-  color: #aaa;
-  border-color: transparent;
-  box-shadow: 2px 2px 5px rgba(0,0,0,0.2),
-    -2px -2px 5px rgba(255,255,255,0.2);
+  color: var(--system-color);
   &.active {
     background: transparent;
     border-radius: 5px 5px 0 0;
-    color: #777;
+    color: var(--system-color);
     margin-bottom: -1px;
     border-bottom: 3px solid #0076bc;
-    box-shadow: 2px 2px 7px rgba(0,0,0,0.2) inset,
-    -5px -5px 7px rgba(255,255,255,0.6) inset;
   }
   &:hover {
-    box-shadow: none;
+    background: var(--system-accents-backgroundColor) !important;
+    color: var(--system-accents-color) !important;
     transform: none;
   }
   i {

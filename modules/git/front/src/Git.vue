@@ -152,7 +152,7 @@
 </template>
 
 <script>
-import { Terminal } from 'xterm/lib/xterm';
+import { Terminal } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';
 import { CanvasAddon } from 'xterm-addon-canvas';
 import { SearchAddon } from 'xterm-addon-search';
@@ -160,7 +160,7 @@ import notification from '../../../../fronts/app/src/helpers/notification';
 import Service from '../../../../fronts/app/src/models/service';
 import ModalVue from '../../../../fronts/app/src/components/Modal.vue';
 import SectionVue from '../../../../fronts/app/src/components/Section.vue';
-// @ts-ignore
+import Theme from '../../../../fronts/app/src/helpers/Theme';
 
 export default {
   components: {
@@ -213,6 +213,7 @@ export default {
       terminalSearch: null,
       displayOnlyLocalBranches: true,
       searchBranch: '',
+      observable: null,
     };
   },
   async mounted() {
@@ -231,42 +232,53 @@ export default {
       else if (branchNames.includes('master')) this.defaultBranch = 'master';
       else if (branchNames.includes('main')) this.defaultBranch = 'main';
     }
-    commandRef.innerHTML = '';
-    this.terminal = new Terminal({
-      smoothScrollDuration: 100,
-      experimentalCarAtlas: 'static',
-      fontFamily: 'MesloLGS NF, monospace',
-      convertEol: true,
-      disableStdin: true,
-      fontSize: 13,
-      allowTransparency: true,
-      minimumContrastRatio: 7,
-      theme: {
-        background: '#ffffff00',
-        foreground: '#4c4c4c',
-        selectionBackground: '#1d95db',
-        selectionForeground: 'white',
-      },
+    await this.loadTerminal();
+
+    this.observable = Theme.observableCurrentTheme.subscribe(async () => {
+      this.loadTerminal();
+      await this.updateGraph();
+      await this.gitFetch();
     });
-    const fitAddon = new FitAddon();
-    if (this.terminal) {
-      this.terminal.loadAddon(fitAddon);
-      this.terminal.loadAddon(new CanvasAddon());
-      const searchAddon = new SearchAddon();
-      this.terminalSearch = searchAddon;
-      this.terminal.loadAddon(searchAddon);
-      this.terminal.open(commandRef);
-      fitAddon.activate(this.terminal);
-      fitAddon.fit();
-    }
     await this.updateGraph();
     await this.gitFetch();
   },
   beforeUnmount() {
     clearInterval(this.interval || undefined);
     clearInterval(this.longInterval || undefined);
+    this.observable?.unsubscribe?.();
   },
   methods: {
+    loadTerminal() {
+      const commandRef = /** @type {HTMLElement} */(this.$refs.terminalRef);
+      if (!commandRef) return;
+      commandRef.innerHTML = '';
+      this.terminal = new Terminal({
+        smoothScrollDuration: 100,
+        fontFamily: 'MesloLGS NF, monospace',
+        convertEol: true,
+        disableStdin: true,
+        fontSize: 13,
+        allowTransparency: true,
+        minimumContrastRatio: Theme.get('system.terminal/contrastRatio'),
+        theme: {
+          background: Theme.get('system.terminal/backgroundColor'),
+          foreground: Theme.get('system.terminal/color'),
+          selectionBackground: '#1d95db',
+          selectionForeground: 'white',
+        },
+      });
+      const fitAddon = new FitAddon();
+      if (this.terminal) {
+        this.terminal.loadAddon(fitAddon);
+        this.terminal.loadAddon(new CanvasAddon());
+        const searchAddon = new SearchAddon();
+        this.terminalSearch = searchAddon;
+        this.terminal.loadAddon(searchAddon);
+        this.terminal.open(commandRef);
+        fitAddon.activate(this.terminal);
+        fitAddon.fit();
+      }
+    },
     /** @param {KeyboardEvent | MouseEvent} ev */
     async nextSearch(ev) {
       if (ev.shiftKey) {

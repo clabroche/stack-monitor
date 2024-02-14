@@ -183,7 +183,7 @@ async function saveColumn($ev) {
   width: 300px;
 }
 .column-root {
-  border: 1px solid #dbdbdb;
+  border: 1px solid var(--system-border-borderColor);
   height: calc(100% - 100px);
   &:hover {
     .actions {
@@ -224,7 +224,7 @@ button.small {
   .card {
     border-radius: 10px;
     padding: 10px;
-    border: 1px solid #dbdbdb;
+    border: 1px solid var(--system-border-borderColor);
     display: flex;
     align-items: center;
     justify-content: space-between;

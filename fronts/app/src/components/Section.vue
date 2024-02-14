@@ -78,12 +78,12 @@ $shadow: rgb(165, 177, 179);
   border-right: 0;
   display: flex;
   flex-direction: column;
-  border: 1px solid #dbdbdb;
+  border: 1px solid var(--system-border-borderColor);
   border-radius: 5px;
   position: relative;
   .background{
     border-radius: 5px;
-    background: white;
+    background: var(--system-sections-backgroundColor);
     position: absolute;
     width: 100%;
     height: 100%;
@@ -105,7 +105,7 @@ $shadow: rgb(165, 177, 179);
       left: calc(50%);
       transform: rotate(20deg);
       transform-origin: bottom left;
-      box-shadow: inset 0 10px 100px #f7f7f7;
+      box-shadow: inset 0 10px 100px var(--system-sections-innerShadow);
     }
     &::after {
       left: calc(50%);

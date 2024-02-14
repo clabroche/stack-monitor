@@ -97,7 +97,8 @@ input {
     justify-content: space-between;
     box-shadow: 0px 0px 4px 0px black;
     width: 150px;
-    background-color: white;
+    background-color: var(--system-secondary-sidebar-backgroundColor);
+    color: var(--system-sidebar-secondary-color);
     height: 100%;
     flex-shrink: 0;
     z-index: 3;

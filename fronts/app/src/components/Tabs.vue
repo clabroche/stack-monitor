@@ -154,14 +154,14 @@ defineExpose({
   flex-shrink: 0;
   width: max-content;
   gap: 5px;
-  background-color: white;
+  background-color: var(--system-backgroundColor);
   z-index: 1;
-  border: 1px solid #dbdbdb;
+  border: 1px solid var(--system-border-borderColor);
   button {
     position: relative;
     outline: none;
     margin: 0;
-    color: #777;
+    color: var(--system-color);
     transition: 200ms;
     border-bottom: 0;
     height: 40px;

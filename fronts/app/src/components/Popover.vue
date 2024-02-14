@@ -29,6 +29,7 @@ export default {
     appendTo: {default: 'parent'},
     disable: {default: false},
     fullWidth: {default: false},
+    showOnCreate: {default: false}
   },
   setup(props) {
     /** @type {import('vue').Ref<Element | import('tippy.js').MultipleTargets | null>} */
@@ -49,6 +50,7 @@ export default {
         hideOnClick: true,
         animation: 'shift-away',
         theme: 'light-border',
+        showOnCreate: props.showOnCreate,
       })
     })
     return {
@@ -63,8 +65,29 @@ export default {
 
 <style scoped lang="scss">
 .fullWidth {
-  &.popover-root, .trigger {
+
+  &.popover-root,
+  .trigger {
     width: 100%;
   }
+}
+</style>
+<style lang="scss">
+.tippy-content {
+  background-color: var(--system-sidebar-backgroundColor);
+  color: var(--system-color);
+}
+.tippy-box[data-theme~=light-border][data-placement^=right]>.tippy-arrow:before{
+  border-right-color: var(--system-sidebar-backgroundColor) !important;
+}
+
+.tippy-box[data-theme~=light-border][data-placement^=left]>.tippy-arrow:before{
+  border-left-color: var(--system-sidebar-backgroundColor) !important;
+}
+.tippy-box[data-theme~=light-border][data-placement^=top]>.tippy-arrow:before{
+  border-top-color: var(--system-sidebar-backgroundColor) !important;
+}
+.tippy-box[data-theme~=light-border][data-placement^=bottom]>.tippy-arrow:before{
+  border-bottom-color: var(--system-sidebar-backgroundColor) !important;
 }
 </style>

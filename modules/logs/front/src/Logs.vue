@@ -780,7 +780,8 @@ function setSelectedLine(line) {
     }
     .terminal-panel-content {
       max-width: calc(100% - 40px);
-      background-color: white;
+      background-color: var(--system-backgroundColor);
+      color: var(--system-color);
       z-index: 2;
       position: absolute;
       right: 0;
@@ -817,7 +818,8 @@ function setSelectedLine(line) {
     flex-wrap: wrap;
     position: relative;
     z-index: 1;
-    background-color: white;
+    background-color: var(--system-sections-backgroundColor);
+    color: var(--system-sections-color);
     .pids {
       max-height: 400px;
       overflow: auto;
@@ -860,7 +862,7 @@ function setSelectedLine(line) {
   background: none;
   right: 3px;
   top: 0;
-  border: 1px solid #dbdbdb;
+  border: 1px solid var(--system-border-borderColor);
   box-sizing: border-box;
   margin: 0;
   z-index: 100;
@@ -1018,7 +1020,8 @@ function setSelectedLine(line) {
   border-radius: 10px;
   padding: 10px;
   box-sizing: border-box;
-  background: white;
+  background: var(--system-backgroundColor);
+  color: var(--system-color);
   width: calc(100% - 10px);
   margin: auto;
   margin-bottom: 5px;
@@ -1114,6 +1117,8 @@ function setSelectedLine(line) {
     gap: 10px;
   }
   textarea {
+    background-color: var(--system-backgroundColor);
+    color: var(--system-color);
     outline: none;
     height: max-content;
     height: calc(19px);
@@ -1138,8 +1143,9 @@ function setSelectedLine(line) {
     font-weight: bold;
   }
   .more-info-content {
-    background-color: #efefef;
-    border: 1px solid #d2d2d2;
+    background-color: var(--system-backgroundColor);
+    color: var(--system-color);
+    border: 1px solid var(--system-border-borderColor);
     border-radius: 5px;
     padding: 5px;
     display: flex;
@@ -1179,6 +1185,7 @@ function setSelectedLine(line) {
     padding: 0;
     display: flex;
     .value-key {
+      color: var(--jsonviewer-valueKeyColor) !important;
       padding: 0;
       &+span {
         overflow: hidden;
@@ -1191,6 +1198,7 @@ function setSelectedLine(line) {
     }
   }
   .data-key {
+    color: var(--jsonviewer-keyColor) !important;
     .chevron-arrow {
       margin-right: 8px;
     }
@@ -1202,7 +1210,8 @@ function setSelectedLine(line) {
   position: absolute;
   display: flex;
   flex-direction: column;
-  background-color: white;
+  background-color: var(--system-backgroundColor);
+  color: var(--system-color);
   width: 100%;
   left: 0;
   bottom: calc(100% + 10px);

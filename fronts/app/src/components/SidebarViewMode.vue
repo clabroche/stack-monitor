@@ -33,6 +33,30 @@
         :padding="14"
         strokeColor="#00f7ff"
         strokeColorBg="#2db7d0"/>
+      <Popover appendTo="parent" trigger="mouseenter" placement="right" :showOnCreate="false">
+        <template #trigger>
+          <sidebar-view-mode-item key="Themes" :button="{
+            text: '',
+            icon: 'fas fa-sun',
+            click: () => Theme.toggle()
+          }"/>
+        </template>
+        <template #content>
+          <div class="themes">
+            <div class="theme"
+              v-for="theme of Object.keys(Theme.themes).map(key => ({theme: Theme.themes[key], label: key})).filter(t => t.theme.public && t.theme.preview)"
+              @click="Theme.apply(theme.label)"
+            >
+              <div class="background" :style="theme.theme.preview.background">
+                <div class="foreground foreground-1" :style="theme.theme.preview.foreground1"></div>
+                <div class="foreground foreground-2" :style="theme.theme.preview.foreground2 || theme.theme.preview.foreground1"></div>
+                <div class="foreground foreground-3" :style="theme.theme.preview.foreground3 || theme.theme.preview.foreground1"></div>
+                <div class="foreground foreground-4" :style="theme.theme.preview.foreground4 || theme.theme.preview.foreground1"></div>
+              </div>
+            </div>
+          </div>
+        </template>
+      </Popover>
       <sidebar-view-mode-item v-for="button of buttonsBottom" :key="button.label" :button="button"/>
     </ul>
   </div>
@@ -47,11 +71,14 @@ import DoughtnutChart from './DoughtnutChart.vue'
 import axios from '../helpers/axios'
 import Socket from '../helpers/Socket';
 import { useRouter } from 'vue-router';
+import Theme from '../helpers/Theme'
+import Popover from './Popover.vue';
 
 export default {
   components: {
     SidebarViewModeItem: SidebarViewModeItemVue,
-    DoughtnutChart
+    DoughtnutChart,
+    Popover
   },
   props: {
     currentService: {default: null}
@@ -75,6 +102,7 @@ export default {
     })
 
     return {
+      Theme,
       buttons:computed(() => ([
         {
           text: 'Overview',
@@ -129,7 +157,7 @@ export default {
   justify-content: space-between;
   box-shadow: 0px 0px 4px 0px black;
   width: 50px;
-  background-color: white;
+  background-color: var(--system-sidebar-backgroundColor);
   height: 100%;
   flex-shrink: 0;
   z-index: 4;
@@ -163,5 +191,41 @@ export default {
 .system .title {
   justify-content: center;
 }
+.themes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  .theme {
+    cursor: pointer;
+    .background {
+      width: 40px;
+      height: 40px;
+      border-radius: 40px;
+      border: 1px solid var(--system-border-borderColor);
+      position: relative;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      .foreground {
+        position: absolute;
+        width: 100%;
+        height: 1px;
+      }
 
+      .foreground-1 {
+        transform: rotate(45deg);
+      }
+      .foreground-2 {
+        transform: rotate(90deg);
+      }
+      .foreground-3 {
+        transform: rotate(135deg);
+      }
+      .foreground-4 {
+        transform: rotate(180deg);
+      }
+    }
+  }
+}
 </style>

@@ -36,6 +36,8 @@ import NotifHistory from './components/NotifHistory.vue'
 import SidebarViewMode from './components/SidebarViewMode.vue'
 import EnvironmentsChooser from './components/EnvironmentsChooser.vue'
 import { useRouter } from 'vue-router';
+import Theme from './helpers/Theme'
+
 
 export default {
   components: {
@@ -46,6 +48,7 @@ export default {
     EnvironmentsChooser,
   },
   setup() {
+    Theme.load()
     const router = useRouter(); 
     const connected = ref(true)
     const redirect = async () => {
@@ -126,8 +129,9 @@ body {
   margin: 0;
   width: 100vw;
   height: 100vh;
-  background-color: #f2f4f7;
-  color: #4c4c4c;
+  background-color: var(--system-backgroundColor);
+  color: var(--system-color);
+  transition: 300ms;
   font-size: 0.9em;
   font-family: JOST, sans-serif;
 }
@@ -143,13 +147,11 @@ button {
   border:none;
   transition: 300ms;
   cursor: pointer;
-  box-sizing: border-box;
-  box-shadow:
-    -5px 5px 10px rgba(0,0,0,0.1),
-    5px -5px 10px rgba(0,0,0,0.2);
+  transition: 300ms;
   &:hover {
-    background-color: #194f91;
-    box-shadow: 1px 1px 1px 1px rgba(0,0,0,0.5);
+    $gradient: 50deg, #3e7b9e 0%, #053857 100%;
+    background: -webkit-linear-gradient($gradient);
+    background: linear-gradient($gradient);
   }
   &.bordered {
     border: 1px solid #074971;
@@ -193,8 +195,9 @@ button[disabled] {
 input {
   padding: 3px 5px;
   border-radius: 10px;
-  border: 1px solid #999;
+  border: 1px solid var(--system-border-borderColor);
   box-sizing: border-box;
+  background-color: var(--system-backgroundColor);
 }
 </style>
 

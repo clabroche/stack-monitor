@@ -46,7 +46,7 @@ const routes = (stackMonitor) => {
     const _plugins = (await PromiseB
       .map(Object.keys(plugins), (/** @type {keyof typeof plugins} */key) => plugins[key])
       .map(async (plugin) => [
-        ...(await plugin?.finder?.(search, stackMonitor) || []),
+        ...(await plugin?.finder?.(search, stackMonitor)?.catch?.(() => ([])) || []),
         ...(searchString(plugin.name, search) ? [{
           title: plugin.displayName || plugin.name,
           description: plugin.description,

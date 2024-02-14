@@ -303,11 +303,10 @@ h3, h1 {
   align-items: center;
 }
 .badge {
-  background: #b1b1b1;
+  background: var(--git-badge-backgroundColor);
+  color: var(--git-badge-color);
   padding: 5px 10px;
   border-radius: 10px;
-  color: white;
-  box-shadow: 0 0 20px 0 #b1b1b1;
   width: max-content;
 }
 .section {
@@ -325,6 +324,8 @@ tr {
 }
 select {
   width: 100%;
+  background-color: var(--system-accents-backgroundColor);
+  color: var(--system-accents-color);
 }
 button.small {
   width: max-content;

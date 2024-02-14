@@ -106,7 +106,7 @@ export default {
 </script>
 <style scoped lang="scss">
 .modal-root {
-  color: #4A5361;
+  color: var(--system-accents-color);
   z-index: 1299;
   position: fixed;
   top: 0;
@@ -119,7 +119,7 @@ export default {
   align-items: center;
   transition: 300ms;
   #modal-content {
-    background: white;
+    background: var(--system-backgroundColor);
     height: auto;
     margin: auto;
     .close-cross {
@@ -176,10 +176,10 @@ export default {
 .button-box {
   display: flex;
   .notif-button {
-    color: #4a5361;
+    color: var(--system-accents-color);;
     font-size: 18px;
     padding: 12px 0px 12px 0px;
-    background-color: #eaebed;
+    background-color: var(--system-accents-backgroundColor);
     display: flex;
     justify-content: center;
     align-items: center;

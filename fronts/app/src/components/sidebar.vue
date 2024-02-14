@@ -199,7 +199,7 @@ input {
     box-shadow: 0px 0px 4px 0px black;
     width: 250px;
     max-width: 250px;
-    background-color: white;
+    background-color: var(--system--secondary-sidebar-backgroundColor);
     height: 100%;
     flex-shrink: 0;
     z-index: 3;

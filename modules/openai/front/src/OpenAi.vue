@@ -206,7 +206,7 @@ $leftSize: 200px;
         align-items: center;
         background-color: white;
         padding: 5px 10px ;
-        border: 1px solid #dbdbdb;
+        border: 1px solid var(--system-border-borderColor);
         border-bottom: 0;
         .toolbar {
           display: flex;
