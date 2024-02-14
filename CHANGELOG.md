@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.17.28](https://github.com/clabroche/stack-monitor/compare/v1.17.27...v1.17.28) (2024-02-14)
+
+### Bug Fixes
+
+* **front:** fix cors policy ([2ee35e1](https://github.com/clabroche/stack-monitor/commit/2ee35e1178c07507c1ca49b1a2db4f5c17755b58))
+
 ## [1.17.27](https://github.com/clabroche/stack-monitor/compare/v1.17.26...v1.17.27) (2024-02-14)
 
 ### Bug Fixes
