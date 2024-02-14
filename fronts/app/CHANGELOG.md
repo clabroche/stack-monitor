@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.17.27](https://github.com/clabroche/stack-monitor/compare/v1.17.26...v1.17.27) (2024-02-14)
+
+### Bug Fixes
+
+* **front:** change icon ([b012ab7](https://github.com/clabroche/stack-monitor/commit/b012ab7dea9dde695cbfd95b2f4dbc446211db0a))
+
 ## [1.17.26](https://github.com/clabroche/stack-monitor/compare/v1.17.25...v1.17.26) (2024-02-14)
 
 ### Bug Fixes
