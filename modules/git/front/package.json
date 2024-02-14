@@ -1,6 +1,6 @@
 {
   "name": "@clabroche/modules-git-front",
-  "version": "1.17.25",
+  "version": "1.17.26",
   "repository": "https://github.com/clabroche/stack-monitor",
   "private": true,
   "scripts": {

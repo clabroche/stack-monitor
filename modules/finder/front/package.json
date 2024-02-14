@@ -1,6 +1,6 @@
 {
   "name": "@clabroche/modules-finder-front",
-  "version": "1.17.23",
+  "version": "1.17.26",
   "repository": "https://github.com/clabroche/stack-monitor",
   "private": true,
   "scripts": {
