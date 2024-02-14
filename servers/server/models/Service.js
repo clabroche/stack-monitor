@@ -380,7 +380,7 @@ class Service {
     }
     let healthy;
     try { healthy = await this.health.check(this); } catch (error) {
-      console.error(`Service health failed:${error}`);
+      console.error(`Service health failed(${this.label}):${error}`);
     }
     if (!healthy && !this.crashed) {
       this.crashed = true;

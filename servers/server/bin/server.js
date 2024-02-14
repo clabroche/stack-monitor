@@ -14,6 +14,16 @@ const args = require('../helpers/args');
     bodyLimit: '100mb',
     noGreetings: true,
     staticController: pathfs.resolve(__dirname, 'public'),
+    helmetConf: {
+      crossOriginEmbedderPolicy: false,
+      crossOriginResourcePolicy: false,
+      contentSecurityPolicy: {
+        directives: {
+          'frame-src': ["'self'", 'clabroche.github.io'],
+        },
+        useDefaults: true,
+      },
+    },
     onListening(server) {
       const addr = server.address();
       const port = typeof addr === 'string'
