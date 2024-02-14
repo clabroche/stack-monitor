@@ -71,7 +71,7 @@ const buttonsPlugins = computed(() => ([
 function chooseFirst() {
   buttonsPlugins.value?.[0]?.click();
 }
-/** @param {import('@clabroche/modules-plugins-loader-front/src/views').PluginSM<null> | undefined | null} plugin */
+/** @param {import('../../../plugins-loader/front/src/views').PluginSM<null> | undefined | null} plugin */
 function isActive(plugin) {
   return router.currentRoute.value.params.plugin === plugin?.name;
 }

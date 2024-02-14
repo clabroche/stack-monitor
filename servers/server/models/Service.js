@@ -223,6 +223,7 @@ class Service {
    */
   launchProcess(spawnCmd, spawnArgs = [], spawnOptions = {}, isMainProcess = true) {
     this.crashed = false;
+    this.exited = false;
     const { cmd, args, options } = this.parseIncomingCommand(spawnCmd, spawnArgs, spawnOptions);
     const spawnProcess = spawn(cmd, args, { ...options, detached: !isWindows });
     if (!this.pids) this.pids = [];

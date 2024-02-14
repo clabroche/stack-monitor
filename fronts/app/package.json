@@ -48,7 +48,6 @@
     "new-github-issue-url": "^1.0.0",
     "postcss": "^8.4.35",
     "sass": "^1.70.0",
-    "socket.io-client": "^4.7.4",
     "tippy.js": "^6.3.7",
     "vite": "^5.0.12",
     "vite-plugin-html": "^3.2.2",

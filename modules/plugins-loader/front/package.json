@@ -28,6 +28,7 @@
     "@clabroche/modules-git-front": "workspace:*",
     "@clabroche/modules-github-front": "workspace:*",
     "@clabroche/modules-global-scripts-front": "workspace:*",
+    "@clabroche/modules-help-front": "workspace:*",
     "@clabroche/modules-json-formatter-front": "workspace:*",
     "@clabroche/modules-jwt-front": "workspace:*",
     "@clabroche/modules-kanban-front": "workspace:*",

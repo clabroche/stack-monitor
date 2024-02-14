@@ -7,6 +7,7 @@
     "test": ""
   },
   "devDependencies": {
-    "@clabroche/common-retrigger-all-build": "workspace:*"
+    "@clabroche/common-retrigger-all-build": "workspace:*",
+    "@clabroche/modules-plugins-loader-front": "workspace:*"
   }
 }

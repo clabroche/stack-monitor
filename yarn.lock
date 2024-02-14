@@ -844,7 +844,6 @@ __metadata:
   resolution: "@clabroche/common-socket-front@workspace:common/socket-front"
   dependencies:
     "@clabroche/common-retrigger-all-build": "workspace:*"
-    axios: "npm:^1.6.7"
     socket.io-client: "npm:^4.7.4"
   peerDependencies:
     vue: ^3.2.45
@@ -906,7 +905,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@clabroche/fronts-app@workspace:*, @clabroche/fronts-app@workspace:fronts/app":
+"@clabroche/fronts-app@workspace:fronts/app":
   version: 0.0.0-use.local
   resolution: "@clabroche/fronts-app@workspace:fronts/app"
   dependencies:
@@ -930,7 +929,6 @@ __metadata:
     new-github-issue-url: "npm:^1.0.0"
     postcss: "npm:^8.4.35"
     sass: "npm:^1.70.0"
-    socket.io-client: "npm:^4.7.4"
     tippy.js: "npm:^6.3.7"
     uuid: "npm:^9.0.1"
     vite: "npm:^5.0.12"
@@ -1177,10 +1175,11 @@ __metadata:
   resolution: "@clabroche/modules-help-backend@workspace:modules/help/backend"
   dependencies:
     "@clabroche/common-retrigger-all-build": "workspace:*"
+    "@clabroche/modules-plugins-loader-front": "workspace:*"
   languageName: unknown
   linkType: soft
 
-"@clabroche/modules-help-front@workspace:modules/help/front":
+"@clabroche/modules-help-front@workspace:*, @clabroche/modules-help-front@workspace:modules/help/front":
   version: 0.0.0-use.local
   resolution: "@clabroche/modules-help-front@workspace:modules/help/front"
   dependencies:
@@ -1435,6 +1434,7 @@ __metadata:
     "@clabroche/modules-git-front": "workspace:*"
     "@clabroche/modules-github-front": "workspace:*"
     "@clabroche/modules-global-scripts-front": "workspace:*"
+    "@clabroche/modules-help-front": "workspace:*"
     "@clabroche/modules-json-formatter-front": "workspace:*"
     "@clabroche/modules-jwt-front": "workspace:*"
     "@clabroche/modules-kanban-front": "workspace:*"
@@ -1524,14 +1524,12 @@ __metadata:
   dependencies:
     "@clabroche/common-express": "workspace:*"
     "@clabroche/common-retrigger-all-build": "workspace:*"
-    "@clabroche/fronts-app": "workspace:*"
+    "@clabroche/common-socket-server": "workspace:*"
     "@clabroche/modules-plugins-loader-backend": "workspace:*"
     "@clabroche/modules-plugins-loader-front": "workspace:*"
     ansi-to-html: "npm:^0.7.2"
     bluebird: "npm:^3.7.2"
     command-exists: "npm:^1.2.9"
-    cookie-parser: "npm:^1.4.6"
-    cors: "npm:^2.8.5"
     dayjs: "npm:^1.11.10"
     debounce: "npm:^2.0.0"
     dot-object: "npm:^2.1.4"
@@ -1548,7 +1546,6 @@ __metadata:
     os-utils: "npm:0.0.14"
     pidusage-tree: "npm:^2.0.5"
     ps-tree: "npm:^1.2.0"
-    socket.io: "npm:^4.7.4"
     supertest: "npm:^6.3.4"
     uuid: "npm:^9.0.1"
   bin:
