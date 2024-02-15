@@ -1,6 +1,6 @@
 {
   "name": "@clabroche/modules-toolbox-front",
-  "version": "1.17.24",
+  "version": "1.17.29",
   "repository": "https://github.com/clabroche/stack-monitor",
   "private": true,
   "scripts": {

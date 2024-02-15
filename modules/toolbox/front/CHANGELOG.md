@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.17.29](https://github.com/clabroche/stack-monitor/compare/v1.17.28...v1.17.29) (2024-02-15)
+
+### Bug Fixes
+
+* **theme:** add black theme ([bee4697](https://github.com/clabroche/stack-monitor/commit/bee469731be182ac929298dc13fe1c230eccb7ba))
+
 ## [1.17.24](https://github.com/clabroche/stack-monitor/compare/v1.17.23...v1.17.24) (2024-02-11)
 
 ### Bug Fixes
