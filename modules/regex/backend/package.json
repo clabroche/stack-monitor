@@ -1,6 +1,6 @@
 {
   "name": "@clabroche/modules-regex-backend",
-  "version": "1.17.29",
+  "version": "1.17.30",
   "repository": "https://github.com/clabroche/stack-monitor",
   "private": true,
   "scripts": {

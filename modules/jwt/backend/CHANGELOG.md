@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.17.30](https://github.com/clabroche/stack-monitor/compare/v1.17.29...v1.17.30) (2024-02-19)
+
+**Note:** Version bump only for package @clabroche/modules-jwt-backend
+
 ## [1.17.29](https://github.com/clabroche/stack-monitor/compare/v1.17.28...v1.17.29) (2024-02-15)
 
 **Note:** Version bump only for package @clabroche/modules-jwt-backend

@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.17.30](https://github.com/clabroche/stack-monitor/compare/v1.17.29...v1.17.30) (2024-02-19)
+
+### Bug Fixes
+
+* **documentation:** add a global documentation ([0ef6b0f](https://github.com/clabroche/stack-monitor/commit/0ef6b0f15760d06380e9d7df3fc9c3a0393305d5))
+* **documentation:** add documentation for documentation ([6290ce7](https://github.com/clabroche/stack-monitor/commit/6290ce7fc6aa070c1fb0f99e0cd815e5f51391b1))
+* **documentation:** deployment for doc ([acacca6](https://github.com/clabroche/stack-monitor/commit/acacca68f431eb78a9852d67191ab454c1d59e4b))
+
 ## [1.17.29](https://github.com/clabroche/stack-monitor/compare/v1.17.28...v1.17.29) (2024-02-15)
 
 ### Bug Fixes
