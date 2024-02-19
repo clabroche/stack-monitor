@@ -1,6 +1,6 @@
 {
   "name": "@clabroche/servers-server",
-  "version": "1.17.30",
+  "version": "1.18.0",
   "private": true,
   "description": "Monitor processes as a stack",
   "git": "https://github.com/clabroche/stack-monitor",

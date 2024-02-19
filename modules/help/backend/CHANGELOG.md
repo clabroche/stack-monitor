@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.18.0](https://github.com/clabroche/stack-monitor/compare/v1.17.30...v1.18.0) (2024-02-19)
+
+**Note:** Version bump only for package @clabroche/modules-help-backend
+
 ## [1.17.30](https://github.com/clabroche/stack-monitor/compare/v1.17.29...v1.17.30) (2024-02-19)
 
 **Note:** Version bump only for package @clabroche/modules-help-backend

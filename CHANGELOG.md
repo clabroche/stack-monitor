@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.18.0](https://github.com/clabroche/stack-monitor/compare/v1.17.30...v1.18.0) (2024-02-19)
+
+### Bug Fixes
+
+* **documentation:** deployment for doc ([fb7dd7f](https://github.com/clabroche/stack-monitor/commit/fb7dd7f1f93c6e0dbaf9e17047b2e7c5b880a7e4))
+
+### Features
+
+* **swagger:** can read an opoenapi url from service ([481b543](https://github.com/clabroche/stack-monitor/commit/481b54305b2606f6f360287b17a4b4270a99eb3d))
+
 ## [1.17.30](https://github.com/clabroche/stack-monitor/compare/v1.17.29...v1.17.30) (2024-02-19)
 
 ### Bug Fixes
