@@ -54,7 +54,22 @@ const stack = (stackMonitor) => ({
           HTTP_PORT: '5459',
         },
       },
-    }, 
+    }, {
+      label: 'Docs',
+      groups: [groups.ui],
+      git: {
+        home: 'https://github.com/clabroche/stack-monitor',
+        remote: 'git@github.com:clabroche/stack-monitor.git',
+      },
+      url: 'http://localhost:5174',
+      spawnCmd: 'npm',
+      spawnArgs: ['run serve'],
+      spawnOptions: {
+        cwd: pathfs.resolve(__dirname, './fronts/docs'),
+        env: {
+        },
+      },
+    },
   ],
 });
 

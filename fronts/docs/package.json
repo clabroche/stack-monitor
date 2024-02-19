@@ -10,8 +10,8 @@
     "url": "https://corentinlabroche.fr/"
   },
   "scripts": {
-    "serve": "vitepress dev docs",
-    "build": "vitepress build docs",
+    "serve": "vitepress dev",
+    "build": "vitepress build",
     "test": ""
   },
   "main": "./background.js",

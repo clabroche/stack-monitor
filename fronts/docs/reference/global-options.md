@@ -97,3 +97,20 @@ You could helped by types in
 ```js [js]
 import('@iryu54/stack-monitor').Parser
 ```
+
+
+## documentation
+type: string,required: false
+
+Path to your documentation files. Place all your md files in it and it will appear on the home page
+
+```js [js]
+const pathfs = require('path')
+
+module.exports = (stackMonitor) => {
+  return {
+    //...
+    documentation: pathfs.resolve(__dirname, './documentations/my-service')
+  }
+}
+```
