@@ -45,6 +45,8 @@ class Service {
     /** @type {string} */
     this.documentation = service.documentation || '';
     /** @type {string} */
+    this.openapiURL = service.openapiURL || '';
+    /** @type {string} */
     this.url = service.url || '';
     /** @type {string[]} */
     this.urls = service.urls || [];

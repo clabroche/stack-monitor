@@ -32,6 +32,7 @@
     "fast-sort": "^3.4.0",
     "highlight.js": "^11.9.0",
     "markdown-it": "^14.0.0",
+    "swagger-ui": "^5.11.7",
     "uuid": "^9.0.1"
   },
   "devDependencies": {

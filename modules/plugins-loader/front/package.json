@@ -37,6 +37,7 @@
     "@clabroche/modules-node-repl-front": "workspace:*",
     "@clabroche/modules-npm-front": "workspace:*",
     "@clabroche/modules-openai-front": "workspace:*",
+    "@clabroche/modules-openapi-front": "workspace:*",
     "@clabroche/modules-regex-front": "workspace:*",
     "@clabroche/modules-toolbox-front": "workspace:*",
     "@clabroche/modules-uuid-front": "workspace:*",

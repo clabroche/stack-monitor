@@ -17,6 +17,7 @@ import Documentation from '@clabroche/modules-documentation-front/src/Index.vue'
 import DevOps from '@clabroche/modules-dev-ops-front/src/Index.vue';
 import Github from '@clabroche/modules-github-front/src/Index.vue';
 import Kanban from '@clabroche/modules-kanban-front/src/Index.vue';
+import OpenApi from '@clabroche/modules-openapi-front/src/Index.vue';
 import GlobalScripts from '@clabroche/modules-global-scripts-front/src/Index.vue';
 import Finder from '@clabroche/modules-finder-front/src/Index.vue';
 import Help from '@clabroche/modules-help-front/src/Index.vue';
@@ -24,6 +25,7 @@ import DynamicComponent from './DynamicComponent.vue';
 
 const toolboxPlugins = [
   { name: 'JWT', component: JWT },
+  { name: 'OpenApi', component: OpenApi },
   { name: 'Finder', component: Finder },
   { name: 'Git-NotUpToDate', component: NotUpToDate },
   { name: 'Regex', component: Regex },
@@ -80,6 +82,7 @@ const plugins = [
     ],
   })),
   { name: 'Help', cmp: Help },
+  { name: 'OpenApi', cmp: OpenApi },
   { name: 'Logs', cmp: LogsVue },
   { name: 'Git', cmp: GitVue },
   { name: 'Github', cmp: Github },

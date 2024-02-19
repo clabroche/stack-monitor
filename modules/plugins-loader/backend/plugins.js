@@ -20,4 +20,5 @@ module.exports = {
   toolbox: require('@clabroche/modules-toolbox-backend'),
   uuid: require('@clabroche/modules-uuid-backend'),
   help: require('@clabroche/modules-help-backend'),
+  openapi: require('@clabroche/modules-openapi-backend'),
 };

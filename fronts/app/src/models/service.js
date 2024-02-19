@@ -21,6 +21,8 @@ class Service {
     this.groups = service.groups || [];
     /** @type {string[]} */
     this.urls = service.urls || [];
+    /** @type {string} */
+    this.openapiURL = service.openapiURL || '';
     /**
      * @type {{
      *   home: string,

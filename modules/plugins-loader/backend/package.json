@@ -27,6 +27,7 @@
     "@clabroche/modules-node-repl-backend": "workspace:*",
     "@clabroche/modules-npm-backend": "workspace:*",
     "@clabroche/modules-openai-backend": "workspace:*",
+    "@clabroche/modules-openapi-backend": "workspace:*",
     "@clabroche/modules-regex-backend": "workspace:*",
     "@clabroche/modules-toolbox-backend": "workspace:*",
     "@clabroche/modules-uuid-backend": "workspace:*"
