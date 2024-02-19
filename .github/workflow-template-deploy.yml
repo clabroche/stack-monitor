@@ -8,6 +8,40 @@ on:
       - staging
 
 jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: "Checkout ${{ github.ref_name }}"
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'yarn'
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Build
+        run: npm run docs:build
+
+      - uses: actions/configure-pages@v2
+      - uses: actions/upload-pages-artifact@v1
+        with:
+          path: fronts/docs/.vitepress/dist
+
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v1
   publish:
     runs-on: ubuntu-latest
     env:
