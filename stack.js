@@ -19,6 +19,23 @@ const stack = (stackMonitor) => ({
   ],
   services: [
     {
+      label: 'Front',
+      description: 'This is the front Stack monitor',
+      groups: [groups.ui],
+      git: {
+        home: 'https://github.com/clabroche/stack-monitor',
+        remote: 'git@github.com:clabroche/stack-monitor.git',
+      },
+      url: 'http://localhost:5173',
+      spawnCmd: 'yarn vite',
+      spawnOptions: {
+        cwd: pathfs.resolve(__dirname, './fronts/app'),
+        env: {
+          NODE_ENV: 'DEV',
+          VITE_HTTP_PORT: '5459',
+        },
+      },
+    }, {
       label: 'Server',
       description: 'This is the backend Stack monitor',
       groups: [groups.api],
@@ -37,24 +54,7 @@ const stack = (stackMonitor) => ({
           HTTP_PORT: '5459',
         },
       },
-    }, {
-      label: 'Front',
-      description: 'This is the front Stack monitor',
-      groups: [groups.ui],
-      git: {
-        home: 'https://github.com/clabroche/stack-monitor',
-        remote: 'git@github.com:clabroche/stack-monitor.git',
-      },
-      url: 'http://localhost:5173',
-      spawnCmd: 'yarn vite',
-      spawnOptions: {
-        cwd: pathfs.resolve(__dirname, './fronts/app'),
-        env: {
-          NODE_ENV: 'DEV',
-          VITE_HTTP_PORT: '5459',
-        },
-      },
-    },
+    }, 
   ],
 });
 

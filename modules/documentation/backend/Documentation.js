@@ -39,43 +39,43 @@ async function walker(rootPath, pathToExplore, stripPath, leafs = []) {
 const Documentation = (stackMonitor) => ({
   /**
      * @param {string} path
-     * @param {import('@clabroche/common-typings').Service} service
+     * @param {string} documentationPath
      * @param {import('./index').Leaf[]} leafs
      */
-  getTree(path, service, leafs = []) {
+  getTree(path, documentationPath, leafs = []) {
     return walker(
-      pathfs.resolve(service.documentation),
+      documentationPath,
       path,
-      (path) => path.replace(pathfs.resolve(service.documentation), '.'),
+      (path) => path.replace(documentationPath, '.'),
       leafs,
     );
   },
   /**
      * @param {string} path
-     * @param {import('@clabroche/common-typings').Service} service
+     * @param {string} documentationPath
      */
-  async getFlatFiles(path, service) {
+  async getFlatFiles(path, documentationPath) {
     /** @type {import('./index').Leaf[]} */
     const leafs = [];
-    await this.getTree(path, service, leafs);
+    await this.getTree(path, documentationPath, leafs);
     return leafs;
   },
 
   /**
      * @param {string} path
-     * @param {import('@clabroche/common-typings').Service} service
+     * @param {string} documentationPath
      */
-  readFile(path, service) {
-    return fse.readFile(pathfs.resolve(service.documentation, path), { encoding: 'utf-8' });
+  readFile(path, documentationPath) {
+    return fse.readFile(pathfs.resolve(documentationPath, path), { encoding: 'utf-8' });
   },
   /**
      * @param {string} path
-     * @param {import('@clabroche/common-typings').Service} service
+     * @param {string} documentationPath
      * @param {string} page
      */
-  async writeFile(path, service, page) {
-    await fse.writeFile(pathfs.resolve(service.documentation, path), page, { encoding: 'utf-8' });
-    return fse.readFile(pathfs.resolve(service.documentation, path), { encoding: 'utf-8' });
+  async writeFile(path, documentationPath, page) {
+    await fse.writeFile(pathfs.resolve(documentationPath, path), page, { encoding: 'utf-8' });
+    return fse.readFile(pathfs.resolve(documentationPath, path), { encoding: 'utf-8' });
   },
 });
 module.exports = Documentation;

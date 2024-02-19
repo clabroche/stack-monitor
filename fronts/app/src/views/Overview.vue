@@ -1,7 +1,6 @@
 <template>
   <div class="overview-root column">
     <SectionCmp class="home-container">
-      
       <h2><i class="fas fa-home"></i>Mes services</h2>
       <ul>
         <li v-for="service of services" :key="service.label" class="service" :class="{enabled: service.enabled}">
@@ -12,20 +11,31 @@
       </ul>
     </SectionCmp>
     <StackChooser class="stack-chooser" :embed="true"></StackChooser>
+
+    <Documentation v-if="docEnabled" class="doc-container"></Documentation>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, watch, computed } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import SectionCmp from '../components/Section.vue'
 import stack from '../models/stack'
 import StackChooser from '../components/StackChooser.vue'
 import Spinner from '../components/Spinner.vue';
+import axios from '../helpers/axios';
 
 /** @type {import('vue').Ref<import('../models/service').default[]>} */
 const services = computed(() => {
   return stack.services.value.slice().sort((a,b) => b.enabled - a.enabled)
 })
+
+const docEnabled = ref(false)
+
+onMounted(async () => {
+  const { data } = await axios.get(`/documentation/service/global/is-available`);
+  docEnabled.value = !!data
+})
+
 </script>
 
 <style lang="scss" scoped>
@@ -36,6 +46,7 @@ const services = computed(() => {
   height: 100%;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(2, 1fr);
   grid-gap: 10px;
 
 
@@ -43,6 +54,7 @@ const services = computed(() => {
     width: 100%;
     height: 100%;
     min-width: 100px;
+    overflow: auto;
   }
   .column {
     display: flex;
@@ -54,7 +66,6 @@ const services = computed(() => {
     grid-column: 1 / span 1;
     grid-row: 1;
     min-width: 300px;
-    height: max-content;
     justify-content: center;
     max-height: 50vh;
     h1 {
@@ -78,6 +89,12 @@ const services = computed(() => {
         gap: 10px;
       }
     }
+  }
+
+  .doc-container {
+    display: flex;
+    grid-column: 1 / span 3;
+    grid-row: 2;
   }
   
   .stack-chooser {

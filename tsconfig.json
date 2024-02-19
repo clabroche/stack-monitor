@@ -15,10 +15,14 @@
     "outDir": "dist",
     "strict": true,
     "noEmit": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "types": []
   },
   "exclude": [
-    "**/*node_modules",
+    ".yarn/cache",
+    "node_modules",
+    "node_modules/*",
+    "**/*/node_modules",
     "**/*dist",
     "./.eslintrc.js"
   ],

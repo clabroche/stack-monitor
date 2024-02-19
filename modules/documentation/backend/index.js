@@ -21,7 +21,7 @@ const plugin = {
   finder: async (search, stackMonitor) => {
     const services = stackMonitor.getServices()?.filter((/** @type {any} */s) => s.documentation);
     const servicesFiles = (await PromiseB.map(services, async (service) => {
-      const files = await stackMonitor.documentation.getFlatFiles('.', service);
+      const files = await stackMonitor.documentation.getFlatFiles('.', service.documentation);
       return PromiseB.filter(files, (leaf) => !leaf.isDir)?.map(async (path) => {
         const content = path.path && await readFile(pathfs.resolve(service.documentation, path.path), { encoding: 'utf-8' }).catch(console.error);
         return { service, path, content };
@@ -49,6 +49,7 @@ module.exports = plugin;
  *  isDir: boolean,
  *  path: string,
  *  ext: string,
+ *  opened: boolean,
  *  children:Leaf[] | null
  * }} Leaf
  */

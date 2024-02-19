@@ -12,6 +12,24 @@ export type PartialPick<T,M> = Partial<Pick<T, M>>
 export type FunctionProperties<T> = PartialPick<T, FunctionPropertyNames<T>>;
 export type NonFunctionProperties<T> = PartialPick<T, NonFunctionPropertyNames<T>>;
 
+
+type addPrefix<TKey, TPrefix extends string> = TKey extends string
+  ? `${TPrefix}${TKey}`
+  : never;
+
+type removePrefix<TPrefixedKey, TPrefix extends string> = TPrefixedKey extends addPrefix<infer TKey, TPrefix>
+  ? TKey
+  : '';
+
+type prefixedValue<TObject extends object, TPrefixedKey extends string, TPrefix extends string> = TObject extends {[K in removePrefix<TPrefixedKey, TPrefix>]: infer TValue}
+  ? TValue
+  : never;
+
+
+export type addPrefixToObject<TObject extends object, TPrefix extends string> = {
+  [K in addPrefix<keyof TObject, TPrefix>]: prefixedValue<TObject, K, TPrefix>
+} 
+
 export interface FieldDescriptior {
   field: string,
   type: 'string' | 'number' | 'boolean' | 'objectId'
@@ -112,7 +130,7 @@ import type {
 //= ==== Npm ==========
 import type {
   OpenAiChat as _OpenAiChat,
-} from '../../../modules/openai/backend';
+} from '../../../modules/openai/backend/index.js';
 
 //= ==== Fs ==========
 import type {
@@ -127,7 +145,7 @@ export type {
   StackFunction,
   Environment,
   StackWithPlugins as StackMonitor,
-} from '../../../servers/server/models/stack';
+} from '../../../servers/server/models/stack.js';
 
 export type {
   SpawnOptions,

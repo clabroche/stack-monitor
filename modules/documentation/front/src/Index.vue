@@ -1,14 +1,14 @@
 <template>
   <section-cmp
     class="configs-root"
-    v-if="service" :key="service.label">
+    :key="service?.label || 'global'">
     <div class="header">
       <h2>Documentation</h2>
     </div>
     <div class="container">
-      <Tree :tree="tree" @go="goTo" :activeLeaf="activeLeaf"></Tree>
+      <Tree class="tree" :tree="tree" @go="goTo" :activeLeaf="activeLeaf"></Tree>
       <div class="markdown">
-        <Markdown :modelValue="currentPage" @update:modelValue="updateCurrentPage"/>
+        <Markdown :key="activeLeaf?.path" :modelValue="currentPage" @update:modelValue="updateCurrentPage"/>
       </div>
     </div>
   </section-cmp>
@@ -28,7 +28,6 @@ const route = useRoute();
 const props = defineProps({
   service: {
     default: null,
-    required: true,
     type: Service,
   },
 });
@@ -41,11 +40,11 @@ const flatTree = ref([]);
 const currentPage = ref(undefined);
 /** @type {import('vue').Ref<Leaf | null | undefined>} */
 const activeLeaf = ref(null);
-
+const label = ref(props.service?.label || 'global');
 /** @param {*} page */
 async function updateCurrentPage(page) {
   if (!activeLeaf.value?.path) return;
-  const { data } = await axios.post(`/documentation/service/${props.service.label}/${encodeURIComponent(activeLeaf.value.path)}`, { page });
+  const { data } = await axios.post(`/documentation/service/${label.value}/${encodeURIComponent(activeLeaf.value.path)}`, { page });
   currentPage.value = data;
 }
 
@@ -56,8 +55,8 @@ watch(() => route.query.leaf, () => {
 });
 
 onMounted(async () => {
-  const { data } = await axios.get(`/documentation/service/${props.service.label}`);
-  const { data: flat } = await axios.get(`/documentation/service/${props.service.label}/flat`);
+  const { data } = await axios.get(`/documentation/service/${label.value}`);
+  const { data: flat } = await axios.get(`/documentation/service/${label.value}/flat`);
   flatTree.value = flat;
   tree.value = data;
   if (!currentPage.value) {
@@ -80,7 +79,7 @@ onMounted(async () => {
 async function goTo(leaf) {
   activeLeaf.value = leaf;
   currentPage.value = undefined;
-  const { data } = await axios.get(`/documentation/service/${props.service.label}/${encodeURIComponent(leaf.path)}`);
+  const { data } = await axios.get(`/documentation/service/${label.value}/${encodeURIComponent(leaf.path)}`);
   currentPage.value = data;
 }
 
@@ -92,10 +91,17 @@ async function goTo(leaf) {
 h2 {
   margin-top: 0;
 }
+.tree {
+  width: 200px;
+}
+.container {
+  display: flex;
+  overflow: auto;
+}
 .markdown {
   background-color: #fff;
   border-radius: 10px;
-  padding: 10px;
+  padding: 0 10px;
   box-sizing: border-box;
   height: 100%;
   overflow: auto;

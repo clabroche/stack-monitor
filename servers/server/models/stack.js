@@ -73,6 +73,8 @@ class Stack {
     this.logParsers = stack.logParsers || [];
     /** @type {boolean} */
     this.monorepo = stack.monorepo || false;
+    /** @type {string | undefined} */
+    this.documentation = stack.documentation;
     /** @type {Service[]} */
     this.services = (stack.services || []).map((service) => (
       new Service(service, /** @type {StackWithPlugins} */(Stack))
