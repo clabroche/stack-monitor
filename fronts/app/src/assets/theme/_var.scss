@@ -1,0 +1,11 @@
+:root {
+  --fontSize: 1em;
+  --BgColor: 70, 108, 128;
+  --BgColorAccent: 44, 62, 80;
+  --BgColorAccentGradient: 80, 138, 177;
+  --headerBgColor: rgb(var(--BgColor));
+  --headerBgColorAccent: rgb(var(--BgColorAccent));
+  --headerBgColorAccentGradient: rgb(var(--BgColorAccentGradient));
+  --headerTextColor: white;
+  --headerTextColorAccent: white;
+}

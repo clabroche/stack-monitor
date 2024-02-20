@@ -149,6 +149,7 @@ $shadow: rgb(165, 177, 179);
     .action.active {
       background: none;
       background-color: green;
+      box-shadow: none;
     }
   }
   .content {

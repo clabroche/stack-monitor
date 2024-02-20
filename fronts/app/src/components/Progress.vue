@@ -34,7 +34,7 @@ export default {
   height: 10px;
   width: 100%;
   border-radius: 4px;
-  background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.05));
+  background-image: linear-gradient(to bottom, var(--system-accent-backgroundColor1), var(--system-accent-backgroundColor1-darkest));
   transform: translateZ(0);
   transform-origin: left;
   transition: 0.4s linear;  

@@ -55,7 +55,7 @@ const isActive = computed(() => {
     transition: 300ms
   }
   &:hover {
-    background-color: #eee;
+    background-color: var(--system-secondary-backgroundColor);
     i {
       opacity: 1;
     }
@@ -65,7 +65,7 @@ const isActive = computed(() => {
     border-left: 3px solid #194f91
   }
   &.disabled {
-    color: #999;
+    color: var(--system-tertiary-color);
   }
   &.crashed {
     color: red;

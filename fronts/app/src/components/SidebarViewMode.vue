@@ -17,8 +17,8 @@
         :adjustTitleTop="-5"
         :adjustSubtitleTop="-11"
         :padding="14"
-        strokeColor="#e900ff"
-        strokeColorBg="#761e7e"/>
+        strokeColor="var(--system-accent-backgroundColor3-lightest)"
+        strokeColorBg="var(--system-accent-backgroundColor1)"/>
       <doughtnut-chart
         placeholder="RAM"
         :width="'10px'"
@@ -31,8 +31,8 @@
         :adjustSubtitleLeft="-2"
         :adjustTitleTop="-5"
         :padding="14"
-        strokeColor="#00f7ff"
-        strokeColorBg="#2db7d0"/>
+        strokeColor="var(--system-accent-backgroundColor3-tertiary-lightest)"
+        strokeColorBg="var(--system-accent-backgroundColor1-tertiary)"/>
       <Popover appendTo="parent" trigger="mouseenter" placement="right" :showOnCreate="false">
         <template #trigger>
           <sidebar-view-mode-item key="Themes" :button="{
@@ -48,10 +48,10 @@
               @click="Theme.apply(theme.label)"
             >
               <div class="background" :style="theme.theme.preview.background">
-                <div class="foreground foreground-1" :style="theme.theme.preview.foreground1"></div>
-                <div class="foreground foreground-2" :style="theme.theme.preview.foreground2 || theme.theme.preview.foreground1"></div>
-                <div class="foreground foreground-3" :style="theme.theme.preview.foreground3 || theme.theme.preview.foreground1"></div>
                 <div class="foreground foreground-4" :style="theme.theme.preview.foreground4 || theme.theme.preview.foreground1"></div>
+                <div class="foreground foreground-3" :style="theme.theme.preview.foreground3 || theme.theme.preview.foreground1"></div>
+                <div class="foreground foreground-2" :style="theme.theme.preview.foreground2 || theme.theme.preview.foreground1"></div>
+                <div class="foreground foreground-1" :style="theme.theme.preview.foreground1"></div>
               </div>
             </div>
           </div>
@@ -214,12 +214,15 @@ export default {
       }
 
       .foreground-1 {
+        height: 10px;
         transform: rotate(45deg);
       }
       .foreground-2 {
+        height: 5px;
         transform: rotate(90deg);
       }
       .foreground-3 {
+        height: 3px;
         transform: rotate(135deg);
       }
       .foreground-4 {

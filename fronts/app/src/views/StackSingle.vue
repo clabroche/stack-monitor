@@ -277,6 +277,9 @@ export default {
         max-width: 100px;
       }
     }
+    button {
+      box-shadow: none;
+    }
     .hovered {
       position: absolute;
       top: 0;

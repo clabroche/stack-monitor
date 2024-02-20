@@ -8,11 +8,17 @@ class Theme {
         rules: {
           system: { backgroundColor: '#f2f4f7', color: '#4c4c4c' },
           'system.terminal': { backgroundColor: '#ffffff00', color: '#4c4c4c', contrastRatio: 7 },
-          'system.accents': { backgroundColor: '#eaebed', color: '#4a5361' },
+          'system.secondary': { backgroundColor: '#eaebed', color: '#4a5361' },
+          'system.tertiary': { color: '#999' },
+          'system.accent': {
+            backgroundColor1: 'rgb(168, 38, 180)',
+            backgroundColor2: 'rgb(157, 27, 209)',
+            backgroundColor3: 'rgb(211, 22, 229)',
+          },
           'system.border': { borderColor: '#dbdbdb' },
           'system.sidebar': { backgroundColor: 'white' },
           'system.secondary-sidebar': { backgroundColor: 'white' },
-          'system.sections': { backgroundColor: 'white', innerShadow: '#f7f7f7' },
+          'system.sections': { backgroundColor: '#f7f7f7', innerShadow: '#eee' },
           'git.badge': { backgroundColor: '#b1b1b1', color: 'white' },
           jsonviewer: {
             keyColor: '#0977e6',
@@ -20,50 +26,113 @@ class Theme {
           },
         },
       },
+      /** ==================================== */
       light: {
         public: true,
+        base: 'base',
         preview: {
-          background: {
-            backgroundColor: '#f2f4f7',
-          },
-          foreground1: {
-            backgroundColor: '#074971',
-          },
-          foreground2: {
-            backgroundColor: 'rgb(0, 247, 255)',
-          },
-          foreground3: {
-            backgroundColor: 'rgb(211, 22, 229)',
-          },
-          foreground4: {
-            backgroundColor: 'rgb(229, 139, 22)',
+          background: { backgroundColor: '#f2f4f7' },
+          foreground1: { backgroundColor: 'rgb(168, 38, 180)' },
+          foreground2: { backgroundColor: 'rgb(10 ,206 ,213)' },
+          foreground3: { backgroundColor: 'rgb(211, 22, 229)' },
+          foreground4: { backgroundColor: 'rgb(229, 139, 22)' },
+        },
+        rules: {
+          'system.accent': {
+            backgroundColor1: 'rgb(168, 38, 180)',
+            backgroundColor2: 'rgb(157, 27, 209)',
+            backgroundColor3: 'rgb(211, 22, 229)',
+
+            'backgroundColor1-secondary': 'rgb(255, 123, 0)',
+            'backgroundColor2-secondary': 'rgb(229, 156, 45)',
+            'backgroundColor3-secondary': 'rgb(229, 139, 22)',
+
+            'backgroundColor1-tertiary': 'rgb(47, 161, 182)',
+            'backgroundColor2-tertiary': 'rgb(10 ,206 ,213)',
+            'backgroundColor3-tertiary': 'rgb(47, 161, 182)',
           },
         },
-        base: 'base',
       },
+      lightOrange: {
+        public: true,
+        base: 'light',
+        preview: {
+          background: { backgroundColor: '#f2f4f7' },
+          foreground1: { backgroundColor: 'rgb(255, 123, 0)' },
+          foreground2: { backgroundColor: 'rgb(10 ,206 ,213)' },
+          foreground3: { backgroundColor: 'rgb(211, 22, 229)' },
+          foreground4: { backgroundColor: 'rgb(229, 139, 22)' },
+        },
+        rules: {
+          'system.accent': {
+            'backgroundColor1-tertiary': 'rgb(168, 38, 180)',
+            'backgroundColor2-tertiary': 'rgb(157, 27, 209)',
+            'backgroundColor3-tertiary': 'rgb(211, 22, 229)',
+
+            backgroundColor1: 'rgb(255, 123, 0)',
+            backgroundColor2: 'rgb(229, 156, 45)',
+            backgroundColor3: 'rgb(229, 139, 22)',
+
+            'backgroundColor1-secondary': 'rgb(47, 161, 182)',
+            'backgroundColor2-secondary': 'rgb(10 ,206 ,213)',
+            'backgroundColor3-secondary': 'rgb(47, 161, 182)',
+          },
+        },
+      },
+      lightBlue: {
+        public: true,
+        base: 'light',
+        preview: {
+          background: { backgroundColor: '#f2f4f7' },
+          foreground1: { backgroundColor: 'rgb(47, 161, 182)' },
+          foreground2: { backgroundColor: 'rgb(10 ,206 ,213)' },
+          foreground3: { backgroundColor: 'rgb(211, 22, 229)' },
+          foreground4: { backgroundColor: 'rgb(229, 139, 22)' },
+        },
+        rules: {
+          'system.accent': {
+            'backgroundColor1-secondary': 'rgb(168, 38, 180)',
+            'backgroundColor2-secondary': 'rgb(157, 27, 209)',
+            'backgroundColor3-secondary': 'rgb(211, 22, 229)',
+
+            'backgroundColor1-tertiary': 'rgb(255, 123, 0)',
+            'backgroundColor2-tertiary': 'rgb(229, 156, 45)',
+            'backgroundColor3-tertiary': 'rgb(229, 139, 22)',
+
+            backgroundColor1: 'rgb(47, 161, 182)',
+            backgroundColor2: 'rgb(10 ,206 ,213)',
+            backgroundColor3: 'rgb(47, 161, 182)',
+          },
+        },
+      },
+      /** ==================================== */
       dark: {
         public: true,
-        preview: {
-          background: {
-            backgroundColor: 'black',
-          },
-          foreground1: {
-            backgroundColor: '#074971',
-          },
-          foreground2: {
-            backgroundColor: 'rgb(0, 247, 255)',
-          },
-          foreground3: {
-            backgroundColor: 'rgb(211, 22, 229)',
-          },
-          foreground4: {
-            backgroundColor: 'rgb(229, 139, 22)',
-          },
-        },
         base: 'light',
+        preview: {
+          background: { backgroundColor: 'black' },
+          foreground1: { backgroundColor: 'rgb(168, 38, 180)' },
+          foreground2: { backgroundColor: 'rgb(10 ,206 ,213)' },
+          foreground3: { backgroundColor: 'rgb(211, 22, 229)' },
+          foreground4: { backgroundColor: 'rgb(229, 139, 22)' },
+        },
         rules: {
           system: { backgroundColor: '#313338', color: '#ddd' },
-          'system.accents': { backgroundColor: '#2b2d31', color: '#ddd' },
+          'system.secondary': { backgroundColor: '#2b2d31', color: '#ddd' },
+          'system.tertiary': { color: '#999' },
+          'system.accent': {
+            backgroundColor1: 'rgb(168, 38, 180)',
+            backgroundColor2: 'rgb(157, 27, 209)',
+            backgroundColor3: 'rgb(211, 22, 229)',
+
+            'backgroundColor1-secondary': 'rgb(255, 123, 0)',
+            'backgroundColor2-secondary': 'rgb(229, 156, 45)',
+            'backgroundColor3-secondary': 'rgb(229, 139, 22)',
+
+            'backgroundColor1-tertiary': 'rgb(47, 161, 182)',
+            'backgroundColor2-tertiary': 'rgb(10 ,206 ,213)',
+            'backgroundColor3-tertiary': 'rgb(47, 161, 182)',
+          },
           'system.terminal': { backgroundColor: '#00000000', color: '#ddd', contrastRatio: 7 },
           'system.border': { borderColor: '#444' },
           'system.sidebar': { backgroundColor: '#1e1f22' },
@@ -73,6 +142,58 @@ class Theme {
           jsonviewer: {
             keyColor: '#0977e6',
             valueKeyColor: '#64a9ba',
+          },
+        },
+      },
+      darkOrange: {
+        public: true,
+        base: 'dark',
+        preview: {
+          background: { backgroundColor: 'black' },
+          foreground1: { backgroundColor: 'rgb(255, 123, 0)' },
+          foreground2: { backgroundColor: 'rgb(10 ,206 ,213)' },
+          foreground3: { backgroundColor: 'rgb(211, 22, 229)' },
+          foreground4: { backgroundColor: 'rgb(229, 139, 22)' },
+        },
+        rules: {
+          'system.accent': {
+            'backgroundColor1-tertiary': 'rgb(168, 38, 180)',
+            'backgroundColor2-tertiary': 'rgb(157, 27, 209)',
+            'backgroundColor3-tertiary': 'rgb(211, 22, 229)',
+
+            backgroundColor1: 'rgb(255, 123, 0)',
+            backgroundColor2: 'rgb(229, 156, 45)',
+            backgroundColor3: 'rgb(229, 139, 22)',
+
+            'backgroundColor1-secondary': 'rgb(47, 161, 182)',
+            'backgroundColor2-secondary': 'rgb(10 ,206 ,213)',
+            'backgroundColor3-secondary': 'rgb(47, 161, 182)',
+          },
+        },
+      },
+      darkBlue: {
+        public: true,
+        base: 'dark',
+        preview: {
+          background: { backgroundColor: 'black' },
+          foreground1: { backgroundColor: 'rgb(47, 161, 182)' },
+          foreground2: { backgroundColor: 'rgb(10 ,206 ,213)' },
+          foreground3: { backgroundColor: 'rgb(211, 22, 229)' },
+          foreground4: { backgroundColor: 'rgb(229, 139, 22)' },
+        },
+        rules: {
+          'system.accent': {
+            'backgroundColor1-secondary': 'rgb(168, 38, 180)',
+            'backgroundColor2-secondary': 'rgb(157, 27, 209)',
+            'backgroundColor3-secondary': 'rgb(211, 22, 229)',
+
+            'backgroundColor1-tertiary': 'rgb(255, 123, 0)',
+            'backgroundColor2-tertiary': 'rgb(229, 156, 45)',
+            'backgroundColor3-tertiary': 'rgb(229, 139, 22)',
+
+            backgroundColor1: 'rgb(47, 161, 182)',
+            backgroundColor2: 'rgb(10 ,206 ,213)',
+            backgroundColor3: 'rgb(47, 161, 182)',
           },
         },
       },
@@ -116,7 +237,6 @@ class Theme {
   }
 
   apply(_theme) {
-    console.log('apply', _theme);
     localStorage.setItem('currentTheme', _theme);
     const theme = this.buildTheme(_theme);
     this.currentTheme = _theme;
@@ -128,6 +248,10 @@ class Theme {
         const cssVariable = `--${rule.replaceAll('.', '-')}-${cssRule}`;
         const value = cssRules[cssRule];
         setCssVariable(cssVariable, value);
+        setCssVariable(`${cssVariable}-darker`, this.lighter(-0.3, value));
+        setCssVariable(`${cssVariable}-darkest`, this.lighter(-0.5, value));
+        setCssVariable(`${cssVariable}-lighter`, this.lighter(0.3, value));
+        setCssVariable(`${cssVariable}-lightest`, this.lighter(0.5, value));
       });
     });
   }

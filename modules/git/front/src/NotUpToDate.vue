@@ -324,8 +324,8 @@ tr {
 }
 select {
   width: 100%;
-  background-color: var(--system-accents-backgroundColor);
-  color: var(--system-accents-color);
+  background-color: var(--system-secondary-backgroundColor);
+  color: var(--system-secondary-color);
 }
 button.small {
   width: max-content;

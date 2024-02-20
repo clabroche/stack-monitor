@@ -1,0 +1,59 @@
+button {
+  padding: 10px;
+  margin: 3px;
+  border-radius: 4px;
+  @include card-darker();
+  color: white;
+  font-weight: bold;
+  border: none;
+  transition: 300ms;
+  cursor: pointer;
+  transition: 300ms;
+
+  &:hover {
+    @include card-darkest();
+  }
+
+  &.bordered {
+    border: 1px solid #074971;
+    color: #074971;
+    background: none;
+  }
+
+  &.small {
+    padding: 5px;
+    font-size: 0.7em;
+    width: 100px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+
+    i {
+      margin-right: 5px;
+    }
+
+    .text {
+      flex-grow: 1;
+      text-align: center;
+    }
+  }
+}
+
+button.success {
+  background-color: #41d143;
+
+  &:hover {
+    background-color: #258d27;
+  }
+}
+
+button[disabled] {
+  background: none;
+  color: #a1a1a1;
+  box-shadow: none;
+  border: 1px solid #a1a1a1;
+
+  &:hover {
+    box-shadow: none;
+  }
+}

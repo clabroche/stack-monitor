@@ -94,21 +94,6 @@ defineExpose({
 
 <style lang="scss" scoped>
 
-@mixin card($mainColor, $secondaryColor, $shadow) {
-  background: $mainColor;
-  background: linear-gradient(93deg, $mainColor 0%, $secondaryColor 100%);
-  color: white;
-  box-shadow:
-    0 0 5px 0 $shadow;
-  &::before, &::after {
-    box-shadow:
-      inset 0 0 50px $mainColor,
-      inset -20px 0 300px $mainColor,
-      0 0 50px #fff,
-      -10px 0 80px $mainColor,
-      10px 0 80px $mainColor;
-  }
-}
 .tabs {
   margin-top: 10px;
   display: flex;
@@ -137,7 +122,7 @@ defineExpose({
           background-color: rgba(0,0,0,0.5);
           color: white;
           border: 0;
-          @include card(rgb(168, 38, 180), rgb(157, 27, 209), rgb(211, 22, 229))
+          @include card()
         }
       }
     }
@@ -154,14 +139,14 @@ defineExpose({
   flex-shrink: 0;
   width: max-content;
   gap: 5px;
-  background-color: var(--system-backgroundColor);
+  background-color: var(--system-sections-backgroundColor);
   z-index: 1;
   border: 1px solid var(--system-border-borderColor);
   button {
     position: relative;
     outline: none;
     margin: 0;
-    color: var(--system-color);
+    color: var(--system-tertiary-color);
     transition: 200ms;
     border-bottom: 0;
     height: 40px;
@@ -178,7 +163,7 @@ defineExpose({
     &.active {
       border-radius: 0;
       color: #777;
-      @include card(rgb(168, 38, 180), rgb(157, 27, 209), rgb(211, 22, 229))
+      @include card()
 
     }
     label {

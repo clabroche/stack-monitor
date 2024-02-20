@@ -20,7 +20,7 @@
           :stroke-dashoffset="(2 * 3.14 * rayon) * (1 - (value / 100))"
           />
         <g :class="'info info-anim-' + anim" v-if="!noSubtitle">
-          <text class='text' :x="17 + adjustSubtitleLeft" :y="rayon +13 + padding / 2  + adjustSubtitleTop" width="60" dominant-baseline="central" alignment-baseline="central" text-anchor="left" :fill="strokeColorBg"  :font-size="fontSize">
+          <text class='text' x="50%" :y="rayon +13 + padding / 2  + adjustSubtitleTop" width="70" textAlign="center" dominant-baseline="central" alignment-baseline="central" text-anchor="middle" :fill="strokeColorBg" font-weight="bold"  :font-size="fontSize">
             {{value.toFixed(0)}}%
           </text>
         </g>

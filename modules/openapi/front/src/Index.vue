@@ -7,7 +7,7 @@
 <script setup>
 import SwaggerUi from 'swagger-ui';
 import {
-  ref, onMounted, onUnmounted, nextTick,
+  ref, onMounted, onUnmounted,
 } from 'vue';
 import 'swagger-ui/dist/swagger-ui.css';
 import { v4 } from 'uuid';

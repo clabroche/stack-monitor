@@ -34,4 +34,11 @@ export default defineConfig({
       replacement: `${path.join(__dirname, 'modules')}/`,
     }],
   },
+  css: {
+    preprocessorOptions: {
+      scss: {
+        additionalData: '@import "./src/assets/theme/_mixin";',
+      },
+    },
+  },
 });

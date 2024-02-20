@@ -42,19 +42,12 @@ const isActive = computed(() => {
       opacity: 1;
     }
   }
-  &.active {
-    font-weight: bold;
-  }
-  &.disabled {
-    color: #999;
-  }
 }
 button {
   outline: none;
-  border-radius: 5px 5px 0 0;
+  border-radius: 5px;
   transition: 200ms;
   transition-property: font-size, box-shadow;
-  border-bottom: 0;
   height: 40px;
   display: flex;
   justify-content: center;
@@ -62,18 +55,16 @@ button {
   background: transparent;
   margin: 0 5px;
   font-size: 1em;
-  color: var(--system-color);
-  &.active {
-    background: transparent;
-    border-radius: 5px 5px 0 0;
-    color: var(--system-color);
-    margin-bottom: -1px;
-    border-bottom: 3px solid #0076bc;
-  }
+  box-shadow: none;
+  color: var(--system-tertiary-color);
   &:hover {
-    background: var(--system-accents-backgroundColor) !important;
-    color: var(--system-accents-color) !important;
+    background: var(--system-secondary-backgroundColor);
+    color: var(--system-secondary-color);
+    box-shadow: none;
     transform: none;
+  }
+  &.active {
+    @include card();
   }
   i {
     font-size: 1.2em;
