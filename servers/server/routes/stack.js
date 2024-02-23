@@ -85,6 +85,7 @@ router.get('/open-link-in-vs-code', (req, res) => {
 router.get('/services', (req, res) => {
   res.json(Stack.getServices().map((s) => s.exportInApi()));
 });
+
 router.get('/:service', (req, res) => {
   const service = findService(req.params.service);
   res.send(service.exportInApi());

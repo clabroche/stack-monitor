@@ -1,6 +1,7 @@
 <template>
   <button @click="button.click()" :class="{active: isActive }" class="sidebar-item" :title="button.text">
-    <i :class="{[button.icon]: true}" aria-hidden="true"/>
+    <i v-if="button.icon" :class="{[button.icon]: true}" aria-hidden="true"/>
+    <img v-else-if="button.img" :src="button.img">
   </button>
 </template>
 
@@ -20,7 +21,7 @@ const isActive = computed(() => {
 })
 
 /**
- * @typedef {{active: string, click: (...args: any[]) => any, icon: string, text: string}} SideBarButton
+ * @typedef {{active: string, click: (...args: any[]) => any, icon?: string,img?: string, text: string}} SideBarButton
  */
 </script>
 
@@ -62,12 +63,25 @@ button {
     color: var(--system-secondary-color);
     box-shadow: none;
     transform: none;
+    img {
+      filter: contrast(0) brightness(2);
+    }
   }
   &.active {
     @include card();
+    img {
+      filter: contrast(0) brightness(2);
+    }
   }
   i {
     font-size: 1.2em;
+  }
+  img {
+    width: 1.2em;
+    height: 1.2em;
+    object-fit: contain;
+    filter: contrast(0) brightness(2) brightness(0.5);
+    
   }
 }
 </style>

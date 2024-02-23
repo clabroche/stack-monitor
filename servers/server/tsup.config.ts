@@ -87,7 +87,6 @@ const copyFilePlugin = {
     await copyFile(path.resolve(__dirname, "../../modules/bugs/backend/defaultJsConfig.json"), "dist/defaultJsConfig.json")
     await copyFile(path.resolve(__dirname, "./helpers/cpuFork.js"), "dist/cpuFork.js")
     await copyFile(path.resolve(__dirname, "./bin/www"), "dist/www")
-    await copyFile(path.resolve(__dirname, "./bin/www"), "dist/www")
   }
 }
 
@@ -100,6 +99,9 @@ const integrateWebApp = {
       execSync('yarn turbo build --filter=@clabroche/fronts-app', {cwd: path.resolve(__dirname, '../..'), stdio: 'inherit'})
       if(existsSync(path.resolve(__dirname, './dist/public'))) await rm(path.resolve(__dirname, './dist/public'), {recursive: true, force: true})
       await copy(path.resolve(__dirname, '../../fronts/app/dist'), path.resolve(__dirname, './dist/public'))
+      console.log('integrate extension')
+      execSync('yarn turbo build --filter=@clabroche/modules-vscode-extension', {cwd: path.resolve(__dirname, '../..'), stdio: 'inherit'})
+      await copy(path.resolve(__dirname, '../../modules/vscode/extension/out/stack-monitor.vsix'), path.resolve(__dirname, './dist/stack-monitor.vsix'))
     })
   }
 }

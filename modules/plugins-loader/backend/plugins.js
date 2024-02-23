@@ -21,4 +21,5 @@ module.exports = {
   uuid: require('@clabroche/modules-uuid-backend'),
   help: require('@clabroche/modules-help-backend'),
   openapi: require('@clabroche/modules-openapi-backend'),
+  vscode: require('@clabroche/modules-vscode-backend'),
 };

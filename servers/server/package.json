@@ -29,6 +29,7 @@
     "@clabroche/common-express": "workspace:*",
     "@clabroche/common-socket-server": "workspace:*",
     "@clabroche/modules-plugins-loader-backend": "workspace:*",
+    "@vscode/vsce": "^2.23.0",
     "ansi-to-html": "^0.7.2",
     "bluebird": "^3.7.2",
     "command-exists": "^1.2.9",
@@ -52,6 +53,7 @@
   "devDependencies": {
     "@clabroche/common-retrigger-all-build": "workspace:*",
     "@clabroche/modules-plugins-loader-front": "workspace:*",
+    "@clabroche/modules-vscode-extension": "workspace:*",
     "nodemon": "^3.0.3",
     "supertest": "^6.3.4"
   },

@@ -357,9 +357,11 @@ class Service {
     };
     this.store.push(line, launchMessage);
     sockets.io?.emit('logs:update', [line, launchMessage]);
-
     if (isMainProcess) {
       this.launchHealthChecker(spawnProcess);
+      sockets.io?.emit('service:start', {
+        label: this.label, pid: spawnProcess.pid,
+      });
     }
 
     return {

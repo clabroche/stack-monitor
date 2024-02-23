@@ -130,6 +130,7 @@ export default {
             return {
               text: placement.label,
               icon: placement.icon,
+              img: placement.img,
               click: placement.goTo ? () => router.push(placement.goTo || '/') : () => { },
               active: placement.active
             }

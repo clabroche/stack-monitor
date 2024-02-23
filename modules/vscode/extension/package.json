@@ -1,0 +1,105 @@
+{
+  "name": "@clabroche/modules-vscode-extension",
+  "displayName": "stack-monitor",
+  "description": "Connect to your stack-monitor instance",
+  "repository": "https://github.com/clabroche/stack-monitor",
+  "publisher": "clabroche",
+  "license": "ISC",
+  "version": "1.18.0",
+  "icon": "./resources/rocket.png",
+  "engines": {
+    "vscode": "^1.86.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "enabledApiProposals": [
+    "extensionRuntime"
+  ],
+  "main": "./src/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "stack-monitor.connect",
+        "title": "Connect to stack monitor"
+      },
+      {
+        "command": "stack-monitor.log",
+        "title": "Create log"
+      }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "stack-monitor",
+          "title": "Stack Monitor",
+          "icon": "resources/rocket.png"
+        }
+      ]
+    },
+    "viewsWelcome": [
+      {
+        "view": "welcome",
+        "contents": "[Connect to stack-monitor](command:stack-monitor.connect)",
+        "when": "!stackMonitorAvailable"
+      }
+    ],
+    "views": {
+      "explorer": [
+        {
+          "id": "services-explorer",
+          "name": "Stackmonitor services",
+          "visibility": "visible",
+          "type": "tree",
+          "when": "stackMonitorAvailable"
+        }
+      ],
+      "stack-monitor": [
+        {
+          "id": "welcome",
+          "name": "Welcome",
+          "when": "!stackMonitorAvailable"
+        },
+        {
+          "id": "services",
+          "name": "Services",
+          "visibility": "visible",
+          "type": "tree",
+          "when": "stackMonitorAvailable"
+        },
+        {
+          "id": "dependencies",
+          "name": "Dependencies",
+          "type": "tree",
+          "when": "stackMonitorAvailable"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "pretest": "yarn run lint",
+    "build": "node build.js",
+    "test": "vscode-test"
+  },
+  "dependencies": {
+    "axios": "^1.6.7",
+    "bluebird": "^3.7.2",
+    "socket.io-client": "^4.7.4"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "^11.0.4",
+    "@types/mocha": "^10.0.6",
+    "@types/node": "18.x",
+    "@types/vscode": "^1.86.0",
+    "@vscode/test-cli": "^0.0.6",
+    "@vscode/test-electron": "^2.3.9",
+    "@vscode/vsce": "^2.24.0",
+    "esbuild": "^0.20.1",
+    "eslint": "^8.56.0",
+    "typescript": "^5.3.3"
+  }
+}

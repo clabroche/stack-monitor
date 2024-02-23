@@ -21,6 +21,7 @@ import OpenApi from '@clabroche/modules-openapi-front/src/Index.vue';
 import GlobalScripts from '@clabroche/modules-global-scripts-front/src/Index.vue';
 import Finder from '@clabroche/modules-finder-front/src/Index.vue';
 import Help from '@clabroche/modules-help-front/src/Index.vue';
+import Vscode from '@clabroche/modules-vscode-front/src/Index.vue';
 import DynamicComponent from './DynamicComponent.vue';
 
 const toolboxPlugins = [
@@ -38,6 +39,7 @@ const toolboxPlugins = [
   { name: 'OpenAI', component: OpenAI },
   { name: 'GlobalScripts', component: GlobalScripts },
   { name: 'Kanban', component: Kanban },
+  { name: 'Vscode', component: Vscode },
   {
     name: 'Toolbox',
     component: Toolbox,
@@ -89,6 +91,7 @@ const plugins = [
   { name: 'Documentation', cmp: Documentation },
   { name: 'Npm', cmp: NpmVue },
   { name: 'Bugs', cmp: BugsVue },
+  { name: 'Vscode', cmp: Vscode },
   { name: 'Configuration', cmp: ConfigsVue },
 ];
 export default plugins;
@@ -112,6 +115,7 @@ export default plugins;
  *    label: string,
  *    position?: 'toolbox' | 'sidebar' | 'dev-ops',
  *    icon?: string,
+ *    img?: string,
  *    iconText?: string,
  *    goTo?: import('vue-router').RouteLocationRaw | string,
  *    active: string
