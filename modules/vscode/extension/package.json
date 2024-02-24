@@ -24,11 +24,19 @@
     "commands": [
       {
         "command": "stack-monitor.connect",
-        "title": "Connect to stack monitor"
+        "title": "StackMonitor: Connect to stack monitor"
       },
       {
         "command": "stack-monitor.log",
-        "title": "Create log"
+        "title": "StackMonitor: Create log"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "stack-monitor.log",
+        "key": "ctrl+k l",
+        "mac": "cmd+k l",
+        "when": "editorTextFocus"
       }
     ],
     "viewsContainers": {

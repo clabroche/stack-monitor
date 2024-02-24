@@ -12,7 +12,7 @@ module.exports = {
     /** @type {import('vscode').ExtensionContext | null} */
     context: null,
     async update() {
-      const file = vscode.window.activeTextEditor.document.fileName;
+      const file = vscode.window.activeTextEditor?.document.fileName;
       if (!file) return;
       vscode.window.createTreeView('dependencies', {
         treeDataProvider: new NodeDependenciesProvider(file),
@@ -57,7 +57,7 @@ module.exports = {
     context: null,
     async update(fetch = false) {
       const { context } = module.exports.editor;
-      const file = vscode.window.activeTextEditor.document.fileName;
+      const file = vscode.window.activeTextEditor?.document.fileName;
       if (file) {
         if (fetch || !module.exports.cache) {
           const { data: services } = await getAxios(context).get('/vscode/get-services-from-file', { params: { file } })
