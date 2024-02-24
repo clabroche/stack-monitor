@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.18.2](https://github.com/clabroche/stack-monitor/compare/v1.18.1...v1.18.2) (2024-02-24)
+
+### Bug Fixes
+
+* **extension:** add command and keybinding to print variable into stack-monitor ([0c5d65f](https://github.com/clabroche/stack-monitor/commit/0c5d65fdf8a97ed312cc3bfcfa46f74590ca3895))
+* **extension:** create vscodeextension ([dfb2589](https://github.com/clabroche/stack-monitor/commit/dfb258912ca717cca9b2dc857c2774bfddd59251))
+* **front:** cosmetic changes ([ff9b282](https://github.com/clabroche/stack-monitor/commit/ff9b2821de658eae571a1da4407ec0651a102e15))
+
 ## [1.18.1](https://github.com/clabroche/stack-monitor/compare/v1.18.0...v1.18.1) (2024-02-20)
 
 ### Bug Fixes
