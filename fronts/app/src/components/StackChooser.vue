@@ -203,6 +203,9 @@ export default {
 
         .content {
             li {
+                display: flex;
+                align-items: center;
+                gap: 10px;
                 margin-bottom: 5px;
                 font-size: 1.1em;
             }

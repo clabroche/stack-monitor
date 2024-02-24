@@ -127,6 +127,8 @@ input {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  border-left: 5px solid transparent;
+
   .item {
     display: flex;
     align-items: center;
@@ -148,7 +150,7 @@ input {
   }
   &.active {
     font-weight: bold;
-    border-left: 3px solid #194f91
+    border-left: 5px solid var(--system-accent-backgroundColor1)
   }
   &.disabled {
     color: #999;

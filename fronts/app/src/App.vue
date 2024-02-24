@@ -48,7 +48,14 @@ export default {
     EnvironmentsChooser,
   },
   setup() {
-    Theme.load()
+    (async () => {
+      const additionalThemes = await Stack.getAdditionalThemes()
+        .catch(err => {
+          console.error(err)
+          return {}
+        })
+      Theme.load(additionalThemes)
+    })()
     const router = useRouter(); 
     const connected = ref(true)
     const redirect = async () => {

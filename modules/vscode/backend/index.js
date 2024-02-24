@@ -13,7 +13,7 @@ const plugin = {
     label: 'VScode extension',
     img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Visual_Studio_Code_1.35_icon.svg/512px-Visual_Studio_Code_1.35_icon.svg.png',
     goTo: { path: '/Vscode' },
-    active: 'Finder',
+    active: 'Vscode',
   }],
   hidden: () => commandExists('code').then(() => false).catch(() => true),
   routes: require('./routes'),

@@ -34,9 +34,7 @@
   background: $color1;
   background: linear-gradient(93deg, $color1 0%, $color2 100%);
   color: white;
-  box-shadow:
-    0 0 5px 0 $color3;
-
+  box-shadow: 0 0 5px 0 $color3;
   &::before,
   &::after {
     box-shadow:

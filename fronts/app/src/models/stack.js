@@ -28,6 +28,11 @@ Stack.prototype.getEnvironment = async function () {
   return environment;
 };
 
+Stack.prototype.getAdditionalThemes = async function () {
+  const { data: additionalThemes } = await axios.get('/stack/additional-themes');
+  return additionalThemes;
+};
+
 Stack.prototype.getEnvironments = async function () {
   const { data: environments } = await axios.get('/stack/environments');
   return environments;

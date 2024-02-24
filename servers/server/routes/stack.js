@@ -38,6 +38,11 @@ router.get('/environment', (req, res) => {
   });
 });
 
+router.get('/additional-themes', (req, res) => {
+  const additionalThemes = Stack.getStack()?.themes || {};
+  res.json(additionalThemes);
+});
+
 router.post('/environment', async (req, res) => {
   const { environment } = req.body;
   if (!environment) return res.status(400).send('Provide an environment field in body');

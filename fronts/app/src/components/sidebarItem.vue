@@ -40,7 +40,7 @@ const isActive = computed(() => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-left: 3px solid transparent; 
+  border-left: 5px solid transparent; 
   span {
     display: flex;
     align-items: center;
@@ -62,7 +62,7 @@ const isActive = computed(() => {
   }
   &.active {
     font-weight: bold;
-    border-left: 3px solid #194f91
+    border-left: 5px solid var(--system-accent-backgroundColor1)
   }
   &.disabled {
     color: var(--system-tertiary-color);

@@ -4,8 +4,7 @@
     isFile: !leaf.isDir,
     isDir: leaf.isDir
   }" @click.stop="leaf.isDir ? toggleLeaf() : $emit('go', leaf)">
-    <i class="fas fa-minus" v-if="leaf.isDir && opened"></i>
-    <i class="fas fa-plus" v-if="leaf.isDir && !opened"></i>
+    <i class="icon-folder fas fa-chevron-right" v-if="leaf.isDir" :class="{opened }"></i>
     <i class="fas fa-file" v-else></i>
     {{ leaf.name || leaf.path }}
   </div>
@@ -45,18 +44,37 @@ const toggleLeaf = () => {
   gap: 5px;
   padding: 2px;
   box-sizing: border-box;
+  transition: 300ms;
+  &:hover {
+    background-color: var(--system-sections-backgroundColor-darker);
+    color: var(--system-color);
+  }
   i {
     width: 20px;
+    height: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
   }
   &.active {
-    background-color: rgba(0,0,0,0.6);
+    background-color: var(--system-accent-backgroundColor1);
     color: white;
+    border-right: 5px solid var(--system-accent-backgroundColor1-darkest)
   }
   &.isFile {
     cursor: pointer;
   }
   &.isDir {
     cursor: pointer;
+  }
+}
+.icon-folder {
+  transition: 300ms;
+  transform-origin: center;
+  &.opened {
+    transform: rotate(90deg);
+
   }
 }
 

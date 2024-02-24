@@ -140,14 +140,15 @@ input {
 
   }
   &:hover {
-    background-color: #eee;
+    background-color: var(--system-backgroundColor);
+    color: var(--system-color);
     i {
       opacity: 1;
     }
   }
   &.active {
     font-weight: bold;
-    border-left: 3px solid #194f91
+    border-left: 5px solid var(--system-accent-backgroundColor1)
   }
   &.disabled {
     color: #999;

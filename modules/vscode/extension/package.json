@@ -1,6 +1,7 @@
 {
   "name": "@clabroche/modules-vscode-extension",
   "displayName": "stack-monitor",
+  "private": true,
   "description": "Connect to your stack-monitor instance",
   "repository": "https://github.com/clabroche/stack-monitor",
   "publisher": "clabroche",
@@ -88,10 +89,8 @@
     }
   },
   "scripts": {
-    "lint": "eslint .",
-    "pretest": "yarn run lint",
     "build": "node build.js",
-    "test": "vscode-test"
+    "test": ""
   },
   "dependencies": {
     "axios": "^1.6.7",

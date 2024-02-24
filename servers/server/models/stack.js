@@ -73,6 +73,8 @@ class Stack {
     this.logParsers = stack.logParsers || [];
     /** @type {boolean} */
     this.monorepo = stack.monorepo || false;
+    /** @type {Record<string, string>} */
+    this.themes = stack.themes || {};
     /** @type {string | undefined} */
     this.documentation = stack.documentation;
     /** @type {Service[]} */
@@ -117,6 +119,7 @@ class Stack {
   exportForDifference() {
     return {
       watchFiles: this.watchFiles,
+      themes: this.themes,
       services: this.services.map((s) => s.exportForDifference()),
     };
   }

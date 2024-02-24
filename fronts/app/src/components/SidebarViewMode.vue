@@ -33,7 +33,7 @@
         :padding="14"
         strokeColor="var(--system-accent-backgroundColor3-tertiary-lightest)"
         strokeColorBg="var(--system-accent-backgroundColor1-tertiary)"/>
-      <Popover appendTo="parent" trigger="mouseenter" placement="right" :showOnCreate="false">
+      <Popover appendTo="parent" trigger="mouseenter" placement="left-start" :showOnCreate="true" >
         <template #trigger>
           <sidebar-view-mode-item key="Themes" :button="{
             text: '',
@@ -42,16 +42,36 @@
           }"/>
         </template>
         <template #content>
-          <div class="themes">
-            <div class="theme"
-              v-for="theme of Object.keys(Theme.themes).map(key => ({theme: Theme.themes[key], label: key})).filter(t => t.theme.public && t.theme.preview)"
-              @click="Theme.apply(theme.label)"
-            >
-              <div class="background" :style="theme.theme.preview.background">
-                <div class="foreground foreground-4" :style="theme.theme.preview.foreground4 || theme.theme.preview.foreground1"></div>
-                <div class="foreground foreground-3" :style="theme.theme.preview.foreground3 || theme.theme.preview.foreground1"></div>
-                <div class="foreground foreground-2" :style="theme.theme.preview.foreground2 || theme.theme.preview.foreground1"></div>
-                <div class="foreground foreground-1" :style="theme.theme.preview.foreground1"></div>
+          <div class="groups">
+            <div v-for="(group) of groups" class="group">
+              {{ group.group }}
+              <div class="themes">
+                <div v-for="theme of group.themes" class="theme" @click="Theme.apply(theme.id)">
+                  <Popover appendTo="parent" trigger="mouseenter" placement="top" :showOnCreate="false">
+                    <template #trigger>
+                      <div class="view">
+                        <div class="viewwindows" :style="{
+                          ...(theme.preview.background || {}),
+                          border: `4px solid ${theme.preview.background.backgroundColor}`
+                        }">
+                          <div class="rad" :style="theme.preview.foreground4 || theme.preview.foreground1"></div>
+                          <div class="rad" :style="theme.preview.foreground3 || theme.preview.foreground1"></div>
+                          <div class="rad" :style="theme.preview.foreground2 || theme.preview.foreground1"></div>
+                          <div class="rad" :style="theme.preview.foreground1"></div>
+                        </div>
+                      </div>
+                      <!-- <div class="background" :style="theme.preview.background">
+                        <div class="foreground foreground-4" :style="theme.preview.foreground4 || theme.preview.foreground1"></div>
+                        <div class="foreground foreground-3" :style="theme.preview.foreground3 || theme.preview.foreground1"></div>
+                        <div class="foreground foreground-2" :style="theme.preview.foreground2 || theme.preview.foreground1"></div>
+                        <div class="foreground foreground-1" :style="theme.preview.foreground1"></div>
+                      </div> -->
+                    </template>
+                    <template #content>
+                      {{ theme.name || theme.label }}
+                    </template>
+                  </Popover>
+                </div>
               </div>
             </div>
           </div>
@@ -103,6 +123,23 @@ export default {
 
     return {
       Theme,
+      groups: computed(() => {
+        const groupsObj = Object.keys(Theme.themes.value).reduce((agg, themeId) => {
+          const theme = Theme.themes.value[themeId]
+          theme.id = themeId
+          if(!theme.public || !theme.preview) return agg
+          const group = theme.group || 'Unknown'
+          if(!agg[group]) agg[group] = {group: 'unknown', themes: []}
+          agg[group].group = group
+          agg[group].themes.push(theme)
+          return agg
+        }, {})
+        const groups = Object.keys(groupsObj).map(key => ({
+          group: key,
+          themes: groupsObj[key].themes
+        }))
+        return groups.sort((a, b) => a.group.localeCompare(b.group))
+      }),
       buttons:computed(() => ([
         {
           text: 'Overview',
@@ -191,6 +228,69 @@ export default {
 } 
 .system .title {
   justify-content: center;
+}
+.groups {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.view{
+  display:flex;
+  align-items: center;
+  justify-content: center;
+  width:50px;
+  height:50px;
+  position: relative;
+  .viewwindows{
+    position:absolute;
+    width:50px;
+    height:50px;
+    border-radius:50%;
+    box-sizing: border-box;
+    overflow:hidden;
+    .rad{
+      position:absolute;
+      width:170%;
+      height:170%;
+      background:rgb(118, 218, 255);
+      animation: rotate 10s linear infinite;
+      &:nth-child(1){
+        left: -50%;
+        top:26%;
+        border-radius:35%;
+        animation-delay: -4s;
+      }
+      &:nth-child(2){
+        left:-30%;
+        top:30%;
+        border-radius:37%;
+        animation-delay: -3s;
+      }
+      &:nth-child(3){
+        left:-20%;
+        top:33%;
+        border-radius:40%;
+        animation-delay: -2s;
+      }
+      &:nth-child(4){
+        left:0;
+        top:35%;
+        border-radius:40%;
+        animation-delay: -1s;
+      }
+    }
+  }
+}
+@keyframes rotate {
+    0% {
+        transform: rotate(0deg);
+    }
+    50% {
+        transform: rotate(180deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
 }
 .themes {
   display: flex;

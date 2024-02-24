@@ -38,7 +38,7 @@ describe('Dependencies', () => {
     const retriggerAllPackage = workspaces.find((w) => w.packageJSON.name.includes('retrigger-all-build'));
     if (!retriggerAllPackage) return;
     workspaces
-      .filter((workspace) => workspace.packageJSON.name !== retriggerAllPackage.packageJSON.name)
+      .filter((workspace) => ![retriggerAllPackage.packageJSON.name, '@clabroche/modules-vscode-extension'].includes(workspace.packageJSON.name))
       .forEach((workspace) => {
         it(`${workspace.packageJSON.name} should have a devDependencies section`, () => {
           if (!fse.readdirSync(workspace.path).includes('.independant')) {

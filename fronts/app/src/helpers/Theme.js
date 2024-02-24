@@ -1,9 +1,10 @@
 import { merge, cloneDeep } from 'lodash-es';
+import { ref } from 'vue';
 import CustomObservable from './CustomObservable';
 
 class Theme {
   constructor() {
-    this.themes = {
+    this.themes = ref({
       base: {
         rules: {
           system: { backgroundColor: '#f2f4f7', color: '#4c4c4c' },
@@ -29,6 +30,8 @@ class Theme {
       /** ==================================== */
       light: {
         public: true,
+        name: 'Light Purple',
+        group: 'Light',
         base: 'base',
         preview: {
           background: { backgroundColor: '#f2f4f7' },
@@ -55,6 +58,8 @@ class Theme {
       },
       lightOrange: {
         public: true,
+        name: 'Light Orange',
+        group: 'Light',
         base: 'light',
         preview: {
           background: { backgroundColor: '#f2f4f7' },
@@ -81,6 +86,8 @@ class Theme {
       },
       lightBlue: {
         public: true,
+        name: 'Light Blue',
+        group: 'Light',
         base: 'light',
         preview: {
           background: { backgroundColor: '#f2f4f7' },
@@ -108,9 +115,11 @@ class Theme {
       /** ==================================== */
       dark: {
         public: true,
+        name: 'Dark Purple',
+        group: 'Dark',
         base: 'light',
         preview: {
-          background: { backgroundColor: 'black' },
+          background: { backgroundColor: '#2b2d31' },
           foreground1: { backgroundColor: 'rgb(168, 38, 180)' },
           foreground2: { backgroundColor: 'rgb(10 ,206 ,213)' },
           foreground3: { backgroundColor: 'rgb(211, 22, 229)' },
@@ -147,9 +156,11 @@ class Theme {
       },
       darkOrange: {
         public: true,
+        name: 'Dark Orange',
+        group: 'Dark',
         base: 'dark',
         preview: {
-          background: { backgroundColor: 'black' },
+          background: { backgroundColor: '#2b2d31' },
           foreground1: { backgroundColor: 'rgb(255, 123, 0)' },
           foreground2: { backgroundColor: 'rgb(10 ,206 ,213)' },
           foreground3: { backgroundColor: 'rgb(211, 22, 229)' },
@@ -173,9 +184,11 @@ class Theme {
       },
       darkBlue: {
         public: true,
+        name: 'Dark Blue',
+        group: 'Dark',
         base: 'dark',
         preview: {
-          background: { backgroundColor: 'black' },
+          background: { backgroundColor: '#2b2d31' },
           foreground1: { backgroundColor: 'rgb(47, 161, 182)' },
           foreground2: { backgroundColor: 'rgb(10 ,206 ,213)' },
           foreground3: { backgroundColor: 'rgb(211, 22, 229)' },
@@ -197,13 +210,14 @@ class Theme {
           },
         },
       },
-    };
+    });
     this.currentTheme = 'light';
-    this.buildedTheme = this.themes.light;
+    this.buildedTheme = this.themes.value.light;
     this.observableCurrentTheme = new CustomObservable();
   }
 
-  load() {
+  load(additionnalThemes = {}) {
+    Object.assign(this.themes.value, additionnalThemes);
     this.loadCurrentTheme();
     this.apply(this.currentTheme);
   }
@@ -227,10 +241,10 @@ class Theme {
   }
 
   buildTheme(_theme) {
-    let theme = cloneDeep(this.themes[_theme]);
+    let theme = cloneDeep(this.themes.value[_theme]);
     if (!theme) throw new Error(`${_theme} theme not exists`);
     if (theme.base) {
-      if (!this.themes[theme.base]) return theme;
+      if (!this.themes.value[theme.base]) return theme;
       theme = merge(this.buildTheme(theme.base), theme);
     }
     return theme;

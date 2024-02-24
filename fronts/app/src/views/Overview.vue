@@ -4,8 +4,10 @@
       <h2><i class="fas fa-home"></i>Mes services</h2>
       <ul>
         <li v-for="service of services" :key="service.label" class="service" :class="{enabled: service.enabled}">
-          <Spinner v-if="service.enabled" size="10"></Spinner>
-          <i v-else class="fas" :class="{'fa-square': !service.enabled}"></i>
+          <div v-if="service.enabled" class="spinner-container" >
+            <Spinner size="10"></Spinner>
+          </div>  
+          <i v-else class="fas" :class="{'fa-pause': !service.enabled}"></i>
           {{ service.label }}
         </li>
       </ul>
@@ -74,15 +76,24 @@ onMounted(async () => {
     }
     h2 {
       margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
       i {
-        font-size: 50px;
+        font-size: 20px;
       }
     }
     ul {
       overflow: auto;
       list-style: none;
       padding: 0;
-      padding-left: 20px;
+      i, .spinner-container {
+        width: 22px;
+        text-align: center;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
       .service {
         display: flex;
         align-items: center;

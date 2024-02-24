@@ -9,6 +9,7 @@
         ".next/**",
         ".vitepress/dist/**",
         "dist/**",
+        "out/**",
         "build/**",
         "server/public/**"
       ]

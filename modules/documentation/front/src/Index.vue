@@ -99,7 +99,6 @@ h2 {
   overflow: auto;
 }
 .markdown {
-  background-color: #fff;
   border-radius: 10px;
   padding: 0 10px;
   box-sizing: border-box;
