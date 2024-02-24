@@ -33,7 +33,7 @@
         :padding="14"
         strokeColor="var(--system-accent-backgroundColor3-tertiary-lightest)"
         strokeColorBg="var(--system-accent-backgroundColor1-tertiary)"/>
-      <Popover appendTo="parent" trigger="mouseenter" placement="left-start" :showOnCreate="true" >
+      <Popover appendTo="parent" trigger="mouseenter" placement="left-start" :showOnCreate="false" >
         <template #trigger>
           <sidebar-view-mode-item key="Themes" :button="{
             text: '',
@@ -60,12 +60,6 @@
                           <div class="rad" :style="theme.preview.foreground1"></div>
                         </div>
                       </div>
-                      <!-- <div class="background" :style="theme.preview.background">
-                        <div class="foreground foreground-4" :style="theme.preview.foreground4 || theme.preview.foreground1"></div>
-                        <div class="foreground foreground-3" :style="theme.preview.foreground3 || theme.preview.foreground1"></div>
-                        <div class="foreground foreground-2" :style="theme.preview.foreground2 || theme.preview.foreground1"></div>
-                        <div class="foreground foreground-1" :style="theme.preview.foreground1"></div>
-                      </div> -->
                     </template>
                     <template #content>
                       {{ theme.name || theme.label }}
@@ -93,6 +87,7 @@ import Socket from '../helpers/Socket';
 import { useRouter } from 'vue-router';
 import Theme from '../helpers/Theme'
 import Popover from './Popover.vue';
+import system from '../models/system'
 
 export default {
   components: {
@@ -167,7 +162,7 @@ export default {
             return {
               text: placement.label,
               icon: placement.icon,
-              img: placement.img,
+              img: system.proxyImg(placement.img),
               click: placement.goTo ? () => router.push(placement.goTo || '/') : () => { },
               active: placement.active
             }

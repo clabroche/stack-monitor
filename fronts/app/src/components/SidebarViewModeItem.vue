@@ -64,7 +64,7 @@ button {
     box-shadow: none;
     transform: none;
     img {
-      filter: contrast(0) brightness(2);
+      filter: contrast(0) brightness(1.6);
     }
   }
   &.active {

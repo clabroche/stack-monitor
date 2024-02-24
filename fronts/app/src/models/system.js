@@ -21,6 +21,10 @@ System.prototype.getInfos = async function (serviceLabel) {
   this.infos = infos;
   return this.infos;
 };
+
+System.prototype.proxyImg = function (url) {
+  return `${axios.defaults.baseURL}/system/proxy-img?url=${encodeURIComponent(url)}`;
+};
 System.prototype.getVersion = async function () {
   const { data: version } = await axios.get('/version');
   this.version.value = version;

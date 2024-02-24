@@ -1,4 +1,5 @@
 const { express } = require('@clabroche/common-express');
+const axios = require('axios');
 
 const router = express.Router();
 const pidusageTree = require('pidusage-tree');
@@ -20,6 +21,33 @@ router.get('/:service/infos', async (req, res) => {
 
 router.get('/disconnect', async () => {
   process.exit(0);
+});
+router.get('/proxy-img', async (req, res) => {
+  axios({
+    method: 'get',
+    url: req.query.url,
+    responseType: 'stream',
+  })
+    .then((response) => {
+      for (const key in response.headers) {
+        if (response.headers.hasOwnProperty(key)) {
+          const element = response.headers[key];
+          res.header(key, element);
+        }
+      }
+      res.status(response.status);
+      response.data.pipe(res);
+    })
+    .catch(({ response }) => {
+      for (const key in response.headers) {
+        if (response.headers.hasOwnProperty(key)) {
+          const element = response.headers[key];
+          res.header(key, element);
+        }
+      }
+      res.status(response.status);
+      response.data.pipe(res);
+    });
 });
 
 /** @param {number} pid */
