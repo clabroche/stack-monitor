@@ -1,7 +1,13 @@
-# Change Log 
+# Change Log
 
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+
+## [1.18.5](https://github.com/clabroche/stack-monitor/compare/v1.18.4...v1.18.5) (2024-02-24)
+
+### Bug Fixes
+
+* create new version ([deebf7b](https://github.com/clabroche/stack-monitor/commit/deebf7bdd118dd1919995716ded6c5ba186afa05))
 
 ## [1.18.3](https://github.com/clabroche/stack-monitor/compare/v1.18.2...v1.18.3) (2024-02-24)
 
