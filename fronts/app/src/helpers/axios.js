@@ -1,8 +1,8 @@
-import Axios from 'axios'
-import config from './config'
+import Axios from 'axios';
+import config from './config';
 
 const axios = Axios.create({
-  baseURL: config.baseURL
-})
+  baseURL: config.baseURL,
+});
 
-export default axios
+export default axios;

@@ -23,7 +23,10 @@ System.prototype.getInfos = async function (serviceLabel) {
 };
 
 System.prototype.proxyImg = function (url) {
-  return `${axios.defaults.baseURL}/system/proxy-img?url=${encodeURIComponent(url)}`;
+  const baseUrl = axios.defaults.baseURL === '/'
+    ? ''
+    : axios.defaults.baseURL;
+  return `${baseUrl}/system/proxy-img?url=${encodeURIComponent(url)}`;
 };
 System.prototype.getVersion = async function () {
   const { data: version } = await axios.get('/version');
