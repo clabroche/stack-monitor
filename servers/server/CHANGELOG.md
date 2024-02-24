@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.18.3](https://github.com/clabroche/stack-monitor/compare/v1.18.2...v1.18.3) (2024-02-24)
+
+### Bug Fixes
+
+* **front:** proxy image to prevent cors + close theme at startup ([cdebdf4](https://github.com/clabroche/stack-monitor/commit/cdebdf4d878acdcd4c71b39f45df7353acf86a9b))
+
 ## [1.18.2](https://github.com/clabroche/stack-monitor/compare/v1.18.1...v1.18.2) (2024-02-24)
 
 ### Bug Fixes
