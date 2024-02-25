@@ -66,12 +66,12 @@ module.exports = {
     await getAxios(context).get('/version')
       .then(async ({ data: version }) => {
         await module.exports.initSocket(context);
-        context.globalState.update('stackMonitorAvailbale', true);
+        context.globalState.update('stackMonitorAvailable', true);
         vscode.window.showInformationMessage(`Successfully connected to stack-monitor v${version}`);
       })
       .catch(() => {
         vscode.window.showInformationMessage('Can\'t connect to stack-monitor. Retry...');
-        context.globalState.update('stackMonitorAvailbale', false);
+        context.globalState.update('stackMonitorAvailable', false);
         module.exports.connect(context);
       })
       .finally(() => {
@@ -101,7 +101,6 @@ module.exports = {
     Socket.socket.on('service:healthcheck:down', async ({ label }) => {
       services.update();
       editor.update(true);
-      vscode.window.showInformationMessage(`Service: ${label} healthcheck:down`);
     });
     Socket.socket.on('service:healthcheck:up', async () => {
       services.update();
