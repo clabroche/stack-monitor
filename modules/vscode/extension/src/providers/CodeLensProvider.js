@@ -26,29 +26,23 @@ module.exports = class CodelensProvider {
    * @returns {vscode.CodeLens[] | Thenable<vscode.CodeLens[]>}
    */
   provideCodeLenses(document) {
-    if (vscode.workspace.getConfiguration('codelens-stackmonitor').get('enableCodeLens', true)) {
-      this.codeLenses = [];
-      const { line } = vscode.window.activeTextEditor.selection.start;
-      const range = document.getWordRangeAtPosition(new vscode.Position(line, 0), new RegExp(this.regex));
-      if (range) {
-        this.codeLenses.push(new vscode.CodeLens(range));
-      }
-      return this.codeLenses;
+    this.codeLenses = [];
+    const { line } = vscode.window.activeTextEditor.selection.start;
+    const range = document.getWordRangeAtPosition(new vscode.Position(line, 0), new RegExp(this.regex));
+    if (range) {
+      this.codeLenses.push(new vscode.CodeLens(range));
     }
-    return [];
+    return this.codeLenses;
   }
 
   /** @param {vscode.CodeLens} codeLens */
   async resolveCodeLens(codeLens) {
-    if (vscode.workspace.getConfiguration('codelens-stackmonitor').get('enableCodeLens', true)) {
-      codeLens.command = {
-        title: this.message,
-        tooltip: 'Tooltip provided by sample extension',
-        command: 'codelens-stackmonitor.codelensAction',
-        arguments: ['Argument 1', false],
-      };
-      return codeLens;
-    }
-    return null;
+    codeLens.command = {
+      title: this.message,
+      tooltip: 'Tooltip provided by sample extension',
+      command: 'codelens-stackmonitor.codelensAction',
+      arguments: ['Argument 1', false],
+    };
+    return codeLens;
   }
 };

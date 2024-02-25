@@ -54,7 +54,8 @@ const routes = (stackMonitor) => {
               && fs.existsSync(pathfs.resolve(a.toString(), './package.json'))
             ))
             .map((path) => fse.readJSONSync(pathfs.resolve(path?.toString() || '', './package.json')).name);
-          return dependents.some((packageName) => servicePackageNames.includes(packageName));
+          return dependents.some((packageName) => servicePackageNames.includes(packageName))
+            || servicePackageNames.includes(packageJSON.name);
         });
         res.json(services);
       } else {
