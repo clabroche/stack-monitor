@@ -1584,6 +1584,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@clabroche/modules-vscode-extension@workspace:modules/vscode/extension"
   dependencies:
+    "@types/command-exists": "npm:^1.2.3"
     "@types/fs-extra": "npm:^11.0.4"
     "@types/mocha": "npm:^10.0.6"
     "@types/node": "npm:18.x"
@@ -1593,6 +1594,7 @@ __metadata:
     "@vscode/vsce": "npm:^2.24.0"
     axios: "npm:^1.6.7"
     bluebird: "npm:^3.7.2"
+    command-exists: "npm:^1.2.9"
     esbuild: "npm:^0.20.1"
     eslint: "npm:^8.56.0"
     socket.io-client: "npm:^4.7.4"

@@ -15,7 +15,7 @@ async function activate(context) {
   dependencies.initialize(context);
   editor.initialize(context);
   services.initialize(context);
-  await initSocket(context);
+  initSocket(context);
   launchHeartBeat(context);
 }
 
