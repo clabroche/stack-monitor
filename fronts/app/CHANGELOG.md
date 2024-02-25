@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.18.6](https://github.com/clabroche/stack-monitor/compare/v1.18.5...v1.18.6) (2024-02-25)
+
+### Bug Fixes
+
+* cosmetic changes ([87429f3](https://github.com/clabroche/stack-monitor/commit/87429f37a57d83f5d568fa4df13cb75e9e4145d1))
+
 ## [1.18.4](https://github.com/clabroche/stack-monitor/compare/v1.18.3...v1.18.4) (2024-02-24)
 
 ### Bug Fixes

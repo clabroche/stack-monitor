@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.18.6](https://github.com/clabroche/stack-monitor/compare/v1.18.5...v1.18.6) (2024-02-25)
+
+### Bug Fixes
+
+* **extension:** autodiscovery ([dcb1b24](https://github.com/clabroche/stack-monitor/commit/dcb1b24c486971a1538a86db9cfdf96f16244bff))
+* **extension:** fix code lens ([d17b922](https://github.com/clabroche/stack-monitor/commit/d17b9228c15b9cb0acd21e3839fd0b85e07c5a69))
+
 ## [1.18.2](https://github.com/clabroche/stack-monitor/compare/v1.18.1...v1.18.2) (2024-02-24)
 
 ### Bug Fixes
