@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.18.7](https://github.com/clabroche/stack-monitor/compare/v1.18.6...v1.18.7) (2024-02-25)
+
+### Bug Fixes
+
+* **extension:** notification on health down is too verbose ([a96aad7](https://github.com/clabroche/stack-monitor/commit/a96aad77ce6d01be5a8411bdd9a32d4f7c1ad438))
+
 ## [1.18.6](https://github.com/clabroche/stack-monitor/compare/v1.18.5...v1.18.6) (2024-02-25)
 
 ### Bug Fixes
