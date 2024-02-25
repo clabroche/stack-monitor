@@ -1,13 +1,22 @@
 <template>
-  <button @click="button.click()" :class="{active: isActive }" class="sidebar-item" :title="button.text">
-    <i v-if="button.icon" :class="{[button.icon]: true}" aria-hidden="true"/>
-    <img v-else-if="button.img" :src="button.img">
-  </button>
+  <Popover appendTo="parent" trigger="mouseenter" placement="right">
+    <template #trigger>
+      <button @click="button.click()" :class="{ active: isActive }" class="sidebar-item" :title="button.text">
+        <i v-if="button.icon" :class="{ [button.icon]: true }" aria-hidden="true"/>
+        <img v-else-if="button.img" :src="button.img">
+      </button>
+    </template>
+    <template #content>
+      {{button.text}}
+    </template>
+  </Popover>
+  
 </template>
 
 <script setup>
 import { computed } from 'vue';
 import { useRouter } from 'vue-router';
+import Popover from './Popover.vue';
 const router = useRouter(); 
 
 const props = defineProps({

@@ -91,7 +91,7 @@
               (<i class="fas fa-exclamation-triangle"></i> Overrided by .env)
             </template>
           </div>
-          <div class="value" v-if="!env.overrided">{{env.value}}</div>
+          <div class="value" v-if="!env.overrided">{{env.value || 'ㅤ' }}</div>
           <div class="value" v-else>
             <ul>
               <li>Current: {{env.value}}</li>
@@ -191,7 +191,7 @@ export default {
     top: 0;
     width: 2px;
     height: 100%;
-    background: #1d94d9;
+    background: var(--system-accent-backgroundColor1);
     position: absolute;
     left: 0;
   }
@@ -201,11 +201,11 @@ export default {
     padding: 0 10px;
     border-radius: 4px;
     position: relative;
-    background-color: #084b74;
+    background-color: var(--system-accent-backgroundColor1-secondary);
     color: white;
     z-index: 1;
     &.overrided {
-      background-color: #e5b100;
+      background-color: red;
     }
     &::before {
       content: "";
@@ -213,8 +213,9 @@ export default {
       width: 40px;
       height: 0px;
       padding-top: 2px;
-      background: rgb(19,37,89);
-      background: linear-gradient(90deg, #1d94d9 0%, rgba(19,37,89,1) 100%);
+      background: linear-gradient(
+        90deg, var(--system-accent-backgroundColor1) 0%, var(--system-accent-backgroundColor1-secondary) 100%
+      );
       position: absolute;
       left: 0;
       transform: translateX(calc(-100% + 1px));
@@ -226,15 +227,16 @@ export default {
     padding: 0 10px;
     border-radius: 4px;
     width: max-content;
-    border: 1px solid rgba(111,185,154,1);
+    border: 1px solid var(--system-accent-backgroundColor1-tertiary);
     margin-top: 10px;
     &::before {
       content: "";
       top: 50%;
       width: 40px;
       height: 2px;
-      background: rgb(19,37,89);
-      background: linear-gradient(90deg, rgba(19,37,89,1) 0%, rgba(111,185,154,1) 100%);
+      background: linear-gradient(
+        90deg, var(--system-accent-backgroundColor1-secondary) 0%, var(--system-accent-backgroundColor1-tertiary) 100%
+      );
       position: absolute;
       left: 0;
       transform: translateX(calc(-100% - 1px));
@@ -244,8 +246,10 @@ export default {
       bottom: 50%;
       width: 2px;
       height: 31px;
-      background: rgb(19,37,89);
-      background: linear-gradient(90deg, rgba(19,37,89,1) 0%, rgba(111,185,154,1) 100%);
+      background: linear-gradient(
+        90deg, var(--system-accent-backgroundColor1-secondary) 0%, var(--system-accent-backgroundColor1-tertiary) 100%
+      );
+      background: var(--system-accent-backgroundColor1-secondary);
       position: absolute;
       left: 0;
       transform: translateX(-41px);
@@ -275,7 +279,7 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #1d94d9;
+    background-color: var(--system-accent-backgroundColor1);
     color: white;
     width: 30px;
     height: 30px;

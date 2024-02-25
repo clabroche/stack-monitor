@@ -5,34 +5,49 @@
     </ul>
     <ul v-if="buttonsBottom.length">
       <sidebar-view-mode-item v-for="button of buttonsPlugins" :key="button.label" :button="button"/>
-      <doughtnut-chart
-        placeholder="CPU"
-        :width="'10px'"
-        :rayon="17"
-        fontSize="11"
-        :value="cpu * 100"
-        :strokeWidth="3"
-        :strokeWidthBg="5"
-        :adjustSubtitleLeft="-2"
-        :adjustTitleTop="-5"
-        :adjustSubtitleTop="-11"
-        :padding="14"
-        strokeColor="var(--system-accent-backgroundColor3-lightest)"
-        strokeColorBg="var(--system-accent-backgroundColor1)"/>
-      <doughtnut-chart
-        placeholder="RAM"
-        :width="'10px'"
-        :rayon="17"
-        :value="mem"
-        fontSize="11"
-        :strokeWidth="3"
-        :strokeWidthBg="5"
-        :adjustSubtitleTop="-11"
-        :adjustSubtitleLeft="-2"
-        :adjustTitleTop="-5"
-        :padding="14"
-        strokeColor="var(--system-accent-backgroundColor3-tertiary-lightest)"
-        strokeColorBg="var(--system-accent-backgroundColor1-tertiary)"/>
+      <Popover appendTo="parent" trigger="mouseenter" placement="right">
+        <template #trigger>
+          <doughtnut-chart
+            placeholder="CPU"
+            :width="'10px'"
+            :rayon="17"
+            fontSize="11"
+            :value="cpu * 100"
+            :strokeWidth="3"
+            :strokeWidthBg="5"
+            :adjustSubtitleLeft="-2"
+            :adjustTitleTop="-5"
+            :adjustSubtitleTop="-11"
+            :padding="14"
+            strokeColor="var(--system-accent-backgroundColor3-lightest)"
+            strokeColorBg="var(--system-accent-backgroundColor1)"/>
+        </template>
+        <template #content>
+          CPU
+        </template>
+      </Popover>
+      <Popover appendTo="parent" trigger="mouseenter" placement="right">
+        <template #trigger>
+          <doughtnut-chart
+            placeholder="RAM"
+            :width="'10px'"
+            :rayon="17"
+            :value="mem"
+            fontSize="11"
+            :strokeWidth="3"
+            :strokeWidthBg="5"
+            :adjustSubtitleTop="-11"
+            :adjustSubtitleLeft="-2"
+            :adjustTitleTop="-5"
+            :padding="14"
+            strokeColor="var(--system-accent-backgroundColor3-tertiary-lightest)"
+            strokeColorBg="var(--system-accent-backgroundColor1-tertiary)"/>
+        </template>
+        <template #content>
+          RAM
+        </template>
+      </Popover>
+      
       <Popover appendTo="parent" trigger="mouseenter" placement="left-start" :showOnCreate="false" >
         <template #trigger>
           <sidebar-view-mode-item key="Themes" :button="{
