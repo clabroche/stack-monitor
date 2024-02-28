@@ -21,12 +21,12 @@ module.exports = (stackMonitor) => {
     if (!msg && !req.query.force) return res.json([]);
     const historyToSend = groupBy(history.data.history, 'raw')
       .sort(((a, b) => a.timestamp - b.timestamp))
-      .filter((a) => a?.raw?.startsWith(msg))
+      .filter((a) => a?.raw?.startsWith(msg) || a.cmd?.startsWith(msg))
       .slice(-10);
     return res.json(historyToSend);
   });
 
-  router.post('/logs/:service/prompt', (req, res) => {
+  router.post('/logs/:service/prompt', async (req, res) => {
     const service = findService(req.params.service);
     /** @type {string | undefined} */
     let message = req.body.message?.trim();
@@ -39,12 +39,10 @@ module.exports = (stackMonitor) => {
     };
     if (pid) service.respondToProcess(pid, message);
     else if (message) {
-      const { spawnProcess, launchMessage } = service.launchProcess(message, [], service.spawnOptions, false);
+      const { spawnProcess, launchMessage } = await service.launchProcess(message, [], service.spawnOptions, false);
       result = {
         ...result,
         pid: spawnProcess.pid,
-        cmd: launchMessage.cmd?.cmd || message,
-        args: launchMessage.cmd?.args || [],
         raw: launchMessage.raw,
         timestamp: launchMessage.timestamp,
       };

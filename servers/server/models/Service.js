@@ -1,5 +1,5 @@
 /// <reference path="@clabroche/common-typings.d.ts">
-const { spawn } = require('child_process');
+const { spawn, execSync } = require('child_process');
 const killport = require('kill-port');
 const URL = require('url');
 const path = require('path');
@@ -11,9 +11,12 @@ const { existsSync, readFileSync } = require('fs-extra');
 const pathfs = require('path');
 const net = require('net');
 const { sockets } = require('@clabroche/common-socket-server');
+const { mkdir, writeFile } = require('fs/promises');
 const CreateInterface = require('../helpers/readline');
 const { stripAnsi, ansiconvert, unescapeAnsi } = require('../helpers/ansiconvert');
 const isWindows = require('../helpers/isWindows');
+const { execAsync } = require('../helpers/exec');
+const { humanStringToKey } = require('../helpers/stringTransformer.helper');
 
 /** @type {Record<string, {cmd: string, args: string[]}>} */
 const alias = {
@@ -56,6 +59,16 @@ class Service {
     this.enabled = service.enabled || false;
     /** @type {boolean} */
     this.crashed = service.crashed || false;
+    /** @type {{name: string, build: string[], volumes: string[], ignoreVolumes: string[], sharedVolume: string} | undefined} */
+    this.container = service.container || undefined;
+    if (this.container) {
+      if (!this.container.name) this.container.name = humanStringToKey(this.label);
+      if (!this.container.volumes?.length) this.container.volumes = [];
+      if (!this.container.ignoreVolumes?.length) this.container.ignoreVolumes = [];
+      this.container.sharedVolume = this.container.sharedVolume
+        ? pathfs.resolve(this.container.sharedVolume)
+        : pathfs.resolve(__dirname, 'temp-docker', this.container.name);
+    }
     /** @type {boolean} */
     this.exited = service.exited || false;
     /**
@@ -83,6 +96,16 @@ class Service {
     this.rootPath = service.rootPath || service.spawnOptions?.cwd?.toString?.() || service.commands?.[0]?.spawnOptions?.cwd?.toString?.() || '';
     /** @type {Parser[]} */
     this.logParsers = service.logParsers || [];
+    /** @type {number | null} */
+    this.lastDatePrinted = service.lastDatePrinted || null;
+    /** @type {LogMessage[]} */
+    this.queue = service.queue || [];
+    setInterval(() => {
+      if (this.queue.length) {
+        const messages = this.queue.splice(0, this.queue.length);
+        sockets.io?.emit('logs:update', messages);
+      }
+    }, 0);
     /**
      * @type {{
      *   check: ((service: Service) => boolean | Promise<boolean>) | undefined,
@@ -146,6 +169,7 @@ class Service {
   }
 
   async restart() {
+    if (!this.container && this.tempContainer) this.container = this.tempContainer;
     await this.kill(false);
     await this.launch(false);
     this.Stack.getStack()?.triggerOnServiceRestart(this);
@@ -156,30 +180,34 @@ class Service {
   }
 
   async kill(triggerEvent = true, keepEnabled = false) {
-    await PromiseB.map(this.pids, async (spawnedProcess) => {
-      if (!spawnedProcess.pid) return;
-      const children = await psTreeAsync(spawnedProcess.pid);
-      children.map(({ PID }) => process.kill(+PID, 'SIGKILL'));
-      spawnedProcess.kill('SIGKILL');
-    });
-    const urls = [...this.urls || [], this.url].filter((a) => a);
-    if (urls.length) {
-      await PromiseB.mapSeries(urls, async (url) => {
-        const { port } = URL.parse(url);
-        if (port && !Number.isNaN(+port)) {
-          let free = false;
-          for (let i = 0; i < 16; i += 1) {
-            // eslint-disable-next-line no-await-in-loop
-            await new Promise((resolve) => { setTimeout(resolve, 100); });
-            // eslint-disable-next-line no-await-in-loop
-            free = await checkport(+port);
-            if (free) break;
-          }
-          if (!free) {
-            await killport(+port).catch((err) => console.error('Error: (Kill port):', err?.message || err));
-          }
-        }
+    if (this.container?.name) {
+      await execAsync(`docker stop ${this.container.name}`, {}).catch(console.error);
+    } else {
+      await PromiseB.map(this.pids, async (spawnedProcess) => {
+        if (!spawnedProcess.pid) return;
+        const children = await psTreeAsync(spawnedProcess.pid);
+        children.map(({ PID }) => process.kill(+PID, 'SIGKILL'));
+        spawnedProcess.kill('SIGKILL');
       });
+      const urls = [...this.urls || [], this.url].filter((a) => a);
+      if (urls.length) {
+        await PromiseB.mapSeries(urls, async (url) => {
+          const { port } = URL.parse(url);
+          if (port && !Number.isNaN(+port)) {
+            let free = false;
+            for (let i = 0; i < 16; i += 1) {
+              // eslint-disable-next-line no-await-in-loop
+              await new Promise((resolve) => { setTimeout(resolve, 100); });
+              // eslint-disable-next-line no-await-in-loop
+              free = await checkport(+port);
+              if (free) break;
+            }
+            if (!free) {
+              await killport(+port).catch((err) => console.error('Error: (Kill port):', err?.message || err));
+            }
+          }
+        });
+      }
     }
     this.pids = [];
     sockets.io?.emit('logs:clear', { label: this.label });
@@ -195,16 +223,16 @@ class Service {
     this.store = [];
     await this.kill(false, true).catch(console.error);
     if (this.spawnCmd) {
-      this.launchProcess(
+      await this.launchProcess(
         this.spawnCmd,
         this.spawnArgs || [],
         this.spawnOptions,
       );
     }
     if (this.commands?.length) {
-      this.commands.forEach((command) => {
+      await PromiseB.map(this.commands, async (command) => {
         if (command?.spawnCmd) {
-          this.launchProcess(
+          await this.launchProcess(
             command?.spawnCmd,
             command?.spawnArgs || [],
             command?.spawnOptions,
@@ -219,95 +247,95 @@ class Service {
 
   /**
    *
+   * @param {Buffer | string} data
+   * @param {Partial<LogMessage>} logMessageOverride
+   */
+  add(data, logMessageOverride, {
+    pid, isMainProcess,
+  }) {
+    const timestamp = Date.now();
+
+    const ansiMsg = unescapeAnsi(data.toString());
+    const stripMsg = stripAnsi(ansiMsg);
+    const htmlMessage = ansiMsg ? ansiconvert.toHtml(ansiMsg) : '<br/>';
+    /** @type {LogMessage} */
+    let line = {
+      pid,
+      msg: htmlMessage,
+      raw: stripMsg,
+      timestamp,
+      label: this.label,
+      json: null,
+      debug: null,
+      ...logMessageOverride,
+      id: v4(),
+    };
+
+    line = [...(this.Stack.getStack()?.logParsers || []), ...this.logParsers].reduce((line, parser) => {
+      if (!parser?.transform) {
+        console.error(`It seems your parser "${parser?.id}" has not a transform function. Please verify or disable it..`);
+        return line;
+      }
+      const result = parser.transform(line, this);
+      if (!result?.id) {
+        console.error(`It seems your parser "${parser.id}" not return correct value. Please verify or disable it..`);
+        return line;
+      }
+      return result;
+    }, line);
+
+    if (line.hide) return;
+
+    if (line.source === 'stderr' && isMainProcess) {
+      sockets.io?.emit('alert', { label: this.label, message: line.raw.toString(), type: 'error' });
+    }
+
+    if (timestamp > (this.lastDatePrinted || Date.now()) + 2000) {
+      const date = `🕑  ${dayjs().format('YYYY-MM-DD HH:mm:ss')}`;
+      /** @type {LogMessage} */
+      const line = {
+        id: v4(), raw: date, label: this.label, msg: date, timestamp, isSeparator: true,
+      };
+      this.store.push(line);
+      this.queue.push(line);
+    }
+    this.lastDatePrinted = Date.now();
+
+    if (line.msg.length > 100000 && !line.msg.startsWith('["stack-monitor"')) line.msg = line.msg.slice(0, 10000);
+    this.store.push(line);
+    this.queue.push(line);
+  }
+
+  /**
+   *
    * @param {string} spawnCmd
    * @param {string[]} spawnArgs
    * @param {SpawnOptions} spawnOptions
    */
-  launchProcess(spawnCmd, spawnArgs = [], spawnOptions = {}, isMainProcess = true) {
+  async launchProcess(spawnCmd, spawnArgs = [], spawnOptions = {}, isMainProcess = true) {
     this.crashed = false;
     this.exited = false;
-    const { cmd, args, options } = this.parseIncomingCommand(spawnCmd, spawnArgs, spawnOptions);
+    const { cmd, args, options } = await this.parseIncomingCommand(spawnCmd, spawnArgs, spawnOptions, isMainProcess);
     const spawnProcess = spawn(cmd, args, { ...options, detached: !isWindows });
-    if (!this.pids) this.pids = [];
     if (!this.pids) this.pids = [];
     this.pids.push(spawnProcess);
     // @ts-ignore
     spawnProcess.title = this.label;
-    let lastDatePrinted = Date.now();
+    this.lastDatePrinted = Date.now();
     /** @type {LogMessage[]} */
-    const queue = [];
-    const stack = this.Stack.getStack();
-
-    const add = (/** @type {Buffer | string} */ data, /** @type {Partial<LogMessage>} */ logMessageOverride) => {
-      const timestamp = Date.now();
-
-      const ansiMsg = unescapeAnsi(data.toString());
-      const stripMsg = stripAnsi(ansiMsg);
-      const htmlMessage = ansiMsg ? ansiconvert.toHtml(ansiMsg) : '<br/>';
-      /** @type {LogMessage} */
-      let line = {
-        pid: spawnProcess.pid,
-        msg: htmlMessage,
-        raw: stripMsg,
-        timestamp,
-        label: this.label,
-        json: null,
-        debug: null,
-        ...logMessageOverride,
-        id: v4(),
-      };
-
-      line = [...(stack?.logParsers || []), ...this.logParsers].reduce((line, parser) => {
-        if (!parser?.transform) {
-          console.error(`It seems your parser "${parser?.id}" has not a transform function. Please verify or disable it..`);
-          return line;
-        }
-        const result = parser.transform(line, this);
-        if (!result?.id) {
-          console.error(`It seems your parser "${parser.id}" not retrun correct value. Please verify or disable it..`);
-          return line;
-        }
-        return result;
-      }, line);
-
-      if (line.hide) return;
-
-      if (line.source === 'stderr' && isMainProcess) {
-        sockets.io?.emit('alert', { label: this.label, message: line.raw.toString(), type: 'error' });
-      }
-
-      if (timestamp > lastDatePrinted + 2000) {
-        const date = `🕑  ${dayjs().format('YYYY-MM-DD HH:mm:ss')}`;
-        /** @type {LogMessage} */
-        const line = {
-          id: v4(), raw: date, label: this.label, msg: date, timestamp, isSeparator: true,
-        };
-        this.store.push(line);
-        queue.push(line);
-      }
-      lastDatePrinted = Date.now();
-
-      if (line.msg.length > 100000 && !line.msg.startsWith('["stack-monitor"')) line.msg = line.msg.slice(0, 10000);
-      this.store.push(line);
-      queue.push(line);
-    };
-
-    const intervalId = setInterval(() => {
-      if (queue.length) {
-        const messages = queue.splice(0, queue.length);
-        sockets.io?.emit('logs:update', messages);
-      }
-    }, 0);
+    this.queue = [];
     new CreateInterface({
       input: spawnProcess.stdout,
       emitAfterNoDataMs: 100,
     })
-      .on('line', (message) => add(message, { source: 'stdout' }));
+      .on('line', (message) => {
+        this.add(message, { source: 'stdout' }, { isMainProcess, pid: spawnProcess.pid });
+      });
     new CreateInterface({
       input: spawnProcess.stderr,
       emitAfterNoDataMs: 100,
     }).on('line', (message) => {
-      add(message, { source: 'stderr' });
+      this.add(message, { source: 'stderr' }, { isMainProcess, pid: spawnProcess.pid });
     });
 
     /** @type {LogMessage} */
@@ -326,9 +354,6 @@ class Service {
       },
     };
     spawnProcess.on('exit', (code, signal) => {
-      setTimeout(() => {
-        clearInterval(intervalId);
-      }, 50);
       if (code) {
         if (launchMessage.cmd) launchMessage.cmd.status = 'error';
         if (isMainProcess) {
@@ -353,7 +378,7 @@ class Service {
     const date = `🕑  ${dayjs().format('YYYY-MM-DD HH:mm:ss')}`;
     /** @type {LogMessage} */
     const line = {
-      id: v4(), raw: date, label: this.label, msg: date, timestamp: lastDatePrinted, isSeparator: true,
+      id: v4(), raw: date, label: this.label, msg: date, timestamp: this.lastDatePrinted, isSeparator: true,
     };
     this.store.push(line, launchMessage);
     sockets.io?.emit('logs:update', [line, launchMessage]);
@@ -375,12 +400,14 @@ class Service {
    * @param {import('child_process').ChildProcessWithoutNullStreams} spawnProcess
    */
   async launchHealthChecker(spawnProcess) {
-    if (!spawnProcess.pid || !this.health?.check) return;
+    if ((!spawnProcess.pid && !this.container?.name) || !this.health?.check) return;
     await new Promise((res) => { setTimeout(res, this.health.interval); });
-    if (!(await psTreeAsync(spawnProcess.pid))?.length) {
-      this.crashed = true;
-      sockets.io?.emit('service:healthcheck:down', { label: this.label, pid: spawnProcess.pid });
-      return;
+    if (!this.container?.name) {
+      if (!(await psTreeAsync(spawnProcess.pid))?.length) {
+        this.crashed = true;
+        sockets.io?.emit('service:healthcheck:down', { label: this.label, pid: spawnProcess.pid });
+        return;
+      }
     }
     let healthy;
     try { healthy = await this.health.check(this); } catch (error) {
@@ -450,8 +477,9 @@ class Service {
    * @param {string} spawnCmd
    * @param {string[]} spawnArgs
    * @param {SpawnOptions} spawnOptions
+   * @param {boolean} isMainProcess
    */
-  parseIncomingCommand(spawnCmd, spawnArgs = [], spawnOptions = {}) {
+  async parseIncomingCommand(spawnCmd, spawnArgs = [], spawnOptions = {}, isMainProcess = true) {
     let cmd = spawnCmd?.split(' ')?.[0];
     const argFromCmd = spawnCmd?.split(' ')?.slice(1).join(' ');
     let args = [argFromCmd, ...spawnArgs].filter((a) => a);
@@ -467,7 +495,6 @@ class Service {
       cwd: spawnOptions.cwd || this.rootPath,
       shell: isWindows ? process.env.ComSpec : '/bin/sh',
       env: {
-        ...process.env,
         ...(spawnOptions.env || {}),
         ...spawnOptions.overrideEnvs || {},
       },
@@ -475,6 +502,71 @@ class Service {
 
     if (cmd.match(/[/\\]/g)) {
       cmd = path.resolve(options.cwd.toString(), cmd);
+    }
+    if (this.container) {
+      try {
+        const result = await this.buildDocker({
+          cmd, args, options, isMainProcess,
+        });
+        return result;
+      } catch (error) {
+        console.error(error);
+        this.add('We are trying to launch without docker, it might not work', { source: 'stderr' }, { pid: null, isMainProcess });
+        this.tempContainer = this.container;
+        this.container = undefined;
+      }
+    }
+    options.env = { ...process.env, ...options.env };
+    return { cmd, args, options };
+  }
+
+  /**
+   * @param {{cmd: string, args: string[], options: SpawnOptions, isMainProcess: boolean}} spawnCmd
+   */
+  async buildDocker({
+    cmd, args, options, isMainProcess,
+  }) {
+    if (!this.container) return { cmd, args, options };
+    const internalVolumeRootPath = this.container.sharedVolume;
+    const dockerFilePath = pathfs.resolve(internalVolumeRootPath, 'Dockerfile');
+    if (!existsSync(internalVolumeRootPath)) await mkdir(internalVolumeRootPath, { recursive: true });
+    await writeFile(dockerFilePath, `
+${(this.container.build || []).join('\n')}
+WORKDIR ${options.cwd}
+${Object.keys(options.env || {}).map((env) => `ENV ${env}=${(options.env || {})[env]} `).join('\n')}
+    `.trim(), 'utf-8');
+    const originalCmd = `${cmd} ${args.join(' ')}`;
+    cmd = 'docker';
+    const volumesCmd = this.container.volumes.map((v) => `-v ${v}:${v}`);
+    volumesCmd.push(...this.container.ignoreVolumes.map((v) => `-v ${pathfs.join(internalVolumeRootPath, v)}:${v}`));
+    const isAlive = await execAsync(`docker inspect --format {{.State.Pid}}  ${this.container.name}`, {})
+      .then(() => true)
+      .catch(() => false);
+    if (!isAlive) {
+      this.add('Building docker image...', { source: 'stdout' }, { pid: null, isMainProcess });
+      await new Promise((resolve, reject) => {
+        console.log('docker', ['build', '-t', this.container?.name || '', '.']);
+        const buildProcess = spawn('docker', ['build', '-t', this.container?.name || '', '.'], { cwd: internalVolumeRootPath });
+        new CreateInterface({
+          input: buildProcess.stdout,
+        })
+          .on('line', (message) => {
+            this.add(message, { source: 'stdout' }, { isMainProcess, pid: buildProcess.pid });
+          });
+        new CreateInterface({
+          input: buildProcess.stderr,
+        }).on('line', (message) => {
+          this.add(message, { source: 'stdout' }, { isMainProcess, pid: buildProcess.pid });
+        });
+        buildProcess.on('exit', (code) => {
+          if (code) return reject(code);
+          return resolve(null);
+        });
+      });
+      args = ['run --name', this.container.name, '--init --rm --network host', ...volumesCmd, this.container.name, originalCmd];
+    } else {
+      await this.add('Attach to container...', { source: 'stdout' }, { pid: null, isMainProcess });
+      args = ['exec ', this.container.name, originalCmd];
     }
     return { cmd, args, options };
   }

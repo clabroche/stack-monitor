@@ -3,7 +3,19 @@
     <div class="main">
       <div class="header">
         <div class="left">
-          <div class="title">{{currentService.label}}</div>
+          <div class="title">
+            <Popover trigger="mouseenter" appendTo="parent" max-width="50vh"  v-if="currentService.container?.name">
+              <template #trigger>
+                <i class="fab fa-docker"></i>
+              </template>
+              <template #content>
+                <ul>
+                  <li>Container name: {{ currentService.container.name }}</li>
+                </ul>
+              </template>
+            </Popover>
+            {{currentService.label}}
+          </div>
           <div class="description">{{currentService.description}}</div>
         </div>
         <div class="right">
@@ -68,6 +80,7 @@ import NotificationBell from '../components/NotificationBell.vue';
 import axios from '../helpers/axios'
 import Socket from '../helpers/Socket';
 import { useRouter } from 'vue-router';
+import Popover from '../../../../fronts/app/src/components/Popover.vue';
 
 export default {
   name: 'StackSingle',
@@ -76,6 +89,7 @@ export default {
     sectionCmp: SectionVue,
     Tabs,
     Card,
+    Popover,
     NotificationBell,
   },
   setup() {
@@ -204,6 +218,8 @@ export default {
         justify-content: space-between;
         .title {
           font-size: 2em;
+          display: flex;
+          gap: 10px;
         }
         .description {
           color: #97d8ff;

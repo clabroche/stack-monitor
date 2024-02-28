@@ -9,6 +9,7 @@
       <slot v-else name="header">
       </slot>
       <div class="actions">
+        <slot name="actions"></slot>
         <template v-for="action of activeActions" :key="action.label">
           <Popover appendTo="parent" trigger="mouseenter" placement="top" :disable="!action.hover">
             <template #trigger>

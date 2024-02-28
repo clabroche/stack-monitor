@@ -1,7 +1,7 @@
 const pathfs = require('path');
 require('dotenv').config();
 
-const { STACKFILE } = process.env;
+const { STACKFILE, SERVICE } = process.env;
 if (!STACKFILE) throw new Error('No Stack file to launch');
 
 const groups = {
@@ -49,6 +49,7 @@ const stack = (stackMonitor) => ({
       spawnOptions: {
         cwd: pathfs.resolve(__dirname, './servers/server'),
         env: {
+          SERVICE,
           STACKFILE: pathfs.resolve(__dirname, STACKFILE),
           NODE_ENV: 'DEV',
           HTTP_PORT: '5459',

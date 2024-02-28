@@ -39,11 +39,14 @@ const args = require('../helpers/args');
           { '': 'Version', Value: require('../helpers/version').version, 'Overrided By': '-' },
           { '': 'Port', Value: ports.http, 'Overrided By': 'HTTP_PORT' },
           { '': 'Url', Value: `http://localhost:${ports.http}`, 'Overrided By': '-' },
+          ...args.services.length
+            ? [{ '': 'Services', Value: args.services.join(', '), 'Overrided By': '-' }]
+            : [],
         ]);
       })();
     },
   });
   if (args.confPath) {
-    await require('../models/stack').selectConf(args.confPath);
+    await require('../models/stack').selectConf(args.confPath, args.services);
   }
 })();

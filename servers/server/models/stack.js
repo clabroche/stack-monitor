@@ -211,7 +211,7 @@ class Stack {
   }
 
   /** @param {string} confPath */
-  static async selectConf(confPath) {
+  static async selectConf(confPath, services) {
     confPath = pathfs.resolve(confPath);
     if (Stack.#currentWatches?.length) Stack.#currentWatches.forEach((currentWatch) => currentWatch.close());
     confPath = path.resolve(confPath);
@@ -244,6 +244,14 @@ class Stack {
           );
         } else console.error(filePath, 'not exists');
       });
+    if (services?.length) {
+      await PromiseB.map(services || [], async (_service) => {
+        const service = Stack.findService(_service);
+        if (service) {
+          await service.launch(true);
+        }
+      });
+    }
   }
 
   /**

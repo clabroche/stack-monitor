@@ -62,6 +62,12 @@ class Service {
     this.exited = service.exited || false;
     /** @type {string} */
     this.rootPath = service.rootPath || '';
+    /** @type {{name: string, build: string[], volumes: string[], ignoreVolumes: string[]} | undefined} */
+    this.container = service.container || undefined;
+    if (this.container) {
+      if (!this.container.volumes?.length) this.container.volumes = [];
+      if (!this.container.ignoreVolumes?.length) this.container.ignoreVolumes = [];
+    }
   }
 
   async updateGit() {

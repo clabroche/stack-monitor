@@ -3,7 +3,7 @@
     <div class="main-content">
       <div class="pids-container" v-if="pids">
         <div class="pid" :class="{active: !currentPidView}" @click="currentPidView = null; scroll(true)">All</div>
-        <Popover appendTo="parent">
+        <Popover placement="bottom-end" appendTo="parent" max-width="50vh">
           <template #trigger>
             <div class="pid" :class="{active: currentPidView}" >
               Commands {{ currentPidView?.raw ? `: ${currentPidView?.raw?.substring(0, 20)}...` : ''}}
@@ -31,8 +31,10 @@
         ]" class="terminal-container">
           <template #header>
             <h4 class="header-title">{{ 'Logs' + (currentPidView?.raw ? `: ${currentPidView?.raw}` : '') }}</h4>
+          </template>
+          <template #actions>
             <div class="header">
-              <Popover appendTo="parent" trigger="mouseenter">
+              <Popover appendTo="parent" placement="bottom-start" trigger="mouseenter">
                 <template #trigger>
                   <button class="small config"><i class="fas fa-cog"></i></button>
                 </template>
@@ -90,8 +92,7 @@
                 </template>
               </Popover>
             </div>
-
-            </template>
+          </template>
           <Transition name="slide-fade">
           <div class="terminal-panel" v-if="selectedLine">
             <div class="terminal-panel-bg" @click="selectedLine = null"></div>
@@ -201,10 +202,10 @@
             <div class="histories" v-if="histories?.length">
               <div
                 class="history" :class="{active: history.active}"
-                @click="messageToSend = history.raw; histories = []; textareaRef?.focus()"
+                @click="messageToSend = history.cmd; histories = []; textareaRef?.focus()"
                 v-for="(history, i) of histories" :key="i + 'history'">
                 <div>
-                  {{ history.raw }}
+                  {{ history.cmd }}
                 </div>
                 <div class="right">
                   <div>Used: {{history.timestamps?.length || 0}}</div>
@@ -556,7 +557,7 @@ async function sendEnter(ev) {
   const active = histories.value.find((a) => a.active);
   if (active) {
     setTimeout(async () => {
-      messageToSend.value = active.raw?.trim();
+      messageToSend.value = active.cmd?.trim();
       await nextTick();
       rerenderTextarea();
       setTimeout(() => {
@@ -734,7 +735,10 @@ function setSelectedLine(line) {
 
 .header-title {
   margin: 0;
-
+  max-width: 50vh;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 }
 .header {
   display: flex;
@@ -824,6 +828,9 @@ function setSelectedLine(line) {
       max-height: 400px;
       overflow: auto;
       .pid {
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
         &:hover {
           background-color: rgba(0,0,0,0.05);
           cursor: pointer;
