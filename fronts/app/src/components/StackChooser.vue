@@ -43,10 +43,11 @@
 import Stack from '../models/stack'
 import System from '../models/system'
 import SectionVue from '../components/Section.vue'
-import { computed, onMounted, reactive, ref, watch } from 'vue'
+import { computed, onMounted, reactive, ref } from 'vue'
 import BackgroundStackChooser from '../components/BackgroundStackChooser.vue'
 import LeftLogo from '../components/LeftLogo.vue'
 import { useRouter } from 'vue-router';
+import Socket from '../helpers/Socket'
 
 export default {
     name: 'StackChooser',
@@ -62,17 +63,24 @@ export default {
         const router = useRouter();
         /** @type {import('vue').Ref<{label: string | undefined, enabled: boolean, groups: string[] | undefined}[]>} */
         const servicesToLaunch = ref([])
-        onMounted(async () => {
-            await Stack.loadServices()
-            servicesToLaunch.value = Stack.services.value.map(service => {
-                const state = localStorage.getItem(`automatic-toggle-${service.label}`)
-                return {
-                    label: service.label,
-                    enabled: state === 'true' || service.enabled || false,
-                    groups: service.groups
-                }
-            })
-        })
+        async function reload() {
+          await Stack.loadServices()
+          servicesToLaunch.value = Stack.services.value.map(service => {
+            const state = localStorage.getItem(`automatic-toggle-${service.label}`)
+            return {
+              label: service.label,
+              enabled: state === 'true' || service.enabled || false,
+              groups: service.groups
+            }
+          })
+          if(router.currentRoute.value.name === 'stack-chooser') {
+            const launched = Stack.services.value.find((service) => service.enabled)
+            if (launched) router.push({ name: 'stack-single', params: { label: launched.label } })
+          }
+        }
+        onMounted(reload)
+        Socket.socket?.on('stack:selectConf', reload)
+        Socket.socket?.on('service:start', reload)
 
         const validate = async () => {
             servicesToLaunch.value.forEach((s) => {

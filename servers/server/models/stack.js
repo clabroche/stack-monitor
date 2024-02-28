@@ -252,6 +252,7 @@ class Stack {
         }
       });
     }
+    sockets.io?.emit('stack:selectConf');
   }
 
   /**
