@@ -1056,6 +1056,30 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@clabroche/modules-docker-backend@workspace:*, @clabroche/modules-docker-backend@workspace:modules/docker/backend":
+  version: 0.0.0-use.local
+  resolution: "@clabroche/modules-docker-backend@workspace:modules/docker/backend"
+  dependencies:
+    "@clabroche/common-retrigger-all-build": "workspace:*"
+    "@clabroche/modules-plugins-loader-front": "workspace:*"
+    "@types/express": "npm:^4.17.21"
+    "@types/fs-extra": "npm:^11.0.4"
+    express: "npm:^4.18.2"
+    fs-extra: "npm:^11.2.0"
+    octokit: "npm:^3.1.2"
+  languageName: unknown
+  linkType: soft
+
+"@clabroche/modules-docker-front@workspace:*, @clabroche/modules-docker-front@workspace:modules/docker/front":
+  version: 0.0.0-use.local
+  resolution: "@clabroche/modules-docker-front@workspace:modules/docker/front"
+  dependencies:
+    "@clabroche/common-retrigger-all-build": "workspace:*"
+    vue: "npm:^3.4.18"
+    vue-eslint-parser: "npm:^9.4.2"
+  languageName: unknown
+  linkType: soft
+
 "@clabroche/modules-documentation-backend@workspace:*, @clabroche/modules-documentation-backend@workspace:modules/documentation/backend":
   version: 0.0.0-use.local
   resolution: "@clabroche/modules-documentation-backend@workspace:modules/documentation/backend"
@@ -1440,6 +1464,7 @@ __metadata:
     "@clabroche/modules-configuration-backend": "workspace:*"
     "@clabroche/modules-dev-ops-backend": "workspace:*"
     "@clabroche/modules-diff-backend": "workspace:*"
+    "@clabroche/modules-docker-backend": "workspace:*"
     "@clabroche/modules-documentation-backend": "workspace:*"
     "@clabroche/modules-finder-backend": "workspace:*"
     "@clabroche/modules-git-backend": "workspace:*"
@@ -1471,6 +1496,7 @@ __metadata:
     "@clabroche/modules-configuration-front": "workspace:*"
     "@clabroche/modules-dev-ops-front": "workspace:*"
     "@clabroche/modules-diff-front": "workspace:*"
+    "@clabroche/modules-docker-front": "workspace:*"
     "@clabroche/modules-documentation-front": "workspace:*"
     "@clabroche/modules-finder-front": "workspace:*"
     "@clabroche/modules-git-front": "workspace:*"

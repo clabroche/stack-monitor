@@ -23,6 +23,7 @@
     "@clabroche/modules-configuration-front": "workspace:*",
     "@clabroche/modules-dev-ops-front": "workspace:*",
     "@clabroche/modules-diff-front": "workspace:*",
+    "@clabroche/modules-docker-front": "workspace:*",
     "@clabroche/modules-documentation-front": "workspace:*",
     "@clabroche/modules-finder-front": "workspace:*",
     "@clabroche/modules-git-front": "workspace:*",

@@ -225,7 +225,7 @@
               <div class="left">
                 <div class="blue">
                   <i class="icon fas fa-folder"></i>
-                  <label>{{ getShortPath(service.rootPath) }}</label>
+                  <label>{{ getShortPath(cwd) }}</label>
                 </div>
                 <div :class="gitChanges?.length ? 'yellow': 'green'" v-if="currentBranch">
                   <i class="icon fas fa-code-branch"></i>
@@ -298,6 +298,7 @@ import 'json-tree-view-vue3/dist/style.css';
 import jsonpath from 'jsonpath';
 import {
   computed, onMounted, ref, nextTick, onBeforeUnmount,
+  onUnmounted,
 } from 'vue';
 import dayjs from 'dayjs';
 import debounce from 'debounce';
@@ -455,50 +456,59 @@ Socket.socket.on('conf:update', () => {
 });
 async function mounted() {
   logs.value = await props.service.getLogs();
-  Socket.socket.on('logs:update', (/** @type {LogMessage[]} */datas) => {
-    datas.forEach((data) => {
-      if (data.label !== props.service.label) return;
-      logs.value.push(data);
-      scroll();
-    });
-  });
-
-  Socket.socket.on('logs:update:lines', (/** @type {LogMessage[]} */lines) => {
-    lines.forEach((line) => {
-      if (line.label !== props.service.label) return;
-      const index = logs.value.findIndex((a) => a.id === line.id);
-      if (index >= 0) {
-        logs.value.splice(index, 1, line);
-      }
-    });
-  });
-
-  Socket.socket.on('service:exit', (/** @type {{label:string, code: number, signal: string, pid?: number}} */data) => {
-    if (data.label !== props.service.label) return;
-    if (data.pid) {
-      if (currentPidView.value?.pid === data.pid) {
-        currentPidView.value = null;
-        scroll(true);
-      }
-    }
-  });
-
-  Socket.socket.on('service:crash', (/** @type {{label:string, code: number, signal: string, pid?: number}} */data) => {
-    if (data.label !== props.service.label) return;
-    if (data.pid) {
-      if (currentPidView.value?.pid === data.pid) {
-        currentPidView.value = null;
-        scroll(true);
-      }
-    }
-  });
-  Socket.socket.on('logs:clear', (data) => {
-    if (data.label !== props.service.label) return;
-    logs.value = [];
-    terminal.value?.clear();
-  });
   scroll(true);
 }
+const crashEventCB = (/** @type {{label:string, code: number, signal: string, pid?: number}} */data) => {
+  if (data.label !== props.service.label) return;
+  if (data.pid) {
+    if (currentPidView.value?.pid === data.pid) {
+      currentPidView.value = null;
+      scroll(true);
+    }
+  }
+};
+const clearEventCB = (data) => {
+  if (data.label !== props.service.label) return;
+  logs.value = [];
+  terminal.value?.clear();
+};
+const logsUpdateEventCB = (/** @type {LogMessage[]} */datas) => {
+  datas.forEach((data) => {
+    if (data.label !== props.service.label) return;
+    logs.value.push(data);
+    scroll();
+  });
+};
+const logsUpdateLineEventCB = (/** @type {LogMessage[]} */lines) => {
+  lines.forEach((line) => {
+    if (line.label !== props.service.label) return;
+    const index = logs.value.findIndex((a) => a.id === line.id);
+    if (index >= 0) {
+      logs.value.splice(index, 1, line);
+    }
+  });
+};
+const exitEventCB = (/** @type {{label:string, code: number, signal: string, pid?: number}} */data) => {
+  if (data.label !== props.service.label) return;
+  if (data.pid) {
+    if (currentPidView.value?.pid === data.pid) {
+      currentPidView.value = null;
+      scroll(true);
+    }
+  }
+};
+Socket.socket.on('logs:update', logsUpdateEventCB);
+Socket.socket.on('logs:update:lines', logsUpdateLineEventCB);
+Socket.socket.on('service:exit', exitEventCB);
+Socket.socket.on('service:crash', crashEventCB);
+Socket.socket.on('logs:clear', clearEventCB);
+onUnmounted(() => {
+  Socket.socket.off('logs:update', logsUpdateEventCB);
+  Socket.socket.off('logs:update:lines', logsUpdateLineEventCB);
+  Socket.socket.off('service:exit', exitEventCB);
+  Socket.socket.off('service:crash', crashEventCB);
+  Socket.socket.off('logs:clear', clearEventCB);
+});
 
 async function clear() {
   props.service.clear();
@@ -684,6 +694,11 @@ const reloadBarInfos = debounce(async (reloadCostingInfos = false) => {
   }
 }, 100);
 
+const cwd = ref(
+  props?.service?.spawnOptions?.cwd
+  || props.service?.commands?.[0]?.spawnOptions?.cwd
+  || props.service?.rootPath,
+);
 /**
  *
  * @param {string | undefined} path
@@ -844,6 +859,7 @@ function setSelectedLine(line) {
     .pid {
       padding: 5px 10px;
       border: 2px solid transparent;
+      cursor: pointer;
       &.active {
         border-bottom-color:#0076bc
       }
@@ -944,10 +960,10 @@ function setSelectedLine(line) {
       margin: 10px 0;
       border: none;
       .section-header {
-        background-color: #e9d6b2;
+        background-color: #d1b37a;
       }
       .section-content {
-        border-color: #e9d6b2
+        border-color: #d1b37a
       }
     }
 
@@ -1192,7 +1208,7 @@ function setSelectedLine(line) {
     padding: 0;
     display: flex;
     .value-key {
-      color: var(--jsonviewer-valueKeyColor) !important;
+      color: var(--system-color) !important;
       padding: 0;
       &+span {
         overflow: hidden;
@@ -1205,7 +1221,11 @@ function setSelectedLine(line) {
     }
   }
   .data-key {
-    color: var(--jsonviewer-keyColor) !important;
+    &:hover {
+      background: transparent;
+      box-shadow: none;
+    }
+    color: var(--system-color);
     .chevron-arrow {
       margin-right: 8px;
     }

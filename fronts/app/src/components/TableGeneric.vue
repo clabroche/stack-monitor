@@ -407,7 +407,9 @@ export default {
 
 <style lang="scss" scoped>
 .table-root {
-  background-color: #fff;
+  background-color: var(--system-sidebar-backgroundColor);
+  color: var(--system-sidebar-color);;
+
   border-radius: 10px;
   overflow: hidden;
   box-shadow: 0 0 10px 0 rgba(0,0,0,0.1);
@@ -421,7 +423,7 @@ export default {
     text-align: left;
     z-index: 1;
     font-weight: normal;
-    color: #757575;
+    color: var(--system-sidebar-color);;
     .header {
       display: flex;
     }
@@ -467,7 +469,9 @@ export default {
   .table-wrapper th{
       position: sticky;
       top: 0;
-      background-color: white;
+      background-color: var(--system-sidebar-backgroundColor);
+      color: var(--system-sidebar-color);;
+
   }
 }
 table {
@@ -481,7 +485,8 @@ table {
       content: "";
       width: 40px;
       height: 100%;
-      background-color: white;
+      background-color: var(--system-sidebar-backgroundColor);
+      color: var(--system-sidebar-color);;
       position: absolute;
       left: 0;
       top: 0;
@@ -505,7 +510,8 @@ table {
       padding: 0;
     }
     div {
-      background-color: white;
+      background-color: var(--system-sidebar-backgroundColor);
+      color: var(--system-sidebar-color);;
       border: 1px solid #ddd;
       padding: 10px 12px;
       box-sizing: border-box;

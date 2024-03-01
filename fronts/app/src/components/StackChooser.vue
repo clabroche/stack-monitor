@@ -43,7 +43,7 @@
 import Stack from '../models/stack'
 import System from '../models/system'
 import SectionVue from '../components/Section.vue'
-import { computed, onMounted, reactive, ref } from 'vue'
+import { computed, onMounted, reactive, ref, onUnmounted } from 'vue'
 import BackgroundStackChooser from '../components/BackgroundStackChooser.vue'
 import LeftLogo from '../components/LeftLogo.vue'
 import { useRouter } from 'vue-router';
@@ -81,6 +81,10 @@ export default {
         onMounted(reload)
         Socket.socket?.on('stack:selectConf', reload)
         Socket.socket?.on('service:start', reload)
+        onUnmounted(() => {
+            Socket.socket?.off('stack:selectConf', reload)
+            Socket.socket?.off('service:start', reload)
+        })
 
         const validate = async () => {
             servicesToLaunch.value.forEach((s) => {

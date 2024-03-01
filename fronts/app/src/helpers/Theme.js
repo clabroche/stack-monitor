@@ -1,217 +1,38 @@
+/* eslint-disable no-multi-assign */
+/* eslint-disable no-nested-ternary */
+/* eslint-disable max-len */
+/* eslint-disable eqeqeq */
+/* eslint-disable no-unused-expressions */
+/* eslint-disable no-bitwise */
+/* eslint-disable no-sequences */
+/* eslint-disable no-mixed-operators */
 import { merge, cloneDeep } from 'lodash-es';
 import { ref } from 'vue';
 import CustomObservable from './CustomObservable';
+import base from './themes/base';
+import lightPurple from './themes/lightPurple';
+import lightOrange from './themes/lightOrange';
+import lightBlue from './themes/lightBlue';
+import darkPurple from './themes/darkPurple';
+import darkOrange from './themes/darkOrange';
+import darkBlue from './themes/darkBlue';
+import baseDark from './themes/baseDark';
 
 class Theme {
   constructor() {
     this.themes = ref({
-      base: {
-        rules: {
-          system: { backgroundColor: '#f2f4f7', color: '#4c4c4c' },
-          'system.terminal': { backgroundColor: '#ffffff00', color: '#4c4c4c', contrastRatio: 7 },
-          'system.secondary': { backgroundColor: '#eaebed', color: '#4a5361' },
-          'system.tertiary': { color: '#999' },
-          'system.accent': {
-            backgroundColor1: 'rgb(168, 38, 180)',
-            backgroundColor2: 'rgb(157, 27, 209)',
-            backgroundColor3: 'rgb(211, 22, 229)',
-          },
-          'system.border': { borderColor: '#dbdbdb' },
-          'system.sidebar': { backgroundColor: 'white' },
-          'system.secondary-sidebar': { backgroundColor: 'white' },
-          'system.sections': { backgroundColor: '#f7f7f7', innerShadow: '#eee' },
-          'git.badge': { backgroundColor: '#b1b1b1', color: 'white' },
-          jsonviewer: {
-            keyColor: '#0977e6',
-            valueKeyColor: '#073642',
-          },
-        },
-      },
+      light: base(),
+      dark: baseDark(),
       /** ==================================== */
-      light: {
-        public: true,
-        name: 'Light Purple',
-        group: 'Light',
-        base: 'base',
-        preview: {
-          background: { backgroundColor: '#f2f4f7' },
-          foreground1: { backgroundColor: 'rgb(168, 38, 180)' },
-          foreground2: { backgroundColor: 'rgb(10 ,206 ,213)' },
-          foreground3: { backgroundColor: 'rgb(211, 22, 229)' },
-          foreground4: { backgroundColor: 'rgb(229, 139, 22)' },
-        },
-        rules: {
-          'system.accent': {
-            backgroundColor1: 'rgb(168, 38, 180)',
-            backgroundColor2: 'rgb(157, 27, 209)',
-            backgroundColor3: 'rgb(211, 22, 229)',
-
-            'backgroundColor1-secondary': 'rgb(255, 123, 0)',
-            'backgroundColor2-secondary': 'rgb(229, 156, 45)',
-            'backgroundColor3-secondary': 'rgb(229, 139, 22)',
-
-            'backgroundColor1-tertiary': 'rgb(47, 161, 182)',
-            'backgroundColor2-tertiary': 'rgb(10 ,206 ,213)',
-            'backgroundColor3-tertiary': 'rgb(47, 161, 182)',
-          },
-        },
-      },
-      lightOrange: {
-        public: true,
-        name: 'Light Orange',
-        group: 'Light',
-        base: 'light',
-        preview: {
-          background: { backgroundColor: '#f2f4f7' },
-          foreground1: { backgroundColor: 'rgb(255, 123, 0)' },
-          foreground2: { backgroundColor: 'rgb(10 ,206 ,213)' },
-          foreground3: { backgroundColor: 'rgb(211, 22, 229)' },
-          foreground4: { backgroundColor: 'rgb(229, 139, 22)' },
-        },
-        rules: {
-          'system.accent': {
-            'backgroundColor1-tertiary': 'rgb(168, 38, 180)',
-            'backgroundColor2-tertiary': 'rgb(157, 27, 209)',
-            'backgroundColor3-tertiary': 'rgb(211, 22, 229)',
-
-            backgroundColor1: 'rgb(255, 123, 0)',
-            backgroundColor2: 'rgb(229, 156, 45)',
-            backgroundColor3: 'rgb(229, 139, 22)',
-
-            'backgroundColor1-secondary': 'rgb(47, 161, 182)',
-            'backgroundColor2-secondary': 'rgb(10 ,206 ,213)',
-            'backgroundColor3-secondary': 'rgb(47, 161, 182)',
-          },
-        },
-      },
-      lightBlue: {
-        public: true,
-        name: 'Light Blue',
-        group: 'Light',
-        base: 'light',
-        preview: {
-          background: { backgroundColor: '#f2f4f7' },
-          foreground1: { backgroundColor: 'rgb(47, 161, 182)' },
-          foreground2: { backgroundColor: 'rgb(10 ,206 ,213)' },
-          foreground3: { backgroundColor: 'rgb(211, 22, 229)' },
-          foreground4: { backgroundColor: 'rgb(229, 139, 22)' },
-        },
-        rules: {
-          'system.accent': {
-            'backgroundColor1-secondary': 'rgb(168, 38, 180)',
-            'backgroundColor2-secondary': 'rgb(157, 27, 209)',
-            'backgroundColor3-secondary': 'rgb(211, 22, 229)',
-
-            'backgroundColor1-tertiary': 'rgb(255, 123, 0)',
-            'backgroundColor2-tertiary': 'rgb(229, 156, 45)',
-            'backgroundColor3-tertiary': 'rgb(229, 139, 22)',
-
-            backgroundColor1: 'rgb(47, 161, 182)',
-            backgroundColor2: 'rgb(10 ,206 ,213)',
-            backgroundColor3: 'rgb(47, 161, 182)',
-          },
-        },
-      },
+      lightPurple: lightPurple(),
+      lightOrange: lightOrange(),
+      lightBlue: lightBlue(),
       /** ==================================== */
-      dark: {
-        public: true,
-        name: 'Dark Purple',
-        group: 'Dark',
-        base: 'light',
-        preview: {
-          background: { backgroundColor: '#2b2d31' },
-          foreground1: { backgroundColor: 'rgb(168, 38, 180)' },
-          foreground2: { backgroundColor: 'rgb(10 ,206 ,213)' },
-          foreground3: { backgroundColor: 'rgb(211, 22, 229)' },
-          foreground4: { backgroundColor: 'rgb(229, 139, 22)' },
-        },
-        rules: {
-          system: { backgroundColor: '#313338', color: '#ddd' },
-          'system.secondary': { backgroundColor: '#2b2d31', color: '#ddd' },
-          'system.tertiary': { color: '#999' },
-          'system.accent': {
-            backgroundColor1: 'rgb(168, 38, 180)',
-            backgroundColor2: 'rgb(157, 27, 209)',
-            backgroundColor3: 'rgb(211, 22, 229)',
-
-            'backgroundColor1-secondary': 'rgb(255, 123, 0)',
-            'backgroundColor2-secondary': 'rgb(229, 156, 45)',
-            'backgroundColor3-secondary': 'rgb(229, 139, 22)',
-
-            'backgroundColor1-tertiary': 'rgb(47, 161, 182)',
-            'backgroundColor2-tertiary': 'rgb(10 ,206 ,213)',
-            'backgroundColor3-tertiary': 'rgb(47, 161, 182)',
-          },
-          'system.terminal': { backgroundColor: '#00000000', color: '#ddd', contrastRatio: 7 },
-          'system.border': { borderColor: '#444' },
-          'system.sidebar': { backgroundColor: '#1e1f22' },
-          'system.secondary-sidebar': { backgroundColor: '#2b2d31' },
-          'system.sections': { backgroundColor: '#2b2d31', innerShadow: '#353535' },
-          'git.badge': { backgroundColor: '#4a5361', color: '#eaebed' },
-          jsonviewer: {
-            keyColor: '#0977e6',
-            valueKeyColor: '#64a9ba',
-          },
-        },
-      },
-      darkOrange: {
-        public: true,
-        name: 'Dark Orange',
-        group: 'Dark',
-        base: 'dark',
-        preview: {
-          background: { backgroundColor: '#2b2d31' },
-          foreground1: { backgroundColor: 'rgb(255, 123, 0)' },
-          foreground2: { backgroundColor: 'rgb(10 ,206 ,213)' },
-          foreground3: { backgroundColor: 'rgb(211, 22, 229)' },
-          foreground4: { backgroundColor: 'rgb(229, 139, 22)' },
-        },
-        rules: {
-          'system.accent': {
-            'backgroundColor1-tertiary': 'rgb(168, 38, 180)',
-            'backgroundColor2-tertiary': 'rgb(157, 27, 209)',
-            'backgroundColor3-tertiary': 'rgb(211, 22, 229)',
-
-            backgroundColor1: 'rgb(255, 123, 0)',
-            backgroundColor2: 'rgb(229, 156, 45)',
-            backgroundColor3: 'rgb(229, 139, 22)',
-
-            'backgroundColor1-secondary': 'rgb(47, 161, 182)',
-            'backgroundColor2-secondary': 'rgb(10 ,206 ,213)',
-            'backgroundColor3-secondary': 'rgb(47, 161, 182)',
-          },
-        },
-      },
-      darkBlue: {
-        public: true,
-        name: 'Dark Blue',
-        group: 'Dark',
-        base: 'dark',
-        preview: {
-          background: { backgroundColor: '#2b2d31' },
-          foreground1: { backgroundColor: 'rgb(47, 161, 182)' },
-          foreground2: { backgroundColor: 'rgb(10 ,206 ,213)' },
-          foreground3: { backgroundColor: 'rgb(211, 22, 229)' },
-          foreground4: { backgroundColor: 'rgb(229, 139, 22)' },
-        },
-        rules: {
-          'system.accent': {
-            'backgroundColor1-secondary': 'rgb(168, 38, 180)',
-            'backgroundColor2-secondary': 'rgb(157, 27, 209)',
-            'backgroundColor3-secondary': 'rgb(211, 22, 229)',
-
-            'backgroundColor1-tertiary': 'rgb(255, 123, 0)',
-            'backgroundColor2-tertiary': 'rgb(229, 156, 45)',
-            'backgroundColor3-tertiary': 'rgb(229, 139, 22)',
-
-            backgroundColor1: 'rgb(47, 161, 182)',
-            backgroundColor2: 'rgb(10 ,206 ,213)',
-            backgroundColor3: 'rgb(47, 161, 182)',
-          },
-        },
-      },
+      darkPurple: darkPurple(),
+      darkOrange: darkOrange(),
+      darkBlue: darkBlue(),
     });
-    this.currentTheme = 'light';
+    this.currentTheme = 'lightPurple';
     this.buildedTheme = this.themes.value.light;
     this.observableCurrentTheme = new CustomObservable();
   }
@@ -230,8 +51,16 @@ class Theme {
   loadCurrentTheme() {
     let currentTheme = localStorage.getItem('currentTheme');
     if (!currentTheme) {
-      localStorage.setItem('currentTheme', 'light');
-      currentTheme = 'light';
+      localStorage.setItem('currentTheme', 'lightPurple');
+      currentTheme = 'lightPurple';
+    }
+    if (currentTheme === 'light') {
+      localStorage.setItem('currentTheme', 'lightPurple');
+      currentTheme = 'lightPurple';
+    }
+    if (currentTheme === 'dark') {
+      localStorage.setItem('currentTheme', 'darkPurple');
+      currentTheme = 'darkPurple';
     }
     this.currentTheme = currentTheme;
   }
@@ -271,6 +100,7 @@ class Theme {
   }
 }
 
+// @ts-ignore
 function getCssVariable() {
   const r = document.querySelector(':root');
   const rs = getComputedStyle(r);
@@ -295,6 +125,7 @@ const pSBC = {
         if (n > 9) {
           [r, g, b, a] = d = d.split(','), n = d.length;
           if (n < 3 || n > 4) return null;
+          // @ts-ignore
           x.r = i(r[3] == 'a' ? r.slice(5) : r.slice(4)), x.g = i(g), x.b = i(b), x.a = a ? parseFloat(a) : -1;
         } else {
           if (n == 8 || n == 6 || n < 4) return null;
@@ -313,8 +144,11 @@ const pSBC = {
     if (!f || !t) return null;
     if (l)r = m(P * f.r + p * t.r), g = m(P * f.g + p * t.g), b = m(P * f.b + p * t.b);
     else r = m((P * f.r ** 2 + p * t.r ** 2) ** 0.5), g = m((P * f.g ** 2 + p * t.g ** 2) ** 0.5), b = m((P * f.b ** 2 + p * t.b ** 2) ** 0.5);
+    // @ts-ignore
     a = f.a, t = t.a, f = a >= 0 || t >= 0, a = f ? a < 0 ? t : t < 0 ? a : a * P + t * p : 0;
+    // @ts-ignore
     if (h) return `rgb${f ? 'a(' : '('}${r},${g},${b}${f ? `,${m(a * 1000) / 1000}` : ''})`;
+    // @ts-ignore
     return `#${(4294967296 + r * 16777216 + g * 65536 + b * 256 + (f ? m(a * 255) : 0)).toString(16).slice(1, f ? undefined : -2)}`;
   },
 

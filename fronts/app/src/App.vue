@@ -61,16 +61,16 @@ export default {
     const redirect = async () => {
       connected.value = Socket.socket.connected
       if(!connected.value) Stack.services.value = []
-      const enabledServices = await Stack.getEnabledServices()
+      // const enabledServices = await Stack.getEnabledServices()
       if(
         router.currentRoute.value.fullPath.startsWith('/stack-single') ||
         router.currentRoute.value.fullPath.startsWith('/stack-multiple')
       ) {
-        if(connected.value && !Stack.services.value.length) {
-          router.push({name:'import-create'})
-        } else if(!enabledServices.length && router.currentRoute.value.name !== 'stack-chooser') {
+        // if(connected.value && !Stack.services.value.length) {
+        //   router.push({name:'import-create'})
+        // } else if(!enabledServices.length && router.currentRoute.value.name !== 'stack-chooser') {
           router.push({name:'stack-chooser'})
-        }
+        // }
       }
     }
     onMounted(async ()=> {

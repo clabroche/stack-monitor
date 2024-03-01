@@ -22,4 +22,5 @@ module.exports = {
   help: require('@clabroche/modules-help-backend'),
   openapi: require('@clabroche/modules-openapi-backend'),
   vscode: require('@clabroche/modules-vscode-backend'),
+  docker: require('@clabroche/modules-docker-backend'),
 };

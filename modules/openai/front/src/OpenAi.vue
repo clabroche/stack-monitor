@@ -204,7 +204,7 @@ $leftSize: 200px;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        background-color: white;
+        background-color: var(--system-sidebar-backgroundColor);
         padding: 5px 10px ;
         border: 1px solid var(--system-border-borderColor);
         border-bottom: 0;

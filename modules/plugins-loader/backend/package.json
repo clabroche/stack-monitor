@@ -13,6 +13,7 @@
     "@clabroche/modules-configuration-backend": "workspace:*",
     "@clabroche/modules-dev-ops-backend": "workspace:*",
     "@clabroche/modules-diff-backend": "workspace:*",
+    "@clabroche/modules-docker-backend": "workspace:*",
     "@clabroche/modules-documentation-backend": "workspace:*",
     "@clabroche/modules-finder-backend": "workspace:*",
     "@clabroche/modules-git-backend": "workspace:*",

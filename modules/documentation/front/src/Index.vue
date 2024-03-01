@@ -105,5 +105,13 @@ h2 {
   height: 100%;
   overflow: auto;
   flex-grow: 1;
+  &::v-deep {
+    ul {
+      li {
+        margin-left: 20px;
+        list-style: disc;
+      }
+    }
+  }
 }
 </style>

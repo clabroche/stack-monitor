@@ -23,6 +23,11 @@
                 skipped: track.steps[step.id]?.skipped === true,
               }"
             >
+              <div v-if="!!track.steps[step.id]?.error" class="badge error"><i class="fas fa-times-circle"></i></div>
+              <Spinner size="30" v-else-if="track.loadingStep === step.id" class="badge loading"></Spinner>
+              <div v-else-if="track.currentStep === step.id" class="badge current"><i class="fas fa-play"></i></div>
+              <div v-else-if="track.steps[step.id]?.isValidated" class="badge valid"><i class="fas fa-check"></i></div>
+              <div v-else-if="track.steps[step.id]?.skipped === true" class="badge skipped"><i class="fas fa-stop-circle"></i></div>
               <h2>{{ step.label }}</h2>
               <template v-if="track.currentStep === step.id && step.prompt && step.id !== track.loadingStep">
                 <div>{{ step.prompt.question }}</div>
@@ -262,24 +267,25 @@ $leftSize: 200px;
       display: flex;
       flex-direction: column;
       border-color: #adabab;
-      background: linear-gradient(90deg, rgba(199,199,199,1) 0%, rgba(0,0,0,0) 100%);
+      background: var(--system-backgroundColor);
+      border: 1px solid var(--system-sections-innerShadow);
+      .badge {
+        position: absolute;
+        right: 10px;
+        &.valid {
+          background: rgb(50, 173, 54);
+        }
+        &.current {
+          background: rgb(41, 117, 184);
+        }
+        &.loading {
+          background-color: transparent;
+        }
+        &.error {
+          background: rgb(196, 57, 57);
+        }
+      }
 
-      &.valid {
-        border-color: #5fc151;
-        background: linear-gradient(90deg, rgba(171,221,173,1) 0%, rgba(0,0,0,0) 100%);
-      }
-      &.current {
-        border-color: #829fc1;
-        background: linear-gradient(90deg, rgba(168,214,255,1) 0%, rgba(0,0,0,0) 100%);
-      }
-      &.loading {
-        border-color: rgb(180, 166, 34);
-        background: linear-gradient(90deg, rgb(204, 187, 33) 0%, rgba(0,0,0,0) 100%);
-      }
-      &.error {
-        border-color: #dd766d;
-        background: linear-gradient(90deg, rgba(239,163,163,1) 0%, rgba(0,0,0,0) 100%);
-      }
       h2 {
         margin: 0;
       }

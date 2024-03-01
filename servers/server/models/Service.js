@@ -1,5 +1,6 @@
 /// <reference path="@clabroche/common-typings.d.ts">
-const { spawn, execSync } = require('child_process');
+const os = require('os');
+const { spawn } = require('child_process');
 const killport = require('kill-port');
 const URL = require('url');
 const path = require('path');
@@ -17,6 +18,9 @@ const { stripAnsi, ansiconvert, unescapeAnsi } = require('../helpers/ansiconvert
 const isWindows = require('../helpers/isWindows');
 const { execAsync } = require('../helpers/exec');
 const { humanStringToKey } = require('../helpers/stringTransformer.helper');
+
+const userInfo = os.userInfo();
+const { gid, uid, username } = userInfo;
 
 /** @type {Record<string, {cmd: string, args: string[]}>} */
 const alias = {
@@ -59,15 +63,27 @@ class Service {
     this.enabled = service.enabled || false;
     /** @type {boolean} */
     this.crashed = service.crashed || false;
-    /** @type {{name: string, build: string[], volumes: string[], ignoreVolumes: string[], sharedVolume: string} | undefined} */
+    /** 
+     * @type {{
+     *  name: string,
+     *  build: string[],
+     *  volumes: string[],
+     *  ignoreVolumes: string[],
+     *  sharedVolume: string,
+     *  noHostUser: true
+     *  noChangeWorkDir: true
+     * } | undefined}
+     */
     this.container = service.container || undefined;
     if (this.container) {
       if (!this.container.name) this.container.name = humanStringToKey(this.label);
       if (!this.container.volumes?.length) this.container.volumes = [];
-      if (!this.container.ignoreVolumes?.length) this.container.ignoreVolumes = [];
       this.container.sharedVolume = this.container.sharedVolume
         ? pathfs.resolve(this.container.sharedVolume)
         : pathfs.resolve(__dirname, 'temp-docker', this.container.name);
+      this.container.ignoreVolumes = this.container.ignoreVolumes?.length
+        ? this.container.ignoreVolumes.filter((f) => !f.startsWith(this.container.sharedVolume))
+        : [];
     }
     /** @type {boolean} */
     this.exited = service.exited || false;
@@ -165,6 +181,7 @@ class Service {
       spawnOptions: this.spawnOptions,
       url: this.url,
       urls: this.urls,
+      container: this.container,
     };
   }
 
@@ -411,7 +428,6 @@ class Service {
     }
     let healthy;
     try { healthy = await this.health.check(this); } catch (error) {
-      console.error(`Service health failed(${this.label}):${error}`);
     }
     if (!healthy && !this.crashed) {
       this.crashed = true;
@@ -528,25 +544,50 @@ class Service {
   }) {
     if (!this.container) return { cmd, args, options };
     const internalVolumeRootPath = this.container.sharedVolume;
-    const dockerFilePath = pathfs.resolve(internalVolumeRootPath, 'Dockerfile');
+    const dockerFilePath = pathfs.resolve(internalVolumeRootPath, `Dockerfile.${this.container.name}`);
+    const dockerIgnoreFilePath = pathfs.resolve(internalVolumeRootPath, '.dockerignore');
+    const dockerContextPath = pathfs.resolve(internalVolumeRootPath, '.empty-context');
     if (!existsSync(internalVolumeRootPath)) await mkdir(internalVolumeRootPath, { recursive: true });
+    if (!existsSync(dockerContextPath)) await mkdir(dockerContextPath, { recursive: true });
     await writeFile(dockerFilePath, `
 ${(this.container.build || []).join('\n')}
-WORKDIR ${options.cwd}
+${
+  this.container.noHostUser
+    ? ''
+    : `
+      RUN echo '${username}:x:${uid}:${gid}::/home/${username}:/usr/bin/zsh' >/etc/passwd
+      RUN mkdir -p /home/${username}
+      RUN chown ${uid}:${gid} /home/${username}
+      USER ${username}
+    `
+}
+${
+  this.container.noChangeWorkDir
+    ? ''
+    : `
+      WORKDIR ${options.cwd}
+    `
+}
 ${Object.keys(options.env || {}).map((env) => `ENV ${env}=${(options.env || {})[env]} `).join('\n')}
     `.trim(), 'utf-8');
+    await writeFile(dockerIgnoreFilePath, 'Dockerfile.*'.trim(), 'utf-8');
     const originalCmd = `${cmd} ${args.join(' ')}`;
     cmd = 'docker';
     const volumesCmd = this.container.volumes.map((v) => `-v ${v}:${v}`);
-    volumesCmd.push(...this.container.ignoreVolumes.map((v) => `-v ${pathfs.join(internalVolumeRootPath, v)}:${v}`));
+    volumesCmd.push(...await PromiseB.map(this.container.ignoreVolumes, async (v) => {
+      const volumePath = pathfs.join(internalVolumeRootPath, v);
+      if (!existsSync(volumePath)) await mkdir(volumePath, { recursive: true }); // Pre create folders with host uid,gid to prevent docker to create as root user
+      if (!existsSync(v)) await mkdir(v, { recursive: true }); // Pre create folders with host uid,gid to prevent docker to create as root user
+      return v.startsWith(internalVolumeRootPath) ? '' : `-v ${volumePath}:${v}`;
+    }).filter((f) => !!f));
+
     const isAlive = await execAsync(`docker inspect --format {{.State.Pid}}  ${this.container.name}`, {})
       .then(() => true)
       .catch(() => false);
     if (!isAlive) {
       this.add('Building docker image...', { source: 'stdout' }, { pid: null, isMainProcess });
       await new Promise((resolve, reject) => {
-        console.log('docker', ['build', '-t', this.container?.name || '', '.']);
-        const buildProcess = spawn('docker', ['build', '-t', this.container?.name || '', '.'], { cwd: internalVolumeRootPath });
+        const buildProcess = spawn('docker', ['build', '-f', dockerFilePath, '-t', this.container?.name || '', dockerContextPath], { cwd: internalVolumeRootPath });
         new CreateInterface({
           input: buildProcess.stdout,
         })
@@ -563,7 +604,7 @@ ${Object.keys(options.env || {}).map((env) => `ENV ${env}=${(options.env || {})[
           return resolve(null);
         });
       });
-      args = ['run --name', this.container.name, '--init --rm --network host', ...volumesCmd, this.container.name, originalCmd];
+      args = ['run --name', this.container.name, `--init --rm --user ${uid}:${gid} --network host`, ...volumesCmd, this.container.name, originalCmd];
     } else {
       await this.add('Attach to container...', { source: 'stdout' }, { pid: null, isMainProcess });
       args = ['exec ', this.container.name, originalCmd];
