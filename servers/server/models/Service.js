@@ -63,7 +63,7 @@ class Service {
     this.enabled = service.enabled || false;
     /** @type {boolean} */
     this.crashed = service.crashed || false;
-    /** 
+    /**
      * @type {{
      *  name: string,
      *  build: string[],
@@ -71,7 +71,9 @@ class Service {
      *  ignoreVolumes: string[],
      *  sharedVolume: string,
      *  noHostUser: true
-     *  noChangeWorkDir: true
+     *  noChangeWorkDir: true,
+     *  customPid?: ({cmd, args, pid})=> Promise<number | null>
+     *  bootstrap: {user: string, cmd: string, entrypoint:string}[]
      * } | undefined}
      */
     this.container = service.container || undefined;
@@ -334,6 +336,9 @@ class Service {
     this.exited = false;
     const { cmd, args, options } = await this.parseIncomingCommand(spawnCmd, spawnArgs, spawnOptions, isMainProcess);
     const spawnProcess = spawn(cmd, args, { ...options, detached: !isWindows });
+    const pid = this.container?.customPid
+      ? await this.container.customPid({ pid: spawnProcess.pid, cmd, args })
+      : spawnProcess.pid;
     if (!this.pids) this.pids = [];
     this.pids.push(spawnProcess);
     // @ts-ignore
@@ -346,13 +351,13 @@ class Service {
       emitAfterNoDataMs: 100,
     })
       .on('line', (message) => {
-        this.add(message, { source: 'stdout' }, { isMainProcess, pid: spawnProcess.pid });
+        this.add(message, { source: 'stdout' }, { isMainProcess, pid });
       });
     new CreateInterface({
       input: spawnProcess.stderr,
       emitAfterNoDataMs: 100,
     }).on('line', (message) => {
-      this.add(message, { source: 'stderr' }, { isMainProcess, pid: spawnProcess.pid });
+      this.add(message, { source: 'stderr' }, { isMainProcess, pid });
     });
 
     /** @type {LogMessage} */
@@ -360,7 +365,7 @@ class Service {
       id: v4(),
       timestamp: Date.now(),
       label: this.label,
-      pid: spawnProcess.pid,
+      pid,
       msg: `${cmd} ${args.join(' ')}`,
       raw: `${cmd} ${args.join(' ')}`,
       cmd: {
@@ -375,7 +380,7 @@ class Service {
         if (launchMessage.cmd) launchMessage.cmd.status = 'error';
         if (isMainProcess) {
           sockets.io?.emit('service:crash', {
-            label: this.label, code, signal, pid: spawnProcess.pid,
+            label: this.label, code, signal, pid,
           });
           this.Stack.getStack()?.triggerOnServiceCrash(this, code);
           this.crashed = true;
@@ -387,7 +392,7 @@ class Service {
         }
       }
       sockets.io?.emit('service:exit', {
-        label: this.label, code, signal, pid: spawnProcess.pid,
+        label: this.label, code, signal, pid,
       });
       sockets.io?.emit('logs:update:lines', [launchMessage]);
     });
@@ -402,7 +407,7 @@ class Service {
     if (isMainProcess) {
       this.launchHealthChecker(spawnProcess);
       sockets.io?.emit('service:start', {
-        label: this.label, pid: spawnProcess.pid,
+        label: this.label, pid,
       });
     }
 
@@ -573,46 +578,93 @@ ${Object.keys(options.env || {}).map((env) => `ENV ${env}=${(options.env || {})[
     await writeFile(dockerIgnoreFilePath, 'Dockerfile.*'.trim(), 'utf-8');
     const originalCmd = `${cmd} ${args.join(' ')}`;
     cmd = 'docker';
-    const volumesCmd = this.container.volumes.map((v) => `-v ${v}:${v}`);
-    volumesCmd.push(...await PromiseB.map(this.container.ignoreVolumes, async (v) => {
-      const volumePath = pathfs.join(internalVolumeRootPath, v);
+    const volumesCmd = this.container.volumes.map((v) => (v.includes(':') ? ['-v', `${v}`] : ['-v', `${v}:${v}`]));
+    volumesCmd.push(...await PromiseB.map(this.container.ignoreVolumes, async (ignoredVolume) => {
+      const volumePath = pathfs.join(internalVolumeRootPath, ignoredVolume);
       if (!existsSync(volumePath)) await mkdir(volumePath, { recursive: true }); // Pre create folders with host uid,gid to prevent docker to create as root user
-      if (!existsSync(v)) await mkdir(v, { recursive: true }); // Pre create folders with host uid,gid to prevent docker to create as root user
-      return v.startsWith(internalVolumeRootPath) ? '' : `-v ${volumePath}:${v}`;
-    }).filter((f) => !!f));
+      if (!existsSync(ignoredVolume)) await mkdir(ignoredVolume, { recursive: true }); // Pre create folders with host uid,gid to prevent docker to create as root user
+      return ignoredVolume.startsWith(internalVolumeRootPath) ? [] : ['-v', `${volumePath}:${ignoredVolume}`];
+    }).filter((f) => !!f?.length));
 
     const isAlive = await execAsync(`docker inspect --format {{.State.Pid}}  ${this.container.name}`, {})
-      .then(() => true)
+      .then((pid) => pid.trim() !== '0')
       .catch(() => false);
     if (!isAlive) {
-      this.add('Building docker image...', { source: 'stdout' }, { pid: null, isMainProcess });
+      this.add('<i class="fab fa-docker" title="docker"></i> <i class="fas fa-hard-hat" title="build"></i> Building docker image...', { source: 'stdout' }, { pid: null, isMainProcess });
       await new Promise((resolve, reject) => {
-        const buildProcess = spawn('docker', ['build', '-f', dockerFilePath, '-t', this.container?.name || '', dockerContextPath], { cwd: internalVolumeRootPath });
+        const buildProcess = spawn('docker', ['build', '-f', dockerFilePath, '-t', this.container?.name || '', dockerContextPath], { cwd: internalVolumeRootPath, shell: isWindows ? process.env.ComSpec : '/bin/sh' });
         new CreateInterface({
           input: buildProcess.stdout,
         })
           .on('line', (message) => {
-            this.add(message, { source: 'stdout' }, { isMainProcess, pid: buildProcess.pid });
+            this.add(`<i class="fab fa-docker" title="docker"></i> <i class="fas fa-hard-hat" title="build"></i> ${message}`, { source: 'stdout' }, { isMainProcess, pid: buildProcess.pid });
           });
         new CreateInterface({
           input: buildProcess.stderr,
         }).on('line', (message) => {
-          this.add(message, { source: 'stdout' }, { isMainProcess, pid: buildProcess.pid });
+          this.add(`<i class="fab fa-docker" title="docker"></i> <i class="fas fa-hard-hat" title="build"></i> ${message}`, { source: 'stdout' }, { isMainProcess, pid: buildProcess.pid });
         });
         buildProcess.on('exit', (code) => {
           if (code) return reject(code);
           return resolve(null);
         });
       });
-      args = ['run --name', this.container.name, `--init --rm --user ${uid}:${gid} --network host`, ...volumesCmd, this.container.name, originalCmd];
+      const baseArgs = ['run', '--name', this.container.name, '--init', '--rm', '--user', `${uid}:${gid}`, '--network', 'host', ...volumesCmd.flat(1)];
+      args = [...baseArgs, this.container.name, originalCmd];
+      if (this.container.bootstrap) {
+        await PromiseB.mapSeries(this.container.bootstrap || [], async (command) => {
+          await new Promise((resolve, reject) => {
+            const entrypoint = command.entrypoint ? ['--entrypoint', `${command.entrypoint}`] : [];
+            const userEntrypoint = command.user ? ['--user', `${command.user}`] : [];
+            const test = [
+              ...baseArgs,
+              ...entrypoint.flat(1),
+              ...userEntrypoint.flat(1),
+              this.container.name,
+              command.cmd,
+            ].filter((a) => a);
+            this.add(`<i class="fab fa-docker" title="docker"></i> <i class="fas fa-hourglass-start" title="bootstrap"></i> ${command.entrypoint || ''} ${command.cmd}`, { source: 'stdout' }, { isMainProcess, pid: null });
+            const bootstrapProcess = spawn('docker', test, { shell: isWindows ? process.env.ComSpec : '/bin/sh' });
+            new CreateInterface({
+              input: bootstrapProcess.stdout,
+            })
+              .on('line', (message) => {
+                this.add(`<i class="fab fa-docker" title="docker"></i> <i class="fas fa-hourglass-start" title="bootstrap"></i> ${command.entrypoint || ''} ${command.cmd} ${message}`, { source: 'stdout' }, { isMainProcess, pid: bootstrapProcess.pid });
+              });
+            new CreateInterface({
+              input: bootstrapProcess.stderr,
+            }).on('line', (message) => {
+              this.add(`<i class="fab fa-docker" title="docker"></i> <i class="fas fa-hourglass-start" title="bootstrap"></i> ${command.entrypoint || ''} ${command.cmd} ${message}`, { source: 'stderr' }, { isMainProcess, pid: bootstrapProcess.pid });
+            });
+            bootstrapProcess.on('exit', (code) => {
+              if (code) return reject(code);
+              return resolve(null);
+            });
+          });
+        });
+      }
     } else {
       await this.add('Attach to container...', { source: 'stdout' }, { pid: null, isMainProcess });
       args = ['exec ', this.container.name, originalCmd];
     }
-    return { cmd, args, options };
+    this.container.customPid = async () => {
+      const getPid = () => execAsync(`docker inspect --format {{.State.Pid}}  ${this.container?.name}`, {}).then((a) => a.trim()).catch(() => null);
+      let pid = await getPid();
+      if (!pid) {
+        await wait(1000);
+        pid = await getPid();
+      }
+      return pid && !Number.isNaN(+pid) ? +pid : null;
+    };
+    return {
+      cmd,
+      args,
+      options,
+    };
   }
 }
 
+const wait = (ms) => new Promise((resolve) => setTimeout(async () => { resolve(null); }, ms));
 /**
  *
  * @param {number} pid
@@ -666,7 +718,7 @@ module.exports = Service;
  *  debug?: Record<any, any> | any[] | null,
  *  isSeparator?: boolean,
  *  label: string,
- *  pid?: number,
+ *  pid?: number | null,
  *  hide?: boolean,
  *  cmd?: {cmd: string, args: string[], options: import('child_process').ExecOptions, status: 'running' | 'error' | 'exited'},
  * }} LogMessage

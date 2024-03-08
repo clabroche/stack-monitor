@@ -162,8 +162,7 @@
                     <h2 class="section-header">Debug</h2>
                     <div class="section-content">
                       <div class="section-actions">
-                        <button class="small" v-if="false">Copied</button>
-                        <button class="small" v-else @click="copy(JSON.stringify(line.debug))">Copy</button>
+                        <button class="small" @click.stop="copy(JSON.stringify(line.debug))">Copy</button>
                         <button class="small">
                           <router-link :to="{ name: 'JSONFormatter', query: { json: JSON.stringify(line.debug) } }">
                             Open in json-viewer
@@ -180,8 +179,7 @@
                     <h2 class="section-header">JSON</h2>
                     <div class="section-content">
                       <div class="section-actions">
-                        <button class="small" v-if="false">Copied</button>
-                        <button class="small" v-else @click="copy(JSON.stringify(line.json))">Copy</button>
+                        <button class="small" @click.stop="copy(JSON.stringify(line.json))">Copy</button>
                         <button class="small">
                           <router-link :to="{ name: 'JSONFormatter', query: { json: JSON.stringify(line.json) } }">
                             Open in json-viewer
@@ -243,12 +241,14 @@
             </div>
             <div class="input-content-terminal">
               <div class="badge" v-if="currentPidView?.pid">Pid: {{ currentPidView.pid }}</div>
-              <i class="fas fa-chevron-right"></i>
+              <i class="fab fa-docker" v-if="service.container?.name"></i>
+              <i class="fas fa-chevron-right" v-else></i>
               <PassThrough>
                 <textarea ref="textareaRef"
                   v-model="messageToSend"
                   @keypress.enter="sendEnter"
                   @keyup="keyup"
+                  @keydown="keydown"
                   @input="inputTerminal"
                   :placeholder="currentPidView ? `Send command to ${currentPidView.pid}...` : 'Send new command...'"
                 />
@@ -594,6 +594,11 @@ async function sendTerminate(forceKill = false) {
   await props.service.sendTerminalTerminate({ pid: currentPidView.value?.pid || undefined, forceKill });
 }
 const autocompleteInProgress = ref(false);
+
+/** @param {KeyboardEvent} $event */
+async function keydown($event) {
+  if ($event.code === 'Tab') $event.preventDefault();
+}
 /** @param {KeyboardEvent} $event */
 async function keyup($event) {
   if ($event.code === 'Escape') {

@@ -5,15 +5,32 @@ const router = express.Router();
 const pidusageTree = require('pidusage-tree');
 const os = require('os');
 const Stack = require('../models/stack');
+const { execAsync } = require('../helpers/exec');
 
 router.get('/:service/infos', async (req, res) => {
   try {
     const service = Stack.findService(req.params.service);
-    const pid = service.pids[0]?.pid;
-    res.json(pid ? await getCPU(pid) : {
-      cpu: null,
-      ram: null,
-    });
+    if (service.container?.name) {
+      const data = await execAsync('docker container stats --format \'{ "cpuPerc": "{{.CPUPerc}}", "memPerc": "{{.MemPerc}}" }\'  --no-stream --no-trunc   user_api_monorepo', {})
+        .then((_data) => {
+          const data = JSON.parse(_data);
+          const cpuPerc = data.cpuPerc.trim().replaceAll('%', '');
+          const memPerc = data.memPerc.trim().replaceAll('%', '');
+          return {
+            cpu: Number.isNaN(+cpuPerc) ? 0 : +cpuPerc,
+            mem: Number.isNaN(+memPerc) ? 0 : +memPerc,
+          };
+        });
+      res.json(data);
+    } else {
+      const pid = service.container?.customPid
+        ? await service.container.customPid({ cmd: null, args: null, pid: null })
+        : service.pids[0]?.pid;
+      res.json(pid ? await getCPU(pid) : {
+        cpu: null,
+        ram: null,
+      });
+    }
   } catch (e) {
     res.json({ cpu: null, mem: null });
   }

@@ -15,9 +15,10 @@ const plugin = {
     active: 'Git-NotUpToDate',
   }],
   order: 2,
-  hidden: (service) => {
-    if (!service) return true;
-    return commandExists('git').then(() => false).catch(() => true);
+  hidden: (service, stack, placement) => {
+    if (placement === 'sidebar') return commandExists('git').then(() => false).catch(() => true);
+    if (placement === 'service' && !service) return true;
+    return true;
   },
   routes: require('./routes'),
 };

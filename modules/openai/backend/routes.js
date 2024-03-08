@@ -2,10 +2,16 @@ const express = require('express');
 const fse = require('fs-extra');
 const pathfs = require('path');
 const OpenAIApi = require('openai').OpenAI;
-const { existsSync, mkdirSync } = require('fs');
+const {
+  existsSync, mkdirSync, createReadStream,
+} = require('fs');
 const { encode } = require('gpt-3-encoder');
 const { v4 } = require('uuid');
+const { writeFile, unlink } = require('fs/promises');
 const homedir = require('os').homedir();
+const axios = require('axios').default;
+const PromiseB = require('bluebird');
+const ports = require('../../../servers/server/models/ports');
 
 const router = express.Router();
 const confDir = pathfs.resolve(homedir, '.stack-monitor');
@@ -13,6 +19,8 @@ const confDir = pathfs.resolve(homedir, '.stack-monitor');
 if (!existsSync(confDir)) mkdirSync(confDir);
 const openaiConfPath = pathfs.resolve(confDir, 'openaiconf.json');
 if (!fse.existsSync(openaiConfPath)) fse.writeJSONSync(openaiConfPath, {});
+const openaiStoragePath = pathfs.resolve(confDir, 'storage');
+if (!fse.existsSync(openaiStoragePath)) fse.mkdirSync(openaiStoragePath);
 const openaiconf = fse.readJsonSync(openaiConfPath);
 /** @type {OpenAIApi | null} */
 let openai = openaiconf.apikey ? new OpenAIApi({
@@ -20,10 +28,16 @@ let openai = openaiconf.apikey ? new OpenAIApi({
 }) : null;
 
 module.exports = () => {
-  router.get('/openai/', async (req, res) => {
+  router.get('/openai', async (req, res) => {
     res.json('hello');
   });
-
+  router.get('/openai/image/:id', async (req, res) => {
+    res.setHeader('content-type', 'image/png');
+    res.setHeader('content-disposition', 'filename=image.png');
+    const path = pathfs.resolve(openaiStoragePath, `${req.params.id}.png`);
+    if (existsSync(path)) createReadStream(path).pipe(res);
+    else res.status(404).send('file not found');
+  });
   router.get('/openai/models', async (req, res) => {
     if (!openai) return res.status(400).send('Openai not initialized');
     const models = await openai.models.list({});
@@ -72,6 +86,55 @@ module.exports = () => {
       return Promise.reject(err);
     });
     return res.json(result.choices[0]?.message?.content || 'Cannot respond');
+  });
+
+  router.post('/openai/chat/:room/image', async (req, res) => {
+    if (!openai) return res.status(400).send('Openai not initialized');
+    const { message, quality, resolution } = req.body;
+    if (!openaiconf?.chat) openaiconf.chat = {};
+    if (!openaiconf?.chat?.[req.params.room]) openaiconf.chat[req.params.room] = {};
+    if (!openaiconf?.chat?.[req.params.room]?.messages) {
+      openaiconf.chat[req.params.room].messages = [
+        { role: 'system', content: 'Tu es un assistant utile.' },
+      ];
+    }
+    /** @type {import('./index').OpenAiChat[]} */
+    const messages = openaiconf?.chat[req.params.room]?.messages || [];
+    messages.push({
+      _id: v4(),
+      // @ts-ignore
+      role: 'user',
+      content: message,
+      created_at: new Date().toISOString(),
+    });
+    const response = await openai.images.generate({
+      quality,
+      model: 'dall-e-3',
+      prompt: message,
+      n: 1,
+      size: resolution,
+    });
+
+    if (response?.data?.[0]?.url) {
+      const { url, revised_prompt } = response.data[0];
+      const uuid = v4();
+      const { data: fileBuffer } = await axios.get(url, {
+        responseType: 'arraybuffer',
+        maxContentLength: Infinity,
+        maxBodyLength: Infinity,
+      });
+      await writeFile(pathfs.resolve(openaiStoragePath, `${uuid}.png`), fileBuffer);
+
+      messages.push({
+        url: `http://localhost:${ports.http}/openai/image/${uuid}`,
+        contentId: uuid,
+        revised_prompt,
+        _id: v4(),
+        created_at: new Date().toISOString(),
+      });
+      save();
+    }
+    return res.json(response.data[0].url);
   });
 
   router.post('/openai/chat/:room', async (req, res) => {
@@ -134,7 +197,14 @@ module.exports = () => {
 
   router.delete('/openai/rooms/:room', async (req, res) => {
     const { room } = req.params;
-    if (openaiconf?.chat?.[room]) delete openaiconf.chat[room];
+    if (openaiconf?.chat?.[room]) {
+      await PromiseB.map(openaiconf?.chat?.[room].messages, async (message) => {
+        if (message.contentId && existsSync(pathfs.resolve(openaiStoragePath, `${message.contentId}.png`))) {
+          await unlink(pathfs.resolve(openaiStoragePath, `${message.contentId}.png`));
+        }
+      }, { concurrency: 4 });
+      delete openaiconf.chat[room];
+    }
     save();
     res.json(Object.keys(openaiconf?.chat || {}));
   });
@@ -162,6 +232,7 @@ module.exports = () => {
     } catch (error) {
       res.json(false);
     }
+    return undefined;
   });
 
   function save() {

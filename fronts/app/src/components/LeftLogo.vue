@@ -1,8 +1,8 @@
 <template>
 <div class="left">
   <div class="logo">
-    Stack Monitor
     <img src="@/assets/rocket.png" alt="">
+    Stack Monitor
   </div>
 </div>
 </template>

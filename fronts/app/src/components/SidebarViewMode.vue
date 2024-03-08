@@ -110,9 +110,6 @@ export default {
     DoughtnutChart,
     Popover
   },
-  props: {
-    currentService: {default: null}
-  },
   setup() {
     const router = useRouter(); 
     /** @type {import('vue').Ref<import('@clabroche/modules-plugins-loader-front/src/views').PluginSM<null>[]>} */
@@ -161,7 +158,11 @@ export default {
           text: 'Single View',
           active: 'single',
           icon: 'fas fa-columns',
-          click: () => router.push({ name: 'stack-single', params: { label: stack.services.value[0]?.label } })
+          click: () => {
+            const lastVisited = stack.services.value.find((service) => service.label === localStorage.getItem('last-service-visisted'))
+            if(lastVisited) router.push({ name: 'stack-single', params: { label: lastVisited.label } })
+            else router.push({ name: 'stack-single', params: { label: stack.services.value[0]?.label } })
+          }
         },
         {
           text: 'Multiple view',
@@ -341,5 +342,8 @@ export default {
       }
     }
   }
+}
+.logo {
+  width: 100%;
 }
 </style>

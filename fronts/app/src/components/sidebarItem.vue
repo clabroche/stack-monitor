@@ -1,5 +1,5 @@
 <template>
-  <div @click="$router.push({name: 'stack-single', params: {label: service.label}})"
+  <div @click="gotToService(service)"
     class="sidebar-item"
     :class="{active: isActive, disabled: !service.enabled, crashed: service.crashed}">
       <span>
@@ -29,6 +29,11 @@ const isActive = computed(() => {
   const serviceLabel = url.split('/').filter(a => a).pop()
   return props.service?.label ? encodeURIComponent(props.service.label) === serviceLabel : false
 })
+/** @param {import('../models/service').default} service */
+function gotToService(service) {
+  localStorage.setItem('last-service-visisted', service.label || '')
+  router.push({name: 'stack-single', params: {label: service.label}})
+}
 </script>
 
 <style lang="scss" scoped>

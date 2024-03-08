@@ -75,7 +75,11 @@ export default {
           })
           if(router.currentRoute.value.name === 'stack-chooser') {
             const launched = Stack.services.value.find((service) => service.enabled)
-            if (launched) router.push({ name: 'stack-single', params: { label: launched.label } })
+            if (launched) {
+                const lastVisited = Stack.services.value.find((service) => service.label === localStorage.getItem('last-service-visisted') && service.enabled)
+                if(lastVisited) router.push({ name: 'stack-single', params: { label: lastVisited.label } })
+                else router.push({ name: 'stack-single', params: { label: launched.label } })
+            }
           }
         }
         onMounted(reload)

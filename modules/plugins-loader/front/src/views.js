@@ -109,6 +109,7 @@ export default plugins;
  *  hidden?: (
  *    service: import('../../../../servers/server/models/Service') | null,
  *    stack: typeof import('../../../../servers/server/models/stack'),
+ *    placement: 'toolbox' | 'sidebar' | 'dev-ops' | 'service' | 'global',
  *  ) => Promise<boolean> | boolean,
  *  routes?: (stackMonitor: import('../../../../servers/server/models/stack')) => import('express').Router,
  *  export: T,

@@ -27,6 +27,7 @@ const labelTrad = {
   containerName: 'Name of container',
   isAlive: 'Is Alive',
   pid: 'PID',
+  image: 'Image',
   dockerInfos: 'More infos',
 };
 
@@ -78,6 +79,7 @@ li {
   display: flex;
   .label {
     width: 300px;
+    flex-shrink: 0;
   }
   &:nth-child(odd) {
     background-color: rgba(0,0,0,0.05);

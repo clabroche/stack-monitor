@@ -27,10 +27,29 @@
         <div class="header">
           <h2>{{ room }}</h2>
           <div class="toolbar">
-            <div>
-              Temperature:
-              <input type="range" min="0" max="2" v-model="temperature" step="0.1">
-            </div>
+            <template v-if="model.startsWith('gpt')">
+              <div>
+                Temperature:
+                <input type="range" min="0" max="2" v-model="temperature" step="0.1">
+              </div>
+            </template>
+            <template v-if="model.startsWith('dall')">
+              <div>
+                Resolution:
+                <select v-model="resolution">
+                  <option value="1024x1024">1024x1024</option>
+                  <option value="1024x1792">1024x1792</option>
+                  <option value="1792x1024">1792x1024</option>
+                </select>
+              </div>
+              <div>
+                Quality:
+                <select v-model="quality">
+                  <option value="standard">standard</option>
+                  <option value="hd">hd</option>
+                </select>
+              </div>
+            </template>
             <div>
               Model:
               <select v-model="model" default="gpt-3.5-turbo">
@@ -62,6 +81,8 @@ const models = ref([]);
 const room = ref();
 const model = ref('gpt-3.5-turbo');
 const temperature = ref(0);
+const resolution = ref('1024x1024');
+const quality = ref('standard');
 
 onMounted(reload);
 
@@ -108,7 +129,10 @@ async function changeApikey(apikey, $event) {
 
 async function getModels() {
   const { data: _models } = await axios.get('/openai/models');
-  models.value = _models.filter((/** @type {*} */m) => m.id.startsWith('gpt') && (m.id.split('-')?.length === 2 || Number.isNaN(+m.id.split('-').pop())));
+  models.value = _models.filter((/** @type {*} */m) => (
+    (m.id.startsWith('gpt') && (m.id.split('-')?.length === 2 || Number.isNaN(+m.id.split('-').pop())))
+    || m.id.startsWith('dall')
+  ));
 }
 
 /** @param {string} message */
@@ -116,12 +140,21 @@ async function sendMessage(message) {
   if (!messages.value) messages.value = [];
   messages.value.push({ role: 'user', content: message });
   loading.value = true;
-  await axios.post(`/openai/chat/${room.value}`, { message, model: model.value, temperature: temperature.value })
-    .catch((err) => {
-      console.error(err);
-      notification.next('error', 'Une erreur s\'est produite');
-    })
-    .finally(() => { loading.value = false; });
+  if (model.value.startsWith('dall')) {
+    await axios.post(`/openai/chat/${room.value}/image`, { message, resolution: resolution.value, quality: quality.value })
+      .catch((err) => {
+        console.error(err);
+        notification.next('error', 'Une erreur s\'est produite');
+      })
+      .finally(() => { loading.value = false; });
+  } else {
+    await axios.post(`/openai/chat/${room.value}`, { message, model: model.value, temperature: temperature.value })
+      .catch((err) => {
+        console.error(err);
+        notification.next('error', 'Une erreur s\'est produite');
+      })
+      .finally(() => { loading.value = false; });
+  }
   await reload();
 }
 

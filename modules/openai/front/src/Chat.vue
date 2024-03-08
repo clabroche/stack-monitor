@@ -3,13 +3,19 @@
     <div class="messages" ref="messagesRef">
       <div v-for="message of messages" :key="message._id" class="message-container"
         :class="{ 'me': message.role === 'user' }">
-        <div class="bubble" v-html="message?.content?.trim()?.replaceAll('\n', '<br/>')">
-        </div>
+        <template v-if="message.url">
+            <img :src="message.url" :alt="message.revised_prompt" :download="message.revised_prompt"/>
+        </template>
+        <template v-else>
+          <div class="bubble" v-html="message?.content?.trim()?.replaceAll('\n', '<br/>')">
+          </div>
+        </template>
         <div class="infos">
           <div>
             {{ dayjs(message.created_at).fromNow() }}
           </div>
           <div v-if="message.total_tokens">{{ message.total_tokens }} tokens</div>
+          <div v-if="message.revised_prompt">{{ message.revised_prompt }}</div>
         </div>
       </div>
       <div v-if="loading" class="message-container" >
@@ -179,5 +185,9 @@ onBeforeUnmount(() => clearInterval(interval));
     flex-grow: 1;
     border: none;
   }
+}
+img {
+  max-width: 750px;
+  max-height: 750px;
 }
 </style>

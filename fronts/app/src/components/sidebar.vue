@@ -95,6 +95,7 @@ export default {
         const service = sortedStack.value[0]
         if ($event.ctrlKey && service) {
           service?.restart()
+          localStorage.setItem('last-service-visisted', service.label || '')
           router.push({name: 'stack-single', params: {label: service.label}})
         }
       }
