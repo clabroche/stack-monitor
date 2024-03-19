@@ -139,7 +139,7 @@
               cmd: line.cmd != null && !simplifiedMode,
               prompt: line.prompt && !simplifiedMode,
             }" v-for="line of displayedLines" :key="line.id" @click="setSelectedLine(line)" >
-                  <div v-html="line.msg" v-if="simplifiedMode"></div>
+                  <div v-if="simplifiedMode">{{ line.msg }}</div>
                   <div v-else-if="line.cmd != null" >
                     <template v-if="line.cmd.cmd.trim()">
                       <h2 class="section-header" v-if="line.cmd.cmd.trim()">
