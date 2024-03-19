@@ -1,6 +1,6 @@
 {
   "name": "@clabroche/modules-json-formatter-backend",
-  "version": "1.18.6",
+  "version": "1.18.8",
   "repository": "https://github.com/clabroche/stack-monitor",
   "private": true,
   "scripts": {

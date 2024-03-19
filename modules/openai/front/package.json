@@ -1,6 +1,6 @@
 {
   "name": "@clabroche/modules-openai-front",
-  "version": "1.17.29",
+  "version": "1.18.8",
   "repository": "https://github.com/clabroche/stack-monitor",
   "private": true,
   "scripts": {

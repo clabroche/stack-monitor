@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.18.8](https://github.com/clabroche/stack-monitor/compare/v1.18.7...v1.18.8) (2024-03-19)
+
+### Bug Fixes
+
+* **devcontainer:** add container support ([f2559fb](https://github.com/clabroche/stack-monitor/commit/f2559fb90bba3de5fcfef2c95dd45826358b7ad4))
+
 ## [1.18.6](https://github.com/clabroche/stack-monitor/compare/v1.18.5...v1.18.6) (2024-02-25)
 
 **Note:** Version bump only for package @clabroche/modules-logs-backend

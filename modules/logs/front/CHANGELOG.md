@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.18.8](https://github.com/clabroche/stack-monitor/compare/v1.18.7...v1.18.8) (2024-03-19)
+
+### Bug Fixes
+
+* **devcontainer:** add container support ([f2559fb](https://github.com/clabroche/stack-monitor/commit/f2559fb90bba3de5fcfef2c95dd45826358b7ad4))
+* **docker:** add docker support ([f3abb42](https://github.com/clabroche/stack-monitor/commit/f3abb4237b8f708585769a8ff51c393d5f21dc5c))
+* **logs:** dont render html on simplified mode ([713b2c7](https://github.com/clabroche/stack-monitor/commit/713b2c736d9d4f62b791076450b01d4f657e7ff1))
+* resolve issues for permission on docker volumes + cosmetic changes ([7a822cd](https://github.com/clabroche/stack-monitor/commit/7a822cd1c205e5808247075828c1d3ce49d1524b))
+
 ## [1.17.29](https://github.com/clabroche/stack-monitor/compare/v1.17.28...v1.17.29) (2024-02-15)
 
 ### Bug Fixes
