@@ -560,7 +560,7 @@ ${
   this.container.noHostUser
     ? ''
     : `
-      RUN echo '${username}:x:${uid}:${gid}::/home/${username}:/usr/bin/zsh' >/etc/passwd
+      RUN echo '${username}:x:${uid}:${gid}::/home/${username}:/usr/bin/sh' >> /etc/passwd
       RUN mkdir -p /home/${username}
       RUN chown ${uid}:${gid} /home/${username}
       USER ${username}
