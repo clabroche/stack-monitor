@@ -7,7 +7,7 @@
     </div>
     <div class="configs">
       <div class="header-configs">
-        <div>
+        <div class="header">
           <i class="fas fa-home" aria-hidden="true"></i>
           <h3>General</h3>
         </div>
@@ -23,7 +23,7 @@
         </div>
       </div>
       <div class="header-configs">
-        <div>
+        <div class="header">
           <i class="fab fa-git-alt" aria-hidden="true"></i>
           <h3>Git</h3>
         </div>
@@ -39,7 +39,7 @@
         </div>
       </div>
       <div class="header-configs">
-        <div>
+        <div class="header">
           <i class="fas fa-terminal" aria-hidden="true"></i>
           <h3>Command</h3>
         </div>
@@ -77,9 +77,10 @@
       </div>
       </template>
       <div class="header-configs">
-        <div>
+        <div class="header">
           <i class="fas fa-cog" aria-hidden="true"></i>
           <h3>Envs</h3>
+          <input type="text" v-model="searchEnv" placeholder="Search...">
         </div>
         <button @click="exportEnv">Export</button>
       </div>
@@ -106,7 +107,7 @@
 
 <script>
 import { sort } from 'fast-sort';
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import Service from '../../../../fronts/app/src/models/service';
 import SectionVue from '../../../../fronts/app/src/components/Section.vue';
 
@@ -123,7 +124,9 @@ export default {
     },
   },
   setup(props) {
+    const searchEnv = ref('');
     return {
+      searchEnv,
       envs: computed(() => {
         const options = props.service?.spawnOptions || {};
         const overrideEnvs = Object.keys(options.overrideEnvs || {})
@@ -147,7 +150,7 @@ export default {
         ]).asc([
           (u) => !u.overrided,
           (u) => u.key,
-        ]);
+        ]).filter((a) => a.key.toUpperCase().includes(searchEnv.value.toUpperCase()));
       }),
       exportEnv() {
         const envObject = props.service.spawnOptions?.env || {};
@@ -168,6 +171,7 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+$grey: var(--system-border-borderColor);
 .key-value {
   margin-bottom: 10px;
   display: flex;
@@ -191,7 +195,7 @@ export default {
     top: 0;
     width: 2px;
     height: 100%;
-    background: var(--system-accent-backgroundColor1);
+    background: $grey;
     position: absolute;
     left: 0;
   }
@@ -201,7 +205,7 @@ export default {
     padding: 0 10px;
     border-radius: 4px;
     position: relative;
-    background-color: var(--system-accent-backgroundColor1-secondary);
+    background-color: var(--system-accent-backgroundColor3);
     color: white;
     z-index: 1;
     &.overrided {
@@ -214,11 +218,11 @@ export default {
       height: 0px;
       padding-top: 2px;
       background: linear-gradient(
-        90deg, var(--system-accent-backgroundColor1) 0%, var(--system-accent-backgroundColor1-secondary) 100%
+        90deg, $grey 0%, $grey 100%
       );
       position: absolute;
       left: 0;
-      transform: translateX(calc(-100% + 1px));
+      transform: translateX(-100%);
     }
   }
   .value {
@@ -227,7 +231,7 @@ export default {
     padding: 0 10px;
     border-radius: 4px;
     width: max-content;
-    border: 1px solid var(--system-accent-backgroundColor1-tertiary);
+    border: 1px solid var(--system-accent-backgroundColor2);
     margin-top: 10px;
     &::before {
       content: "";
@@ -235,7 +239,7 @@ export default {
       width: 40px;
       height: 2px;
       background: linear-gradient(
-        90deg, var(--system-accent-backgroundColor1-secondary) 0%, var(--system-accent-backgroundColor1-tertiary) 100%
+        90deg, $grey 0%, $grey 100%
       );
       position: absolute;
       left: 0;
@@ -247,9 +251,9 @@ export default {
       width: 2px;
       height: 31px;
       background: linear-gradient(
-        90deg, var(--system-accent-backgroundColor1-secondary) 0%, var(--system-accent-backgroundColor1-tertiary) 100%
+        90deg, $grey 0%, $grey 100%
       );
-      background: var(--system-accent-backgroundColor1-secondary);
+      background: $grey;
       position: absolute;
       left: 0;
       transform: translateX(-41px);
@@ -273,9 +277,14 @@ export default {
   }
 }
 .header-configs {
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
   i {
     margin-left: 7px;
-    margin-right: 15px;
     display: flex;
     justify-content: center;
     align-items: center;
