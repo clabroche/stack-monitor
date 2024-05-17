@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.18.9](https://github.com/clabroche/stack-monitor/compare/v1.18.8...v1.18.9) (2024-05-17)
+
+### Bug Fixes
+
+* **docker:** add bootstrap scripts ([040e036](https://github.com/clabroche/stack-monitor/commit/040e036dc53c67e875d2e1a6e2b6147ca4070754))
+* increase turborepo and yarn version ([9d1d179](https://github.com/clabroche/stack-monitor/commit/9d1d17943af8f873b94bf736fdb2fa025eba5c34))
+
 ## [1.18.8](https://github.com/clabroche/stack-monitor/compare/v1.18.7...v1.18.8) (2024-03-19)
 
 ### Bug Fixes
