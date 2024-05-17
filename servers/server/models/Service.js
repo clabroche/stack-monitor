@@ -27,7 +27,7 @@ const alias = {
   ls: { cmd: 'ls', args: ['--color=force'] },
   gco: { cmd: 'git', args: ['checkout'] },
 };
-
+const bootstrapConcurrency = {};
 class Service {
   /**
    * @param {import('@clabroche/common-typings').NonFunctionProperties<Service>} service
@@ -73,7 +73,7 @@ class Service {
      *  noHostUser: true
      *  noChangeWorkDir: true,
      *  customPid?: ({cmd, args, pid})=> Promise<number | null>
-     *  bootstrap: {user: string, cmd: string, entrypoint:string}[]
+     *  bootstrap: {user: string, cmd: string, entrypoint:string}[] | {concurrencyKey?:string, commands: {user: string, cmd: string, entrypoint:string}[]}
      * } | undefined}
      */
     this.container = service.container || undefined;
@@ -336,9 +336,15 @@ class Service {
     this.exited = false;
     const { cmd, args, options } = await this.parseIncomingCommand(spawnCmd, spawnArgs, spawnOptions, isMainProcess);
     const spawnProcess = spawn(cmd, args, { ...options, detached: !isWindows });
-    const pid = this.container?.customPid
-      ? await this.container.customPid({ pid: spawnProcess.pid, cmd, args })
-      : spawnProcess.pid;
+
+    /** @type {number | undefined | null} */
+    let pid = 0;
+    pid = spawnProcess.pid;
+    if (this.container?.customPid) {
+      // cant wait for custom pid, because listeners should be attached fast after spawn call
+      this.container.customPid({ pid: spawnProcess.pid, cmd, args })
+        .then((_pid) => { pid = _pid; });
+    }
     if (!this.pids) this.pids = [];
     this.pids.push(spawnProcess);
     // @ts-ignore
@@ -589,6 +595,7 @@ ${Object.keys(options.env || {}).map((env) => `ENV ${env}=${(options.env || {})[
     const isAlive = await execAsync(`docker inspect --format {{.State.Pid}}  ${this.container.name}`, {})
       .then((pid) => pid.trim() !== '0')
       .catch(() => false);
+
     if (!isAlive) {
       this.add('<i class="fab fa-docker" title="docker"></i> <i class="fas fa-hard-hat" title="build"></i> Building docker image...', { source: 'stdout' }, { pid: null, isMainProcess });
       await new Promise((resolve, reject) => {
@@ -612,36 +619,47 @@ ${Object.keys(options.env || {}).map((env) => `ENV ${env}=${(options.env || {})[
       const baseArgs = ['run', '--name', this.container.name, '--init', '--rm', '--user', `${uid}:${gid}`, '--network', 'host', ...volumesCmd.flat(1)];
       args = [...baseArgs, this.container.name, originalCmd];
       if (this.container.bootstrap) {
-        await PromiseB.mapSeries(this.container.bootstrap || [], async (command) => {
-          await new Promise((resolve, reject) => {
-            const entrypoint = command.entrypoint ? ['--entrypoint', `${command.entrypoint}`] : [];
-            const userEntrypoint = command.user ? ['--user', `${command.user}`] : [];
-            const test = [
-              ...baseArgs,
-              ...entrypoint.flat(1),
-              ...userEntrypoint.flat(1),
-              this.container.name,
-              command.cmd,
-            ].filter((a) => a);
-            this.add(`<i class="fab fa-docker" title="docker"></i> <i class="fas fa-hourglass-start" title="bootstrap"></i> ${command.entrypoint || ''} ${command.cmd}`, { source: 'stdout' }, { isMainProcess, pid: null });
-            const bootstrapProcess = spawn('docker', test, { shell: isWindows ? process.env.ComSpec : '/bin/sh' });
-            new CreateInterface({
-              input: bootstrapProcess.stdout,
-            })
-              .on('line', (message) => {
-                this.add(`<i class="fab fa-docker" title="docker"></i> <i class="fas fa-hourglass-start" title="bootstrap"></i> ${command.entrypoint || ''} ${command.cmd} ${message}`, { source: 'stdout' }, { isMainProcess, pid: bootstrapProcess.pid });
+        const bootstrapCommands = (Array.isArray(this.container.bootstrap)
+          ? this.container.bootstrap
+          : this.container.bootstrap.commands) || [];
+        const concurrency = (Array.isArray(this.container.bootstrap)
+          ? ''
+          : this.container.bootstrap.concurrencyKey);
+        if (!concurrency || (concurrency && !bootstrapConcurrency[concurrency])) {
+          bootstrapConcurrency[concurrency] = true;
+          await PromiseB.mapSeries(bootstrapCommands, async (command) => {
+            await new Promise((resolve, reject) => {
+              const entrypoint = command.entrypoint ? ['--entrypoint', `${command.entrypoint}`] : [];
+              const userEntrypoint = command.user ? ['--user', `${command.user}`] : [];
+              const test = [
+                ...baseArgs,
+                ...entrypoint.flat(1),
+                ...userEntrypoint.flat(1),
+                this.container.name,
+                command.cmd,
+              ].filter((a) => a);
+              this.add(`<i class="fab fa-docker" title="docker"></i> <i class="fas fa-hourglass-start" title="bootstrap"></i> ${command.entrypoint || ''} ${command.cmd}`, { source: 'stdout' }, { isMainProcess, pid: null });
+              const bootstrapProcess = spawn('docker', test, { shell: isWindows ? process.env.ComSpec : '/bin/sh' });
+              new CreateInterface({
+                input: bootstrapProcess.stdout,
+              })
+                .on('line', (message) => {
+                  this.add(`<i class="fab fa-docker" title="docker"></i> <i class="fas fa-hourglass-start" title="bootstrap"></i> ${command.entrypoint || ''} ${command.cmd} ${message}`, { source: 'stdout' }, { isMainProcess, pid: bootstrapProcess.pid });
+                });
+              new CreateInterface({
+                input: bootstrapProcess.stderr,
+              }).on('line', (message) => {
+                this.add(`<i class="fab fa-docker" title="docker"></i> <i class="fas fa-hourglass-start" title="bootstrap"></i> ${command.entrypoint || ''} ${command.cmd} ${message}`, { source: 'stderr' }, { isMainProcess, pid: bootstrapProcess.pid });
               });
-            new CreateInterface({
-              input: bootstrapProcess.stderr,
-            }).on('line', (message) => {
-              this.add(`<i class="fab fa-docker" title="docker"></i> <i class="fas fa-hourglass-start" title="bootstrap"></i> ${command.entrypoint || ''} ${command.cmd} ${message}`, { source: 'stderr' }, { isMainProcess, pid: bootstrapProcess.pid });
+              bootstrapProcess.on('exit', (code) => {
+                if (code) return reject(code);
+                return resolve(null);
+              });
             });
-            bootstrapProcess.on('exit', (code) => {
-              if (code) return reject(code);
-              return resolve(null);
-            });
+          }).finally(() => {
+            bootstrapConcurrency[concurrency] = false;
           });
-        });
+        }
       }
     } else {
       await this.add('Attach to container...', { source: 'stdout' }, { pid: null, isMainProcess });
