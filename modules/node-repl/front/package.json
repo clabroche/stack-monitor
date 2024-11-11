@@ -1,6 +1,6 @@
 {
   "name": "@clabroche/modules-node-repl-front",
-  "version": "1.17.26",
+  "version": "1.18.10",
   "repository": "https://github.com/clabroche/stack-monitor",
   "private": true,
   "scripts": {

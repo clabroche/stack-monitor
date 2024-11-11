@@ -1,6 +1,6 @@
 {
   "name": "@clabroche/modules-jwt-backend",
-  "version": "1.18.8",
+  "version": "1.18.10",
   "repository": "https://github.com/clabroche/stack-monitor",
   "private": true,
   "scripts": {
