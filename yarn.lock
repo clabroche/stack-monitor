@@ -874,7 +874,6 @@ __metadata:
     "@clabroche/common-retrigger-all-build": "workspace:*"
     "@types/express": "npm:^4"
     "@types/ws": "npm:^8"
-    eiows: "npm:^7.1.2"
     express: "npm:^4.21.1"
     ws: "npm:^8.18.0"
   languageName: unknown
@@ -9079,16 +9078,6 @@ __metadata:
   version: 1.1.1
   resolution: "ee-first@npm:1.1.1"
   checksum: 10/1b4cac778d64ce3b582a7e26b218afe07e207a0f9bfe13cc7395a6d307849cfe361e65033c3251e00c27dd060cab43014c2d6b2647676135e18b77d2d05b3f4f
-  languageName: node
-  linkType: hard
-
-"eiows@npm:^7.1.2":
-  version: 7.1.2
-  resolution: "eiows@npm:7.1.2"
-  dependencies:
-    node-gyp: "npm:latest"
-  checksum: 10/52d3c4078061f862f5901bb04bea389f652e2c06ac9048ca7926338d1cf6ff6b4312b97b9f86343a0291966293d4a90b0ce72a2ec4e4fbfe9772ac8783e684e2
-  conditions: (!os=win32 | os=linux | os=freebsd | os=darwin)
   languageName: node
   linkType: hard
 
