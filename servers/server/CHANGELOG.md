@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.18.11](https://github.com/clabroche/stack-monitor/compare/v1.18.10...v1.18.11) (2024-11-11)
+
+**Note:** Version bump only for package @clabroche/servers-server
+
 ## [1.18.10](https://github.com/clabroche/stack-monitor/compare/v1.18.9...v1.18.10) (2024-11-11)
 
 ### Bug Fixes

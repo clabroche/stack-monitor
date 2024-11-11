@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.18.11](https://github.com/clabroche/stack-monitor/compare/v1.18.10...v1.18.11) (2024-11-11)
+
+### Bug Fixes
+
+* remove eiwos ([86bbff3](https://github.com/clabroche/stack-monitor/commit/86bbff321bd3cd7a70faeb0de6ccbbe93be4bab4))
+* remove eiwos ([12ff054](https://github.com/clabroche/stack-monitor/commit/12ff0548941856cd5ca627f1a0a157141366b3cf))
+
 ## [1.18.10](https://github.com/clabroche/stack-monitor/compare/v1.18.9...v1.18.10) (2024-11-11)
 
 ### Bug Fixes
