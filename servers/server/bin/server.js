@@ -19,7 +19,7 @@ const args = require('../helpers/args');
       crossOriginResourcePolicy: false,
       contentSecurityPolicy: {
         directives: {
-          'frame-src': ["'self'", 'clabroche.github.io'],
+          'frame-src': ["'self'", 'clabroche.github.io', 'jsoncrack.com'],
         },
         useDefaults: true,
       },
