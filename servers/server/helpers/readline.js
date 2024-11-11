@@ -31,11 +31,11 @@ module.exports = class extends EventEmitter {
         } else {
           this.all.push(char);
         }
-        if (this.options.emitAfterNoDataMs) {
-          this.timeout = setTimeout(() => {
-            this.#emit();
-          }, this.options.emitAfterNoDataMs);
-        }
+      }
+      if (this.options.emitAfterNoDataMs) {
+        this.timeout = setTimeout(() => {
+          this.#emit();
+        }, this.options.emitAfterNoDataMs);
       }
     });
   }

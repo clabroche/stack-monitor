@@ -54,20 +54,20 @@ async function reload() {
 }
 onMounted(reload);
 
-Socket.socket?.on('stack:selectConf', reload);
-Socket.socket?.on('service:crash', reload);
-Socket.socket?.on('service:start', reload);
-Socket.socket?.on('service:exit', reload);
-Socket.socket?.on('service:healthcheck:down', reload);
-Socket.socket?.on('service:healthcheck:up', reload);
+Socket?.on('stack:selectConf', reload);
+Socket?.on('service:crash', reload);
+Socket?.on('service:start', reload);
+Socket?.on('service:exit', reload);
+Socket?.on('service:healthcheck:down', reload);
+Socket?.on('service:healthcheck:up', reload);
 
 onUnmounted(() => {
-  Socket.socket?.off('stack:selectConf', reload);
-  Socket.socket?.off('service:crash', reload);
-  Socket.socket?.off('service:start', reload);
-  Socket.socket?.off('service:exit', reload);
-  Socket.socket?.off('service:healthcheck:down', reload);
-  Socket.socket?.off('service:healthcheck:up', reload);
+  Socket?.off('stack:selectConf', reload);
+  Socket?.off('service:crash', reload);
+  Socket?.off('service:start', reload);
+  Socket?.off('service:exit', reload);
+  Socket?.off('service:healthcheck:down', reload);
+  Socket?.off('service:healthcheck:up', reload);
 });
 
 </script>

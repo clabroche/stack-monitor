@@ -83,11 +83,11 @@ export default {
           }
         }
         onMounted(reload)
-        Socket.socket?.on('stack:selectConf', reload)
-        Socket.socket?.on('service:start', reload)
+        Socket?.on('stack:selectConf', reload)
+        Socket?.on('service:start', reload)
         onUnmounted(() => {
-            Socket.socket?.off('stack:selectConf', reload)
-            Socket.socket?.off('service:start', reload)
+            Socket?.off('stack:selectConf', reload)
+            Socket?.off('service:start', reload)
         })
 
         const validate = async () => {

@@ -252,7 +252,7 @@ class Stack {
         }
       });
     }
-    sockets.io?.emit('stack:selectConf');
+    sockets.emit('stack:selectConf');
   }
 
   /**
@@ -268,7 +268,7 @@ class Stack {
     }
     this.environments = env;
     console.log('Environment changed, reload page...');
-    sockets.io?.emit('forceReload');
+    sockets.emit('forceReload');
     return /** @type {never} */(this.environments?.[this.#currentEnvironment]?.envs);
   }
 
@@ -393,7 +393,7 @@ async function reloadService(originalStack, newStack) {
     return false;
   });
 
-  sockets.io?.emit('conf:update', updatedServices.map((s) => s.label));
+  sockets.emit('conf:update', updatedServices.map((s) => s.label));
   await PromiseB.map(updatedServices, async (service) => {
     if (service.pids?.length) {
       console.log('Restart', service.label);
@@ -417,7 +417,7 @@ async function reloadGloblalConf(originalStack, newStack) {
   });
   console.log('Global changes, restart all...');
   await originalStack.restart();
-  sockets.io?.emit('forceReload');
+  sockets.emit('forceReload');
   return null;
 }
 

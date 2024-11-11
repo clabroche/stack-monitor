@@ -121,7 +121,7 @@ export default {
       await stack.loadServices()
       const { data: _plugins } = await axios.get('/plugins/sidebar')
       plugins.value = _plugins?.flat() || []
-      Socket.socket.on('infos:global', data => {
+      Socket.on('infos:global', data => {
         const {memPercentage, cpu: _cpu} = data
         cpu.value = _cpu
         mem.value = memPercentage

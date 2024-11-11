@@ -6,7 +6,7 @@ import Socket from '../helpers/Socket';
 function Stack() {
   /** @type {import('vue').Ref<import('./service').default[]>} */
   this.services = ref([]);
-  Socket.socket.on('conf:update', (/** @type {string[]} */data) => {
+  Socket.on('conf:update', (/** @type {string[]} */data) => {
     if (data.length) {
       data.forEach((label) => {
         const service = this.services.value.find((_service) => _service.label === label);

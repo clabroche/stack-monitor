@@ -14,7 +14,7 @@ const { signal } = controller;
 child = fork(path.resolve(__dirname, './cpuFork.js'), [], { signal });
 child.on('message', (message) => {
   const { ram, cpu } = JSON.parse(message.toString());
-  sockets.io?.emit('infos:global', {
+  sockets.emit('infos:global', {
     nbCpus,
     memPercentage: ram.memPercentage,
     totalmem: ram.totalmem,

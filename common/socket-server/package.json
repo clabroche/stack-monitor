@@ -11,9 +11,13 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "socket.io": "^4.7.4"
+    "eiows": "^7.1.2",
+    "express": "^4.21.1",
+    "ws": "^8.18.0"
   },
   "devDependencies": {
-    "@clabroche/common-retrigger-all-build": "workspace:*"
+    "@clabroche/common-retrigger-all-build": "workspace:*",
+    "@types/express": "^4",
+    "@types/ws": "^8"
   }
 }

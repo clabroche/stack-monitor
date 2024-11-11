@@ -16,6 +16,9 @@
             <input type="checkbox" v-model="showRaw">
           </div>
           <div class="line">
+            <button class="small" @click="openDiagram">
+              Tree view
+            </button>
             <button class="small" @click="copy(JSON.stringify(repairedJSON))">
               Copy minified json
             </button>
@@ -30,22 +33,44 @@
         </div>
       </div>
     </section-cmp>
+    <Modal ref="jsonCrackRef" validateString="Ok" :noCancel="true">
+      <template #header="">
+        JSON crack
+      </template>
+      <template #body="" >
+        <div class="jsoncrack-container">
+          <iframe width="100%" height="100%" ref="jsoncrackEmbed" id="jsoncrackEmbed" :src="`https://jsoncrack.com/widget`" />
+        </div>
+      </template>
+    </Modal>
   </div>
+
 </template>
 
 <script setup>
-import { computed, ref } from 'vue';
+import { computed, ref, nextTick } from 'vue';
 import { JsonTreeView } from 'json-tree-view-vue3';
 import { useRouter } from 'vue-router';
 import { jsonrepair } from 'jsonrepair';
 import SectionCmp from '../../../../fronts/app/src/components/Section.vue';
 import notification from '../../../../fronts/app/src/helpers/notification';
+import Modal from '../../../../fronts/app/src/components/Modal.vue';
 
 const router = useRouter();
 
 const initialJSON = router.currentRoute.value.query.json?.toString();
 const showRaw = ref(false);
-
+const jsonCrackRef = ref();
+const jsoncrackEmbed = ref();
+const openDiagram = async () => {
+  jsonCrackRef.value.open();
+  await nextTick();
+  jsoncrackEmbed.value.onload = () => {
+    jsoncrackEmbed.value.contentWindow.postMessage({
+      json: stringifiedJSON.value,
+    }, '*');
+  };
+};
 const repairedJSON = computed(() => {
   try {
     return JSON.parse(code.value);
@@ -133,6 +158,9 @@ function copy(data) {
   margin: auto;
   align-self: center;
   border-radius: 10px;
+}
+.jsoncrack-container {
+  height: 80vh;
 }
 </style>
 

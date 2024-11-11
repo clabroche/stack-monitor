@@ -107,7 +107,7 @@ watch(route, () => {
     selectScript(globalScripts.value.find((script) => script.label === currentQueryScript) || globalScripts.value[0]);
   }
 });
-Socket.socket.on('reloadScripts', reload);
+Socket.on('reloadScripts', reload);
 async function reload() {
   const { data: scripts } = await axios.get('/global-scripts/');
   globalScripts.value = scripts || [];
@@ -150,7 +150,7 @@ async function selectScript(script) {
 async function launch() {
   if (!currentScript.value?.label) return;
   const { data: _communicationId } = await axios.post(`/global-scripts/${currentScript.value.label}`);
-  Socket.socket.on(_communicationId, (/** @type {string} */ ev, /** @type {any} */data) => {
+  Socket.on(_communicationId, (/** @type {string} */ ev, /** @type {any} */data) => {
     if (ev === 'track') track.value = data;
   });
   communicationId.value = _communicationId;

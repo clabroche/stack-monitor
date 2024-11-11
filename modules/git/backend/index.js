@@ -17,7 +17,7 @@ const plugin = {
   order: 2,
   hidden: (service, stack, placement) => {
     if (placement === 'sidebar') return commandExists('git').then(() => false).catch(() => true);
-    if (placement === 'service' && !service) return true;
+    if (placement === 'service' && service) return false;
     return true;
   },
   routes: require('./routes'),

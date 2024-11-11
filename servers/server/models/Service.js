@@ -118,12 +118,14 @@ class Service {
     this.lastDatePrinted = service.lastDatePrinted || null;
     /** @type {LogMessage[]} */
     this.queue = service.queue || [];
-    setInterval(() => {
-      if (this.queue.length) {
-        const messages = this.queue.splice(0, this.queue.length);
-        sockets.io?.emit('logs:update', messages);
+    const self = this;
+    (function processQueue() {
+      if (self.queue.length) {
+        const messages = self.queue.splice(0, self.queue.length);
+        sockets.emit('logs:update', messages);
       }
-    }, 0);
+      setTimeout(processQueue, 100);
+    }());
     /**
      * @type {{
      *   check: ((service: Service) => boolean | Promise<boolean>) | undefined,
@@ -195,7 +197,7 @@ class Service {
   }
 
   sendHasBeenModified() {
-    sockets.io?.emit('conf:update', [this.label]);
+    sockets.emit('conf:update', [this.label]);
   }
 
   async kill(triggerEvent = true, keepEnabled = false) {
@@ -229,7 +231,7 @@ class Service {
       }
     }
     this.pids = [];
-    sockets.io?.emit('logs:clear', { label: this.label });
+    sockets.emit('logs:clear', { label: this.label });
     this.store = [];
     await new Promise((resolve) => { setTimeout(resolve, 100); });
     this.enabled = keepEnabled;
@@ -306,7 +308,7 @@ class Service {
     if (line.hide) return;
 
     if (line.source === 'stderr' && isMainProcess) {
-      sockets.io?.emit('alert', { label: this.label, message: line.raw.toString(), type: 'error' });
+      sockets.emit('alert', { label: this.label, message: line.raw.toString(), type: 'error' });
     }
 
     if (timestamp > (this.lastDatePrinted || Date.now()) + 2000) {
@@ -385,7 +387,7 @@ class Service {
       if (code) {
         if (launchMessage.cmd) launchMessage.cmd.status = 'error';
         if (isMainProcess) {
-          sockets.io?.emit('service:crash', {
+          sockets.emit('service:crash', {
             label: this.label, code, signal, pid,
           });
           this.Stack.getStack()?.triggerOnServiceCrash(this, code);
@@ -397,10 +399,10 @@ class Service {
           this.exited = true;
         }
       }
-      sockets.io?.emit('service:exit', {
+      sockets.emit('service:exit', {
         label: this.label, code, signal, pid,
       });
-      sockets.io?.emit('logs:update:lines', [launchMessage]);
+      sockets.emit('logs:update:lines', [launchMessage]);
     });
 
     const date = `🕑  ${dayjs().format('YYYY-MM-DD HH:mm:ss')}`;
@@ -409,10 +411,10 @@ class Service {
       id: v4(), raw: date, label: this.label, msg: date, timestamp: this.lastDatePrinted, isSeparator: true,
     };
     this.store.push(line, launchMessage);
-    sockets.io?.emit('logs:update', [line, launchMessage]);
+    sockets.emit('logs:update', [line, launchMessage]);
     if (isMainProcess) {
       this.launchHealthChecker(spawnProcess);
-      sockets.io?.emit('service:start', {
+      sockets.emit('service:start', {
         label: this.label, pid,
       });
     }
@@ -433,7 +435,7 @@ class Service {
     if (!this.container?.name) {
       if (!(await psTreeAsync(spawnProcess.pid))?.length) {
         this.crashed = true;
-        sockets.io?.emit('service:healthcheck:down', { label: this.label, pid: spawnProcess.pid });
+        sockets.emit('service:healthcheck:down', { label: this.label, pid: spawnProcess.pid });
         return;
       }
     }
@@ -442,10 +444,10 @@ class Service {
     }
     if (!healthy && !this.crashed) {
       this.crashed = true;
-      sockets.io?.emit('service:healthcheck:down', { label: this.label, pid: spawnProcess.pid });
+      sockets.emit('service:healthcheck:down', { label: this.label, pid: spawnProcess.pid });
     } else if (healthy && this.crashed) {
       this.crashed = false;
-      sockets.io?.emit('service:healthcheck:up', { label: this.label, pid: spawnProcess.pid });
+      sockets.emit('service:healthcheck:up', { label: this.label, pid: spawnProcess.pid });
     }
     this.launchHealthChecker(spawnProcess);
   }
@@ -471,7 +473,7 @@ class Service {
       pid,
     };
     this.store.push(line);
-    sockets.io?.emit('logs:update', [line]);
+    sockets.emit('logs:update', [line]);
     return null;
   }
 

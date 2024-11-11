@@ -104,7 +104,7 @@ export default {
     watch(() => router.currentRoute.value.params.label, async () => {
       await reload()
     })
-    Socket.socket.on('conf:update', (/**@type {string[]}*/data) => {
+    Socket.on('conf:update', (/**@type {string[]}*/data) => {
       if (data.includes(router.currentRoute.value.params.label.toString())) {
         reload()
       }

@@ -55,7 +55,7 @@ const terminal = ref();
 const code = ref(defaultCode);
 
 onMounted(async () => {
-  Socket.socket.on('node-repl:update', ({ msg, clear }) => {
+  Socket.on('node-repl:update', ({ msg, clear }) => {
     if (clear) terminal.value.clear();
     if (!msg) return;
     msg.trim().split('\n')

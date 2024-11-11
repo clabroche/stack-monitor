@@ -159,8 +159,8 @@
                     <div class="section-content" v-html="line.msg.trim() || '<br/>'"/>
                   </div>
                   <div v-else-if="line.debug  != null" >
-                    <h2 class="section-header">Debug</h2>
-                    <div class="section-content">
+                    <div class="section-header">
+                      <h2 class="section-header">Debug</h2>
                       <div class="section-actions">
                         <button class="small" @click.stop="copy(JSON.stringify(line.debug))">Copy</button>
                         <button class="small">
@@ -172,12 +172,14 @@
                           Find a solution
                         </button>
                       </div>
+                    </div>
+                    <div class="section-content">
                       <JsonTreeView :maxDepth="1" :json="transformerJSON(line.debug)" :copyable="true" :expand-depth="1" :show-double-quotes="true"/>
                     </div>
                   </div>
                   <div v-else-if="line.json != null"  >
-                    <h2 class="section-header">JSON</h2>
-                    <div class="section-content">
+                    <div class="section-header">
+                      <h2 >JSON</h2>
                       <div class="section-actions">
                         <button class="small" @click.stop="copy(JSON.stringify(line.json))">Copy</button>
                         <button class="small">
@@ -189,6 +191,8 @@
                           Find a solution
                         </button>
                       </div>
+                    </div>
+                    <div class="section-content">
                       <JsonTreeView :maxDepth="1" :json="transformerJSON(line.json)" :copyable="true" :expand-depth="1" :show-double-quotes="true"/>
                     </div>
                   </div>
@@ -449,7 +453,7 @@ const isLineIncluded = (line) => {
 };
 
 onMounted(() => mounted());
-Socket.socket.on('conf:update', () => {
+Socket.on('conf:update', () => {
   if (logsContainer.value && !logsContainer.value?.children.length && terminal.value) {
     terminal.value.open(logsContainer.value);
   }
@@ -497,11 +501,11 @@ const exitEventCB = (/** @type {{label:string, code: number, signal: string, pid
     }
   }
 };
-Socket.socket.on('logs:update', logsUpdateEventCB);
-Socket.socket.on('logs:update:lines', logsUpdateLineEventCB);
-Socket.socket.on('service:exit', exitEventCB);
-Socket.socket.on('service:crash', crashEventCB);
-Socket.socket.on('logs:clear', clearEventCB);
+Socket.on('logs:update', logsUpdateEventCB);
+Socket.on('logs:update:lines', logsUpdateLineEventCB);
+Socket.on('service:exit', exitEventCB);
+Socket.on('service:crash', crashEventCB);
+Socket.on('logs:clear', clearEventCB);
 onUnmounted(() => {
   Socket.socket.off('logs:update', logsUpdateEventCB);
   Socket.socket.off('logs:update:lines', logsUpdateLineEventCB);
@@ -917,7 +921,6 @@ function setSelectedLine(line) {
     width: 100%;
     box-sizing: border-box;
     .section-actions {
-      display: none;
       button {
         width: max-content;
         a {
@@ -938,6 +941,10 @@ function setSelectedLine(line) {
       z-index: 1;
       display: flex;
       align-items: center;
+      transition: 300ms;
+      h2 {
+        margin: 0;
+      }
     }
     .section-content {
       border-left: 4px solid #000000;
@@ -945,19 +952,27 @@ function setSelectedLine(line) {
       padding: 0 10px;
       box-sizing: border-box;
     }
+    .section-actions {
+      max-width: 0;
+      overflow: hidden;
+      transition: 300ms;
+      display: flex;
+      margin-left: 0;
+      button {
+        white-space: nowrap;
+      }
+    }
     &:hover {
       background-color: rgba(0,0,0,0.05);
+      .section-actions {
+        display: flex;
+        align-items: center;
+        gap: 2px;
+        max-width: 1000px;
+        margin-left: 20px;
+      }
       .section-content {
         position: relative;
-        .section-actions {
-          position: absolute;
-          top: 0;
-          right: 0;
-          display: flex;
-          align-items: center;
-          gap: 2px;
-
-        }
       }
     }
     &.json {

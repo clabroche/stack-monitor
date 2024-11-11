@@ -82,27 +82,27 @@ module.exports = {
     await Socket.init(`http://localhost:${context.globalState.get('stackMonitorPort')}`);
     services.update();
     editor.update(true);
-    Socket.socket.on('service:crash', async ({ label }) => {
+    Socket.on('service:crash', async ({ label }) => {
       services.update();
       editor.update(true);
       vscode.window.showInformationMessage(`Service: ${label} crash`);
     });
-    Socket.socket.on('service:start', async ({ label }) => {
+    Socket.on('service:start', async ({ label }) => {
       services.update();
       editor.update(true);
       vscode.window.showInformationMessage(`Service: ${label} start`);
     });
 
-    Socket.socket.on('service:exit', async ({ label }) => {
+    Socket.on('service:exit', async ({ label }) => {
       services.update();
       editor.update(true);
       vscode.window.showInformationMessage(`Service: ${label} exit`);
     });
-    Socket.socket.on('service:healthcheck:down', async ({ label }) => {
+    Socket.on('service:healthcheck:down', async ({ label }) => {
       services.update();
       editor.update(true);
     });
-    Socket.socket.on('service:healthcheck:up', async () => {
+    Socket.on('service:healthcheck:up', async () => {
       services.update();
       editor.update(true);
     });

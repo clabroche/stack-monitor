@@ -74,9 +74,9 @@ export default {
       }
     }
     onMounted(async ()=> {
-      Socket.socket.on('connect',  redirect);
-      Socket.socket.on('disconnect', redirect);
-      Socket.socket.on('forceReload', () => {
+      Socket.on('connect',  redirect);
+      Socket.on('disconnect', redirect);
+      Socket.on('forceReload', () => {
         window.location.reload()
       });
       await redirect()
