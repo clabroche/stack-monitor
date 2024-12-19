@@ -10,7 +10,7 @@ const plugin = {
   /** @param {import('../../../servers/server/models/Service') | null} service */
   hidden: async (service) => {
     if (!service?.container) return true;
-    return !service.container.name;
+    return !service.container.enabled;
   },
   routes: require('./routes'),
 };

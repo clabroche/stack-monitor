@@ -1,9 +1,9 @@
 <template>
 <teleport to="body">
   <transition name="fade">
-    <div  v-if="isOpen" class="modal-root" @click="close()" :class="{right: position==='right'}">
+    <div  v-if="isOpen" class="modal-root" @click="noGlobalClose ? '' : close()" :class="{right: position==='right'}">
       <div :name="uuid" height="auto" :style="{width:width || '90%'}" :scrollable="noScroll ? !noScroll : true" class="modal" @closed="cancel()" @click.stop>
-        <div id="modal-content" :style="{height: height || 'auto'}">
+        <div id="modal-content" :style="{height: height || 'auto', maxHeight}">
           <div class="close-cross" v-if="closeCross" @click="close()">
             <i class="fas fa-times" aria-hidden="true"></i>
           </div>
@@ -32,8 +32,10 @@ export default {
     'value',
     'width',
     'height',
+    'maxHeight',
     'cancelString',
     'validateString',
+    'noGlobalClose',
     'noActions',
     'closeCross',
     'noScroll',
@@ -122,6 +124,8 @@ export default {
     background: var(--system-backgroundColor);
     height: auto;
     margin: auto;
+    display: flex;
+    flex-direction: column;
     .close-cross {
       position: absolute;
       right: 20px;
@@ -151,6 +155,9 @@ export default {
       font-weight: bold;
     }
     .body {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
       padding: 20px;
       overflow: auto;
     }

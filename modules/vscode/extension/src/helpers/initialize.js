@@ -79,7 +79,7 @@ module.exports = {
       });
   },
   initSocket: async (context) => {
-    await Socket.init(`http://localhost:${context.globalState.get('stackMonitorPort')}`);
+    await Socket.init(`http://localhost:${context.globalState.get('stackMonitorPort')}/socket`);
     services.update();
     editor.update(true);
     Socket.on('service:crash', async ({ label }) => {

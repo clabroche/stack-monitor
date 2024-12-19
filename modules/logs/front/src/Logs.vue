@@ -693,6 +693,7 @@ onMounted(async () => {
 });
 
 const reloadBarInfos = debounce(async (reloadCostingInfos = false) => {
+  if (!props.service.git?.remote) return;
   if (reloadCostingInfos) {
     if (gitRemoteDelta.value) gitRemoteDelta.value = '';
   }
@@ -1126,7 +1127,7 @@ function setSelectedLine(line) {
         }
         &::after {
           content: '';
-          border: 12px solid transparent;
+          border: 9px solid transparent;
           border-top-color: transparent !important;
           border-bottom-color: transparent !important;
           border-right-color: transparent !important;

@@ -26,9 +26,6 @@
   "typings": "./typings/export.d.ts",
   "types": "./typings/export.d.ts",
   "dependencies": {
-    "@clabroche/common-express": "workspace:*",
-    "@clabroche/common-socket-server": "workspace:*",
-    "@clabroche/modules-plugins-loader-backend": "workspace:*",
     "@vscode/vsce": "^2.23.0",
     "ansi-to-html": "^0.7.2",
     "bluebird": "^3.7.2",
@@ -39,10 +36,14 @@
     "dotenv": "^16.4.2",
     "express": "^4.18.2",
     "express-async-errors": "^3.1.1",
+    "express-http-proxy": "^2.1.1",
     "fast-sort": "^3.4.0",
+    "fdir": "^6.4.2",
     "fs-extra": "^11.2.0",
     "kill-port": "^2.0.1",
+    "libsodium-wrappers": "^0.7.15",
     "lodash": "^4.17.21",
+    "lowdb": "^7.0.1",
     "octokit": "^3.1.2",
     "open": "^8",
     "os-utils": "0.0.14",
@@ -52,11 +53,16 @@
     "uuid": "^9.0.1"
   },
   "devDependencies": {
+    "@clabroche/common-express": "workspace:*",
     "@clabroche/common-retrigger-all-build": "workspace:*",
+    "@clabroche/common-socket-server": "workspace:*",
+    "@clabroche/modules-plugins-loader-backend": "workspace:*",
     "@clabroche/modules-plugins-loader-front": "workspace:*",
     "@clabroche/modules-vscode-extension": "workspace:*",
+    "@types/libsodium-wrappers": "^0",
     "nodemon": "^3.0.3",
-    "supertest": "^6.3.4"
+    "supertest": "^6.3.4",
+    "tsup": "^8.3.5"
   },
   "bin": "bin/www",
   "keywords": [

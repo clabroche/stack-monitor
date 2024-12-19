@@ -20,11 +20,17 @@ import monokai from './Editor-monokai.json'
 const props = defineProps({
   modelValue: { default: '' },
   language: { default: 'text/plain' },
+  additionalOptions: {
+    /** @type {import('monaco-editor/esm/vs/editor/editor.api').editor.IStandaloneDiffEditorConstructionOptions} */
+    default: {}
+  },
   diff: { default: false }
 })
 const emit = defineEmits([
   'update:modelValue',
   'save',
+  'focus',
+  'blur'
 ])
 
 const monacoRef = ref()
@@ -59,10 +65,12 @@ onMounted(async() => {
     autoIndent: 'brackets',
     formatOnPaste: true,
     formatOnType: true,
+    ...(props.additionalOptions || {})
   }
   // @ts-ignore
   monaco.editor.defineTheme("monokai", monokai);
   monaco.editor.setTheme("myTheme");
+
   if(props.diff) {
     const _editor = monaco.editor.createDiffEditor(monacoRef.value, options)
     _editor.setModel({
@@ -73,6 +81,21 @@ onMounted(async() => {
     editor.value = _editor
   } else {
     const _editor = monaco.editor.create(monacoRef.value, options)
+
+    _editor.onDidFocusEditorWidget(()=>{
+      emit('focus')
+    })
+    _editor.onDidBlurEditorWidget(()=>{
+      emit('blur')
+    })
+    if(props.language === 'javascript' || props.language === 'typescript') {
+      monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
+        target: monaco.languages.typescript.ScriptTarget.ESNext,
+        allowJs: true,
+        checkJs: true,
+        allowNonTsExtensions: true
+      })
+    }
     _editor.setModel(monaco.editor.createModel('', props.language));
     _editor.updateOptions({ readOnly: false });
     _editor.onDidChangeModelContent((model) => {

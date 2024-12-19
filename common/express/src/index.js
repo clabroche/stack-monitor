@@ -23,12 +23,14 @@ module.exports = {
    * @param {{
    *  port: number | string,
    *  baseUrl?: string,
-   *  helmetConf?: import('helmet').HelmetOptions,
+   *  helmetConf?: import('helmet').HelmetOptions | null,
    *  corsConf?: import('cors').CorsOptions,
    *  beforeAll?: () => any,
    *  afterAll?: () => any,
    *  socket?: boolean,
-   *  onListening?: (server: http.Server<typeof http.IncomingMessage, typeof http.ServerResponse>) => any,
+   *  onListening?: (server: {server: http.Server<typeof http.IncomingMessage, typeof http.ServerResponse>, app: import('express').Express}) => any,
+   *  beforeStatic?: (server: {server: http.Server<typeof http.IncomingMessage, typeof http.ServerResponse>, app: import('express').Express}) => any,
+   *  afterControllers?: (server: {server: http.Server<typeof http.IncomingMessage, typeof http.ServerResponse>, app: import('express').Express}) => any,
    *  controllers?: () => import('express').RequestHandler,
    *  staticController?: string,
    *  additionalSwaggerPaths?: string[]
@@ -47,7 +49,9 @@ module.exports = {
     corsConf = {},
     beforeAll = () => {},
     afterAll = () => {},
-    onListening = () => {},
+    onListening = () => { },
+    beforeStatic = () => { },
+    afterControllers = () => { },
     controllers = () => () => {},
     staticController = undefined,
     noGreetings = false,
@@ -72,11 +76,13 @@ module.exports = {
     const server = http.createServer(app);
     if (socket) {
       console.log('Enable socket...');
-      Socket.sockets.connect(server, '*', '/socket.io');
+      Socket.sockets.connect(server);
     }
-    app.use(helmet(
-      helmetConf,
-    ));
+    if (helmetConf) {
+      app.use(helmet(
+        helmetConf,
+      ));
+    }
 
     console.log('Enable cors...');
     app.use(cors(corsConf));
@@ -134,7 +140,7 @@ module.exports = {
 
     console.log('Apply additional routes...');
     app.use(context);
-
+    beforeStatic?.({ server, app });
     if (staticController) {
       app.use('/', accessLogger, express.static(staticController));
     }
@@ -142,6 +148,7 @@ module.exports = {
     if (!noGreetings) {
       app.get('/', (req, res) => res.json({ appName, appVersion }));
     }
+    afterControllers?.({ server, app });
 
     console.log('Enable error handling...');
     app.use(require('@clabroche/common-express-error-handler')());
@@ -150,10 +157,10 @@ module.exports = {
     app.use(require('@clabroche/common-express-404'));
 
     console.log('Apply additional tasks before launch...');
-    await beforeAll();
+    await beforeAll({app, server});
 
     console.log('Launch...');
-    server.on('listening', () => onListening(server));
+    server.on('listening', () => onListening({ server, app }));
     server.listen(port, async () => {
       console.log('<h1>✓ Launched</h1>');
     });

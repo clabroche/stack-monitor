@@ -1,4 +1,4 @@
 module.exports = {
-  confPath: process.argv[2],
+  confPath: process.argv[2] || '.',
   services: process.argv.slice(3).filter((a) => a),
 };

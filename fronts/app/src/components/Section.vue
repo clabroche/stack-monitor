@@ -15,7 +15,7 @@
             <template #trigger>
               <button
                 @click="action?.click?.()"
-                class="action small" :class="{mini: !action.label && action.icon || action.small, active: action.active}">
+                class="action small" :class="{mini: !action.label && action.icon || action.small, active: action.active}" :style="action.style || {}">
                 <i :class="action.icon" v-if="action.icon"  aria-hidden="true"></i>
                 <span class="text" v-if="action.label">{{action.label}}</span>
               </button>

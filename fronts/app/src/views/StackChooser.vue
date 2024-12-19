@@ -1,4 +1,3 @@
-
 <template>
 <div class="stack-chooser-root" >
   <background-stack-chooser :lowResources="true"></background-stack-chooser>
@@ -23,6 +22,7 @@ import StackChooserCmp from '../components/StackChooser.vue'
 import LeftLogo from '../components/LeftLogo.vue'
 import {useRouter} from 'vue-router'
 const router = useRouter();
+
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

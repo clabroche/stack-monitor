@@ -9,9 +9,13 @@ const PromiseB = require('bluebird');
 const dot = require('dot-object');
 const pathfs = require('path');
 const { existsSync } = require('fs-extra');
+const { mkdir } = require('fs/promises');
 const Service = require('./Service');
 const myConfs = require('./myConfs');
 const ports = require('./ports');
+const dbs = require('../helpers/dbs');
+const Environment = require('./Environment');
+const EncryptionKey = require('./EncryptionKey');
 
 if (!sockets.io) throw new Error('Stack monitor seems not fully inialized: Socket is empty, check if socket connection is launched before require this file');
 
@@ -22,8 +26,8 @@ class Stack {
   /** @type {fs.FSWatcher[]} */
   static #currentWatches = [];
 
-  /** @type {string} */
-  static #currentEnvironment = '';
+  /** @type {import('./Environment') | null} */
+  static #currentEnvironment = null;
 
   /** @type {() => void} */
   static #onLaunchCallback = () => { };
@@ -75,6 +79,8 @@ class Stack {
     this.monorepo = stack.monorepo || false;
     /** @type {Record<string, string>} */
     this.themes = stack.themes || {};
+    /** @type {import('./Environment')[]} */
+    this.environments = stack.environments ? stack.environments.map((env) => new Environment(env, Stack)) : [];
     /** @type {string | undefined} */
     this.documentation = stack.documentation;
     /** @type {Service[]} */
@@ -113,7 +119,7 @@ class Stack {
   }
 
   static getCurrentEnvironment() {
-    return Stack.environments?.[this.#currentEnvironment];
+    return Stack.#currentEnvironment;
   }
 
   exportForDifference() {
@@ -127,32 +133,24 @@ class Stack {
   /**
    *
    * @param {string} confPath
-   * @param {typeof Stack} injection
    * @returns
    */
-  static async parse(confPath, injection) {
-    delete require.cache[require.resolve(confPath)];
-    let rawStack;
+  static async parse(confPath) {
+    const dbsRootPath = await dbs.getDbs('services');
+    let services = [];
+    let environments = [];
     try {
-      rawStack = confPath ? require(confPath) : [];
+      services = await PromiseB.map(dbsRootPath, (id) => Service.load(id, Stack));
+      environments = await Environment.all();
     } catch (error) {
-      // Because sometimes require failed on reload
-      rawStack = confPath ? require(confPath) : [];
+      console.error(error);
+      this.Socket.emit('system:wrongKey');
     }
-    if (Array.isArray(rawStack)) {
-      return new Stack({ services: rawStack, confPath });
-    } if (typeof rawStack === 'function') {
-      const stack = await rawStack(injection);
-      return new Stack({
-        ...stack,
-        confPath,
-        services: stack.services || stack.stack,
-      });
-    }
+
     return new Stack({
-      ...rawStack,
+      environments,
       confPath,
-      services: rawStack.services || rawStack.stack,
+      services,
     });
   }
 
@@ -172,6 +170,13 @@ class Stack {
 
   static getServices() {
     return Stack.#currentStack?.services || [];
+  }
+
+  static async deleteService(label) {
+    if (!Stack.#currentStack) return;
+    const service = this.findService(label);
+    Stack.#currentStack.services = Stack.#currentStack.services.filter((a) => a.label !== label);
+    await service.delete();
   }
 
   getServices() {
@@ -211,65 +216,15 @@ class Stack {
   }
 
   /** @param {string} confPath */
-  static async selectConf(confPath, services) {
+  static async selectConf(confPath) {
     confPath = pathfs.resolve(confPath);
-    if (Stack.#currentWatches?.length) Stack.#currentWatches.forEach((currentWatch) => currentWatch.close());
-    confPath = path.resolve(confPath);
-    await myConfs.add(confPath);
-    Stack.#currentStack = await this.parse(confPath, this);
-    [
-      ...(Stack.#currentStack?.watchFiles || []),
-      confPath,
-      ...Stack.getServices().flatMap((service) => {
-        const envRootPath = service.rootPath && pathfs.resolve(service.rootPath, '.env');
-        const envSpawnOptionsPath = service.spawnOptions.cwd && pathfs.resolve(service.spawnOptions.cwd.toString(), '.env');
-        const commandPaths = service.commands.map((command) => {
-          const commandPath = command?.spawnOptions?.cwd && pathfs.resolve(command.spawnOptions.cwd.toString(), '.env');
-          return commandPath && existsSync(commandPath) ? commandPath : null;
-        });
-        return [
-          envRootPath && existsSync(envRootPath) ? envRootPath : null,
-          envSpawnOptionsPath && existsSync(envSpawnOptionsPath) ? envSpawnOptionsPath : null,
-          ...commandPaths,
-        ];
-      }),
-    ]
-      .filter((a, i, arr) => a && arr.indexOf(a) === i)
-      .forEach((filePath) => {
-        if (filePath && fs.existsSync(filePath)) {
-          Stack.#currentWatches.push(
-            watch(filePath, async () => {
-              checkConfDebounce(filePath);
-            }),
-          );
-        } else console.error(filePath, 'not exists');
-      });
-    if (services?.length) {
-      await PromiseB.map(services || [], async (_service) => {
-        const service = Stack.findService(_service);
-        if (service) {
-          await service.launch(true);
-        }
-      });
+    await EncryptionKey.init();
+    if (!EncryptionKey.encryptionKey) {
+      await EncryptionKey.saveKey(await EncryptionKey.generateKey());
     }
-    sockets.emit('stack:selectConf');
-  }
-
-  /**
-   * @template {Record<string, Environment>} T
-   * @param { T | undefined } env
-   * @param {keyof T & string} defaultEnvironment
-   * @returns {never}
-   */
-  static setEnvironments(env, defaultEnvironment) {
-    if (!this.#currentEnvironment) this.#currentEnvironment = defaultEnvironment;
-    if (JSON.stringify(this.environments) === JSON.stringify(env)) {
-      return /** @type {never} */(this.environments?.[this.#currentEnvironment]?.envs);
-    }
-    this.environments = env;
-    console.log('Environment changed, reload page...');
-    sockets.emit('forceReload');
-    return /** @type {never} */(this.environments?.[this.#currentEnvironment]?.envs);
+    Stack.#currentStack = await this.parse(confPath);
+    Stack.#currentEnvironment = Stack.#currentStack.environments.find((env) => env.default) || null;
+    return sockets.emit('stack:selectConf');
   }
 
   /**
@@ -277,8 +232,19 @@ class Stack {
    * @param {string} envLabel
    */
   async changeEnvironment(envLabel) {
-    if (Stack.environments?.[envLabel]) {
-      Stack.#currentEnvironment = envLabel;
+    const environment = await Environment.find(envLabel);
+    if (environment) {
+      Stack.#currentEnvironment = environment;
+      Stack.getServices().forEach((service) => {
+        service.commands?.forEach((command) => {
+          if (!command.spawnOptions.envs[envLabel]) {
+            command.spawnOptions.envs[envLabel] = {
+              extends: [],
+              envs: [],
+            };
+          }
+        });
+      });
       const enabledServices = Stack.getEnabledServices();
       await Stack.getStack()?.kill();
       enabledServices.forEach((s) => {
@@ -291,7 +257,7 @@ class Stack {
       }
       await Stack.getStack()?.launch();
     } else {
-      throw new Error('env not found');
+      throw new Error('Environment not found');
     }
   }
 

@@ -65,6 +65,7 @@ export default {
         const servicesToLaunch = ref([])
         async function reload() {
           await Stack.loadServices()
+          if(!Stack.services.value.length) return router.push({name: 'stack-single-no-view'})
           servicesToLaunch.value = Stack.services.value.map(service => {
             const state = localStorage.getItem(`automatic-toggle-${service.label}`)
             return {

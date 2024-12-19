@@ -22,6 +22,19 @@ export default defineConfig({
     //   ]
     // }
   },
+
+  server: {
+    port: 5173,
+    host: '0.0.0.0',
+    cors: false,
+    hmr: {
+      host: '0.0.0.0',
+      port: 5173,
+      protocol: 'ws',
+      clientPort: 5173,
+    },
+  },
+
   resolve: {
     alias: [{
       find: /~(.+)/,
@@ -37,7 +50,7 @@ export default defineConfig({
   css: {
     preprocessorOptions: {
       scss: {
-        additionalData: '@import "./src/assets/theme/_mixin";',
+        additionalData: '@import "@/assets/theme/_mixin";',
       },
     },
   },

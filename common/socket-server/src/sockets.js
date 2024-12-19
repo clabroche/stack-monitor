@@ -21,6 +21,6 @@ module.exports = {
    * @param {*} server
    */
   connect(server) {
-    this.io = new WebSocket.Server({ server });
+    this.io = new WebSocket.Server({ server, path: '/socket' });
   },
 };

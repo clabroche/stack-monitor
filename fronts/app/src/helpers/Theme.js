@@ -83,7 +83,15 @@ class Theme {
     localStorage.setItem('currentTheme', _theme);
     const theme = this.buildTheme(_theme);
     this.currentTheme = _theme;
+
     this.buildedTheme = theme;
+    if (this.currentTheme.startsWith('dark')) {
+      document.documentElement.classList.add('theme-dark');
+      document.documentElement.classList.remove('theme-light');
+    } else {
+      document.documentElement.classList.add('theme-light');
+      document.documentElement.classList.remove('theme-dark');
+    }
     this.observableCurrentTheme.next('apply', _theme);
     Object.keys(theme.rules).forEach((rule) => {
       const cssRules = theme.rules[rule];
@@ -97,6 +105,19 @@ class Theme {
         setCssVariable(`${cssVariable}-lightest`, this.lighter(0.5, value));
       });
     });
+    console.log(theme.rules);
+    setCssVariable('--p-primary-color', theme.rules['system.accent'].backgroundColor2);
+    setCssVariable('--p-content-background', theme.rules['system.sections'].backgroundColor);
+    setCssVariable('--p-button-primary-color', '#FFFFFF');
+    setCssVariable('--p-primary-active-color', theme.rules['system.accent'].backgroundColor3);
+    setCssVariable('--p-primary-hover-color', theme.rules['system.accent'].backgroundColor3);
+    setCssVariable('--p-button-primary-hover-color', '#FFFFFF');
+    setCssVariable('--p-button-primary-background', 'linear-gradient(93deg, var(--system-accent-backgroundColor1) 0%, var(--system-accent-backgroundColor2) 100%)');
+    setCssVariable('--p-button-primary-hover-background', 'linear-gradient(93deg, var(--system-accent-backgroundColor2) 0%, var(--system-accent-backgroundColor1) 100%)');
+    setCssVariable('--p-highlight-color', theme.rules['system.accent'].backgroundColor3);
+    setCssVariable('--p-highlight-background', theme.rules['system.secondary'].backgroundColor);
+    setCssVariable('--p-primary-50', theme.rules['system.secondary'].backgroundColor);
+    setCssVariable('--p-primary-100', theme.rules['system.secondary'].backgroundColor);
   }
 }
 

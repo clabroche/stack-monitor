@@ -43,6 +43,17 @@ Stack.prototype.changeEnvironment = async function (environment) {
   return environments;
 };
 
+Stack.prototype.shouldSetup = async function () {
+  const { data: shouldSetup } = await axios.get('/crypto/should-setup');
+  return shouldSetup;
+};
+
+/** @param {{label: string, color: string, bgColor: string}} environment */
+Stack.prototype.createEnvironment = async function (environment) {
+  const { data: environments } = await axios.post('/stack/environment/create', { environment });
+  return environments;
+};
+
 Stack.prototype.getAllConfsPath = async function () {
   const { data: paths } = await axios.get('/stack/all-confs-path');
   return paths;
@@ -71,4 +82,5 @@ Stack.prototype.getEnabledServices = async function () {
   if (!this.services.value.length) await this.loadServices();
   return this.services.value.filter((service) => service.enabled);
 };
+
 export default new Stack();
