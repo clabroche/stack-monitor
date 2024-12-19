@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.0.0](https://github.com/clabroche/stack-monitor/compare/v1.18.12...v2.0.0) (2024-12-19)
+
+**Note:** Version bump only for package @clabroche/modules-finder-front
+
 ## [1.17.29](https://github.com/clabroche/stack-monitor/compare/v1.17.28...v1.17.29) (2024-02-15)
 
 ### Bug Fixes

@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.0.0](https://github.com/clabroche/stack-monitor/compare/v1.18.12...v2.0.0) (2024-12-19)
+
+**Note:** Version bump only for package @clabroche/modules-openapi-front
+
 ## [1.18.8](https://github.com/clabroche/stack-monitor/compare/v1.18.7...v1.18.8) (2024-03-19)
 
 ### Bug Fixes

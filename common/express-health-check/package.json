@@ -1,6 +1,6 @@
 {
   "name": "@clabroche/common-express-health-check",
-  "version": "1.17.18",
+  "version": "2.0.0",
   "description": "",
   "repository": "https://github.com/clabroche/stack-monitor",
   "private": true,

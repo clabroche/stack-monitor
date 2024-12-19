@@ -1,7 +1,7 @@
 {
   "name": "@clabroche/common-express",
   "private": true,
-  "version": "1.18.11",
+  "version": "2.0.0",
   "description": "",
   "repository": "https://github.com/clabroche/stack-monitor",
   "main": "src/index.js",

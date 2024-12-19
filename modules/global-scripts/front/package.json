@@ -1,6 +1,6 @@
 {
   "name": "@clabroche/modules-global-scripts-front",
-  "version": "1.18.10",
+  "version": "2.0.0",
   "repository": "https://github.com/clabroche/stack-monitor",
   "private": true,
   "scripts": {
