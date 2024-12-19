@@ -13,11 +13,15 @@ const pathfs = require('path');
 const net = require('net');
 const { sockets } = require('@clabroche/common-socket-server');
 const { mkdir, writeFile } = require('fs/promises');
+const { cloneDeep } = require('lodash');
 const CreateInterface = require('../helpers/readline');
 const { stripAnsi, ansiconvert, unescapeAnsi } = require('../helpers/ansiconvert');
 const isWindows = require('../helpers/isWindows');
 const { execAsync } = require('../helpers/exec');
 const { humanStringToKey } = require('../helpers/stringTransformer.helper');
+const dbs = require('../helpers/dbs');
+const Environment = require('./Environment');
+const ParserModel = require('./Parser');
 
 const userInfo = os.userInfo();
 const { gid, uid, username } = userInfo;
@@ -35,6 +39,55 @@ class Service {
    */
   constructor(service, Stack) {
     this.Stack = Stack;
+    /** @type {LogMessage[]} */
+    this.queue = service.queue || [];
+    const self = this;
+    (function processQueue() {
+      if (self.queue.length) {
+        const messages = self.queue.splice(0, self.queue.length);
+        sockets.emit('logs:update', messages);
+      }
+      setTimeout(processQueue, 100);
+    }());
+    this.reload(service);
+  }
+
+  async save() {
+    const obj = this.exportForDifference();
+    (obj.commands || []).map((command) => delete command.spawnOptions?.overrideEnvs);
+    await dbs.getDb(`services/${this.label}`).write(obj);
+  }
+
+  async delete() {
+    await dbs.getDb(`services/${this.label}`).delete();
+  }
+
+  static async load(label, Stack) {
+    return new Service(await dbs.getDb(`services/${label}`).read(), Stack);
+  }
+
+  /** @param {string} path */
+  loadCustomEnv(path) {
+    const dotEnvPath = pathfs.resolve(path, '.env');
+    if (existsSync(dotEnvPath) && readFileSync(dotEnvPath, { encoding: 'utf-8' }).trim()) {
+      console.log(`! A .env will override your ${this.label} service !`);
+      return require('dotenv').parse(readFileSync(dotEnvPath));
+    }
+    return null;
+  }
+
+  exportInApi() {
+    const res = { ...this };
+    // @ts-ignore
+    delete res.pids;
+    // @ts-ignore
+    delete res.store;
+    // @ts-ignore
+    delete res.Stack;
+    return res;
+  }
+
+  reload(service) {
     /** @type {string} */
     this.label = service.label || '';
     /** @type {string} */
@@ -59,41 +112,45 @@ class Service {
     this.urls = service.urls || [];
     /** @type {string[]} */
     this.groups = service.groups || [];
+    /** @type {string[]} */
+    this.parsers = service.parsers || [];
     /** @type {boolean} */
     this.enabled = service.enabled || false;
     /** @type {boolean} */
     this.crashed = service.crashed || false;
     /**
      * @type {{
+     *  enabled: boolean
      *  name: string,
-     *  build: string[],
+     *  build: string,
      *  volumes: string[],
      *  ignoreVolumes: string[],
      *  sharedVolume: string,
      *  noHostUser: true
      *  noChangeWorkDir: true,
      *  customPid?: ({cmd, args, pid})=> Promise<number | null>
-     *  bootstrap: {user: string, cmd: string, entrypoint:string}[] | {concurrencyKey?:string, commands: {user: string, cmd: string, entrypoint:string}[]}
-     * } | undefined}
+     *  bootstrap: {commands: Array<{concurrencyKey?:string, commands: {user: string, cmd: string, entrypoint:string}}>}
+     * }}
      */
-    this.container = service.container || undefined;
+    this.container = service.container || {};
     if (this.container) {
       if (!this.container.name) this.container.name = humanStringToKey(this.label);
       if (!this.container.volumes?.length) this.container.volumes = [];
-      this.container.sharedVolume = this.container.sharedVolume
-        ? pathfs.resolve(this.container.sharedVolume)
-        : pathfs.resolve(__dirname, 'temp-docker', this.container.name);
+      if (!this.container.build) this.container.build = '';
+      this.container.sharedVolume = this.container.sharedVolume || './temp-docker';
       this.container.ignoreVolumes = this.container.ignoreVolumes?.length
-        ? this.container.ignoreVolumes.filter((f) => !f.startsWith(this.container.sharedVolume))
+        ? this.container.ignoreVolumes.filter((f) => !f.startsWith(this.container?.sharedVolume || ''))
         : [];
+      if (!this.container.bootstrap) this.container.bootstrap = { commands: [] };
+      if (!this.container.bootstrap.commands) this.container.bootstrap.commands = [];
     }
     /** @type {boolean} */
     this.exited = service.exited || false;
     /**
      * @type {{
-     *  spawnArgs?: string[],
-     *  spawnCmd?: string,
-     *  spawnOptions?: SpawnOptions
+     *  spawnArgs: string[],
+     *  spawnCmd: string,
+     *  spawnOptions: SpawnOptions & {envs: {[key:string]: {extends: [], envs: {key: string, value: string, override: string, systemOverride?: string}[]}}}
      * }[]}
      * */
     this.commands = service.commands || [];
@@ -112,20 +169,9 @@ class Service {
     };
     /** @type {string} */
     this.rootPath = service.rootPath || service.spawnOptions?.cwd?.toString?.() || service.commands?.[0]?.spawnOptions?.cwd?.toString?.() || '';
-    /** @type {Parser[]} */
-    this.logParsers = service.logParsers || [];
     /** @type {number | null} */
     this.lastDatePrinted = service.lastDatePrinted || null;
-    /** @type {LogMessage[]} */
-    this.queue = service.queue || [];
-    const self = this;
-    (function processQueue() {
-      if (self.queue.length) {
-        const messages = self.queue.splice(0, self.queue.length);
-        sockets.emit('logs:update', messages);
-      }
-      setTimeout(processQueue, 100);
-    }());
+
     /**
      * @type {{
      *   check: ((service: Service) => boolean | Promise<boolean>) | undefined,
@@ -137,60 +183,70 @@ class Service {
       interval: service.health?.interval || 1000,
     };
 
-    if ((this.spawnOptions.cwd || this.rootPath)) {
-      const customEnvs = this.loadCustomEnv((this.spawnOptions.cwd || this.rootPath).toString());
-      this.spawnOptions.overrideEnvs = customEnvs || undefined;
-    }
-    this.commands.map((command) => {
-      if (command?.spawnOptions?.cwd) {
-        const customEnvs = this.loadCustomEnv(command.spawnOptions.cwd.toString());
-        command.spawnOptions.overrideEnvs = customEnvs || undefined;
+    Environment.all().then(async () => {
+      if (this.commands) {
+        this.commands.map((command) => {
+          if (command.spawnOptions?.cwd) {
+            const customEnvs = this.loadCustomEnv(command.spawnOptions.cwd.toString()) || {};
+            Object.keys(customEnvs).forEach((key) => {
+              if (!command.spawnOptions?.envs) return;
+              const value = customEnvs[key];
+              const existingEnv = command.spawnOptions.envs.find((env) => env.key === key);
+              if (existingEnv) {
+                existingEnv.systemOverride = value;
+              } else {
+                command.spawnOptions.envs.push({
+                  key, value: '', override: '', systemOverride: value,
+                });
+              }
+            });
+          }
+          return null;
+        });
       }
-      return null;
     });
   }
 
-  /** @param {string} path */
-  loadCustomEnv(path) {
-    const dotEnvPath = pathfs.resolve(path, '.env');
-    if (existsSync(dotEnvPath) && readFileSync(dotEnvPath, { encoding: 'utf-8' }).trim()) {
-      console.log(`! A .env will override your ${this.label} service !`);
-      return require('dotenv').parse(readFileSync(dotEnvPath));
-    }
-    return null;
-  }
-
-  exportInApi() {
-    const res = { ...this };
-    // @ts-ignore
-    delete res.pids;
-    // @ts-ignore
-    delete res.store;
-    // @ts-ignore
-    delete res.Stack;
-    return res;
+  async #walkThroughAllEnvs(cb = (env) => env, obj = this) {
+    await PromiseB.map(obj.commands || [], async (command) => {
+      if (command.spawnOptions?.envs) {
+        await PromiseB.map(Object.keys(command.spawnOptions?.envs || {}), async (environmentName) => {
+          const environment = command.spawnOptions?.envs[environmentName];
+          environment.envs = await PromiseB.map(environment.envs, async (env) => cb(env));
+        });
+      }
+    });
   }
 
   /** @return {Partial<import('@clabroche/common-typings').NonFunctionProperties<Service>>} */
   exportForDifference() {
-    return {
+    const service = cloneDeep({
       label: this.label,
       commands: this.commands,
       rootPath: this.rootPath,
       description: this.description,
       git: this.git,
       groups: this.groups,
-      spawnArgs: this.spawnArgs,
-      spawnCmd: this.spawnCmd,
-      spawnOptions: this.spawnOptions,
       url: this.url,
       urls: this.urls,
+      parsers: this.parsers,
       container: this.container,
-    };
+    });
+    if (service.commands) {
+      service.commands.map((command) => {
+        if (!command.spawnOptions.envs[this.Stack.getCurrentEnvironment()?.label || '']) command.spawnOptions.envs[this.Stack.getCurrentEnvironment()?.label || ''] = { extends: [], envs: [] };
+        command.spawnOptions.envs[this.Stack.getCurrentEnvironment()?.label || ''].envs = command.spawnOptions?.envs[this.Stack.getCurrentEnvironment()?.label || ''].envs.map((env) => ({
+          key: env.key,
+          value: env.value,
+          override: env.override,
+        }));
+        return command;
+      });
+    }
+    return service;
   }
 
   async restart() {
-    if (!this.container && this.tempContainer) this.container = this.tempContainer;
     await this.kill(false);
     await this.launch(false);
     this.Stack.getStack()?.triggerOnServiceRestart(this);
@@ -201,7 +257,7 @@ class Service {
   }
 
   async kill(triggerEvent = true, keepEnabled = false) {
-    if (this.container?.name) {
+    if (this.container?.enabled && this.container?.name) {
       await execAsync(`docker stop ${this.container.name}`, {}).catch(console.error);
     } else {
       await PromiseB.map(this.pids, async (spawnedProcess) => {
@@ -243,21 +299,10 @@ class Service {
   async launch(triggerEvent = true) {
     this.store = [];
     await this.kill(false, true).catch(console.error);
-    if (this.spawnCmd) {
-      await this.launchProcess(
-        this.spawnCmd,
-        this.spawnArgs || [],
-        this.spawnOptions,
-      );
-    }
     if (this.commands?.length) {
       await PromiseB.map(this.commands, async (command) => {
         if (command?.spawnCmd) {
-          await this.launchProcess(
-            command?.spawnCmd,
-            command?.spawnArgs || [],
-            command?.spawnOptions,
-          );
+          await this.launchProcess(command);
         }
       });
     }
@@ -271,8 +316,8 @@ class Service {
    * @param {Buffer | string} data
    * @param {Partial<LogMessage>} logMessageOverride
    */
-  add(data, logMessageOverride, {
-    pid, isMainProcess,
+  async add(data, logMessageOverride, {
+    pid, isMainProcess, command,
   }) {
     const timestamp = Date.now();
 
@@ -291,13 +336,13 @@ class Service {
       ...logMessageOverride,
       id: v4(),
     };
-
-    line = [...(this.Stack.getStack()?.logParsers || []), ...this.logParsers].reduce((line, parser) => {
-      if (!parser?.transform) {
-        console.error(`It seems your parser "${parser?.id}" has not a transform function. Please verify or disable it..`);
-        return line;
-      }
-      const result = parser.transform(line, this);
+    line = await PromiseB.reduce(([
+      ...(this.parsers || []),
+      ...(command.parsers || []),
+    ]), async (line, parserId) => {
+      const parser = await ParserModel.find(parserId);
+      if (!parser) return line;
+      const result = await parser.transformFunction(line, this);
       if (!result?.id) {
         console.error(`It seems your parser "${parser.id}" not return correct value. Please verify or disable it..`);
         return line;
@@ -327,102 +372,141 @@ class Service {
     this.queue.push(line);
   }
 
-  /**
-   *
-   * @param {string} spawnCmd
-   * @param {string[]} spawnArgs
-   * @param {SpawnOptions} spawnOptions
-   */
-  async launchProcess(spawnCmd, spawnArgs = [], spawnOptions = {}, isMainProcess = true) {
-    this.crashed = false;
-    this.exited = false;
-    const { cmd, args, options } = await this.parseIncomingCommand(spawnCmd, spawnArgs, spawnOptions, isMainProcess);
-    const spawnProcess = spawn(cmd, args, { ...options, detached: !isWindows });
-
-    /** @type {number | undefined | null} */
-    let pid = 0;
-    pid = spawnProcess.pid;
-    if (this.container?.customPid) {
-      // cant wait for custom pid, because listeners should be attached fast after spawn call
-      this.container.customPid({ pid: spawnProcess.pid, cmd, args })
-        .then((_pid) => { pid = _pid; });
-    }
-    if (!this.pids) this.pids = [];
-    this.pids.push(spawnProcess);
-    // @ts-ignore
-    spawnProcess.title = this.label;
-    this.lastDatePrinted = Date.now();
-    /** @type {LogMessage[]} */
-    this.queue = [];
-    new CreateInterface({
-      input: spawnProcess.stdout,
-      emitAfterNoDataMs: 100,
-    })
-      .on('line', (message) => {
-        this.add(message, { source: 'stdout' }, { isMainProcess, pid });
-      });
-    new CreateInterface({
-      input: spawnProcess.stderr,
-      emitAfterNoDataMs: 100,
-    }).on('line', (message) => {
-      this.add(message, { source: 'stderr' }, { isMainProcess, pid });
-    });
-
-    /** @type {LogMessage} */
-    const launchMessage = {
-      id: v4(),
-      timestamp: Date.now(),
-      label: this.label,
-      pid,
-      msg: `${cmd} ${args.join(' ')}`,
-      raw: `${cmd} ${args.join(' ')}`,
-      cmd: {
-        cmd,
-        args,
-        options,
-        status: 'running',
-      },
-    };
-    spawnProcess.on('exit', (code, signal) => {
-      if (code) {
-        if (launchMessage.cmd) launchMessage.cmd.status = 'error';
-        if (isMainProcess) {
-          sockets.emit('service:crash', {
-            label: this.label, code, signal, pid,
-          });
-          this.Stack.getStack()?.triggerOnServiceCrash(this, code);
-          this.crashed = true;
-        }
-      } else if (launchMessage.cmd) {
-        launchMessage.cmd.status = 'exited';
-        if (isMainProcess) {
-          this.exited = true;
-        }
+  async launchProcess(command, isMainProcess = true) {
+    try {
+      this.crashed = false;
+      this.exited = false;
+      const { cmd, args, options } = await this.parseIncomingCommand(command, isMainProcess);
+      if (!existsSync(options.cwd)) {
+        this.crashed = true;
+        this.exited = true;
+        /** @type {LogMessage} */
+        const launchMessage = {
+          id: v4(),
+          timestamp: Date.now(),
+          label: this.label,
+          pid: null,
+          msg: `Path does not exists (${options.cwd})`,
+          raw: `Path does not exists (${options.cwd})`,
+          cmd: {
+            cmd,
+            args,
+            options,
+            status: 'exited',
+          },
+        };
+        console.error(launchMessage.msg);
+        this.add(launchMessage.msg, { source: 'stderr' }, { pid: null, command, isMainProcess });
+        return;
       }
-      sockets.emit('service:exit', {
-        label: this.label, code, signal, pid,
-      });
-      sockets.emit('logs:update:lines', [launchMessage]);
-    });
+      const spawnProcess = spawn(cmd, args, { ...options, detached: !isWindows });
 
-    const date = `🕑  ${dayjs().format('YYYY-MM-DD HH:mm:ss')}`;
-    /** @type {LogMessage} */
-    const line = {
-      id: v4(), raw: date, label: this.label, msg: date, timestamp: this.lastDatePrinted, isSeparator: true,
-    };
-    this.store.push(line, launchMessage);
-    sockets.emit('logs:update', [line, launchMessage]);
-    if (isMainProcess) {
-      this.launchHealthChecker(spawnProcess);
-      sockets.emit('service:start', {
-        label: this.label, pid,
+      /** @type {number | undefined | null} */
+      let pid = 0;
+      pid = spawnProcess.pid;
+      if (this.container?.customPid) {
+        // cant wait for custom pid, because listeners should be attached fast after spawn call
+        this.container.customPid({ pid: spawnProcess.pid, cmd, args })
+          .then((_pid) => { pid = _pid; });
+      }
+      if (!this.pids) this.pids = [];
+      this.pids.push(spawnProcess);
+      // @ts-ignore
+      spawnProcess.title = this.label;
+      this.lastDatePrinted = Date.now();
+      /** @type {LogMessage[]} */
+      this.queue = [];
+      new CreateInterface({
+        input: spawnProcess.stdout,
+        emitAfterNoDataMs: 100,
+      })
+        .on('line', (message) => {
+          this.add(message, { source: 'stdout' }, { isMainProcess, pid, command });
+        });
+      new CreateInterface({
+        input: spawnProcess.stderr,
+        emitAfterNoDataMs: 100,
+      }).on('line', (message) => {
+        this.add(message, { source: 'stderr' }, { isMainProcess, pid, command });
       });
+
+      /** @type {LogMessage} */
+      const launchMessage = {
+        id: v4(),
+        timestamp: Date.now(),
+        label: this.label,
+        pid,
+        msg: `${cmd} ${args.join(' ')}`,
+        raw: `${cmd} ${args.join(' ')}`,
+        cmd: {
+          cmd,
+          args,
+          options,
+          status: 'running',
+        },
+      };
+      spawnProcess.on('exit', (code, signal) => {
+        if (code) {
+          if (launchMessage.cmd) launchMessage.cmd.status = 'error';
+          if (isMainProcess) {
+            sockets.emit('service:crash', {
+              label: this.label, code, signal, pid,
+            });
+            this.Stack.getStack()?.triggerOnServiceCrash(this, code);
+            this.crashed = true;
+          }
+        } else if (launchMessage.cmd) {
+          launchMessage.cmd.status = 'exited';
+          if (isMainProcess) {
+            this.exited = true;
+          }
+        }
+        sockets.emit('service:exit', {
+          label: this.label, code, signal, pid,
+        });
+        sockets.emit('logs:update:lines', [launchMessage]);
+      });
+
+      const date = `🕑  ${dayjs().format('YYYY-MM-DD HH:mm:ss')}`;
+      /** @type {LogMessage} */
+      const line = {
+        id: v4(), raw: date, label: this.label, msg: date, timestamp: this.lastDatePrinted, isSeparator: true,
+      };
+      this.store.push(line, launchMessage);
+      sockets.emit('logs:update', [line, launchMessage]);
+      if (isMainProcess) {
+        this.launchHealthChecker(spawnProcess);
+        sockets.emit('service:start', {
+          label: this.label, pid,
+        });
+      }
+
+      return {
+        launchMessage,
+        spawnProcess,
+      };
+    } catch (error) {
+      /** @type {LogMessage} */
+      const launchMessage = {
+        id: v4(),
+        timestamp: Date.now(),
+        label: this.label,
+        pid: null,
+        msg: 'ERROR',
+        raw: 'ERROR',
+        cmd: {
+          cmd: command.spawnCmd,
+          args: command.spawnArgs,
+          options: command.spawnOptions,
+          status: 'exited',
+        },
+      };
+      const date = `🕑  ${dayjs().format('YYYY-MM-DD HH:mm:ss')}`;
+      const line = {
+        id: v4(), raw: date, label: this.label, msg: date, timestamp: this.lastDatePrinted, isSeparator: true,
+      };
+      sockets.emit('logs:update', [line, launchMessage]);
     }
-
-    return {
-      launchMessage,
-      spawnProcess,
-    };
   }
 
   /**
@@ -432,7 +516,7 @@ class Service {
   async launchHealthChecker(spawnProcess) {
     if ((!spawnProcess.pid && !this.container?.name) || !this.health?.check) return;
     await new Promise((res) => { setTimeout(res, this.health.interval); });
-    if (!this.container?.name) {
+    if (!this.container?.enabled) {
       if (!(await psTreeAsync(spawnProcess.pid))?.length) {
         this.crashed = true;
         sockets.emit('service:healthcheck:down', { label: this.label, pid: spawnProcess.pid });
@@ -501,14 +585,32 @@ class Service {
     this.sendHasBeenModified();
   }
 
+  async buildEnvs(environmentLabel, spawnOptions, envs = {}, envLabel = this.Stack.getCurrentEnvironment()?.label) {
+    const environment = spawnOptions.envs[environmentLabel];
+    if (!environment) return [];
+    const globalEnvironment = await Environment.find(environmentLabel);
+    const extendEnvironmentLabel = environment.extends.filter((a) => a)?.[0];
+    if (extendEnvironmentLabel) await this.buildEnvs(extendEnvironmentLabel, spawnOptions, envs);
+    return environment.envs.reduce((envs, env) => {
+      envs[env.key] = env.systemOverride || env.override || env.value;
+      const tag = this.extractTag(envs[env.key]);
+      if (tag) {
+        envs[env.key] = globalEnvironment?.envs[tag] ?? envs[env.key];
+      }
+      return envs;
+    }, envs);
+  }
+
+  extractTag(field) {
+    const extractedTag = /{{(.*)}}/gi.exec(field)?.[1]?.trim();
+    return extractedTag;
+  }
+
   /**
-   *
-   * @param {string} spawnCmd
-   * @param {string[]} spawnArgs
-   * @param {SpawnOptions} spawnOptions
    * @param {boolean} isMainProcess
    */
-  async parseIncomingCommand(spawnCmd, spawnArgs = [], spawnOptions = {}, isMainProcess = true) {
+  async parseIncomingCommand(command, isMainProcess = true) {
+    const { spawnCmd, spawnArgs = [], spawnOptions = { envs: [] } } = command;
     let cmd = spawnCmd?.split(' ')?.[0];
     const argFromCmd = spawnCmd?.split(' ')?.slice(1).join(' ');
     let args = [argFromCmd, ...spawnArgs].filter((a) => a);
@@ -518,21 +620,19 @@ class Service {
       cmd = currentAlias?.cmd || cmd;
       args = [...(currentAlias?.args || []), ...args];
     }
+    const cwd = replaceEnvs(spawnOptions.cwd || this.rootPath || pathfs.resolve());
 
     const options = {
       ...spawnOptions,
-      cwd: spawnOptions.cwd || this.rootPath,
+      cwd,
       shell: isWindows ? process.env.ComSpec : '/bin/sh',
-      env: {
-        ...(spawnOptions.env || {}),
-        ...spawnOptions.overrideEnvs || {},
-      },
+      env: await this.buildEnvs(this.Stack.getCurrentEnvironment()?.label, spawnOptions),
     };
 
     if (cmd.match(/[/\\]/g)) {
       cmd = path.resolve(options.cwd.toString(), cmd);
     }
-    if (this.container) {
+    if (this.container?.enabled) {
       try {
         const result = await this.buildDocker({
           cmd, args, options, isMainProcess,
@@ -540,9 +640,6 @@ class Service {
         return result;
       } catch (error) {
         console.error(error);
-        this.add('We are trying to launch without docker, it might not work', { source: 'stderr' }, { pid: null, isMainProcess });
-        this.tempContainer = this.container;
-        this.container = undefined;
       }
     }
     options.env = { ...process.env, ...options.env };
@@ -555,15 +652,17 @@ class Service {
   async buildDocker({
     cmd, args, options, isMainProcess,
   }) {
-    if (!this.container) return { cmd, args, options };
-    const internalVolumeRootPath = this.container.sharedVolume;
+    if (!this.container?.enabled) return { cmd, args, options };
+    const internalVolumeRootPath = this.container.sharedVolume.startsWith('~')
+      ? pathfs.resolve(os.homedir(), this.container.sharedVolume.replace('~/', ''))
+      : pathfs.resolve(this.container.sharedVolume);
     const dockerFilePath = pathfs.resolve(internalVolumeRootPath, `Dockerfile.${this.container.name}`);
     const dockerIgnoreFilePath = pathfs.resolve(internalVolumeRootPath, '.dockerignore');
     const dockerContextPath = pathfs.resolve(internalVolumeRootPath, '.empty-context');
     if (!existsSync(internalVolumeRootPath)) await mkdir(internalVolumeRootPath, { recursive: true });
     if (!existsSync(dockerContextPath)) await mkdir(dockerContextPath, { recursive: true });
     await writeFile(dockerFilePath, `
-${(this.container.build || []).join('\n')}
+${this.container.build || ''}
 ${
   this.container.noHostUser
     ? ''
@@ -574,24 +673,21 @@ ${
       USER ${username}
     `
 }
-${
-  this.container.noChangeWorkDir
-    ? ''
-    : `
-      WORKDIR ${options.cwd}
-    `
-}
 ${Object.keys(options.env || {}).map((env) => `ENV ${env}=${(options.env || {})[env]} `).join('\n')}
     `.trim(), 'utf-8');
     await writeFile(dockerIgnoreFilePath, 'Dockerfile.*'.trim(), 'utf-8');
     const originalCmd = `${cmd} ${args.join(' ')}`;
     cmd = 'docker';
-    const volumesCmd = this.container.volumes.map((v) => (v.includes(':') ? ['-v', `${v}`] : ['-v', `${v}:${v}`]));
+    const volumesCmd = this.container.volumes.map((v) => {
+      let [external, internal] = v.split(':');
+      if (external) external = pathfs.resolve(replaceEnvs(external));
+      if (internal) internal = pathfs.resolve(replaceEnvs(internal));
+      return ['-v', `${external}:${internal || external}`];
+    });
     volumesCmd.push(...await PromiseB.map(this.container.ignoreVolumes, async (ignoredVolume) => {
-      const volumePath = pathfs.join(internalVolumeRootPath, ignoredVolume);
+      const volumePath = pathfs.join(internalVolumeRootPath, `ignoredVolume-${this.label}`, ignoredVolume);
       if (!existsSync(volumePath)) await mkdir(volumePath, { recursive: true }); // Pre create folders with host uid,gid to prevent docker to create as root user
-      if (!existsSync(ignoredVolume)) await mkdir(ignoredVolume, { recursive: true }); // Pre create folders with host uid,gid to prevent docker to create as root user
-      return ignoredVolume.startsWith(internalVolumeRootPath) ? [] : ['-v', `${volumePath}:${ignoredVolume}`];
+      return ['-v', `${volumePath}:${ignoredVolume}`];
     }).filter((f) => !!f?.length));
 
     const isAlive = await execAsync(`docker inspect --format {{.State.Pid}}  ${this.container.name}`, {})
@@ -599,19 +695,24 @@ ${Object.keys(options.env || {}).map((env) => `ENV ${env}=${(options.env || {})[
       .catch(() => false);
 
     if (!isAlive) {
-      this.add('<i class="fab fa-docker" title="docker"></i> <i class="fas fa-hard-hat" title="build"></i> Building docker image...', { source: 'stdout' }, { pid: null, isMainProcess });
+      const command = {
+        spwanCmd: 'docker',
+        spawnArgs: ['build', '-f', dockerFilePath, '-t', this.container?.name || '', dockerContextPath],
+        spawnOptions: { cwd: internalVolumeRootPath, shell: isWindows ? process.env.ComSpec : '/bin/sh' },
+      };
+      this.add('<i class="fab fa-docker" title="docker"></i> <i class="fas fa-hard-hat" title="build"></i> Building docker image...', { source: 'stdout' }, { pid: null, isMainProcess, command });
       await new Promise((resolve, reject) => {
-        const buildProcess = spawn('docker', ['build', '-f', dockerFilePath, '-t', this.container?.name || '', dockerContextPath], { cwd: internalVolumeRootPath, shell: isWindows ? process.env.ComSpec : '/bin/sh' });
+        const buildProcess = spawn(command.spwanCmd, command.spawnArgs, command.spawnOptions);
         new CreateInterface({
           input: buildProcess.stdout,
         })
           .on('line', (message) => {
-            this.add(`<i class="fab fa-docker" title="docker"></i> <i class="fas fa-hard-hat" title="build"></i> ${message}`, { source: 'stdout' }, { isMainProcess, pid: buildProcess.pid });
+            this.add(`<i class="fab fa-docker" title="docker"></i> <i class="fas fa-hard-hat" title="build"></i> ${message}`, { source: 'stdout' }, { isMainProcess, pid: buildProcess.pid, command });
           });
         new CreateInterface({
           input: buildProcess.stderr,
         }).on('line', (message) => {
-          this.add(`<i class="fab fa-docker" title="docker"></i> <i class="fas fa-hard-hat" title="build"></i> ${message}`, { source: 'stdout' }, { isMainProcess, pid: buildProcess.pid });
+          this.add(`<i class="fab fa-docker" title="docker"></i> <i class="fas fa-hard-hat" title="build"></i> ${message}`, { source: 'stdout' }, { isMainProcess, pid: buildProcess.pid, command });
         });
         buildProcess.on('exit', (code) => {
           if (code) return reject(code);
@@ -640,18 +741,27 @@ ${Object.keys(options.env || {}).map((env) => `ENV ${env}=${(options.env || {})[
                 this.container.name,
                 command.cmd,
               ].filter((a) => a);
-              this.add(`<i class="fab fa-docker" title="docker"></i> <i class="fas fa-hourglass-start" title="bootstrap"></i> ${command.entrypoint || ''} ${command.cmd}`, { source: 'stdout' }, { isMainProcess, pid: null });
-              const bootstrapProcess = spawn('docker', test, { shell: isWindows ? process.env.ComSpec : '/bin/sh' });
+              const commandBootstrap = {
+                spawnCmd: 'docker',
+                spawnArgs: test,
+                spawnOptions: { shell: isWindows ? process.env.ComSpec : '/bin/sh' },
+              };
+              this.add(`<i class="fab fa-docker" title="docker"></i> <i class="fas fa-hourglass-start" title="bootstrap"></i> ${command.entrypoint || ''} ${command.cmd}`, { source: 'stdout' }, { isMainProcess, pid: null, command: commandBootstrap });
+              const bootstrapProcess = spawn(
+                commandBootstrap.spawnCmd,
+                commandBootstrap.spawnArgs,
+                commandBootstrap.spawnOptions,
+              );
               new CreateInterface({
                 input: bootstrapProcess.stdout,
               })
                 .on('line', (message) => {
-                  this.add(`<i class="fab fa-docker" title="docker"></i> <i class="fas fa-hourglass-start" title="bootstrap"></i> ${command.entrypoint || ''} ${command.cmd} ${message}`, { source: 'stdout' }, { isMainProcess, pid: bootstrapProcess.pid });
+                  this.add(`<i class="fab fa-docker" title="docker"></i> <i class="fas fa-hourglass-start" title="bootstrap"></i> ${message}`, { source: 'stdout' }, { isMainProcess, pid: bootstrapProcess.pid, command: commandBootstrap });
                 });
               new CreateInterface({
                 input: bootstrapProcess.stderr,
               }).on('line', (message) => {
-                this.add(`<i class="fab fa-docker" title="docker"></i> <i class="fas fa-hourglass-start" title="bootstrap"></i> ${command.entrypoint || ''} ${command.cmd} ${message}`, { source: 'stderr' }, { isMainProcess, pid: bootstrapProcess.pid });
+                this.add(`<i class="fab fa-docker" title="docker"></i> <i class="fas fa-hourglass-start" title="bootstrap"></i> ${message}`, { source: 'stderr' }, { isMainProcess, pid: bootstrapProcess.pid, command: commandBootstrap });
               });
               bootstrapProcess.on('exit', (code) => {
                 if (code) return reject(code);
@@ -664,7 +774,7 @@ ${Object.keys(options.env || {}).map((env) => `ENV ${env}=${(options.env || {})[
         }
       }
     } else {
-      await this.add('Attach to container...', { source: 'stdout' }, { pid: null, isMainProcess });
+      await this.add('Attach to container...', { source: 'stdout' }, { pid: null, isMainProcess, command: { spwanCmd: cmd, spawnArgs: args, spawnOptions: options } });
       args = ['exec ', this.container.name, originalCmd];
     }
     this.container.customPid = async () => {
@@ -716,6 +826,21 @@ function checkport(_port) {
 }
 
 module.exports = Service;
+
+function requireFromString(src, filename) {
+  const Module = module.constructor;
+  const m = new Module();
+  m._compile(src, filename);
+  return m.exports;
+}
+
+function replaceEnvs(str) {
+  Object.keys(process.env).forEach((env) => {
+    if (!env) return;
+    str = str.replace(`$${env}`, process.env[env]);
+  });
+  return str;
+}
 
 /**
  * @typedef {import('child_process').ExecOptions &

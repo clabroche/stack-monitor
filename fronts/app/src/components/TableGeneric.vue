@@ -54,10 +54,10 @@
         </template>
       </tbody>
       <tbody v-else-if="Array.isArray(computedList)">
-        <tr v-for="row of computedList" :key="row">
+        <tr v-for="(row, rowIndex) of computedList" :key="`row-${rowIndex}`">
           <td v-for="(header, i) of computedHeaders" :key="i +'-td-' + header.id" :style="{width: header.width ? header.width : ''}"
             @click="click(row, header, row[header.id])">
-            <slot :name="header.id" :item="row[header.id]" :row="row">
+            <slot :name="header.id" :item="row[header.id]" :row="row" :index="i">
               {{row[header.id]}}
             </slot>
           </td>

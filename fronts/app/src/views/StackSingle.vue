@@ -4,7 +4,7 @@
       <div class="header">
         <div class="left">
           <div class="title">
-            <Popover trigger="mouseenter" appendTo="parent" max-width="50vh"  v-if="currentService.container?.name">
+            <Popover trigger="mouseenter" appendTo="parent" max-width="50vh"  v-if="currentService.container?.enabled">
               <template #trigger>
                 <i class="fab fa-docker"></i>
               </template>
@@ -105,6 +105,7 @@ export default {
       await reload()
     })
     Socket.on('conf:update', (/**@type {string[]}*/data) => {
+      console.log('zelkf,ezf,nezfkezf')
       if (data.includes(router.currentRoute.value.params.label.toString())) {
         reload()
       }
@@ -115,7 +116,7 @@ export default {
     const tabs = ref([])
 
     async function reload() {
-      currentService.value = await Stack.getService(router.currentRoute.value.params.label.toString())
+      currentService.value = await Stack.getService(router.currentRoute.value.params.label?.toString())
       if(currentService.value) {
         const {data: plugins} = await axios.get('/plugins/services/' + currentService.value.label)
         tabs.value = plugins

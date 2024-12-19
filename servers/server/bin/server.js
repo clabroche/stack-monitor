@@ -13,8 +13,8 @@ const args = require('../helpers/args');
     apiPrefix: '/',
     bodyLimit: '100mb',
     noGreetings: true,
-    staticController: pathfs.resolve(__dirname, 'public'),
-    helmetConf: {
+    staticController: process.env.NODE_ENV !== 'DEV' ? pathfs.resolve(__dirname, 'public') : undefined,
+    helmetConf: process.env.NODE_ENV !== 'DEV' ? {
       crossOriginEmbedderPolicy: false,
       crossOriginResourcePolicy: false,
       contentSecurityPolicy: {
@@ -23,8 +23,26 @@ const args = require('../helpers/args');
         },
         useDefaults: true,
       },
+    } : null,
+    afterControllers({ app, server }) {
+      if (process.env.NODE_ENV === 'DEV') {
+        const httpProxy = require('http-proxy');
+        const proxy = httpProxy.createProxy({ ws: true });
+        server.on('upgrade', (req, res) => {
+          if (req.url === '/') {
+            proxy.ws(req, res, {
+              target: 'ws://localhost:5173',
+            });
+          }
+        });
+        app.use((req, res) => {
+          proxy.web(req, res, {
+            target: 'ws://localhost:5173',
+          });
+        });
+      }
     },
-    onListening(server) {
+    onListening({ server }) {
       const addr = server.address();
       const port = typeof addr === 'string'
         ? addr
@@ -46,7 +64,6 @@ const args = require('../helpers/args');
       })();
     },
   });
-  if (args.confPath) {
-    await require('../models/stack').selectConf(args.confPath, args.services);
-  }
+  console.log(args.confPath)
+  await require('../models/stack').selectConf(args.confPath);
 })();

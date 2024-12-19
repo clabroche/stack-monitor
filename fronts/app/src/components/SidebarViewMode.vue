@@ -4,7 +4,38 @@
       <sidebar-view-mode-item v-for="button of buttons" :key="button.label" :button="button"/>
     </ul>
     <ul v-if="buttonsBottom.length">
-      <sidebar-view-mode-item v-for="button of buttonsPlugins" :key="button.label" :button="button"/>
+      <div style="position: relative">
+        <SpeedDial :tooltipOptions="{position: 'left', event: 'hover'}" :model="buttonsPlugins.map(button => {
+          return button
+        })" direction="right" style="" :pt="{
+          list: {
+            style: {
+              zIndex: 100000000,
+              position: 'absolute',
+              left: '100%',
+              border: '1px solid var(--system-border-borderColor)',
+              backgroundColor: 'var(--system-sidebar-backgroundColor)',
+            }
+          }
+        }" >
+        <template #button="{ toggleCallback, visible }">
+          <Button :class="{'speeddial-button-trigger': true, active: visible}" @click="toggleCallback"><i class="fas fa-layer-group" :style="{transition: '300ms', transform: visible ? 'rotate(45deg)' : ''}"></i></Button>
+        </template>
+        <template #item="{ item, toggleCallback }">
+          <Popover appendTo="parent" trigger="mouseenter" placement="top">
+            <template #trigger>
+              <button @click="item.click();toggleCallback($event)" :class="{ active: $router.currentRoute.value.fullPath.includes(item.active), 'button-speed-dial': true }" class="sidebar-item" :title="item.text">
+                <i v-if="item.icon" :class="{ [item.icon]: true }" aria-hidden="true"/>
+                <img v-else-if="item.img" :src="item.img" height="10px">
+              </button>
+            </template>
+            <template #content>
+              {{item.text}}
+            </template>
+          </Popover>
+        </template>  
+      </SpeedDial>
+      </div>
       <Popover appendTo="parent" trigger="mouseenter" placement="right">
         <template #trigger>
           <doughtnut-chart
@@ -103,12 +134,14 @@ import { useRouter } from 'vue-router';
 import Theme from '../helpers/Theme'
 import Popover from './Popover.vue';
 import system from '../models/system'
+import SpeedDial from 'primevue/speeddial'
 
 export default {
   components: {
     SidebarViewModeItem: SidebarViewModeItemVue,
     DoughtnutChart,
-    Popover
+    Popover,
+    SpeedDial
   },
   setup() {
     const router = useRouter(); 
@@ -161,7 +194,8 @@ export default {
           click: () => {
             const lastVisited = stack.services.value.find((service) => service.label === localStorage.getItem('last-service-visisted'))
             if(lastVisited) router.push({ name: 'stack-single', params: { label: lastVisited.label } })
-            else router.push({ name: 'stack-single', params: { label: stack.services.value[0]?.label } })
+            else if(stack.services.value[0]) router.push({ name: 'stack-single', params: { label: stack.services.value[0]?.label } })
+            else router.push({ name: 'stack-single-no-view'})
           }
         },
         {
@@ -169,7 +203,7 @@ export default {
           active: 'multiple',
           icon: 'fas fa-th',
           click: () => router.push({name: 'stack-multiple'})
-        }
+        },
       ])),
       buttonsPlugins: computed(() => ([
         ...plugins.value.map(plugin => {
@@ -186,6 +220,12 @@ export default {
         }).flat().filter(f => f),
       ])),
       buttonsBottom: computed(() => ([
+        {
+          text: 'Settings',
+          active: 'settings',
+          icon: 'fas fa-cog',
+          click: () => router.push({name: 'settings-no-view'})
+        },
         {
           text: 'Disconnect',
           icon: 'fas fa-unlink',
@@ -346,4 +386,56 @@ export default {
 .logo {
   width: 100%;
 }
+.button-speed-dial, .speeddial-button-trigger {
+  outline: none;
+  border-radius: 5px;
+  transition: 200ms;
+  transition-property: font-size, box-shadow;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: transparent;
+  margin: 0 5px;
+  font-size: 1em;
+  box-shadow: none;
+  color: var(--system-tertiary-color);
+  &:hover {
+    background: var(--system-secondary-backgroundColor);
+    color: var(--system-secondary-color);
+    box-shadow: none;
+    transform: none;
+    img {
+      filter: contrast(0) brightness(1.6);
+    }
+  }
+  &.active {
+    @include card();
+    img {
+      filter: contrast(0) brightness(2);
+    }
+  }
+  i {
+    font-size: 1.2em;
+  }
+  img {
+    width: 1.2em;
+    height: 1.2em;
+    object-fit: contain;
+    filter: contrast(0) brightness(2) brightness(0.5);
+    
+  }
+}
+</style>
+
+<style lang="scss" >
+.p-speeddial-list {
+    opacity:0;
+  }
+.p-speeddial-open {
+  .p-speeddial-list {
+    opacity:1;
+  }
+}
+
 </style>

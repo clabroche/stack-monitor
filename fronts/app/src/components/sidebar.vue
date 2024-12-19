@@ -6,6 +6,13 @@
           <input type="text" v-model="search" @input="openGroup = 'All'" placeholder="Search service..." @keypress.enter="launchService" >
           <i class="fas fa-chevron-left" @click="minimized = true"></i>
         </div>
+        <div class="add-container">
+          <div class="add">
+            <i class="fas fa-plus"></i>
+            <input v-model="serviceLabelToAdd" placeholder="Add new service..." @keypress.enter="addService">
+          </div>
+          <label v-if="addServiceError">{{ addServiceError }}</label>
+        </div>
         <sidebar-group header="All" :open="openGroup === 'All'" @open="openGroup = 'All'">
           <sidebar-item v-for="service of sortedStack" :key="service.label" :service="service"/>
         </sidebar-group>
@@ -31,6 +38,7 @@ import { computed, onMounted, ref } from 'vue'
 import Socket from '../helpers/Socket'
 import notification from '../helpers/notification'
 import { useRouter } from 'vue-router';
+import axios from '../helpers/axios'
 
 export default {
   components: {
@@ -82,6 +90,7 @@ export default {
         .map(key => ({label: key, services: groupObject[key]}))
         .sort((a,b) => a.label.localeCompare(b.label))
     })
+    const serviceLabelToAdd= ref('')
     return {
       groups,
       minimized,
@@ -90,6 +99,23 @@ export default {
       search,
       sortedStack,
       System,
+      serviceLabelToAdd,
+      addServiceError: computed(() => {
+        if(Stack.services.value.find(a => a.label === serviceLabelToAdd.value)) return 'A service already exists with this label'
+        return ''
+      }),
+      addService: () => {
+        if(Stack.services.value.find(a => a.label === serviceLabelToAdd.value)) return
+        axios.post('/stack/create-service',  {
+          label: serviceLabelToAdd.value,
+        }).then(() => {
+          const label = serviceLabelToAdd.value
+          setTimeout(() => {
+            router.push({name: 'stack-single', params: {label}, query: {tab: "Configuration"}})
+          }, 100);
+          serviceLabelToAdd.value = ''
+        })
+      },
       /** @param {KeyboardEvent} $event */
       launchService($event) {
         const service = sortedStack.value[0]
@@ -236,5 +262,20 @@ input {
 } 
 .system .title {
   justify-content: center;
+}
+.add-container {
+  margin: 0 10px;
+  margin-bottom: 10px;
+  label {
+    color: red;
+  }
+  .add {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    input {
+      margin: 0;
+    }
+  }
 }
 </style>

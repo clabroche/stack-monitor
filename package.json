@@ -43,7 +43,7 @@
     "@clabroche/common-typings": "workspace:^",
     "@commitlint/cli": "^17.6.7",
     "@commitlint/config-conventional": "^17.6.7",
-    "@iryu54/stack-monitor": "^1.18.5",
+    "@iryu54/stack-monitor": "^1.18.12",
     "@lerna-lite/changed": "^2.5.0",
     "@lerna-lite/cli": "^2.5.0",
     "@lerna-lite/diff": "^2.5.0",
@@ -79,7 +79,7 @@
     "knip": "^4.5.0",
     "ps-tree": "^1.2.0",
     "tsup": "^8.0.1",
-    "turbo": "^1.13.3 ",
+    "turbo": "^2.3.3 ",
     "typescript": "^5.3.3",
     "workspace-tools": "^0.36.3"
   },

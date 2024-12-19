@@ -72,3 +72,7 @@ pre {
   word-wrap: break-word;
   /* Internet Explorer 5.5+ */
 }
+
+.p-select-overlay.p-component {
+  z-index: 10000 !important;
+}

@@ -25,6 +25,7 @@
   "typings": "./typings/export.d.ts",
   "types": "./typings/export.d.ts",
   "dependencies": {
+    "@primevue/themes": "^4.2.5",
     "bluebird": "^3.7.2",
     "dayjs": "^1.11.10",
     "debounce": "^2.0.0",
@@ -32,7 +33,9 @@
     "fast-sort": "^3.4.0",
     "highlight.js": "^11.9.0",
     "markdown-it": "^14.0.0",
+    "primevue": "^4.2.5",
     "swagger-ui": "^5.11.7",
+    "tailwindcss": "^3.4.16",
     "uuid": "^9.0.1"
   },
   "devDependencies": {
@@ -42,7 +45,7 @@
     "@clabroche/modules-plugins-loader-front": "workspace:*",
     "@fortawesome/fontawesome-free": "^6.5.1",
     "@vitejs/plugin-vue": "^5.0.3",
-    "autoprefixer": "^10.4.17",
+    "autoprefixer": "^10.4.20",
     "axios": "^1.6.7",
     "lodash-es": "^4.17.21",
     "monaco-editor": "^0.46.0",
@@ -50,7 +53,7 @@
     "postcss": "^8.4.35",
     "sass": "^1.70.0",
     "tippy.js": "^6.3.7",
-    "vite": "^5.0.12",
+    "vite": "^6.0.3",
     "vite-plugin-html": "^3.2.2",
     "vue": "^3.4.18",
     "vue-router": "^4.2.5",

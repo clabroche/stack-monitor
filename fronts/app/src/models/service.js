@@ -20,6 +20,8 @@ class Service {
     /** @type {string[]} */
     this.groups = service.groups || [];
     /** @type {string[]} */
+    this.parsers = service.parsers || [];
+    /** @type {string[]} */
     this.urls = service.urls || [];
     /** @type {string} */
     this.openapiURL = service.openapiURL || '';
@@ -62,8 +64,8 @@ class Service {
     this.exited = service.exited || false;
     /** @type {string} */
     this.rootPath = service.rootPath || '';
-    /** @type {{name: string, build: string[], volumes: string[], ignoreVolumes: string[]} | undefined} */
-    this.container = service.container || undefined;
+    /** @type {{enabled: true, name: string, build: string[], volumes: string[], ignoreVolumes: string[], bootstrap: {commands: {cmd: string,user: string,entrypoint: string,}[]}}} */
+    this.container = service.container;
     if (this.container) {
       if (!this.container.volumes?.length) this.container.volumes = [];
       if (!this.container.ignoreVolumes?.length) this.container.ignoreVolumes = [];
@@ -71,7 +73,7 @@ class Service {
   }
 
   async updateGit() {
-    if (this.git) {
+    if (this.git?.remote) {
       this.git.branches = await this.getBranches();
       this.git.currentBranch = await this.getCurrentBranch();
       this.git.status = await this.getStatus();

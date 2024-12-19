@@ -3,7 +3,7 @@
   <div id="app-container" v-if="connected">
     <div id="app">
       <sidebar-view-mode v-if="!['stack-chooser', 'import-create'].includes($route.name?.toString() || '')"/>
-      <sidebar v-if="$route.name === 'stack-single'"/>
+      <sidebar v-if="['stack-single', 'stack-single-no-view'].includes($route.name)"/>
       <div class="main">
         <router-view/>
       </div>
@@ -37,6 +37,7 @@ import SidebarViewMode from './components/SidebarViewMode.vue'
 import EnvironmentsChooser from './components/EnvironmentsChooser.vue'
 import { useRouter } from 'vue-router';
 import Theme from './helpers/Theme'
+import axios from './helpers/axios'
 
 
 export default {
@@ -61,17 +62,15 @@ export default {
     const redirect = async () => {
       connected.value = Socket.socket.connected
       if(!connected.value) Stack.services.value = []
-      // const enabledServices = await Stack.getEnabledServices()
       if(
         router.currentRoute.value.fullPath.startsWith('/stack-single') ||
         router.currentRoute.value.fullPath.startsWith('/stack-multiple')
       ) {
-        // if(connected.value && !Stack.services.value.length) {
-        //   router.push({name:'import-create'})
-        // } else if(!enabledServices.length && router.currentRoute.value.name !== 'stack-chooser') {
-          router.push({name:'stack-chooser'})
-        // }
+        router.push({name:'stack-chooser'})
       }
+      const shouldSetup = await Stack.shouldSetup()
+      if(shouldSetup) router.push({name: 'settings', params: {setting: 'crypto'}, query: { wrongKey: 'true' }})
+      console.log(shouldSetup)
     }
     onMounted(async ()=> {
       Socket.on('connect',  redirect);
@@ -79,6 +78,8 @@ export default {
       Socket.on('forceReload', () => {
         window.location.reload()
       });
+      Socket.on('reloadService', () => Stack.loadServices())
+      Socket.on('system:wrongKey', () => router.push({name: 'settings', params: {setting: 'crypto'}, query: { wrongKey: 'true' }}))
       await redirect()
     })
 

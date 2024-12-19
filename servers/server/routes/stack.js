@@ -3,11 +3,54 @@ const { exec } = require('child_process');
 const open = require('open');
 const commandExists = require('command-exists').sync;
 const Octokit = require('octokit');
+const { sockets } = require('@clabroche/common-socket-server');
 const Stack = require('../models/stack');
 const myConfs = require('../models/myConfs');
 
 const router = express.Router();
 const { findService } = Stack;
+const Service = require('../models/Service');
+const Environment = require('../models/Environment');
+
+router.post('/create-service/', async (req, res) => {
+  const existingService = Stack.findService(req.body.label);
+  if (existingService) {
+    existingService.reload(req.body);
+    await existingService.save();
+    sockets.emit('conf:update', [existingService.label]);
+    res.send(existingService);
+  } else {
+    const service = new Service(req.body, Stack);
+    await service.save();
+    Stack.getStack()?.services.push(service);
+    sockets.emit('conf:update', [service.label]);
+    res.send(service);
+  }
+  sockets.emit('reloadService');
+});
+
+router.patch('/:service', async (req, res) => {
+  const service = findService(req.params.service);
+  await service.save();
+  Stack.getStack()?.services.push(service);
+  sockets.emit('reloadService');
+  res.send(service);
+});
+
+router.get('/export-env', async (req, res) => {
+  const service = findService(req.query.service?.toString() || '');
+  if (!service) return res.status(404).send('Service not found');
+  const command = service.commands?.[+(req.query.commandIndex?.toString() || '0')];
+  if (!command) return res.status(404).send('Command not found');
+  const envs = await service.buildEnvs(req.query.environment, command.spawnOptions);
+  res.send(envs);
+});
+
+router.delete('/:service', async (req, res) => {
+  await Stack.deleteService(req.params.service);
+  sockets.emit('reloadService');
+  res.send('ok');
+});
 
 router.get('/has-update', async (req, res) => {
   try {
@@ -30,12 +73,23 @@ router.get('/configuration', (req, res) => {
   res.json(Stack.getStack()?.exportInApi());
 });
 router.get('/environment', (req, res) => {
-  res.json({
-    id: Object.keys(Stack.environments || {}).find((key) => (
-      Stack.environments?.[key]?.label === Stack.getCurrentEnvironment()?.label
-    )),
-    ...Stack.getCurrentEnvironment(),
-  });
+  res.json(Stack.getCurrentEnvironment());
+});
+
+router.patch('/environments/:environmentLabel', async (req, res) => {
+  const env = await Stack.getStack()?.environments.find((env) => env.label === req.params.environmentLabel);
+  if (!env) return res.status(404).send('Environment not found');
+  await env.update(req.body);
+  await sockets.emit('reloadEnvironments');
+  res.json(Stack.getCurrentEnvironment());
+});
+
+router.delete('/environments/:environmentLabel', async (req, res) => {
+  const env = await Stack.getStack()?.environments.find((env) => env.label === req.params.environmentLabel);
+  if (!env) return res.status(404).send('Environment not found');
+  await env.delete();
+  await sockets.emit('reloadEnvironments');
+  res.json('ok');
 });
 
 router.get('/additional-themes', (req, res) => {
@@ -49,8 +103,16 @@ router.post('/environment', async (req, res) => {
   await Stack.getStack()?.changeEnvironment(environment);
   return res.json(Stack.getCurrentEnvironment());
 });
-router.get('/environments', (req, res) => {
-  res.json(Stack.environments);
+router.post('/environment/create', async (req, res) => {
+  const { environment } = req.body;
+  if (!environment) return res.status(400).send('Provide an environment field in body');
+  const newEnvironment = new Environment(environment);
+  await newEnvironment.save();
+  await sockets.emit('reloadEnvironments');
+  return res.json(Stack.getCurrentEnvironment());
+});
+router.get('/environments', async (req, res) => {
+  res.json(await Environment.all());
 });
 router.get('/all-confs-path', (req, res) => {
   res.json(myConfs.confs);

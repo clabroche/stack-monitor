@@ -35,11 +35,14 @@ module.exports = (stackMonitor) => {
     if (!message) message = '\n';
     /** @type {History} */
     let result = {
-      id: v4(), pid, cmd: message, args: [], raw: message, timestamp: Date.now(), service: service.label,
+      id: v4(), pid, cmd: message, args: [], raw: message, timestamp: Date.now(), service: service.label || '',
     };
     if (pid) service.respondToProcess(pid, message);
     else if (message) {
-      const { spawnProcess, launchMessage } = await service.launchProcess(message, [], service.spawnOptions, false);
+      const { spawnProcess, launchMessage } = await service.launchProcess(
+        { spawnCmd: message, spawnArgs: [], spawnOptions: { ...service.spawnOptions, envs: [] } },
+        false,
+      );
       result = {
         ...result,
         pid: spawnProcess.pid,
