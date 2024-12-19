@@ -1,6 +1,6 @@
 {
   "name": "@clabroche/modules-openai-backend",
-  "version": "1.18.10",
+  "version": "1.18.13",
   "repository": "https://github.com/clabroche/stack-monitor",
   "private": true,
   "scripts": {
