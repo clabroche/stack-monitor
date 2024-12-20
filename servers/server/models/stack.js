@@ -485,6 +485,7 @@ function difference(fromObject, toObject) {
  *  envs: Record<string, any>,
  *  color?: string,
  *  bgColor?: string
+ *  default?: boolean
  * }} Environment
  */
 

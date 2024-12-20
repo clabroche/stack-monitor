@@ -35,23 +35,35 @@
           <div class="line" v-if="!!extendsEnvironments.filter(a => a && a !== currentEnvironment.label).length">
             <div>Extends env variables from</div>
              <Select size="small"
-               v-model="envs.extends[0]"
+               v-model="service.commands[commandIndex].spawnOptions.envs[currentEnvironment.label].extends[0]"
                :options="extendsEnvironments.filter(a => a !== currentEnvironment.label)"
                @change="save"
                placeholder="Choose an environment" />
           </div>
         </div>
         <DataTable scrollable class="datatable" size="small"   v-if="!importView" sortField="key" :sortOrder="1"
-          :value="envs.envs"
+          :value="getEnvs()"
           tableStyle="width: 100%;">
-            <Column field="action" header="" :row-span="2" col>
+            <Column field="action" header="" :row-span="2" col :pt="{
+              bodyCell: {
+                style: {
+                  verticalAlign: 'top'
+                }
+              }
+            }">
               <template #body="{ data }">
                 <Button :disabled="!!data.systemOverride" size="small" @click="deleteEnv(data.key)">
                   <i class="fas fa-times"></i>
                 </Button>
               </template>
             </Column>
-            <Column field="key" header="Key" sortable>
+            <Column field="key" header="Key" sortable :pt="{
+              bodyCell: {
+                style: {
+                  verticalAlign: 'top'
+                }
+              }
+            }">
               <template #body="{ data, field }">
                 <span :style="{
                   color: {
@@ -64,21 +76,57 @@
                 </span>
               </template>
             </Column>
-            <Column field="value" header="Value" style="min-width: 200px;">
+            <Column field="value" header="Value" style="min-width: 200px;" :pt="{
+              bodyCell: {
+                style: {
+                  verticalAlign: 'top'
+                }
+              }
+            }">
               <template #body="{ data, field }">
                 <div v-if="data[field].match(/{{(.*)}}/gi)">
-                  variable:
                 </div>
-                <InputText v-model="data[field]" @input="editEnv(data)" autofocus fluid @blur="save" @keypress.enter="save"/>
+                <IftaLabel>
+                  <InputText
+                    v-model="data[field]"
+                    @input="editEnv(data)"
+                    autofocus
+                    fluid
+                    @blur="save"
+                    @keypress.enter="save"/>
+                  <label>Variable</label>
+                </IftaLabel>
                 <div v-if="data[field].match(/{{(.*)}}/gi)">
-                  Global variable value:
-                  <InputText v-model="currentEnvironment.envs[extractTag(data[field])]" @blur="saveEnvironment" @keypress.enter="saveEnvironment" autofocus fluid />
+                  <IftaLabel size="small">
+                    <InputText
+                      v-model="currentEnvironment.envs[extractTag(data[field])]"
+                      @blur="saveEnvironment"
+                      @keypress.enter="saveEnvironment"
+                      autofocus
+                      fluid />
+                      <label>Global variable value</label>
+                  </IftaLabel>
                 </div>
               </template>
             </Column>
-            <Column field="override" header="Override" style="min-width: 200px;">
+            <Column field="override" header="Override" style="min-width: 200px;" :pt="{
+              bodyCell: {
+                style: {
+                  verticalAlign: 'top'
+                }
+              }
+            }">
               <template #body="{ data, field }">
-                <InputText v-model="data[field]" @input="editEnv(data)" autofocus fluid @blur="save" @keypress.enter="save"/>
+                <IftaLabel>
+                  <InputText
+                    v-model="data[field]"
+                    @input="editEnv(data)"
+                    autofocus
+                    fluid
+                    @blur="save"
+                    @keypress.enter="save"/>
+                  <label>Override</label>
+                </IftaLabel>
               </template>
             </Column>
             <Column field="systemOverride" header="System override">
@@ -96,7 +144,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
@@ -105,6 +153,7 @@ import Textarea from 'primevue/textarea'; // optional
 import Button from 'primevue/button';
 import { cloneDeep } from 'lodash';
 import Select from 'primevue/select';
+import IftaLabel from 'primevue/iftalabel';
 import Modal from '../../../../fronts/app/src/components/Modal.vue';
 import stack from '../../../../fronts/app/src/models/stack';
 import axios from '../../../../fronts/app/src/helpers/axios';
@@ -112,13 +161,12 @@ import notification from '../../../../fronts/app/src/helpers/notification';
 
 const command = ref();
 const commandIndex = ref();
-const envs = ref({
-  extends: [],
-  /** @type {{value: string, key: string, override: string, systemOverride?: string}[]} */
-  envs: [],
-});
+
 const props = defineProps({
-  service: null,
+  service: {
+    /** @type {import('../../../../fronts/app/src/models/service').default | null} */
+    default: null,
+  },
 });
 
 const modalEditEnv = ref();
@@ -127,7 +175,7 @@ const code = ref('');
 function toggleimportView() {
   if (!importView.value) {
     code.value = `# key=value
-${envs.value.envs.map((env) => `${env.key}=${env.value}`).join('\n')}
+${getEnvs().map((env) => `${env.key}=${env.value}`).join('\n')}
 `;
   }
   importView.value = !importView.value;
@@ -136,27 +184,41 @@ ${envs.value.envs.map((env) => `${env.key}=${env.value}`).join('\n')}
 const extendsEnvironments = ref([]);
 function extractTag(field) {
   const extractedTag = /{{(.*)}}/gi.exec(field)?.[1]?.trim();
-  return extractedTag;
+  return extractedTag || '';
 }
+
+function getEnvs() {
+  return props.service.commands[commandIndex.value].spawnOptions.envs[showEnvironment.value].envs;
+}
+function setEnvs(env) {
+  props.service.commands[commandIndex.value].spawnOptions.envs[showEnvironment.value].envs = env;
+  return env;
+}
+
 function parseCode() {
-  envs.value.envs = code.value
-    .split('\n')
-    .filter((line) => !line.trim().startsWith('#') && line.trim())
-    .map((envString) => {
-      const [key, ...value] = envString.split('=');
-      const env = envs.value.envs.find((env) => env.key === key) || {
-        key, value: '', systemOverride: '', override: '',
-      };
-      env.value = value.join('=');
-      return env;
-    });
+  setEnvs(
+    code.value
+      .split('\n')
+      .filter((line) => !line.trim().startsWith('#') && line.trim())
+      .map((envString) => {
+        const [key, ...value] = envString.split('=');
+        const env = getEnvs().find((env) => env.key === key) || {
+          key, value: '', systemOverride: '', override: '',
+        };
+        env.value = value.join('=');
+        return env;
+      }),
+  );
 }
 
 const envToAdd = ref({
   key: '', value: '', override: '', systemOverride: '',
 });
 function addEnv() {
-  envs.value.envs.push(cloneDeep(envToAdd.value));
+  setEnvs([
+    ...getEnvs(),
+    cloneDeep(envToAdd.value),
+  ]);
   envToAdd.value = {
     key: '', value: '', override: '', systemOverride: '',
   };
@@ -164,7 +226,7 @@ function addEnv() {
 }
 
 async function editEnv(data) {
-  const env = envs.value.envs.find((env) => env.key === data.key);
+  const env = getEnvs().find((env) => env.key === data.key);
   Object.assign(env, data);
 }
 
@@ -192,7 +254,7 @@ async function saveEnvironment() {
     .then(() => notification.next('success', 'Environment saved'))
     .catch(() => notification.next('success', 'Environment cant be saved'));
 }
-async function open({command: _command, commandIndex: _commandIndex}) {
+async function open({ command: _command, commandIndex: _commandIndex }) {
   command.value = _command;
   commandIndex.value = _commandIndex;
   changeEnvironment();
@@ -202,17 +264,16 @@ async function changeEnvironment() {
   if (!command.value.spawnOptions.envs[showEnvironment.value]) {
     command.value.spawnOptions.envs[showEnvironment.value] = { extends: [], envs: [] };
   }
-  currentEnvironment.value = environments.value.find((a) => a.label === showEnvironment.value) || { label: 'unknown' };
-  envs.value = command.value.spawnOptions.envs[showEnvironment.value];
+  currentEnvironment.value = environments.value.find((a) => a.label === showEnvironment.value) || { label: 'unknown', envs: {} };
 }
 async function deleteEnv(key) {
-  envs.value.envs = envs.value.envs.filter((env) => env.key !== key);
+  setEnvs(getEnvs().filter((env) => env.key !== key));
   save();
 }
-/** @type {import('vue').Ref<{label: string}[]>} */
+/** @type {import('vue').Ref<{label: string, envs: Record<string, {envs: string}>}[]>} */
 const environments = ref([]);
-/** @type {import('vue').Ref<{label: string}>} */
-const currentEnvironment = ref({ label: '' });
+/** @type {import('vue').Ref<{label: string, envs: Record<string, {envs: string}>}>} */
+const currentEnvironment = ref({ label: '', envs: {} });
 const showEnvironment = ref('');
 onMounted(async () => {
   currentEnvironment.value = await stack.getEnvironment();

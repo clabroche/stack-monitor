@@ -105,7 +105,6 @@ export default {
       await reload()
     })
     Socket.on('conf:update', (/**@type {string[]}*/data) => {
-      console.log('zelkf,ezf,nezfkezf')
       if (data.includes(router.currentRoute.value.params.label.toString())) {
         reload()
       }
