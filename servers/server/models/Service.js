@@ -633,14 +633,10 @@ class Service {
       cmd = path.resolve(options.cwd.toString(), cmd);
     }
     if (this.container?.enabled) {
-      try {
-        const result = await this.buildDocker({
-          cmd, args, options, isMainProcess,
-        });
-        return result;
-      } catch (error) {
-        console.error(error);
-      }
+      const result = await this.buildDocker({
+        cmd, args, options, isMainProcess,
+      });
+      return result;
     }
     options.env = { ...process.env, ...options.env };
     return { cmd, args, options };
@@ -682,12 +678,12 @@ ${Object.keys(options.env || {}).map((env) => `ENV ${env}=${(options.env || {})[
       let [external, internal] = v.split(':');
       if (external) external = pathfs.resolve(replaceEnvs(external));
       if (internal) internal = pathfs.resolve(replaceEnvs(internal));
-      return ['-v', `${external}:${internal || external}`];
+      return ['-v', `"${external}:${internal || external}"`];
     });
     volumesCmd.push(...await PromiseB.map(this.container.ignoreVolumes, async (ignoredVolume) => {
-      const volumePath = pathfs.join(internalVolumeRootPath, `ignoredVolume-${this.label}`, ignoredVolume);
+      const volumePath = pathfs.join(internalVolumeRootPath, `ignored-volume-${humanStringToKey(this.label)}`, ignoredVolume);
       if (!existsSync(volumePath)) await mkdir(volumePath, { recursive: true }); // Pre create folders with host uid,gid to prevent docker to create as root user
-      return ['-v', `${volumePath}:${ignoredVolume}`];
+      return ['-v', `"${volumePath}:${ignoredVolume}"`];
     }).filter((f) => !!f?.length));
 
     const isAlive = await execAsync(`docker inspect --format {{.State.Pid}}  ${this.container.name}`, {})
