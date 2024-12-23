@@ -184,6 +184,7 @@ defineExpose({
 .content {
   position: relative;
   flex-grow: 1;
+  overflow-x: hidden;
 }
 .badge {
   position: absolute;

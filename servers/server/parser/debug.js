@@ -2,6 +2,8 @@ const jsonParser = require('./json');
 /** @type {import("../models/Service").Parser} */
 const parser = {
   id: 'stack-monitor-parser-debug',
+  label: 'Stackmonitor debug',
+  readonly: true,
   transform: (line, ...rest) => {
     if (!line.json) line = jsonParser.transform(line, ...rest);
     if (!line.json) return line;

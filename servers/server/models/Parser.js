@@ -2,6 +2,11 @@ const PromiseB = require('bluebird');
 const { randomUUID } = require('crypto');
 const dbs = require('../helpers/dbs');
 
+const nativeParsers = {
+  [require('../parser/debug').id]: require('../parser/debug'),
+  [require('../parser/json').id]: require('../parser/json'),
+  [require('../parser/link').id]: require('../parser/link'),
+};
 class Parser {
   /**
    * @param {import('@clabroche/common-typings').NonFunctionProperties<Parser>} parser
@@ -13,16 +18,26 @@ class Parser {
     this.id = parser.id || randomUUID();
     /** @type {string} */
     this.transform = parser.transform || '';
-    /** @type {Function} */
-    this.transformFunction = eval(parser.transform)
+    /** @type {boolean} */
+    this.readonly = parser.readonly || false;
+    try {
+      /** @type {Function} */
+      this.transformFunction = typeof parser.transform === 'string' ? eval(parser.transform) : parser.transform;
+    } catch (error) {
+      console.error('[PARSER]:', this.label, 'Cannot interpret your parser', error);
+    }
   }
 
   static async load(id) {
+    if (nativeParsers[id]) return new Parser(nativeParsers[id]);
     return new Parser(await dbs.getDb(`parsers/${id}`).read());
   }
 
   static async all() {
-    const allDbds = await dbs.getDbs('parsers');
+    const allDbds = [
+      ...await dbs.getDbs('parsers'),
+      ...Object.keys(nativeParsers),
+    ];
     return PromiseB.map(allDbds, (id) => this.load(id));
   }
 

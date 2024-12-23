@@ -49,8 +49,8 @@ module.exports = class ServicesProvider {
     const { data: service } = await getAxios(this.context).get(`/stack/${element.data.label}`);
     return [
       new Dependency({
-        label: service.rootPath,
-        tooltip: service.rootPath,
+        label: service.getRootPath(),
+        tooltip: service.getRootPath(),
         collapsibleState: vscode.TreeItemCollapsibleState.None,
         type: 'rootPath',
       }),

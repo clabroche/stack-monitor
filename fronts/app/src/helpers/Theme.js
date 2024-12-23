@@ -105,7 +105,6 @@ class Theme {
         setCssVariable(`${cssVariable}-lightest`, this.lighter(0.5, value));
       });
     });
-    console.log(theme.rules);
     setCssVariable('--p-primary-color', theme.rules['system.accent'].backgroundColor2);
     setCssVariable('--p-content-background', theme.rules['system.sections'].backgroundColor);
     setCssVariable('--p-button-primary-color', '#FFFFFF');
@@ -118,6 +117,7 @@ class Theme {
     setCssVariable('--p-highlight-background', theme.rules['system.secondary'].backgroundColor);
     setCssVariable('--p-primary-50', theme.rules['system.secondary'].backgroundColor);
     setCssVariable('--p-primary-100', theme.rules['system.secondary'].backgroundColor);
+    console.log(theme.rules);
   }
 }
 

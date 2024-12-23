@@ -5,6 +5,7 @@ const {
 const pathfs = require('path');
 const {
   readdir, mkdir, writeFile, readFile,
+  unlink,
 } = require('fs/promises');
 const { fdir } = require('fdir');
 const PromiseB = require('bluebird');
@@ -13,6 +14,8 @@ const args = require('./args');
 const { encrypt, decrypt } = require('./crypto');
 
 module.exports = new class {
+  cache = {};
+
   getRootPath() {
     const confPath = args.confPath || process.cwd();
     const rootPath = pathfs.resolve(confPath, '.stackmonitor/dbs');
@@ -42,8 +45,13 @@ module.exports = new class {
   getDb(id, { encrypted } = { encrypted: true }) {
     const getPath = async () => {
       const persistencePath = pathfs.resolve(`${this.getRootPath()}/${id}${encrypted ? '.encrypted' : ''}.json`);
-      if (!existsSync(pathfs.dirname(persistencePath))) await mkdir(pathfs.dirname(persistencePath), { recursive: true });
-      if (!existsSync(persistencePath)) await writeFile(persistencePath, JSON.stringify({}, null, 2), 'utf-8');
+      if (!existsSync(pathfs.dirname(persistencePath))) await mkdirSync(pathfs.dirname(persistencePath), { recursive: true });
+      if (!existsSync(persistencePath)) {
+        let defaultDB = JSON.stringify({}, null, 2);
+        if (encrypted) defaultDB = await encrypt(defaultDB, { additionnalNonce: persistencePath.split('.stackmonitor').pop() });
+        await writeFile(persistencePath, defaultDB, 'utf-8');
+        this.cache[id] = defaultDB;
+      }
       return persistencePath;
     };
     return {
@@ -54,23 +62,28 @@ module.exports = new class {
         const additionnalNonce = path.split('.stackmonitor').pop();
         if (encrypted) db = await encrypt(db, { additionnalNonce });
         writeFileSync(path, db, 'utf-8');
+        this.cache[id] = data;
       },
       read: async () => {
+        if (this.cache[id]) return this.cache[id];
         const path = await getPath();
         const additionnalNonce = path.split('.stackmonitor').pop();
         let db = readFileSync(path, 'utf-8');
         if (encrypted) {
           db = await decrypt(db, { additionnalNonce })
             .catch((err) => {
-              console.log(JSON.stringify(['stack-monitor', 'decytpfzefze'],(_, v) => (typeof v === 'function' ? `[func]` : v)));
-              console.error(err);
+              console.error(path, err);
               sockets.emit('system:wrongKey');
               throw err;
             });
         }
-        return JSON.parse(db);
+        this.cache[id] = JSON.parse(db);
+        return this.cache[id];
       },
-      delete: async () => unlinkSync(await getPath(id)),
+      delete: async () => {
+        delete this.cache[id];
+        return unlink(await getPath());
+      },
     };
   }
 }();

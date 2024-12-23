@@ -24,8 +24,8 @@
             <a v-if="currentService.git && currentService.git.home" :href="currentService.git.home" target="_blank" title="Open git home"><i class="fab fa-github"  aria-hidden="true"></i></a>
             <a v-if="currentService.url" :href="currentService.url" target="_blank" title="Open service URL"><i class="fas fa-globe"  aria-hidden="true"></i></a>
             <a v-for="url in currentService.urls" :key="url" :href="url" target="_blank" :title="url"><i class="fas fa-globe"  aria-hidden="true"></i></a>
-            <img v-if="currentService.rootPath" src="@/assets/vscode-icon.png" alt="vscode icon"  aria-hidden="true" title="Open in Visual Studio Code" @click="openInVsCode()"/>
-            <i v-if="currentService.rootPath" class="fas fa-folder" aria-hidden="true" title="Open folder" @click="openFolder()"></i>
+            <img v-if="currentService.rootPath" src="@/assets/vscode-icon.png" alt="vscode icon"  aria-hidden="true" title="Open in Visual Studio Code" @click="openInVsCode(currentService.rootPath)"/>
+            <i v-if="currentService.rootPath"  class="fas fa-folder" aria-hidden="true" title="Open folder" @click="openFolder(currentService.rootPath)"></i>
           </div>
         </div>
       </div>
@@ -104,10 +104,16 @@ export default {
     watch(() => router.currentRoute.value.params.label, async () => {
       await reload()
     })
-    Socket.on('conf:update', (/**@type {string[]}*/data) => {
+    const onConfUpdate = (/**@type {string[]}*/data) => {
       if (data.includes(router.currentRoute.value.params.label.toString())) {
         reload()
       }
+    }
+    onMounted(() => {
+      Socket.on('conf:update', onConfUpdate)
+    })
+    onBeforeUnmount(() => {
+      Socket.off('conf:update', onConfUpdate)
     })
 
     /** @type {number} */
@@ -115,6 +121,7 @@ export default {
     const tabs = ref([])
 
     async function reload() {
+      await Stack.loadServices()
       currentService.value = await Stack.getService(router.currentRoute.value.params.label?.toString())
       if(currentService.value) {
         const {data: plugins} = await axios.get('/plugins/services/' + currentService.value.label)
@@ -163,11 +170,11 @@ export default {
       cpu, mem,
       tabs,
       restartInProgress,
-      async openInVsCode() {
-        currentService.value?.openInVsCode()
+      async openInVsCode(path) {
+        currentService.value?.openInVsCode(path)
       },
-      async openFolder() {
-        currentService.value?.openFolder()
+      async openFolder(path) {
+        currentService.value?.openFolder(path)
       },
       async restart() {
         restartInProgress.value = true

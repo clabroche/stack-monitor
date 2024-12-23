@@ -1,7 +1,5 @@
-const { readdir, mkdir } = require('fs/promises');
 const PromiseB = require('bluebird');
-const pathfs = require('path');
-const { existsSync } = require('fs');
+const { cloneDeep, merge } = require('lodash');
 const dbs = require('../helpers/dbs');
 
 class Environment {
@@ -19,10 +17,15 @@ class Environment {
     this.bgColor = environment.bgColor || '';
     /** @type {{[key: string]: string}} */
     this.envs = environment.envs || {};
+    /** @type {{[key: string]: string}} */
+    this.overrideEnvs = environment.overrideEnvs || {};
   }
 
   static async load(label, Stack) {
-    return new Environment(await dbs.getDb(`envs/${label}`).read(), Stack);
+    const environmentDB = await dbs.getDb(`envs/${label}`).read();
+    const overrides = await dbs.getDb(`overrides/${label}-environment`).read();
+    merge(environmentDB?.envs || {}, overrides?.envs || {});
+    return new Environment(environmentDB, Stack);
   }
 
   static async all() {
@@ -35,6 +38,7 @@ class Environment {
         color: '#000000',
         default: true,
         label: 'Local',
+        envs: {},
       });
       await localEnv.save();
       environments.push(localEnv);
@@ -48,8 +52,16 @@ class Environment {
   }
 
   async save() {
-    const obj = this.toStorage();
-    await dbs.getDb(`envs/${this.label}`).write(obj);
+    const dbToWrite = this.toStorage();
+    const overrideDbToWrite = { envs: {} };
+    Object.keys(dbToWrite.envs).forEach((key) => {
+      if (key.endsWith('_STACKMONITOR_OVERRIDE')) {
+        overrideDbToWrite.envs[key] = dbToWrite.envs[key];
+        delete dbToWrite.envs[key];
+      }
+    });
+    await dbs.getDb(`overrides/${this.label}-environment`).write(overrideDbToWrite);
+    await dbs.getDb(`envs/${this.label}`).write(dbToWrite);
   }
 
   async update(env) {
@@ -57,7 +69,7 @@ class Environment {
     this.color = env.color;
     this.bgColor = env.bgColor;
     this.envs = env.envs;
-    await dbs.getDb(`envs/${this.label}`).write(this.toStorage());
+    return this.save();
   }
 
   async delete() {
@@ -65,13 +77,13 @@ class Environment {
   }
 
   toStorage() {
-    return {
+    return cloneDeep({
       label: this.label,
       default: this.default,
       color: this.color,
       bgColor: this.bgColor,
       envs: this.envs,
-    };
+    });
   }
 }
 

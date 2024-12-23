@@ -11,29 +11,38 @@ const router = express.Router();
 const { findService } = Stack;
 const Service = require('../models/Service');
 const Environment = require('../models/Environment');
+const { replaceEnvs } = require('../helpers/stringTransformer.helper');
 
-router.post('/create-service/', async (req, res) => {
+router.post('/services', async (req, res) => {
   const existingService = Stack.findService(req.body.label);
   if (existingService) {
-    existingService.reload(req.body);
+    await existingService.constructor(req.body, Stack, { isUpdate: true });
     await existingService.save();
     sockets.emit('conf:update', [existingService.label]);
     res.send(existingService);
   } else {
-    const service = new Service(req.body, Stack);
+    const service = await new Service(req.body, Stack);
     await service.save();
     Stack.getStack()?.services.push(service);
     sockets.emit('conf:update', [service.label]);
     res.send(service);
   }
-  sockets.emit('reloadService');
 });
 
+router.put('/:service/duplicate', async (req, res) => {
+  const existingService = findService(req.params.service).toStorage();
+  const service = await new Service(existingService, Stack);
+  service.label = req.body.label;
+  await service.save();
+  Stack.getStack()?.services.push(service);
+  sockets.emit('conf:update');
+  res.send(service);
+});
 router.patch('/:service', async (req, res) => {
   const service = findService(req.params.service);
   await service.save();
   Stack.getStack()?.services.push(service);
-  sockets.emit('reloadService');
+  sockets.emit('conf:update');
   res.send(service);
 });
 
@@ -48,14 +57,14 @@ router.get('/export-env', async (req, res) => {
 
 router.delete('/:service', async (req, res) => {
   await Stack.deleteService(req.params.service);
-  sockets.emit('reloadService');
+  sockets.emit('conf:update');
   res.send('ok');
 });
 
 router.get('/has-update', async (req, res) => {
   try {
     const localVersion = `v${require('../helpers/version').version}`;
-    const octokit = new Octokit.Octokit({ auth: process.env.GH_APIKEY });
+    const octokit = new Octokit.Octokit({ auth: process.env.STACK_MONITOR_GH_APIKEY });
     const { data: tags } = await octokit.rest.repos.listTags({ owner: 'clabroche', repo: 'stack-monitor' });
     const remoteVersion = tags[0]?.name;
     return res.json({
@@ -158,27 +167,22 @@ router.get('/:service', (req, res) => {
   res.send(service.exportInApi());
 });
 router.get('/:service/open-in-vs-code', (req, res) => {
-  const service = findService(req.params.service);
   const command = (commandExists('code') ? 'code' : null) || (commandExists('code-insiders') ? 'code-insiders' : null);
   if (command) {
-    exec(`${command} .`, { cwd: service.rootPath });
+    exec(`${command} .`, { cwd: replaceEnvs(req.query.path?.toString() || '.') });
   }
   res.send(command);
 });
 router.get('/:service/open-link-in-vs-code', (req, res) => {
-  const service = findService(req.params.service);
   const command = (commandExists('code') ? 'code' : null) || (commandExists('code-insiders') ? 'code-insiders' : null);
   if (command) {
-    exec(`${command} --goto "${req.query.link}" .`, { cwd: service.rootPath, env: process.env });
+    exec(`${command} --goto "${req.query.link}" .`, { cwd: replaceEnvs(req.query.path?.toString() || '.'), env: process.env });
   }
   res.send(command);
 });
 
 router.get('/:service/open-folder', (req, res) => {
-  const service = findService(req.params.service);
-  if (service.rootPath) {
-    open(service.rootPath.toString());
-  }
+  open(replaceEnvs(req.query.path?.toString() || '.'));
   res.send();
 });
 

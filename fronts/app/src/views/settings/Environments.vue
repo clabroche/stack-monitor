@@ -21,7 +21,55 @@
         <ToggleSwitch size="small" v-model="environment.default" @click="saveEnvironment(environment)"></ToggleSwitch>
         <label>Default</label>
       </div>
+      <Button label="Envs" size="small" @click="openModalEnv(environment)"></Button>
       <Divider v-if="environments[i+1]"></Divider>
+      <Modal :ref="(el) => envModalRefs[environment.label] = el" :noScroll="false" :noCancel="true" validateString="Close">
+        <template #body>
+          <div class="line">
+            <div>
+              <InputText v-if="!importViewMode" placeholder="Add new variable" @change="ev => addEnv(environment, ev.target.value)" v-model="keyToAdd"></InputText>
+            </div>
+            <Button :label="importViewMode? 'Import view' : 'Env view'" @click="toggleimportView(environment)"></Button>
+          </div>
+          <DataTable scrollable class="datatable" size="small"  sortField="key" :sortOrder="1" v-if="!importViewMode"
+            :value="parseRawEnvs(environment.envs)"
+            tableStyle="width: 100%;">
+            <Column field="action" header="" col style="max-width: 1rem" :pt="{
+              bodyCell: {
+                style: {
+                  verticalAlign: 'top'
+                }
+              }
+            }">
+              <template #body="{ data }">
+                <Button size="small" @click="delete environment.envs[data.key]">
+                  <i class="fas fa-times"></i>
+                </Button>
+              </template>
+            </Column>
+            <Column field="key" header="Key" col :colspan="1" style="max-width: 5rem" :pt="{
+              bodyCell: {
+                style: {
+                  verticalAlign: 'top'
+                }
+              }
+            }"></Column>
+            <Column field="value" header="Value" :colspan="16" col :pt="{
+              bodyCell: {
+                style: {
+                  verticalAlign: 'top'
+                }
+              }
+            }">
+              <template #body="{ data, field }">
+                <InputText v-model="environment.envs[data.key]" @blur="saveEnvironment(environment)" fluid>
+                </InputText>
+              </template>
+            </Column>
+          </DataTable>
+          <Textarea  v-else v-model="code" @input="parseCode(environment)" @blur="saveEnvironment(environment)"></Textarea>
+        </template>
+      </Modal>
     </div>
   </SectionCmp>
 </template>
@@ -38,7 +86,45 @@ import notification from '../../helpers/notification';
 import Socket from '../../helpers/Socket';
 import Divider from 'primevue/divider';
 import IftaLabel from 'primevue/iftalabel';
+import Modal from '../../components/Modal.vue';
+import DataTable from 'primevue/datatable';
+import Column from 'primevue/column';
+import Textarea from 'primevue/textarea';
+const keyToAdd = ref('')
+function addEnv(environment, value) {
+  environment.envs[value] = ''
+  keyToAdd.value = ''
+}
+async function openModalEnv(environment) {
+  await envModalRefs.value[environment.label].open().promise
+}
 
+const importViewMode = ref(false)
+const code = ref('')
+
+function toggleimportView(environment) {
+  if (!importViewMode.value) {
+    code.value = `# key=value
+${Object.keys(environment.envs).map((key) => `${key}=${environment.envs[key]}`).sort(( a,b) => a.localeCompare(b)).join('\n')}
+`;
+  }
+  importViewMode.value = !importViewMode.value;
+}
+function parseCode(environment) {
+  environment.envs = {}
+  code.value
+      .split('\n')
+      .filter((line) => !line.trim().startsWith('#') && line.trim())
+      .forEach((envString) => {
+        const [key, ...value] = envString.split('=');
+        environment.envs[key] = value.join('=')
+      })
+}
+
+function parseRawEnvs(envs) {
+  return Object.keys(envs).map((key) => ({ key, value: envs[key] }));
+}
+const envModalRefs = ref({})
 /** @type {import('vue').Ref<Record<string, import('../../../../servers/server/models/stack').Environment>[]>} */
 const environments = ref([])
 onMounted(async () => {
@@ -95,10 +181,17 @@ async function deleteEnvironment(environment) {
   }
   .line {
     align-items: center;
+    display: flex;
+    justify-content: space-between;
   }
 
   .column {
     flex-direction: column;
     justify-content: center;
+  }
+
+  textarea {
+    width: 100%;
+    height: 50vh;
   }
 </style>

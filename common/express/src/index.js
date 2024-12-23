@@ -25,7 +25,7 @@ module.exports = {
    *  baseUrl?: string,
    *  helmetConf?: import('helmet').HelmetOptions | null,
    *  corsConf?: import('cors').CorsOptions,
-   *  beforeAll?: () => any,
+   *  beforeAll?: ({app, server}) => any,
    *  afterAll?: () => any,
    *  socket?: boolean,
    *  onListening?: (server: {server: http.Server<typeof http.IncomingMessage, typeof http.ServerResponse>, app: import('express').Express}) => any,
@@ -74,10 +74,6 @@ module.exports = {
     const app = express();
 
     const server = http.createServer(app);
-    if (socket) {
-      console.log('Enable socket...');
-      Socket.sockets.connect(server);
-    }
     if (helmetConf) {
       app.use(helmet(
         helmetConf,
@@ -106,7 +102,7 @@ module.exports = {
       path: pathfs.resolve(baseUrl, 'logs-express'),
     });
     let accessLogger = (req, res, next) => next();
-    if (process.env.NODE_ENV === 'DEV' && process.env.DEBUG === 'stack-monitor') {
+    if (process.env.NODE_ENV === 'HFBXdZMJxLyJoua28asEaxRixJ6LriR7FnRzX6pwA7pFjZ' && process.env.DEBUG === 'stack-monitor') {
       console.log('Dev mode detected, enable access logger');
       accessLogger = pinoHttp.default({
         autoLogging: {
@@ -140,16 +136,40 @@ module.exports = {
 
     console.log('Apply additional routes...');
     app.use(context);
+
     beforeStatic?.({ server, app });
+
     if (staticController) {
       app.use('/', accessLogger, express.static(staticController));
     }
+
+    if (socket) {
+      console.log('Enable socket...');
+      Socket.sockets.connect(server);
+    }
     app.use(apiPrefix, accessLogger, controllers());
+
     if (!noGreetings) {
       app.get('/', (req, res) => res.json({ appName, appVersion }));
     }
-    afterControllers?.({ server, app });
 
+    afterControllers?.({ server, app });
+    if (process.env.NODE_ENV === 'HFBXdZMJxLyJoua28asEaxRixJ6LriR7FnRzX6pwA7pFjZ') {
+      const httpProxy = require('http-proxy');
+      const proxy = httpProxy.createProxy({ ws: true });
+      server.on('upgrade', (req, res) => {
+        if (req.url === '/') {
+          proxy.ws(req, res, {
+            target: 'ws://localhost:5173',
+          });
+        }
+      });
+      app.use((req, res) => {
+        proxy.web(req, res, {
+          target: 'ws://localhost:5173',
+        });
+      });
+    }
     console.log('Enable error handling...');
     app.use(require('@clabroche/common-express-error-handler')());
 
@@ -157,10 +177,11 @@ module.exports = {
     app.use(require('@clabroche/common-express-404'));
 
     console.log('Apply additional tasks before launch...');
-    await beforeAll({app, server});
+    await beforeAll({ app, server });
 
     console.log('Launch...');
     server.on('listening', () => onListening({ server, app }));
+
     server.listen(port, async () => {
       console.log('<h1>✓ Launched</h1>');
     });

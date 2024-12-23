@@ -4,9 +4,16 @@
     v-if="service" :key="service.label">
     <div class="header">
       <h2>Configuration</h2>
-      <Button size="small" icon="fas fa-trash" label="Remove" severity="danger" @click="remove"/>
+      <div class="line">
+        <Button size="small" icon="fas fa-copy" label="Duplicate" @click="duplicate"/>
+        <Button size="small" icon="fas fa-trash" label="Remove" severity="danger" @click="remove"/>
+      </div>
     </div>
-    <Tree :value="nodes"  v-model:expandedKeys="expandedKeys" :style="{width: 'max-content'}">
+    <Tree :value="nodes"  v-model:expandedKeys="expandedKeys">
+       <template #nodeicon="{node: {svgIcon, icon}}">
+        <div v-html="svgIcon" v-if="svgIcon" :style="{width: '15px', display: 'flex'}"></div>
+        <i :class="icon" v-else></i>
+    </template>
       <template #default="slotProps">
         <div class="line">
           <div class="column">
@@ -14,7 +21,7 @@
             <span class="description" v-if="slotProps.node.description">{{ slotProps.node.description }}</span>
           </div>
           <Button v-for="button of slotProps.node.buttons || []" :key="button.label"
-            :severity="button.severity" :style="{justifyContent:'flex-start'}"
+            :severity="button.severity" :style="{justifyContent:'flex-start', width: 'max-content'}"
             size="small"
             @click="button.action">
             <i :class="button.icon"/>
@@ -24,32 +31,40 @@
       </template>
       <template #inputtext="slotProps">
         <div class="line">
-          <template v-if="slotProps.node.inputLabel">
-            <IftaLabel>
-              <InputText v-if="slotProps?.node?.model"
-                v-model="slotProps.node.model.obj[slotProps.node.model.key]"
-                size="small"
-                @blur="slotProps.node.save"
-                @keypress.enter="slotProps.node.save"
-              />
-              <label>{{ slotProps.node.inputLabel }}</label>
-            </IftaLabel>
-          </template>
-          <template v-else>
-            <InputText v-if="slotProps?.node?.model"
-              v-model="slotProps.node.model.obj[slotProps.node.model.key]"
-              size="small"
-              @blur="slotProps.node.save"
-              @keypress.enter="slotProps.node.save"
-            />
-          </template>
           <Button v-for="button of slotProps.node.buttons || []" :key="button.label"
-            :severity="button.severity" fluid :style="{justifyContent:'flex-start'}"
+            :severity="button.severity" :style="{justifyContent:'flex-start',width: 'max-content'}"
             size="small"
             @click="button.action">
             <i :class="button.icon"/>
             {{button.label}}
           </Button>
+          <InputGroup fluid>
+            <InputGroupAddon v-if="slotProps.node.beforeText">{{slotProps.node.beforeText}}</InputGroupAddon>
+            <template v-if="slotProps.node.inputLabel">
+              <IftaLabel fluid full :style="{display: 'inline-grid',flexGrow: '1'}">
+                <InputText v-if="slotProps?.node?.model"
+                  v-model="slotProps.node.model.obj[slotProps.node.model.key]"
+                  size="small"
+                  :type="slotProps.node.inputType || 'text'"
+                  @blur="slotProps.node.save"
+                  @keypress.enter="slotProps.node.save"
+                  :style="{width: '100%'}"
+                />
+                <label>{{ slotProps.node.inputLabel }}</label>
+              </IftaLabel>
+            </template>
+            <template v-else>
+              <InputText v-if="slotProps?.node?.model"
+                v-model="slotProps.node.model.obj[slotProps.node.model.key]"
+                size="small"
+                :type="slotProps.node.inputType || 'text'"
+                fluid
+                @blur="slotProps.node.save"
+                @keypress.enter="slotProps.node.save"
+              />
+            </template>
+          </InputGroup>
+
         </div>
       </template>
       <template #textarea="slotProps">
@@ -61,7 +76,7 @@
             @keypress.enter="slotProps.node.save"
           ></Textarea>
           <Button v-for="button of slotProps.node.buttons || []" :key="button.label"
-            :severity="button.severity" fluid :style="{justifyContent:'flex-start'}"
+            :severity="button.severity" fluid :style="{justifyContent:'flex-start', width: 'max-content'}"
             size="small"
             @click="button.action">
             <i :class="button.icon"/>
@@ -78,7 +93,7 @@
             @change="slotProps.node.save"
           ></ToggleSwitch>
           <Button v-for="button of slotProps.node.buttons || []" :key="button.label"
-            :severity="button.severity" fluid :style="{justifyContent:'flex-start'}"
+            :severity="button.severity" fluid :style="{justifyContent:'flex-start', width: 'max-content'}"
             size="small"
             @click="button.action">
             <i :class="button.icon"/>
@@ -98,7 +113,7 @@
             @blur="slotProps.node.save"
           ></Editor>
           <Button v-for="button of slotProps.node.buttons || []" :key="button.label"
-            :severity="button.severity" fluid :style="{justifyContent:'flex-start'}"
+            :severity="button.severity" fluid :style="{justifyContent:'flex-start', width: 'max-content'}"
             size="small"
             @click="button.action">
             <i :class="button.icon"/>
@@ -107,10 +122,32 @@
         </div>
       </template>
       <template #button="{node}">
-        <Button @click="node.click" size="small" :severity="node.severity" fluid :style="{justifyContent:'flex-start'}">
-          <i v-if="node.buttonIcon" :class="node.buttonIcon"></i>
-          {{ node.label }}
-        </Button>
+        <Form
+          @submit="($ev) => {node.click($ev.states.value.value); $ev.reset() }"
+          v-if="node.inputtext"
+          :style="{display: 'flex'}">
+          <FormField v-slot="$field" initialValue="" name="value" :style="{width: '100%'}" >
+            <InputText size="small" />
+          </FormField>
+          <Button
+            type="submit"
+            size="small"
+            :severity="node.severity"
+            fluid
+            :style="{justifyContent:'flex-start', width: 'max-content'}">
+            <i v-if="node.buttonIcon" :class="node.buttonIcon"></i>
+            {{ node.label }}
+          </Button>
+        </Form>
+        <Button v-else
+            @click="node.click"
+            size="small"
+            :severity="node.severity"
+            fluid
+            :style="{justifyContent:'flex-start', width: 'max-content'}">
+            <i v-if="node.buttonIcon" :class="node.buttonIcon"></i>
+            {{ node.label }}
+          </Button>
       </template>
       <template #select="{node}">
         <Select :options="node.options?.value || node.options || []" fluid
@@ -141,10 +178,39 @@
         </div>
       </template>
   </Modal>
+  <Modal
+  ref="duplicateModalRef"
+  cancelString="Cancel"
+  validateString="Duplicate"
+  :disabled="duplicateModalDisabled">
+    <template #header>
+        Duplication
+      </template>
+      <template #body>
+        <IftaLabel>
+          <InputText size="small" fluid v-model="labelOfDuplicatedService"></InputText>
+          <label>Name of the duplicated service</label>
+        </IftaLabel>
+      </template>
+  </Modal>
+  <Modal
+  ref="removeModalRef"
+  cancelString="Cancel"
+  validateString="Remove">
+    <template #header>
+        Remove
+      </template>
+      <template #body>
+        <IftaLabel>
+          Are you sure to delete this service ?
+        </IftaLabel>
+      </template>
+  </Modal>
 </template>
 
 <script>
 import { computed, onMounted, ref } from 'vue';
+import { useRouter } from 'vue-router';
 import Tree from 'primevue/tree';
 import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
@@ -154,6 +220,10 @@ import Select from 'primevue/select';
 import Textarea from 'primevue/textarea';
 import IftaLabel from 'primevue/iftalabel';
 import ToggleSwitch from 'primevue/toggleswitch';
+import { v4 as uuid } from 'uuid';
+import { Form, FormField } from '@primevue/forms';
+import InputGroup from 'primevue/inputgroup';
+import InputGroupAddon from 'primevue/inputgroupaddon';
 import Service from '../../../../fronts/app/src/models/service';
 import SectionVue from '../../../../fronts/app/src/components/Section.vue';
 import Modal from '../../../../fronts/app/src/components/Modal.vue';
@@ -169,14 +239,18 @@ export default {
     ModalEditEnvs,
     Tree,
     IftaLabel,
+    Form,
     Button,
     InputText,
+    FormField,
     Modal,
     DataTable,
     Column,
     Select,
     Textarea,
     ToggleSwitch,
+    InputGroup,
+    InputGroupAddon,
   },
   props: {
     service: {
@@ -190,10 +264,12 @@ export default {
     const modalEditEnvsRef = ref();
     const modalShowEnvRef = ref();
     const currentEnvironment = ref();
+    const router = useRouter();
     const parsers = ref([]);
     const save = () => {
-      axios.post('/stack/create-service', props.service)
-        .then(() => notification.next('success', 'Configuration sauvegardée'));
+      props.service.save()
+        .then(() => notification.next('success', 'Configuration saved'))
+        .catch(() => notification.next('error', 'Cannot save configuration'));
     };
     const nodes = computed(() => ([
       {
@@ -229,6 +305,105 @@ export default {
                 save,
               },
             ],
+          },
+          {
+            key: 'rootpath',
+            label: 'Root path',
+            icon: 'home',
+            description: props.service.rootPath,
+            children: [
+              {
+                type: 'inputtext',
+                model: {
+                  obj: props.service,
+                  key: 'rootPath',
+                },
+                save,
+              },
+            ],
+          },
+        ],
+      }, {
+        key: 'general-health',
+        label: 'Health check',
+        icon: 'fas fa-heart',
+        description: `${props.service.health?.enabled ? 'Enabled' : 'Disabled'}:  ${props.service.health?.url || ''}`,
+        children: [
+          {
+            type: 'switch',
+            model: {
+              obj: props.service.health,
+              key: 'enabled',
+            },
+            save,
+          }, {
+            type: 'select',
+            options: [
+              { id: 'GET', label: 'GET' },
+              { id: 'POST', label: 'POST' },
+              { id: 'PATCH', label: 'PATCH' },
+              { id: 'PUT', label: 'PUT' },
+              { id: 'DELETE', label: 'DELETE' },
+            ],
+            onChange({ value }) {
+              if (!props.service.health) return;
+              props.service.health.method = value;
+              save();
+            },
+            value: props.service.health?.method,
+            save,
+          }, {
+            type: 'inputtext',
+            inputLabel: 'URL',
+            model: {
+              obj: props.service.health,
+              key: 'url',
+            },
+            save,
+          }, {
+            type: 'inputtext',
+            inputLabel: 'Return code',
+            inputType: 'number',
+            model: {
+              obj: props.service.health,
+              key: 'returnCode',
+            },
+            save,
+          }, {
+            type: 'inputtext',
+            inputLabel: 'Return text',
+            model: {
+              obj: props.service.health,
+              key: 'responseText',
+            },
+            save,
+          }, {
+            type: 'inputtext',
+            inputLabel: 'Interval (ms)',
+            inputType: 'number',
+            model: {
+              obj: props.service.health,
+              key: 'interval',
+            },
+            save,
+          }, {
+            type: 'inputtext',
+            inputLabel: 'Timeout (ms)',
+            inputType: 'number',
+            model: {
+              obj: props.service.health,
+              key: 'timeout',
+            },
+            save,
+          }, {
+            type: 'inputtext',
+            inputLabel: 'Start after (ms)',
+            inputType: 'number',
+            model: {
+              obj: props.service.health,
+              key: 'startAfter',
+            },
+            save,
           },
         ],
       },
@@ -306,12 +481,15 @@ export default {
           return parser?.label;
         }).join(', '),
         children: [
-          ...props.service.parsers?.map((parserId, i) => ({
-            key: `service-parser-${i}`,
-            label: parsers.value.find((p) => p.id === parserId)?.label,
-            buttons: [{ severity: 'danger', icon: 'fas fa-trash', action: () => { props.service.parsers?.splice(i, 1); save(); } }],
-            save,
-          })) || [],
+          ...props.service.parsers?.map((parserId, i) => {
+            const parser = parsers.value.find((p) => p.id === parserId);
+            return {
+              key: `service-parser-${i}`,
+              label: parser?.label,
+              buttons: [{ severity: 'danger', icon: 'fas fa-trash', action: () => { props.service.parsers?.splice(i, 1); save(); } }],
+              save,
+            };
+          }) || [],
           {
             type: 'select',
             model: {
@@ -330,9 +508,26 @@ export default {
         ],
       },
       {
+        key: 'openapi-url',
+        label: 'Openapi Url',
+        svgIcon: '<svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><title>Swagger</title><path d="M12 0C5.383 0 0 5.383 0 12s5.383 12 12 12c6.616 0 12-5.383 12-12S18.616 0 12 0zm0 1.144c5.995 0 10.856 4.86 10.856 10.856 0 5.995-4.86 10.856-10.856 10.856-5.996 0-10.856-4.86-10.856-10.856C1.144 6.004 6.004 1.144 12 1.144zM8.37 5.868a6.707 6.707 0 0 0-.423.005c-.983.056-1.573.517-1.735 1.472-.115.665-.096 1.348-.143 2.017-.013.35-.05.697-.115 1.038-.134.609-.397.798-1.016.83a2.65 2.65 0 0 0-.244.042v1.463c1.126.055 1.278.452 1.37 1.629.033.429-.013.858.015 1.287.018.406.073.808.156 1.2.259 1.075 1.307 1.435 2.575 1.218v-1.283c-.203 0-.383.005-.558 0-.43-.013-.591-.12-.632-.535-.056-.535-.042-1.08-.075-1.62-.064-1.001-.175-1.988-1.153-2.625.503-.37.868-.812.983-1.398.083-.41.134-.821.166-1.237.028-.415-.023-.84.014-1.25.06-.665.102-.937.9-.91.12 0 .235-.017.369-.027v-1.31c-.16 0-.31-.004-.454-.006zm7.593.009a4.247 4.247 0 0 0-.813.06v1.274c.245 0 .434 0 .623.005.328.004.577.13.61.494.032.332.031.669.064 1.006.065.669.101 1.347.217 2.007.102.544.475.95.941 1.283-.817.549-1.057 1.333-1.098 2.215-.023.604-.037 1.213-.069 1.822-.028.554-.222.734-.78.748-.157.004-.31.018-.484.028v1.305c.327 0 .627.019.927 0 .932-.055 1.495-.507 1.68-1.412.078-.498.124-1 .138-1.504.032-.461.028-.927.074-1.384.069-.715.397-1.01 1.112-1.057a.972.972 0 0 0 .199-.046v-1.463c-.12-.014-.204-.027-.291-.032-.536-.023-.804-.203-.937-.71a5.146 5.146 0 0 1-.152-.993c-.037-.618-.033-1.241-.074-1.86-.08-1.192-.794-1.753-1.887-1.786zm-6.89 5.28a.844.844 0 0 0-.083 1.684h.055a.83.83 0 0 0 .877-.78v-.046a.845.845 0 0 0-.83-.858zm2.911 0a.808.808 0 0 0-.834.78c0 .027 0 .05.004.078 0 .503.342.826.859.826.507 0 .826-.332.826-.853-.005-.503-.342-.836-.855-.831zm2.963 0a.861.861 0 0 0-.876.835c0 .47.378.849.849.849h.009c.425.074.853-.337.881-.83.023-.457-.392-.854-.863-.854z"/></svg>',
+        description: props.service.openapiURL,
+        children: [
+          {
+            type: 'inputtext',
+            model: {
+              obj: props.service,
+              key: 'openapiURL',
+            },
+            save,
+          },
+        ],
+      },
+      {
         key: 'service-container',
         icon: 'fab fa-docker',
         label: 'Docker',
+        description: `${props.service.container?.enabled ? 'Enabled' : 'Disabled'}:  ${props.service.container?.build?.split('\n')?.[0] || ''}`,
         children: [
           {
             key: 'service-container-switch',
@@ -346,6 +541,7 @@ export default {
           {
             key: 'service-container-build',
             label: 'Dockerfile',
+            description: props.service.container?.build?.split('\n')?.[0] || '',
             children: [
               {
                 key: 'service-container-build-input',
@@ -472,8 +668,39 @@ export default {
                   key: 'sharedVolume',
                 },
                 save,
-              }
-            ]
+              },
+            ],
+          },
+        ],
+      },
+      {
+        key: 'metadata',
+        label: 'Metadata',
+        icon: 'fas fa-list',
+        description: Object.keys(props.service.meta || {}).map((metaKey) => `${metaKey}=${props.service.meta[metaKey]}`).join(','),
+        children: [
+          ...Object.keys(props.service.meta || {}).map((metaKey) => ({
+            key: `metadata-${metaKey}`,
+            inputLabel: metaKey,
+            description: props.service.meta?.[metaKey],
+            type: 'inputtext',
+            model: {
+              obj: props.service.meta,
+              key: metaKey,
+            },
+            buttons: [{ severity: 'danger', icon: 'fas fa-trash', action: () => { delete props.service.meta[metaKey]; save(); } }],
+            save,
+          })),
+          {
+            key: 'metadata-add',
+            type: 'button',
+            label: 'Add new Metadata',
+            buttonIcon: 'fas fa-plus',
+            inputtext: true,
+            click: (metaKey) => {
+              props.service.meta[metaKey] = '';
+              save();
+            },
           },
         ],
       },
@@ -527,10 +754,11 @@ export default {
               }, {
                 key: `command-${commandIndex}-path`,
                 label: 'Path',
-                description: command.spawnOptions?.cwd,
+                description: `${props.service.rootPath || '.'}/${command.spawnOptions?.cwd || ''}`,
                 children: [
                   {
                     type: 'inputtext',
+                    beforeText: `${props.service.rootPath || '.'}/`,
                     model: {
                       obj: command.spawnOptions,
                       key: 'cwd',
@@ -601,7 +829,9 @@ export default {
             buttonIcon: 'fas fa-plus',
             click: async () => {
               if (!props.service.commands) return;
-              props.service.commands.push({ spawnOptions: { cwd: '', envs: { [currentEnvironment.value.label]: { extends: [], envs: [] } } }, spawnArgs: [], spawnCmd: '' });
+              props.service.commands.push({
+                id: uuid(), spawnOptions: { cwd: '', envs: { [currentEnvironment.value.label]: { extends: [], envs: [] } } }, spawnArgs: [], spawnCmd: '',
+              });
               expandedKeys.value[`command-${props.service.commands.length - 1}`] = true;
               expandedKeys.value[`command-${props.service.commands.length - 1}-argument`] = true;
               expandedKeys.value[`command-${props.service.commands.length - 1}-command`] = true;
@@ -620,7 +850,6 @@ export default {
     });
     const expandAll = () => {
       for (const node of nodes.value) {
-        console.log(node);
         if (node.key === 'commands') {
           for (const nodeCommand of node.children) {
             expandedKeys.value[nodeCommand.key] = true;
@@ -653,17 +882,46 @@ export default {
     function parseRawEnvs(envs) {
       return Object.keys(envs).map((key) => ({ key, value: envs[key] }));
     }
+    const removeModalRef = ref();
+    const duplicateModalRef = ref();
+    const labelOfDuplicatedService = ref('');
     return {
+      duplicateModalRef,
+      labelOfDuplicatedService,
       modalEditEnvsRef,
       modalShowEnvRef,
       exportEnv,
       parseRawEnvs,
       expandedKeys,
       nodes,
+      removeModalRef,
       save,
-      remove() {
+      duplicateModalDisabled: computed(() => !labelOfDuplicatedService.value
+          || stack.services.value.find((a) => a.label === labelOfDuplicatedService.value)),
+      async remove() {
+        const result = await removeModalRef.value.open().promise;
+        if (!result) return;
         axios.delete(`/stack/${props.service.label}`)
-          .then(() => notification.next('success', 'Service supprimé'));
+          .then(() => {
+            notification.next('success', 'Service supprimé');
+            router.push({ name: 'stack-single-no-view' });
+          });
+      },
+      async duplicate() {
+        const result = await duplicateModalRef.value.open().promise;
+        if (!result) return;
+
+        axios.put(`/stack/${props.service.label}/duplicate`, { label: labelOfDuplicatedService.value })
+          .then(() => {
+            notification.next('success', 'Service duplicated');
+            const label = labelOfDuplicatedService.value;
+            router.push({ name: 'stack-single', params: { label }, query: { tab: 'Configuration' } });
+          })
+          .catch(() => {
+            notification.next('error', 'Cant duplicate service');
+          }).finally(() => {
+            labelOfDuplicatedService.value = '';
+          });
       },
     };
   },
@@ -688,22 +946,21 @@ $grey: var(--system-border-borderColor);
 }
 .label {
   white-space: nowrap;
+  display: inline-block;
   text-overflow: ellipsis;
   overflow: hidden;
-  width: 200px;
-  display: inline-block;
 }
 .description {
   color: var(--system-tertiary-color);
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
-  width: 200px;
   display: inline-block;
 }
 .column {
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 .line {
   display: flex;
@@ -712,6 +969,7 @@ $grey: var(--system-border-borderColor);
 ::v-deep {
   .p-tree-node-label {
     flex-grow: 1;
+    overflow: hidden;
   }
 }
 </style>

@@ -25,6 +25,7 @@
   "typings": "./typings/export.d.ts",
   "types": "./typings/export.d.ts",
   "dependencies": {
+    "@primevue/forms": "^4.2.5",
     "@primevue/themes": "^4.2.5",
     "bluebird": "^3.7.2",
     "dayjs": "^1.11.10",

@@ -135,13 +135,15 @@ import Theme from '../helpers/Theme'
 import Popover from './Popover.vue';
 import system from '../models/system'
 import SpeedDial from 'primevue/speeddial'
+import Button from 'primevue/button'
 
 export default {
   components: {
     SidebarViewModeItem: SidebarViewModeItemVue,
     DoughtnutChart,
     Popover,
-    SpeedDial
+    SpeedDial,
+    Button
   },
   setup() {
     const router = useRouter(); 
@@ -400,6 +402,7 @@ export default {
   font-size: 1em;
   box-shadow: none;
   color: var(--system-tertiary-color);
+  border: none;
   &:hover {
     background: var(--system-secondary-backgroundColor);
     color: var(--system-secondary-color);

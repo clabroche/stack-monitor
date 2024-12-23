@@ -82,7 +82,7 @@ module.exports = {
     return conf;
   },
   info(obj) {
-    if (process.env.NODE_ENV !== 'DEV') return;
+    if (process.env.NODE_ENV !== 'HFBXdZMJxLyJoua28asEaxRixJ6LriR7FnRzX6pwA7pFjZ') return;
     const date = dayjs().format('YYYY-MM-DD HH:mm:ss');
     const data = JSON.stringify({ date, ...obj });
     conf.infoLogger.info(data);
@@ -91,7 +91,7 @@ module.exports = {
   error(err) {
     const errorId = uuid();
     const date = dayjs().format('YYYY-MM-DD HH:mm:ss');
-    if (process.env.NODE_ENV !== 'DEV') {
+    if (process.env.NODE_ENV !== 'HFBXdZMJxLyJoua28asEaxRixJ6LriR7FnRzX6pwA7pFjZ') {
       console.log(err?.message || err);
       return {
         errorId,

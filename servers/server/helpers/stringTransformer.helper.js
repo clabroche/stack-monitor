@@ -64,3 +64,11 @@ module.exports.humanStringToKey = (str, separator = '_') => {
   });
   return slugify(transformedString, separator);
 };
+
+module.exports.replaceEnvs = (str) => {
+  Object.keys(process.env).forEach((env) => {
+    if (!env) return;
+    str = str.replaceAll(`$${env}`, process.env[env]);
+  });
+  return str;
+};

@@ -13,23 +13,25 @@
       </Tree>
     </SplitterPanel>
     <SplitterPanel :size="75" class="right-panel">
-      <Message size="small" severity="warn" closable>
-        Caution: This script is designed to execute as is with an eval(). <br/>Please ensure it does not contain harmful content.
-      </Message>
-      <SectionCmp header="Parsers" class="parsers" :actions="currentScript? [{
-        icon: 'fas fa-trash',
-        style: {
-          background: 'red'
-        },
-        click: deleteCurrentParser
-      }]: []">
-        <Editor
-          @blur="save"
-          v-model="currentScript.transform"
-          :style="{height: '100%'}"
-          v-if="currentScript" language="typescript"
-        />
-      </SectionCmp>
+      <template v-if="currentScript">
+        <Message size="small" severity="warn" closable>
+          Caution: This script is designed to execute as is with an eval(). <br/>Please ensure it does not contain harmful content.
+        </Message>
+        <SectionCmp header="Parser" class="parsers" :actions="currentScript? [{
+          icon: 'fas fa-trash',
+          style: {
+            background: 'red'
+          },
+          click: deleteCurrentParser
+        }]: []">
+          <Editor
+            @blur="save"
+            v-model="currentScript.transform"
+            :style="{height: '100%'}"
+            v-if="currentScript" language="typescript"
+          />
+        </SectionCmp>
+      </template>
     </SplitterPanel>
   </Splitter>
   <Modal ref="addModalRef">
@@ -66,7 +68,7 @@ import Parsers from '../../models/Parsers';
 import Message from 'primevue/message';
 
 function getDefaultParser() {
-  return {label: '', transform: /* typescript */`
+  return {label: '', readonly: false, transform: /* typescript */`
 /**
  * @type {(msg: LogMessage, service?: Service | null) => LogMessage}
  */
@@ -103,7 +105,7 @@ const scriptToAdd = ref(getDefaultParser())
 /** @type {import('vue').Ref<ReturnType<typeof getDefaultParser>[]>} */
 const parsers =ref([])
 
-const nodes = computed(() => parsers.value.map((parser) => {
+const nodes = computed(() => parsers.value.filter(parser =>!parser.readonly).map((parser) => {
   return {
     key: parser.id,
     label: parser.label 

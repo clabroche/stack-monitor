@@ -14,7 +14,7 @@ module.exports = (stackMonitor) => {
       res.json(results);
       ts.kill('SIGKILL');
     });
-    ts.send(service.rootPath || __dirname);
+    ts.send(service.getRootPath() || __dirname);
     return null;
   });
   return router;

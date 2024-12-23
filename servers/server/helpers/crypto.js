@@ -5,7 +5,6 @@ module.exports.generateKey = async () => {
   await _sodium.ready;
   const sodium = _sodium;
   const key = sodium.crypto_aead_aegis256_keygen();
-  console.log('Generated Key Length:', key.length); // Should be 32
   return sodium.to_base64(key);
 };
 

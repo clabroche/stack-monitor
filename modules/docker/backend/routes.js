@@ -22,7 +22,6 @@ module.exports = (stackMonitor) => {
       .catch(() => null);
     let dockerImage = null;
     if (dockerInfos) {
-      console.log(dockerInfos.Image);
       dockerImage = await execAsync(`docker history --no-trunc --human --format json ${dockerInfos.Image}`, {})
         .then((data) => {
           try {

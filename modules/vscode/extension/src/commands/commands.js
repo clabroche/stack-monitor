@@ -7,7 +7,6 @@ module.exports = {
     const disposable = vscode.commands.registerCommand('stack-monitor.connect', () => connect(context));
     const disposableSnippet = vscode.commands.registerCommand('stack-monitor.log', async () => {
       const editor = vscode.window.activeTextEditor;
-      console.log(editor.selections);
       const highlighted = editor.selections.map((selection) => {
         const selectionRange = new vscode.Range(
           selection.start.line,

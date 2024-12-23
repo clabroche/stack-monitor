@@ -197,11 +197,11 @@ const script = (stackMonitor) => ({
       id: 'requirements',
       label: 'Requirements',
       script: async () => {
-        if (!process.env.GH_APIKEY) throw new Error('Add GH_APIKEY dans le .env')
-        const octokit = new Octokit.Octokit({ auth: process.env.GH_APIKEY })
+        if (!process.env.STACK_MONITOR_GH_APIKEY) throw new Error('Add STACK_MONITOR_GH_APIKEY dans le .env')
+        const octokit = new Octokit.Octokit({ auth: process.env.STACK_MONITOR_GH_APIKEY })
         const { data: { login } } = await octokit.rest.users.getAuthenticated();
         return {
-          GH_APIKEY: process.env.GH_APIKEY,
+          STACK_MONITOR_GH_APIKEY: process.env.STACK_MONITOR_GH_APIKEY,
           logged_as: login,
           octokit,
         }

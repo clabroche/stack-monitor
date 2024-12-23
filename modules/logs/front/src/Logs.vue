@@ -453,10 +453,17 @@ const isLineIncluded = (line) => {
 };
 
 onMounted(() => mounted());
-Socket.on('conf:update', () => {
+
+const onConfUpdate = () => {
   if (logsContainer.value && !logsContainer.value?.children.length && terminal.value) {
     terminal.value.open(logsContainer.value);
   }
+};
+onMounted(() => {
+  Socket.on('conf:update', onConfUpdate);
+});
+onBeforeUnmount(() => {
+  Socket.off('conf:update', onConfUpdate);
 });
 async function mounted() {
   logs.value = await props.service.getLogs();

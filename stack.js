@@ -49,50 +49,9 @@ const stack = (stackMonitor) => ({
         cwd: pathfs.resolve(__dirname, './servers/server'),
         env: {
           SERVICE,
-          ADDWORKING_PATH: '/home/coco/Projects/addworking/services',
           STACKFILE: pathfs.resolve(__dirname, STACKFILE),
-          NODE_ENV: 'DEV',
+          NODE_ENV: 'HFBXdZMJxLyJoua28asEaxRixJ6LriR7FnRzX6pwA7pFjZ',
           HTTP_PORT: '5459',
-        },
-      },
-    }, {
-      label: 'Private Server',
-      description: 'This is the private backend Stack monitor',
-      groups: [groups.api],
-      git: {
-        home: 'https://github.com/clabroche/stack-monitor',
-        remote: 'git@github.com:clabroche/stack-monitor.git',
-      },
-      url: 'http://localhost:5460',
-      spawnCmd: 'npm',
-      spawnArgs: ['run serve'],
-      spawnOptions: {
-        cwd: pathfs.resolve(__dirname, './servers/private'),
-        env: {
-          MONGO_URL: process.env.MONGO_URL,
-          NODE_ENV: 'development',
-          HTTP_PORT: '5460',
-          JWT_PRIVATE_KEY: 'fekfzelkfzezefkzejfzekfjzeklfgjzegjgzngziajfrpafze',
-        },
-      },
-    }, {
-      label: 'Server Prod',
-      description: 'This is the backend Stack monitor',
-      groups: [groups.api],
-      git: {
-        home: 'https://github.com/clabroche/stack-monitor',
-        remote: 'git@github.com:clabroche/stack-monitor.git',
-      },
-      url: 'http://localhost:5460',
-      spawnCmd: 'npm',
-      spawnArgs: ['run serve'],
-      spawnOptions: {
-        cwd: pathfs.resolve(__dirname, './servers/server'),
-        env: {
-          SERVICE,
-          STACKFILE: pathfs.resolve(__dirname, STACKFILE),
-          NODE_ENV: 'production',
-          HTTP_PORT: '5460',
         },
       },
     }, {

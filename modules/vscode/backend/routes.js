@@ -42,7 +42,7 @@ const routes = (stackMonitor) => {
         ];
         const services = stackMonitor.getServices().filter((service) => {
           const servicePackageNames = [
-            service.rootPath,
+            service.getRootPath(),
             service.spawnOptions.cwd,
             ...service.commands.map((cmd) => cmd.spawnOptions?.env),
           ]
@@ -68,7 +68,7 @@ const routes = (stackMonitor) => {
         if (!projectRoot) return res.status(400).send('no package found');
         const services = stackMonitor.getServices().filter((service) => {
           const servicePaths = [
-            service.rootPath,
+            service.getRootPath(),
             service.spawnOptions.cwd,
             ...service.commands.map((cmd) => cmd.spawnOptions?.env),
           ]

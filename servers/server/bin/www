@@ -1,2 +1,14 @@
 #!/usr/bin/env node
+process.title = 'stack-monitor';
+const args = require('../helpers/args');
+
+if(args.confPath) process.chdir(args.confPath)
+
+require('dotenv').config()
+
 require('./server')
+  .launch()
+    .catch((err) => {
+      console.error(err)
+      return err
+    })

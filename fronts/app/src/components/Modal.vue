@@ -14,8 +14,8 @@
             <slot name="body" :data="data"></slot>
           </div>
           <div class="button-box" v-if="!noActions">
-            <div class="notif-button cancel" v-if="!noCancel" @click="cancel()">{{ cancelString || 'Annuler' }}</div>
-            <div class="notif-button validate" :class="{colored}" v-if="!noValidate" @click="validate()">{{ validateString || 'Sauvegarder' }}</div>
+            <button class="notif-button cancel" v-if="!noCancel" @click="cancel()">{{ cancelString || 'Annuler' }}</button>
+            <button class="notif-button validate" :disabled="disabled" :class="{colored}" v-if="!noValidate" @click="validate()">{{ validateString || 'Sauvegarder' }}</button>
           </div>
         </div>
       </div>
@@ -121,6 +121,7 @@ export default {
   align-items: center;
   transition: 300ms;
   #modal-content {
+    max-height: 90vh;
     background: var(--system-backgroundColor);
     height: auto;
     margin: auto;
@@ -183,6 +184,7 @@ export default {
 .button-box {
   display: flex;
   .notif-button {
+    background: none;
     color: var(--system-secondary-color);;
     font-size: 18px;
     padding: 12px 0px 12px 0px;
@@ -196,6 +198,11 @@ export default {
     &.colored {
       background-color: #26928e;
       color: white;
+    }
+    &[disabled] {
+      border: none;
+      color: #999;
+      background-color: #bbb;
     }
     &:hover {
       background-color: #d1d1d1;

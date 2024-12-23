@@ -1,6 +1,7 @@
 const { existsSync } = require('fs');
 const path = require('path');
 const { writeFile, readFile, appendFile } = require('fs/promises');
+const { randomUUID } = require('crypto');
 const dbs = require('../helpers/dbs');
 const { generateKey, encrypt, decrypt } = require('../helpers/crypto');
 
@@ -21,8 +22,10 @@ class EncryptionKey {
     if (!existsSync(gitignorePath)) {
       writeFile(gitignorePath, 'encryption-key.json');
     } else {
-      const hasGitIgnore = (await readFile(gitignorePath, 'utf-8')).split('\n').some((line) => line.trim() === 'encryption-key.json');
-      if (!hasGitIgnore) await appendFile(gitignorePath, '\nencryption-key.json');
+      const gitignoreFile = (await readFile(gitignorePath, 'utf-8')).split('\n');
+      const gitignoreHasKey = (key) => gitignoreFile.some((line) => line.trim() === key);
+      if (!gitignoreHasKey('encryption-key.json')) await appendFile(gitignorePath, '\nencryption-key.json');
+      if (!gitignoreHasKey('overrides')) await appendFile(gitignorePath, '\noverrides');
     }
   }
 
@@ -42,10 +45,11 @@ class EncryptionKey {
 
   async testKey(encryptionKey) {
     try {
-      const result = await encrypt('toto', { encryptionKey });
+      const variable = randomUUID();
+      const result = await encrypt(variable, { encryptionKey });
 
       const decrypted = await decrypt(result, { encryptionKey });
-      if (decrypted === 'toto') return true;
+      if (decrypted === variable) return true;
       return false;
     } catch (error) {
       console.error(error);

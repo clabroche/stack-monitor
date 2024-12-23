@@ -944,6 +944,7 @@ __metadata:
     "@clabroche/common-typings": "workspace:*"
     "@clabroche/modules-plugins-loader-front": "workspace:*"
     "@fortawesome/fontawesome-free": "npm:^6.5.1"
+    "@primevue/forms": "npm:^4.2.5"
     "@primevue/themes": "npm:^4.2.5"
     "@vitejs/plugin-vue": "npm:^5.0.3"
     autoprefixer: "npm:^10.4.20"
@@ -1667,9 +1668,11 @@ __metadata:
     "@clabroche/modules-plugins-loader-backend": "workspace:*"
     "@clabroche/modules-plugins-loader-front": "workspace:*"
     "@clabroche/modules-vscode-extension": "workspace:*"
+    "@types/http-proxy": "npm:^1"
     "@types/libsodium-wrappers": "npm:^0"
     "@vscode/vsce": "npm:^2.23.0"
     ansi-to-html: "npm:^0.7.2"
+    axios: "npm:^1.7.9"
     bluebird: "npm:^3.7.2"
     command-exists: "npm:^1.2.9"
     dayjs: "npm:^1.11.10"
@@ -1682,6 +1685,7 @@ __metadata:
     fast-sort: "npm:^3.4.0"
     fdir: "npm:^6.4.2"
     fs-extra: "npm:^11.2.0"
+    http-proxy: "npm:^1.18.1"
     kill-port: "npm:^2.0.1"
     libsodium-wrappers: "npm:^0.7.15"
     lodash: "npm:^4.17.21"
@@ -4072,6 +4076,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@primeuix/forms@npm:^0.0.2":
+  version: 0.0.2
+  resolution: "@primeuix/forms@npm:0.0.2"
+  dependencies:
+    "@primeuix/utils": "npm:^0.3.0"
+  checksum: 10/fed149a30ee32fbdad1d3016c9937ff45cbb06d0026758c2d0493912b350c791f9f67014c485d441f040c3aa9d64bc3e1094e34f368432b16e69fe4a0d59743c
+  languageName: node
+  linkType: hard
+
 "@primeuix/styled@npm:^0.3.2":
   version: 0.3.2
   resolution: "@primeuix/styled@npm:0.3.2"
@@ -4081,7 +4094,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@primeuix/utils@npm:^0.3.2":
+"@primeuix/utils@npm:^0.3.0, @primeuix/utils@npm:^0.3.2":
   version: 0.3.2
   resolution: "@primeuix/utils@npm:0.3.2"
   checksum: 10/31df653f2914e188fe8d5c4db24e36721e743d3f41e672d6a7a5fd275f399949f84e18abb4fca230a3f698f9533ec6092f00166256851fd03f32d27884c75459
@@ -4097,6 +4110,17 @@ __metadata:
   peerDependencies:
     vue: ^3.3.0
   checksum: 10/208a40e358dda18743a37dc2b18408dcb192a186e2975304b29b804e3de85f7fb43fcffb0f817ffbaa32989299522a5878c6c6da55a833573fa34d2c5d940409
+  languageName: node
+  linkType: hard
+
+"@primevue/forms@npm:^4.2.5":
+  version: 4.2.5
+  resolution: "@primevue/forms@npm:4.2.5"
+  dependencies:
+    "@primeuix/forms": "npm:^0.0.2"
+    "@primeuix/utils": "npm:^0.3.2"
+    "@primevue/core": "npm:4.2.5"
+  checksum: 10/b48253326542b7f69bed560a77f2769bd4a74a3f6fd3f44caf3b2f8cf96237bcd97d5aca7bb8a36e2eecdccce61499bfced888c89d18d35f1c219a15210d9825
   languageName: node
   linkType: hard
 
@@ -7186,6 +7210,17 @@ __metadata:
     form-data: "npm:^4.0.0"
     proxy-from-env: "npm:^1.1.0"
   checksum: 10/a1932b089ece759cd261f175d9ebf4d41c8994cf0c0767cda86055c7a19bcfdade8ae3464bf4cec4c8b142f4a657dc664fb77a41855e8376cf38b86d7a86518f
+  languageName: node
+  linkType: hard
+
+"axios@npm:^1.7.9":
+  version: 1.7.9
+  resolution: "axios@npm:1.7.9"
+  dependencies:
+    follow-redirects: "npm:^1.15.6"
+    form-data: "npm:^4.0.0"
+    proxy-from-env: "npm:^1.1.0"
+  checksum: 10/b7a5f660ea53ba9c2a745bf5ad77ad8bf4f1338e13ccc3f9f09f810267d6c638c03dac88b55dae8dc98b79c57d2d6835be651d58d2af97c174f43d289a9fd007
   languageName: node
   linkType: hard
 
@@ -11316,7 +11351,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"follow-redirects@npm:^1.0.0":
+"follow-redirects@npm:^1.0.0, follow-redirects@npm:^1.15.6":
   version: 1.15.9
   resolution: "follow-redirects@npm:1.15.9"
   peerDependenciesMeta:

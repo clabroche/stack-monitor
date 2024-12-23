@@ -28,6 +28,7 @@
   "dependencies": {
     "@vscode/vsce": "^2.23.0",
     "ansi-to-html": "^0.7.2",
+    "axios": "^1.7.9",
     "bluebird": "^3.7.2",
     "command-exists": "^1.2.9",
     "dayjs": "^1.11.10",
@@ -59,7 +60,9 @@
     "@clabroche/modules-plugins-loader-backend": "workspace:*",
     "@clabroche/modules-plugins-loader-front": "workspace:*",
     "@clabroche/modules-vscode-extension": "workspace:*",
+    "@types/http-proxy": "^1",
     "@types/libsodium-wrappers": "^0",
+    "http-proxy": "^1.18.1",
     "nodemon": "^3.0.3",
     "supertest": "^6.3.4",
     "tsup": "^8.3.5"

@@ -33,7 +33,7 @@
         <div class="actions">
         <button v-if="!isAllEnabled" @click="toggleGroup('All')">Select all</button>
         <button v-else @click="toggleGroup('All')">Unselect all</button>
-        <button @click="validate" class="success"><i class="fas fa-play" aria-hidden="true"></i> Launch</button>
+        <button @click="validate" class="success"><i class="fas fa-play" aria-hidden="true"></i> {{oneOrMoreEnabled ? 'Launch' : 'Open without launching'}}</button>
         </div>
     </section-cmp>
 </template>
@@ -126,6 +126,7 @@ export default {
             servicesToLaunch,
             search,
             isAllEnabled: computed(() => servicesToLaunch.value.every(service => service.enabled)),
+            oneOrMoreEnabled: computed(() => servicesToLaunch.value.some(service => service.enabled)),
             groups: computed(() => {
                 const groupsById = servicesToLaunch.value.reduce((groups, service) => {
                     if (service.groups) {

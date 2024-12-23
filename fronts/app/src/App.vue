@@ -70,7 +70,6 @@ export default {
       }
       const shouldSetup = await Stack.shouldSetup()
       if(shouldSetup) router.push({name: 'settings', params: {setting: 'crypto'}, query: { wrongKey: 'true' }})
-      console.log(shouldSetup)
     }
     onMounted(async ()=> {
       Socket.on('connect',  redirect);
@@ -78,7 +77,6 @@ export default {
       Socket.on('forceReload', () => {
         window.location.reload()
       });
-      Socket.on('reloadService', () => Stack.loadServices())
       Socket.on('system:wrongKey', () => router.push({name: 'settings', params: {setting: 'crypto'}, query: { wrongKey: 'true' }}))
       await redirect()
     })

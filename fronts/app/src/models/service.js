@@ -17,6 +17,28 @@ class Service {
     this.description = service.description || '';
     /** @type {string} */
     this.url = service.url || '';
+    /**
+     * @type {{
+     *  enabled: boolean,
+     *  url: string,
+     *  interval: string,
+     *  method: 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE'
+     *  returnCode: number,
+     *  responseText: string,
+     *  timeout: number,
+     *  startAfter: number
+     * }}
+     */
+    this.health = service.health || {
+      enabled: false,
+      url: '',
+      interval: '',
+      method: 'GET',
+      returnCode: 200,
+      responseText: '',
+      timeout: 0,
+      startAfter: 0,
+    };
     /** @type {string[]} */
     this.groups = service.groups || [];
     /** @type {string[]} */
@@ -63,9 +85,11 @@ class Service {
     /** @type {boolean} */
     this.exited = service.exited || false;
     /** @type {string} */
-    this.rootPath = service.rootPath || '';
-    /** @type {{enabled: true, name: string, build: string[], volumes: string[], ignoreVolumes: string[], bootstrap: {commands: {cmd: string,user: string,entrypoint: string,}[]}}} */
+    this.rootPath = service.rootPath || this.commands?.[0]?.spawnOptions?.cwd || '';
+    /** @type {{enabled: true, name: string, build: string, volumes: string[], ignoreVolumes: string[], bootstrap: {commands: {cmd: string,user: string,entrypoint: string,}[]}}} */
     this.container = service.container;
+    /** @type {Record<string, string>} */
+    this.meta = service.meta || {};
     if (this.container) {
       if (!this.container.volumes?.length) this.container.volumes = [];
       if (!this.container.ignoreVolumes?.length) this.container.ignoreVolumes = [];
@@ -122,8 +146,8 @@ class Service {
     return logs;
   }
 
-  async openInVsCode() {
-    return axios.get(`/stack/${this.label}/open-in-vs-code`);
+  async openInVsCode(path) {
+    return axios.get(`/stack/${this.label}/open-in-vs-code`, { params: { path } });
   }
 
   /**
@@ -135,8 +159,8 @@ class Service {
     return axios.get(`/stack/${this.label}/open-link-in-vs-code`, { params: { link } });
   }
 
-  async openFolder() {
-    return axios.get(`/stack/${this.label}/open-folder`);
+  async openFolder(path) {
+    return axios.get(`/stack/${this.label}/open-folder`, { params: { path } });
   }
 
   async restart() {
@@ -281,6 +305,11 @@ class Service {
   async getBugs() {
     const { data: bugs } = await axios.get(`/bugs/${this.label}`);
     return bugs || [];
+  }
+
+  async save() {
+    await axios.post('/stack/services', this);
+    return this;
   }
 
   /**

@@ -106,7 +106,7 @@ export default {
       }),
       addService: () => {
         if(Stack.services.value.find(a => a.label === serviceLabelToAdd.value)) return
-        axios.post('/stack/create-service',  {
+        axios.post('/stack/services',  {
           label: serviceLabelToAdd.value,
         }).then(() => {
           const label = serviceLabelToAdd.value

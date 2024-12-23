@@ -76,3 +76,11 @@ pre {
 .p-select-overlay.p-component {
   z-index: 10000 !important;
 }
+.p-autocomplete-overlay {
+  z-index: 1000000000 !important;
+}
+.p-autocomplete-dropdown {
+  margin: 0;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
