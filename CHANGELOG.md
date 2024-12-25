@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.1](https://github.com/clabroche/stack-monitor/compare/v2.0.0...v2.0.1) (2024-12-25)
+
+### Bug Fixes
+
+* **docker:** fix volume paths with interpreted characters ([38eb09b](https://github.com/clabroche/stack-monitor/commit/38eb09b8f7cdab2799c4cad35d2ea9f66083ad70))
+* **env_vars:** fix reactivity ([12f7180](https://github.com/clabroche/stack-monitor/commit/12f718070723d79e1adef9050894c131ec6343f9))
+* various fixes ([18129e9](https://github.com/clabroche/stack-monitor/commit/18129e96f7c92a69176d6a75add45f3a48ab11ae))
+
 # [2.0.0](https://github.com/clabroche/stack-monitor/compare/v1.18.12...v2.0.0) (2024-12-19)
 
 * feat!: migrate stackmonitor to entire UI ([e173073](https://github.com/clabroche/stack-monitor/commit/e173073d932be7e400b1f51261c090116e8fb543))
