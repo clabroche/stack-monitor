@@ -26,6 +26,9 @@
   "typings": "./typings/export.d.ts",
   "types": "./typings/export.d.ts",
   "dependencies": {
+    "@clabroche/common-express": "workspace:*",
+    "@clabroche/common-socket-server": "workspace:*",
+    "@clabroche/modules-plugins-loader-backend": "workspace:*",
     "@vscode/vsce": "^2.23.0",
     "ansi-to-html": "^0.7.2",
     "axios": "^1.7.9",
@@ -54,10 +57,7 @@
     "uuid": "^9.0.1"
   },
   "devDependencies": {
-    "@clabroche/common-express": "workspace:*",
     "@clabroche/common-retrigger-all-build": "workspace:*",
-    "@clabroche/common-socket-server": "workspace:*",
-    "@clabroche/modules-plugins-loader-backend": "workspace:*",
     "@clabroche/modules-plugins-loader-front": "workspace:*",
     "@clabroche/modules-vscode-extension": "workspace:*",
     "@types/http-proxy": "^1",
