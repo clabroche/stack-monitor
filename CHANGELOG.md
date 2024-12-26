@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.4](https://github.com/clabroche/stack-monitor/compare/v2.0.3...v2.0.4) (2024-12-26)
+
+### Bug Fixes
+
+* cwd when prompt a command ([483001f](https://github.com/clabroche/stack-monitor/commit/483001f826b65f163b48278636a0d840c7b6703b))
+
 ## [2.0.3](https://github.com/clabroche/stack-monitor/compare/v2.0.2...v2.0.3) (2024-12-26)
 
 ### Bug Fixes
