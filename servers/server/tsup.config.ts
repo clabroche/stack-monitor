@@ -59,7 +59,7 @@ const syncPackageJSON = {
 
     })
     delete packageJSON.private
-    packageJSON.bin = 'www'
+    packageJSON.bin = 'www.js'
     packageJSON.main = 'stack.js'
     packageJSON.types = 'index.d.ts'
     packageJSON.typings = 'index.d.ts'
@@ -86,7 +86,6 @@ const copyFilePlugin = {
     await copyFile(path.resolve(__dirname, "../../modules/bugs/backend/checkJsFork.js"), "dist/checkJsFork.js")
     await copyFile(path.resolve(__dirname, "../../modules/bugs/backend/defaultJsConfig.json"), "dist/defaultJsConfig.json")
     await copyFile(path.resolve(__dirname, "./helpers/cpuFork.js"), "dist/cpuFork.js")
-    await copyFile(path.resolve(__dirname, "./bin/www"), "dist/www")
   }
 }
 
@@ -107,7 +106,7 @@ const integrateWebApp = {
 }
 
 export default defineConfig({
-  entry: ['./bin/server.js'],
+  entry: ['./bin/www'],
   clean: true,
   bundle: true,
   publicDir: './src/public',
