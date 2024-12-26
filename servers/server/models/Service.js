@@ -686,8 +686,7 @@ Service.prototype.parseIncomingCommand = async function (command, isMainProcess 
     cmd = currentAlias?.cmd || cmd;
     args = [...(currentAlias?.args || []), ...args];
   }
-  const cwd = replaceEnvs(pathfs.resolve(this.getRootPath(), spawnOptions.cwd || this.rootPath || '.'));
-
+  const cwd = replaceEnvs(pathfs.resolve(spawnOptions.cwd || this.commands[0]?.spawnOptions?.cwd || this.getRootPath() || '.'));
   const options = {
     ...spawnOptions,
     cwd,
