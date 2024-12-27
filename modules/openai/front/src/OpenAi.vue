@@ -2,14 +2,11 @@
   <div class="openai-root">
     <div class="header">
       <h1>Open ai</h1>
-      <div class="apikey-container">
-        <input type="text"
-          @change="changeApikey(/**@type {HTMLInputElement}*/($event.target)?.value, $event)"
-          placeholder="Apikey...">
-      </div>
     </div>
     <div v-if="!ready">
-      Vous ne pouvez pas encore communiquer avec l'assistant
+      You need to provide a valid apikey from openai in the STACK_MONITOR_OPENAI_APIKEY
+      environment variable to use this module.
+      <a href="https://platform.openai.com/api-keys" target="_blank">See here.</a>
     </div>
     <div v-else class="content">
       <div class="rooms">
@@ -116,16 +113,6 @@ async function changeRoom(_room) {
   messages.value = [];
   await reload();
 }
-/**
- * @param {string} apikey
- * @param {Event} $event
- */
-async function changeApikey(apikey, $event) {
-  if (!apikey) return;
-  await axios.post('/openai/apikey', { apikey });
-  await reload();
-  if ($event) /** @type {HTMLInputElement} */($event.target).value = '';
-}
 
 async function getModels() {
   const { data: _models } = await axios.get('/openai/models');
@@ -177,10 +164,6 @@ h2 {
   display: flex;
   justify-content: space-between;
   text-align: center;
-  .apikey-container {
-    display: flex;
-    align-items: center;
-  }
 }
 $leftSize: 200px;
 .openai-root {

@@ -1,5 +1,6 @@
-const fse = require('fs-extra');
 const pathfs = require('path');
+const { readFile, writeFile, readdir } = require('fs/promises');
+const { statSync } = require('fs');
 const PromiseB = require('bluebird');
 const { v4 } = require('uuid');
 
@@ -13,9 +14,9 @@ const { v4 } = require('uuid');
  */
 async function walker(rootPath, pathToExplore, stripPath, leafs = []) {
   const fullPath = pathfs.resolve(rootPath, pathToExplore);
-  const dir = await PromiseB.mapSeries(fse.readdir(fullPath), async (_path) => {
+  const dir = await PromiseB.mapSeries(readdir(fullPath), async (_path) => {
     const newPath = pathfs.resolve(fullPath, _path);
-    const isDir = fse.statSync(newPath).isDirectory();
+    const isDir = statSync(newPath).isDirectory();
     /** @type {import('./index').Leaf} */
     const leaf = {
       id: v4(),
@@ -66,7 +67,7 @@ const Documentation = (stackMonitor) => ({
      * @param {string} documentationPath
      */
   readFile(path, documentationPath) {
-    return fse.readFile(pathfs.resolve(documentationPath, path), { encoding: 'utf-8' });
+    return readFile(pathfs.resolve(documentationPath, path), { encoding: 'utf-8' });
   },
   /**
      * @param {string} path
@@ -74,8 +75,8 @@ const Documentation = (stackMonitor) => ({
      * @param {string} page
      */
   async writeFile(path, documentationPath, page) {
-    await fse.writeFile(pathfs.resolve(documentationPath, path), page, { encoding: 'utf-8' });
-    return fse.readFile(pathfs.resolve(documentationPath, path), { encoding: 'utf-8' });
+    await writeFile(pathfs.resolve(documentationPath, path), page, { encoding: 'utf-8' });
+    return readFile(pathfs.resolve(documentationPath, path), { encoding: 'utf-8' });
   },
 });
 module.exports = Documentation;

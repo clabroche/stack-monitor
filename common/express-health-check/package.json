@@ -6,12 +6,11 @@
   "private": true,
   "main": "src/index.js",
   "scripts": {
-    "test": "clabroche-jest"
+    "test": "echo \"no test\""
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@clabroche/common-jest": "workspace:*",
     "@clabroche/common-retrigger-all-build": "workspace:*",
     "jest-sonar-reporter": "^2.0.0",
     "supertest": "^6.3.4"

@@ -17,6 +17,7 @@
   },
   "devDependencies": {
     "@clabroche/common-retrigger-all-build": "workspace:*",
+    "@primevue/forms": "^4.2.5",
     "fast-sort": "^3.4.0",
     "vue": "^3.4.18",
     "vue-eslint-parser": "^9.4.2"

@@ -2,13 +2,6 @@
   <section-cmp v-if="service" :key="service.label">
     <div class="header">
       <h2>Github</h2>
-      <div class="actions">
-        <div>
-          <input type="text" v-model="apikey" @keypress.enter="validateApikey"
-            placeholder="Change your github token here...">
-          <button @click="validateApikey">Validate</button>
-        </div>
-      </div>
     </div>
     <div class="container" v-if="isReady">
       <div>
@@ -81,11 +74,10 @@
       </div>
     </div>
     <div class="container" v-else>
-      <h3>Not ready</h3>
       <div>
-        <input type="text" v-model="apikey" @keypress.enter="validateApikey"
-        placeholder="Type your github token here...">
-        <button @click="validateApikey">Validate</button>
+        To use this module you need to provide a valid apikey from github in the
+        STACK_MONITOR_GH_APIKEY environment variable.
+        <a href="https://github.com/settings/tokens/new" target="_blank">See here.</a>
       </div>
     </div>
   </section-cmp>

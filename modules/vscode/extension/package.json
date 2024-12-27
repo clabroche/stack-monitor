@@ -100,7 +100,6 @@
   },
   "devDependencies": {
     "@types/command-exists": "^1.2.3",
-    "@types/fs-extra": "^11.0.4",
     "@types/mocha": "^10.0.6",
     "@types/node": "18.x",
     "@types/vscode": "^1.86.0",

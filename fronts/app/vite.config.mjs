@@ -2,7 +2,10 @@ import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import path from 'path';
 import { createHtmlPlugin } from 'vite-plugin-html';
+import { fileURLToPath } from 'url';
 
+const __filename = fileURLToPath(import.meta.url); // get the resolved path to the file
+const __dirname = path.dirname(__filename); // get the name of the directory
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [

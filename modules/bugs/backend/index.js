@@ -1,4 +1,4 @@
-const fse = require('fs-extra');
+const { existsSync } = require('fs');
 const pathfs = require('path');
 
 /** @type {import('@clabroche/modules-plugins-loader-front/src/views').PluginSM<null>} */
@@ -23,6 +23,6 @@ module.exports = plugin;
 async function isNpm(service) {
   const path = service?.spawnOptions?.cwd;
   return path
-    ? fse.existsSync(pathfs.resolve(path.toString(), 'package.json'))
+    ? existsSync(pathfs.resolve(path.toString(), 'package.json'))
     : false;
 }

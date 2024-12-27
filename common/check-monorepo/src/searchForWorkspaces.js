@@ -1,4 +1,4 @@
-const fse = require('fs-extra');
+const fs = require('fs');
 const pathfs = require('path');
 const { execSync } = require('child_process');
 
@@ -63,15 +63,15 @@ function checkIfAllWorkspacesAreLinkedToLerna() {
  *   }
  * }[]}
  */
-const exploreDir = (rootDir) => fse
+const exploreDir = (rootDir) => fs
   .readdirSync(rootDir)
   .filter((dir) => !['node_modules', 'out'].includes(dir)
       && dir[0] !== '.')
   .map((dir) => pathfs.resolve(rootDir, dir))
-  .filter((dir) => fse.statSync(dir).isDirectory())
+  .filter((dir) => fs.statSync(dir).isDirectory())
   .map((dir) => {
     const packageJSONPath = pathfs.resolve(dir, 'package.json');
-    const hasPackageJson = fse.existsSync(packageJSONPath);
+    const hasPackageJson = fs.existsSync(packageJSONPath);
     if (hasPackageJson) {
       const packageJSON = require(packageJSONPath);
       return {

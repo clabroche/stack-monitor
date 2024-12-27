@@ -1,18 +1,12 @@
 require('express-async-errors');
 const express = require('express');
-const { initSwagger } = require('@clabroche/common-swagger');
-const swagger = require('@clabroche/common-swagger');
-const logger = require('@clabroche/common-express-logger');
 const cors = require('cors');
 const pathfs = require('path');
 const fs = require('fs');
-const context = require('@clabroche/common-context').init;
 const healthCheck = require('@clabroche/common-express-health-check');
 const helmet = require('helmet').default;
 const cookieParser = require('cookie-parser');
 const compression = require('compression');
-const pino = require('pino');
-const pinoHttp = require('pino-http');
 const http = require('http');
 const Socket = require('@clabroche/common-socket-server');
 
@@ -33,12 +27,10 @@ module.exports = {
    *  afterControllers?: (server: {server: http.Server<typeof http.IncomingMessage, typeof http.ServerResponse>, app: import('express').Express}) => any,
    *  controllers?: () => import('express').RequestHandler,
    *  staticController?: string,
-   *  additionalSwaggerPaths?: string[]
    *  noGreetings?: boolean,
    *  apiPrefix?: string
    *  bodyLimit?: string
    *  healthPath?: string
-   *  apiDocsPath?: string
    * }} param0
    * @returns
    */
@@ -56,11 +48,9 @@ module.exports = {
     staticController = undefined,
     noGreetings = false,
     socket = false,
-    additionalSwaggerPaths = [],
     apiPrefix = '/api',
     bodyLimit = '50mb',
     healthPath = apiPrefix,
-    apiDocsPath = apiPrefix,
   }) => {
     const pkgJSONPath = pathfs.resolve(baseUrl, 'package.json');
     const isPkgJSONExists = fs.existsSync(pkgJSONPath);
@@ -97,57 +87,21 @@ module.exports = {
     console.log('Enable Compression...');
     app.use(compression());
 
-    console.log('Enable Logger...');
-    logger.init({
-      path: pathfs.resolve(baseUrl, 'logs-express'),
-    });
-    let accessLogger = (req, res, next) => next();
-    if (process.env.NODE_ENV === 'HFBXdZMJxLyJoua28asEaxRixJ6LriR7FnRzX6pwA7pFjZ' && process.env.DEBUG === 'stack-monitor') {
-      console.log('Dev mode detected, enable access logger');
-      accessLogger = pinoHttp.default({
-        autoLogging: {
-          ignore: (req) => !!(
-            req.url?.endsWith('/health')
-            || req.url?.endsWith('/infos')
-            || req.url?.endsWith('/status')
-            || req.url?.endsWith('/current-branch')
-          ),
-        },
-        logger: logger.getConf().accessLogger,
-        serializers: {
-          req: pino.stdSerializers.wrapRequestSerializer((r) => {
-            r.headers = {
-              ...r.headers,
-              cookie: '',
-              authorization: '',
-            };
-            return r;
-          }),
-        },
-      });
-    }
-    console.log('Enable swagger...');
-    app.use(swagger);
-    await initSwagger({
-      appVersion, baseUrl, appName, additionalSwaggerPaths, apiDocsPath,
-    }).catch((err) => console.error(`Swagger error: ${err?.message || err}`));
     console.log('Enable health check...');
     app.use(healthPath, healthCheck(express, { name: appName, version: appVersion }));
 
-    console.log('Apply additional routes...');
-    app.use(context);
-
     beforeStatic?.({ server, app });
 
+    console.log('Apply additional routes...');
     if (staticController) {
-      app.use('/', accessLogger, express.static(staticController));
+      app.use('/', express.static(staticController));
     }
 
     if (socket) {
       console.log('Enable socket...');
       Socket.sockets.connect(server);
     }
-    app.use(apiPrefix, accessLogger, controllers());
+    app.use(apiPrefix, controllers());
 
     if (!noGreetings) {
       app.get('/', (req, res) => res.json({ appName, appVersion }));

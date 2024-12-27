@@ -1,5 +1,4 @@
 const HTTPError = require('@clabroche/common-express-http-error');
-const logger = require('@clabroche/common-express-logger');
 const errorCodes = require('./errorCodes');
 
 module.exports = () => (err, req, res, next) => {
@@ -16,7 +15,7 @@ module.exports = () => (err, req, res, next) => {
       ? new HTTPError(err, 500, err?.errorId, err?.date, err?.stack)
       : new HTTPError(err.message, err.code, err?.errorId, err?.date, err?.stack);
   }
-  logger.error(httpErr);
+  console.error(httpErr);
   res.status(Math.floor(httpErr.code)).json({
     errorId: httpErr.errorId,
     date: httpErr.date,

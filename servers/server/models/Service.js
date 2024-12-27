@@ -9,7 +9,7 @@ const psTree = require('ps-tree');
 const PromiseB = require('bluebird');
 const dayjs = require('dayjs');
 const { v4 } = require('uuid');
-const { existsSync, readFileSync } = require('fs-extra');
+const { existsSync, readFileSync } = require('fs');
 const axios = require('axios').default;
 const pathfs = require('path');
 const net = require('net');
@@ -243,7 +243,7 @@ Service.prototype.loadCustomEnv = function (path) {
   const dotEnvPath = pathfs.resolve(path, '.env');
   if (existsSync(dotEnvPath) && readFileSync(dotEnvPath, { encoding: 'utf-8' }).trim()) {
     console.log(`! A .env will override your ${this.label} service !`);
-    return require('dotenv').parse(readFileSync(dotEnvPath));
+    return require('dotenv').parse(readFileSync(dotEnvPath, 'utf-8'));
   }
   return null;
 };

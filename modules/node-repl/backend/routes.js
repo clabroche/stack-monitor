@@ -1,6 +1,7 @@
 const express = require('express');
 const { v4 } = require('uuid');
-const fse = require('fs-extra');
+const { mkdir, writeFile } = require('fs/promises');
+const { writeFileSync, readFileSync, unlinkSync } = require('fs');
 const pathfs = require('path');
 const { mkdirSync, existsSync } = require('fs');
 const { spawn } = require('child_process');
@@ -12,8 +13,8 @@ const confDir = pathfs.resolve(homedir, '.stack-monitor');
 
 if (!existsSync(confDir)) mkdirSync(confDir);
 const confPath = pathfs.resolve(confDir, 'node-repl');
-if (!fse.existsSync(confPath)) fse.writeJSONSync(confPath, {});
-const conf = fse.readJsonSync(confPath);
+if (!existsSync(confPath)) writeFileSync(confPath, '{}', 'utf-8');
+const conf = JSON.parse(readFileSync(confPath, 'utf-8'));
 
 /** @param {import('@clabroche/common-typings').StackMonitor} stackMonitor */
 module.exports = (stackMonitor) => {
@@ -28,10 +29,10 @@ module.exports = (stackMonitor) => {
     conf.chat[room].script = script;
     const uuid = v4();
     const filePath = pathfs.resolve(__dirname, 'sandbox-node-repl', uuid);
-    if (!fse.existsSync(pathfs.dirname(filePath))) {
-      await fse.mkdir(pathfs.dirname(filePath));
+    if (!existsSync(pathfs.dirname(filePath))) {
+      await mkdir(pathfs.dirname(filePath));
     }
-    await fse.writeFile(filePath, script);
+    await writeFile(filePath, script);
     const spawnCmd = spawn('node', [filePath], {
       env: { ...process.env },
       cwd: pathfs.resolve(__dirname),
@@ -49,7 +50,7 @@ module.exports = (stackMonitor) => {
     spawnCmd.on('close', () => {
       Socket.io?.emit('node-repl:update', { close: true });
       conf.chat[room].result = result;
-      fse.unlinkSync(filePath);
+      unlinkSync(filePath);
       save();
     });
     save();
@@ -81,7 +82,7 @@ module.exports = (stackMonitor) => {
   });
 
   function save() {
-    fse.writeJsonSync(confPath, conf);
+    writeFileSync(confPath, JSON.stringify(conf), 'utf-8');
   }
   return router;
 };

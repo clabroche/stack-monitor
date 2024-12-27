@@ -1,18 +1,17 @@
 const pathfs = require('path');
-const fse = require('fs-extra');
+const { readFileSync, existsSync } = require('fs');
 const ts = require('typescript');
-const { existsSync } = require('fs');
 
 process.on('message', (/** @type {string} */cwd) => {
   const tsConfigPath = pathfs.resolve(cwd, 'tsconfig.json');
   const jsConfigPath = pathfs.resolve(cwd, 'jsconfig.json');
   let configPath = pathfs.resolve(__dirname, 'defaultJsConfig.json');
-  if (fse.existsSync(tsConfigPath)) {
+  if (existsSync(tsConfigPath)) {
     configPath = tsConfigPath;
-  } else if (fse.existsSync(jsConfigPath)) {
+  } else if (existsSync(jsConfigPath)) {
     configPath = jsConfigPath;
   }
-  const tsconfigFile = ts.readJsonConfigFile(configPath, (path) => fse.readFileSync(path, { encoding: 'utf-8' }));
+  const tsconfigFile = ts.readJsonConfigFile(configPath, (path) => readFileSync(path, { encoding: 'utf-8' }));
   const config = ts.parseJsonSourceFileConfigFileContent(
     tsconfigFile,
     {

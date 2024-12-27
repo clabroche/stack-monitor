@@ -13,9 +13,6 @@
   "peerDependencies": {
     "vue": "^3.2.45"
   },
-  "dependencies": {
-    "socket.io-client": "^4.7.4"
-  },
   "devDependencies": {
     "@clabroche/common-retrigger-all-build": "workspace:*"
   }

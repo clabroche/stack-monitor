@@ -23,7 +23,7 @@ module.exports = {
       project: ['**/*.ts!', '**/*.js!', '**/*/bin/www'],
     },
     'common/*': {
-      entry: ['src/{index,cli,server}.js!', 'src/{index,cli,server}.ts!', '**/*.spec.(js|ts)', '**/*.test.(js|ts)', 'tsup.config.ts', 'src/transport.js', 'src/walkerFork.js'],
+      entry: ['src/{index,cli,server}.js!', 'src/{index,cli,server}.ts!', '**/*.spec.(js|ts)', '**/*.test.(js|ts)', 'tsup.config.ts', 'src/walkerFork.js'],
       project: ['**/*.ts!', '**/*.js!'],
     },
     'modules/*/front': {
@@ -35,13 +35,13 @@ module.exports = {
   },
   ignoreDependencies: [
     '@clabroche/common-retrigger-all-build',
-    '@swc/jest',
-    'jest-sonar-reporter',
     '@types/*',
+    'vue-router',
     'knip',
     '@lerna-lite/*',
     'turbo',
     '@commitlint/*',
+    'vue',
   ],
   ignore: [
     '**/*/jest.config.js',

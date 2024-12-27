@@ -1,7 +1,8 @@
 const pathfs = require('path');
 const homedir = require('os').homedir();
-const fse = require('fs-extra');
-const { existsSync, mkdirSync } = require('fs');
+const {
+  existsSync, mkdirSync, writeFileSync, readFileSync,
+} = require('fs');
 
 const confDir = pathfs.resolve(homedir, '.stack-monitor');
 
@@ -17,15 +18,15 @@ const confDir = pathfs.resolve(homedir, '.stack-monitor');
 function getSave(file, initialData, options = {}) {
   if (!existsSync(confDir)) mkdirSync(confDir);
   const dataConfPath = pathfs.resolve(confDir, file);
-  if (!fse.existsSync(dataConfPath)) fse.writeJSONSync(dataConfPath, initialData);
-  const data = fse.readJsonSync(dataConfPath);
+  if (!existsSync(dataConfPath)) writeFileSync(dataConfPath, JSON.stringify(initialData), 'utf-8');
+  const data = JSON.parse(readFileSync(dataConfPath, 'utf-8'));
   options?.afterGet?.(data);
   return {
     /** @type {T} */
     data,
     save() {
       options?.beforeSave?.(data);
-      fse.writeJsonSync(dataConfPath, data);
+      writeFileSync(dataConfPath, JSON.stringify(data), 'utf-8');
     },
   };
 }

@@ -1,9 +1,10 @@
 const express = require('express');
-const fse = require('fs-extra');
 const pathfs = require('path');
 const OpenAIApi = require('openai').OpenAI;
 const {
   existsSync, mkdirSync, createReadStream,
+  writeFileSync,
+  readFileSync,
 } = require('fs');
 const { encode } = require('gpt-3-encoder');
 const { v4 } = require('uuid');
@@ -18,13 +19,13 @@ const confDir = pathfs.resolve(homedir, '.stack-monitor');
 
 if (!existsSync(confDir)) mkdirSync(confDir);
 const openaiConfPath = pathfs.resolve(confDir, 'openaiconf.json');
-if (!fse.existsSync(openaiConfPath)) fse.writeJSONSync(openaiConfPath, {});
+if (!existsSync(openaiConfPath)) writeFileSync(openaiConfPath, '{}', 'utf-8');
 const openaiStoragePath = pathfs.resolve(confDir, 'storage');
-if (!fse.existsSync(openaiStoragePath)) fse.mkdirSync(openaiStoragePath);
-const openaiconf = fse.readJsonSync(openaiConfPath);
+if (!existsSync(openaiStoragePath)) mkdirSync(openaiStoragePath);
+const openaiconf = JSON.parse(readFileSync(openaiConfPath, 'utf-8'));
 /** @type {OpenAIApi | null} */
-let openai = openaiconf.apikey ? new OpenAIApi({
-  apiKey: openaiconf.apikey,
+let openai = process.env.STACK_MONITOR_OPENAI_APIKEY ? new OpenAIApi({
+  apiKey: process.env.STACK_MONITOR_OPENAI_APIKEY,
 }) : null;
 
 module.exports = () => {
@@ -215,10 +216,10 @@ module.exports = () => {
 
   router.post('/openai/apikey', async (req, res) => {
     const { apikey } = req.body;
-    openaiconf.apikey = apikey;
+    process.env.STACK_MONITOR_OPENAI_APIKEY = apikey;
     save();
-    openai = openaiconf.apikey ? new OpenAIApi({
-      apiKey: openaiconf.apikey,
+    openai = process.env.STACK_MONITOR_OPENAI_APIKEY ? new OpenAIApi({
+      apiKey: process.env.STACK_MONITOR_OPENAI_APIKEY,
     }) : null;
 
     res.json(true);
@@ -236,7 +237,7 @@ module.exports = () => {
   });
 
   function save() {
-    fse.writeJsonSync(openaiConfPath, openaiconf);
+    writeFileSync(openaiConfPath, JSON.stringify(openaiconf), 'utf-8');
   }
   return router;
 };

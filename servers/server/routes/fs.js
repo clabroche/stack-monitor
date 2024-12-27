@@ -1,34 +1,34 @@
 const { express } = require('@clabroche/common-express');
 
 const router = express.Router();
-const fse = require('fs-extra');
 const pathfs = require('path');
 const PromiseB = require('bluebird');
 const os = require('os');
 const { sort } = require('fast-sort');
+const { readdir, readFile, stat } = require('fs/promises');
 
 router.get('/home-dir', async (req, res) => {
   res.send(os.homedir());
 });
 router.get('/ls', async (req, res) => {
   const path = req.query.path?.toString() || __dirname;
-  const readdir = await fse.readdir(path);
+  const dir = await readdir(path);
   const parentDirectory = {
     absolutePath: pathfs.resolve(path, '..'),
     name: '..',
     isDirectory: true,
   };
   let dirs = [parentDirectory];
-  await PromiseB.map(readdir, async (entry) => {
+  await PromiseB.map(dir, async (entry) => {
     try {
       if (entry.charAt(0) === '.') return null;
       const absolutePath = pathfs.resolve(path, entry);
-      const stat = await fse.stat(absolutePath);
+      const entryStat = await stat(absolutePath);
       /** @type {Entry} */
       const entryInfos = {
         absolutePath,
         name: entry,
-        isDirectory: stat.isDirectory(),
+        isDirectory: entryStat.isDirectory(),
         npmInfos: null,
         isStack: false,
       };
@@ -62,9 +62,9 @@ router.get('/ls', async (req, res) => {
  * @param {string} path
  */
 async function getNpmInfos(path) {
-  const readdir = await fse.readdir(path);
-  if (readdir.includes('package.json')) {
-    const packageJSON = await fse.readJSON(pathfs.resolve(path, 'package.json'));
+  const dir = await readdir(path);
+  if (dir.includes('package.json')) {
+    const packageJSON = JSON.parse(await readFile(pathfs.resolve(path, 'package.json'), 'utf-8'));
     /** @type {NpmInfos} */
     return {
       path,

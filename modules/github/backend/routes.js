@@ -1,22 +1,14 @@
 const express = require('express');
+const { Octokit } = require('fix-esm').require('@octokit/core');
+const { restEndpointMethods } = require('fix-esm').require('@octokit/plugin-rest-endpoint-methods');
 
 const router = express.Router();
-const fse = require('fs-extra');
-const pathfs = require('path');
-const Octokit = require('octokit');
 
-// ============== Load Conf
-const homedir = require('os').homedir();
+const MyOctokit = Octokit.plugin(restEndpointMethods);
 
-const confDir = pathfs.resolve(homedir, '.stack-monitor');
-if (!fse.existsSync(confDir)) fse.mkdirSync(confDir);
-const githubConfigPath = pathfs.resolve(confDir, 'github.json');
-if (!fse.existsSync(githubConfigPath)) fse.writeJSONSync(githubConfigPath, {});
-const githubconf = fse.readJsonSync(githubConfigPath);
-
-/** @type {Octokit.Octokit | null} */
-let octokit = githubconf.GH_TOKEN
-  ? new Octokit.Octokit({ auth: githubconf.GH_TOKEN })
+/** @type {Octokit & import('@octokit/plugin-rest-endpoint-methods').Api | null} */
+let octokit = process.env.STACK_MONITOR_GH_APIKEY
+  ? new MyOctokit({ auth: process.env.STACK_MONITOR_GH_APIKEY })
   : null;
 
 /** @param {import('@clabroche/common-typings').StackMonitor} stackMonitor */
@@ -36,8 +28,6 @@ module.exports = (stackMonitor) => {
     const _octokit = new Octokit.Octokit({ auth: apikey });
     const { data: { login } } = await _octokit.rest.users.getAuthenticated();
     octokit = _octokit;
-    githubconf.GH_TOKEN = apikey;
-    save();
     return res.send(login);
   });
 
@@ -62,13 +52,9 @@ module.exports = (stackMonitor) => {
 };
 
 function requirements() {
-  if (!octokit && !githubconf.GH_TOKEN) {
+  if (!octokit && !process.env.STACK_MONITOR_GH_APIKEY) {
     throw new Error('github api is not initialized');
   } else if (!octokit) {
-    octokit = new Octokit.Octokit({ auth: githubconf.GH_TOKEN });
+    octokit = new MyOctokit({ auth: process.env.STACK_MONITOR_GH_APIKEY });
   }
-}
-
-function save() {
-  fse.writeJsonSync(githubConfigPath, githubconf);
 }

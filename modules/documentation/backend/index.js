@@ -1,4 +1,4 @@
-const { readFile } = require('fs-extra');
+const { readFile } = require('fs/promises');
 const PromiseB = require('bluebird');
 const pathfs = require('path');
 const Documentation = require('./Documentation');

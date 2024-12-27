@@ -1,13 +1,15 @@
 const pathfs = require('path');
-const fse = require('fs-extra');
 const os = require('os');
+const {
+  existsSync, mkdirSync, writeFileSync, readFileSync,
+} = require('fs');
 
 const persistencePath = pathfs.resolve(os.homedir(), '.stack-monitor');
 
-if (!fse.existsSync(persistencePath)) fse.mkdirpSync(persistencePath);
+if (!existsSync(persistencePath)) mkdirSync(persistencePath, { recursive: true });
 const confsPath = pathfs.resolve(persistencePath, 'confs');
-if (!fse.existsSync(confsPath)) fse.writeJSONSync(confsPath, []);
-const store = fse.readJSONSync(confsPath);
+if (!existsSync(confsPath)) writeFileSync(confsPath, JSON.stringify([]), 'utf-8');
+const store = JSON.parse(readFileSync(confsPath, 'utf-8'));
 
 module.exports = {
   /** @type {string[]} */
@@ -16,12 +18,12 @@ module.exports = {
   async add(conf) {
     if (!store.includes(conf)) {
       store.push(conf);
-      await fse.writeJSONSync(confsPath, store);
+      await writeFileSync(confsPath, JSON.stringify(store), 'utf-8');
     }
   },
   /** @param {string} conf */
   async remove(conf) {
     store.splice(store.indexOf(conf), 1);
-    await fse.writeJSONSync(confsPath, store);
+    await writeFileSync(confsPath, JSON.stringify(store), 'utf-8');
   },
 };

@@ -18,8 +18,7 @@
     "docs:build": "node runScriptWithEnv \"turbo run build --filter @clabroche/fronts-docs\"",
     "eslint": "eslint",
     "lerna": "npx lerna",
-    "changed": "yarn lerna changed -pl --toposort",
-    "resolve-conflicts": "cd common/workflow-conflict-resolver && node src/index.js"
+    "changed": "yarn lerna changed -pl --toposort"
   },
   "repository": "git+https://github.com/clabroche/stack-monitor.git",
   "author": "clabroche <corentinlabroche@gmail.com>",
@@ -53,7 +52,6 @@
     "@lerna-lite/version": "^2.5.0",
     "@types/bluebird": "^3.5.38",
     "@types/debounce": "^1",
-    "@types/jest": "^27.5.1",
     "@types/kill-port": "^2",
     "@types/lodash": "^4.14.201",
     "@types/node": "^20.8.9",
@@ -74,9 +72,10 @@
     "eslint-plugin-react": "^7.33.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-vue": "^9.21.1",
+    "fix-esm": "^1.0.1",
     "husky": "^8.0.3",
     "kill-port": "^2.0.1",
-    "knip": "^4.5.0",
+    "knip": "^5.41.1",
     "ps-tree": "^1.2.0",
     "tsup": "^8.0.1",
     "turbo": "^2.3.3 ",
@@ -85,5 +84,9 @@
   },
   "engines": {
     "node": ">=16.0.0"
+  },
+  "dependencies": {
+    "@octokit/core": "^6.1.2",
+    "@octokit/plugin-rest-endpoint-methods": "^13.2.6"
   }
 }
