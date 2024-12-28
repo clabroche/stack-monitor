@@ -6,15 +6,6 @@
   "scripts": {
     "test": ""
   },
-  "eslintConfig": {
-    "parser": "vue-eslint-parser",
-    "env": {
-      "browser": true
-    },
-    "rules": {
-      "import/no-extraneous-dependencies": "off"
-    }
-  },
   "devDependencies": {
     "@clabroche/common-retrigger-all-build": "workspace:*",
     "vue": "^3.4.18",

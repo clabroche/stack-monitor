@@ -1,4 +1,4 @@
-module.exports = {
+const plugins = {
   bugs: require('@clabroche/modules-bugs-backend'),
   configuration: require('@clabroche/modules-configuration-backend'),
   devOps: require('@clabroche/modules-dev-ops-backend'),
@@ -24,3 +24,7 @@ module.exports = {
   vscode: require('@clabroche/modules-vscode-backend'),
   docker: require('@clabroche/modules-docker-backend'),
 };
+module.exports = Object.keys(plugins).reduce((acc, key) => {
+  if (plugins[key].enabled) acc[key] = plugins[key];
+  return acc;
+}, {});

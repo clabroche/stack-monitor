@@ -1,9 +1,8 @@
 <template>
-
   <div id="app-container" v-if="connected">
     <div id="app">
       <sidebar-view-mode v-if="!['stack-chooser', 'import-create'].includes($route.name?.toString() || '')"/>
-      <sidebar v-if="['stack-single', 'stack-single-no-view'].includes($route.name)"/>
+      <sidebar v-if="['stack-single', 'stack-single-no-view'].includes($route.name?.toString() || '')"/>
       <div class="main">
         <router-view/>
       </div>

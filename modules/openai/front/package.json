@@ -6,15 +6,6 @@
   "scripts": {
     "test": ""
   },
-  "eslintConfig": {
-    "parser": "vue-eslint-parser",
-    "env": {
-      "browser": true
-    },
-    "rules": {
-      "import/no-extraneous-dependencies": "off"
-    }
-  },
   "devDependencies": {
     "@clabroche/common-retrigger-all-build": "workspace:*",
     "dayjs": "^1.11.10",

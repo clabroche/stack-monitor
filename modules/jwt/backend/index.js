@@ -1,5 +1,6 @@
 /** @type {import('@clabroche/modules-plugins-loader-front/src/views').PluginSM<null>} */
 const plugin = {
+  enabled: true,
   name: 'JWT',
   displayName: 'JWT',
   description: 'View a json web token',

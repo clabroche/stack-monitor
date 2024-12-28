@@ -85,15 +85,12 @@ const plugins = [
       },
     ],
   })),
-  { name: 'Help', cmp: Help },
-  { name: 'OpenApi', cmp: OpenApi },
   { name: 'Logs', cmp: LogsVue },
   { name: 'Git', cmp: GitVue },
   { name: 'Github', cmp: Github },
   { name: 'Documentation', cmp: Documentation },
   { name: 'Npm', cmp: NpmVue },
   { name: 'Bugs', cmp: BugsVue },
-  { name: 'Vscode', cmp: Vscode },
   { name: 'Configuration', cmp: ConfigsVue },
 ];
 export default plugins;
@@ -101,6 +98,7 @@ export default plugins;
 /**
  * @template T
  * @typedef {{
+ *  enabled: boolean,
  *  name: string,
  *  displayName: string,
 *   description?: string,

@@ -2,6 +2,7 @@ const commandExists = require('command-exists');
 
 /** @type {import('@clabroche/modules-plugins-loader-front/src/views').PluginSM<null>} */
 const plugin = {
+  enabled: true,
   name: 'Vscode',
   displayName: 'Vscode',
   description: 'interact with vscode extension',

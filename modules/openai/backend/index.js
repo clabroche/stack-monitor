@@ -1,5 +1,6 @@
 /** @type {import('@clabroche/modules-plugins-loader-front/src/views').PluginSM<null>} */
 const plugin = {
+  enabled: true,
   name: 'OpenAI',
   displayName: 'Open A.I.',
   description: 'Just chat with Chat GPT',

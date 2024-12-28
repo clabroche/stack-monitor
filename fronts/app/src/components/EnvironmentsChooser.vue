@@ -6,6 +6,7 @@
     <div>
       Current environment
       <Select
+        class="select"
           size="small"
           :defaultValue="currentEnvironment.label"
           :value="currentEnvironment.label"
@@ -156,7 +157,12 @@ function editEnvironments() {
   position: relative;
   z-index: 10;
 }
-
+.select {
+  padding: 0;
+  :deep(.p-select-label) {
+    padding: 0 10px;
+  }
+}
 .reload-modal {
   width: 100vw;
   height: 100vh;

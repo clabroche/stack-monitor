@@ -2,6 +2,7 @@ const Kanban = require('./Kanban');
 
 /** @type {import('@clabroche/modules-plugins-loader-front/src/views').PluginSM<import('./Kanban')>} */
 const plugin = {
+  enabled: true,
   name: 'kanban',
   displayName: 'Kanban',
   description: 'Manage your project with cards',

@@ -5,36 +5,19 @@
     </ul>
     <ul v-if="buttonsBottom.length">
       <div style="position: relative">
-        <SpeedDial :tooltipOptions="{position: 'left', event: 'hover'}" :model="buttonsPlugins.map(button => {
-          return button
-        })" direction="right" style="" :pt="{
-          list: {
-            style: {
-              zIndex: 100000000,
-              position: 'absolute',
-              left: '100%',
-              border: '1px solid var(--system-border-borderColor)',
-              backgroundColor: 'var(--system-sidebar-backgroundColor)',
-            }
-          }
-        }" >
-        <template #button="{ toggleCallback, visible }">
-          <Button :class="{'speeddial-button-trigger': true, active: visible}" @click="toggleCallback"><i class="fas fa-layer-group" :style="{transition: '300ms', transform: visible ? 'rotate(45deg)' : ''}"></i></Button>
-        </template>
-        <template #item="{ item, toggleCallback }">
-          <Popover appendTo="parent" trigger="mouseenter" placement="top">
-            <template #trigger>
-              <button @click="item.click();toggleCallback($event)" :class="{ active: $router.currentRoute.value.fullPath.includes(item.active), 'button-speed-dial': true }" class="sidebar-item" :title="item.text">
-                <i v-if="item.icon" :class="{ [item.icon]: true }" aria-hidden="true"/>
-                <img v-else-if="item.img" :src="item.img" height="10px">
-              </button>
-            </template>
-            <template #content>
-              {{item.text}}
-            </template>
-          </Popover>
-        </template>  
-      </SpeedDial>
+        <div v-for="item of buttonsPlugins" :key="item?.text">
+          <Popover appendTo="parent" trigger="mouseenter" placement="right">
+              <template #trigger>
+                <button @click="item?.click()" :class="{ active: $router.currentRoute.value.fullPath.includes(item?.active || ''), 'button-speed-dial': true }" class="sidebar-item" :title="item?.text">
+                  <i v-if="item?.icon" :class="{ [item?.icon]: true }" aria-hidden="true"/>
+                  <img v-else-if="item?.img" :src="item?.img" height="10px">
+                </button>
+              </template>
+              <template #content>
+                {{item?.text}}
+              </template>
+            </Popover>
+        </div>
       </div>
       <Popover appendTo="parent" trigger="mouseenter" placement="right">
         <template #trigger>
@@ -164,6 +147,7 @@ export default {
     })
 
     return {
+      speedDialVisible: ref(true),
       Theme,
       groups: computed(() => {
         const groupsObj = Object.keys(Theme.themes.value).reduce((agg, themeId) => {

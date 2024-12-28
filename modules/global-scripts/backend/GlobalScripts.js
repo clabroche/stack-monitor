@@ -16,7 +16,7 @@ const GlobalScripts = (stackMonitor) => {
         globalScripts.splice(index, 1);
       }
       globalScripts.push(script);
-      stackMonitor.Socket.io?.emit('reloadScripts');
+      stackMonitor.Socket.emit('reloadScripts');
     },
     getScripts() {
       return globalScripts;
@@ -40,7 +40,6 @@ const GlobalScripts = (stackMonitor) => {
     },
     /** @param {string} id */
     launchScript(id) {
-      if (!Socket.io) throw new Error('Socket not ready');
       const script = this.getScript(id);
       if (!script) throw new Error(`Script ${id} not found`);
       const communicationId = v4();
@@ -60,7 +59,7 @@ const GlobalScripts = (stackMonitor) => {
         return (script?.pipeline || []).indexOf(step);
       }
       Socket.on(communicationId, async (
-      /** @type {import('socket.io').Socket} */ socket,
+      /** @type {import('ws').WebSocket} */ socket,
         /** @type {string} */ event,
         /** @type {any} */ data,
       ) => {

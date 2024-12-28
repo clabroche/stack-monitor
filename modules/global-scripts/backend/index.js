@@ -2,6 +2,7 @@ const GlobalScripts = require('./GlobalScripts');
 
 /** @type {import('@clabroche/modules-plugins-loader-front/src/views').PluginSM<GlobalScripts>} */
 const plugin = {
+  enabled: true,
   name: 'Global scripts',
   displayName: 'Global scripts',
   description: 'Launch scripts and rule the world',

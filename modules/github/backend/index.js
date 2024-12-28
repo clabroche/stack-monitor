@@ -1,5 +1,6 @@
 /** @type {import('@clabroche/modules-plugins-loader-front/src/views').PluginSM<null>} */
 const plugin = {
+  enabled: true,
   name: 'Github',
   displayName: 'Github',
   description: 'View pull requests for a given service',

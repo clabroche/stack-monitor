@@ -1,5 +1,6 @@
 /** @type {import('@clabroche/modules-plugins-loader-front/src/views').PluginSM<null>} */
 const plugin = {
+  enabled: true,
   name: 'Diff',
   displayName: 'Differences',
   description: 'Find differences between two strings',

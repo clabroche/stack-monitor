@@ -163,7 +163,7 @@ function Service(service, Stack, { isUpdate } = { isUpdate: false }) {
     if (!isUpdate) {
       this.commands.forEach((command) => {
         // Load .env
-        if (!command.spawnOptions?.cwd) command.spawnOptions.cwd = '.';
+        if (!command.spawnOptions?.cwd) command.spawnOptions.cwd = '';
         const customEnvs = this.loadCustomEnv(command.spawnOptions.cwd.toString()) || {};
         Object.keys(customEnvs).forEach((key) => {
           if (!command.spawnOptions?.envs) return;

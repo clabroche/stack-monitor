@@ -31,13 +31,13 @@
             </div>
             <Button :label="importViewMode? 'Import view' : 'Env view'" @click="toggleimportView(environment)"></Button>
           </div>
-          <DataTable scrollable class="datatable" size="small"  sortField="key" :sortOrder="1" v-if="!importViewMode"
+          <DataTable scrollable class="datatable" size="small"  sortField="key" :sortOrder="1" v-if="!importViewMode" :resizable-columns="true"
             :value="parseRawEnvs(environment.envs)"
             tableStyle="width: 100%;">
-            <Column field="action" header="" col style="max-width: 1rem" :pt="{
+            <Column field="action" header="" col style="width: 20px" :pt="{
               bodyCell: {
                 style: {
-                  verticalAlign: 'top'
+                  verticalAlign: 'middle'
                 }
               }
             }">
@@ -50,19 +50,42 @@
             <Column field="key" header="Key" col :colspan="1" style="max-width: 5rem" :pt="{
               bodyCell: {
                 style: {
-                  verticalAlign: 'top'
+                  verticalAlign: 'middle'
                 }
               }
-            }"></Column>
+            }">
+              <template #body="{ data, field }">
+                <Popover appendTo="parent" trigger="mouseenter" placement="top">
+                  <template #trigger>
+                    {{ data[field] }}
+                  </template>
+                  <template #content>
+                    <span class="text">{{data[field]}}</span>
+                  </template>
+                </Popover>
+              </template>
+            </Column>
             <Column field="value" header="Value" :colspan="16" col :pt="{
               bodyCell: {
                 style: {
-                  verticalAlign: 'top'
+                  verticalAlign: 'middle'
                 }
               }
             }">
               <template #body="{ data, field }">
                 <InputText v-model="environment.envs[data.key]" @blur="saveEnvironment(environment)" fluid>
+                </InputText>
+              </template>
+            </Column>
+            <Column field="value" header="Override" :colspan="16" col :pt="{
+              bodyCell: {
+                style: {
+                  verticalAlign: 'middle'
+                }
+              }
+            }">
+              <template #body="{ data, field }">
+                <InputText v-model="environment.envs[data.key + '_STACKMONITOR_OVERRIDE']" @blur="saveEnvironment(environment)" fluid>
                 </InputText>
               </template>
             </Column>
@@ -90,6 +113,7 @@ import Modal from '../../components/Modal.vue';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import Textarea from 'primevue/textarea';
+import Popover from '../../components/Popover.vue';
 const keyToAdd = ref('')
 function addEnv(environment, value) {
   environment.envs[value] = ''
@@ -122,7 +146,7 @@ function parseCode(environment) {
 }
 
 function parseRawEnvs(envs) {
-  return Object.keys(envs).map((key) => ({ key, value: envs[key] }));
+  return Object.keys(envs).map((key) => ({ key, value: envs[key] })).filter(({ key }) => !key.endsWith('_STACKMONITOR_OVERRIDE'));
 }
 const envModalRefs = ref({})
 /** @type {import('vue').Ref<Record<string, import('../../../../servers/server/models/stack').Environment>[]>} */

@@ -1,5 +1,6 @@
 /** @type {import('@clabroche/modules-plugins-loader-front/src/views').PluginSM<import('./UUID')>} */
 const plugin = {
+  enabled: true,
   name: 'UUID',
   displayName: 'UUID',
   description: 'Generate an UUID',

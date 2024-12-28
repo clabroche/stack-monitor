@@ -754,11 +754,11 @@ export default {
               }, {
                 key: `command-${commandIndex}-path`,
                 label: 'Path',
-                description: `${props.service.rootPath || '.'}/${command.spawnOptions?.cwd || ''}`,
+                description: `${command.spawnOptions?.cwd || ''}`,
                 children: [
                   {
                     type: 'inputtext',
-                    beforeText: `${props.service.rootPath || '.'}/`,
+                    beforeText: `${props.service.rootPath || '.'}`,
                     model: {
                       obj: command.spawnOptions,
                       key: 'cwd',

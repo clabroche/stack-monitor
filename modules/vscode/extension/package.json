@@ -96,18 +96,18 @@
     "axios": "^1.6.7",
     "bluebird": "^3.7.2",
     "command-exists": "^1.2.9",
-    "socket.io-client": "^4.7.4"
+    "ws": "^8.18.0"
   },
   "devDependencies": {
     "@types/command-exists": "^1.2.3",
     "@types/mocha": "^10.0.6",
     "@types/node": "18.x",
     "@types/vscode": "^1.86.0",
+    "@types/ws": "^8",
     "@vscode/test-cli": "^0.0.6",
     "@vscode/test-electron": "^2.3.9",
-    "@vscode/vsce": "^2.24.0",
+    "@vscode/vsce": "^3.2.1",
     "esbuild": "^0.20.1",
-    "eslint": "^8.56.0",
     "typescript": "^5.3.3"
   }
 }

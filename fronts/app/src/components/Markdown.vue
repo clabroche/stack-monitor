@@ -12,7 +12,6 @@ import {computed, ref} from 'vue'
 import markdownIt from 'markdown-it'
 import hljs from 'highlight.js'
 import 'highlight.js/styles/monokai.min.css'
-
 const md = markdownIt({
   highlight: function (str, lang) {
     if (lang && hljs.getLanguage(lang)) {

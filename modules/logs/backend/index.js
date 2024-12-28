@@ -2,6 +2,7 @@ const dayjs = require('dayjs');
 
 /** @type {import('@clabroche/modules-plugins-loader-front/src/views').PluginSM<null>} */
 const plugin = {
+  enabled: true,
   name: 'Logs',
   displayName: 'Logs',
   description: 'Show, parse and communicate with logs produced by yours commands',

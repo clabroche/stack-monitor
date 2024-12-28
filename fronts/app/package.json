@@ -57,11 +57,6 @@
     "vue-router": "^4.2.5",
     "vuedraggable": "^4.1.0"
   },
-  "eslintConfig": {
-    "rules": {
-      "import/no-extraneous-dependencies": "off"
-    }
-  },
   "postcss": {
     "plugins": {
       "autoprefixer": {}

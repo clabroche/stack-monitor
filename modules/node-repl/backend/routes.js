@@ -38,17 +38,17 @@ module.exports = (stackMonitor) => {
       cwd: pathfs.resolve(__dirname),
     });
     let result = '';
-    Socket.io?.emit('node-repl:update', { clear: true });
+    Socket.emit('node-repl:update', { clear: true });
     spawnCmd.stdout.on('data', (data) => {
-      Socket.io?.emit('node-repl:update', { msg: data.toString('utf-8') });
+      Socket.emit('node-repl:update', { msg: data.toString('utf-8') });
       result += data.toString('utf-8');
     });
     spawnCmd.stderr.on('data', (data) => {
-      Socket.io?.emit('node-repl:update', { msg: data.toString('utf-8') });
+      Socket.emit('node-repl:update', { msg: data.toString('utf-8') });
       result += data.toString('utf-8');
     });
     spawnCmd.on('close', () => {
-      Socket.io?.emit('node-repl:update', { close: true });
+      Socket.emit('node-repl:update', { close: true });
       conf.chat[room].result = result;
       unlinkSync(filePath);
       save();

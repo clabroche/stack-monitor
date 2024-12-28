@@ -1,5 +1,6 @@
 /** @type {import('@clabroche/modules-plugins-loader-front/src/views').PluginSM<null>} */
 const plugin = {
+  enabled: false,
   name: 'DevOps',
   displayName: 'Dev ops',
   description: 'Choose a tool used for dev ops purposes',

@@ -56,7 +56,6 @@ export default {
     const mouseInAnchor = ref(false);
     onMounted(async () => {
       await Stack.loadServices()
-      groups.value = []
       Socket.on('service:crash', async ({ label, code, signal }) => {
         notification.next('error', `${label} has crashed with code ${code}`)
         await Stack.loadServices()

@@ -1,6 +1,6 @@
 import { reactive, ref } from 'vue';
 import axios from '../helpers/axios';
-
+const a = "fzmfzemfkzefmzek"
 function System() {
   this.infos = reactive({
     cpu: 0,

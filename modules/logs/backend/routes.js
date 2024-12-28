@@ -66,14 +66,14 @@ module.exports = (stackMonitor) => {
     } = req.body;
     if (!pid) throw new Error('Pid is required');
     if (pid) service.terminate(pid, !!forceKill);
-    Socket.io?.emit('logs:update', []);
+    Socket.emit('logs:update', []);
     res.send('ok');
   });
 
   router.delete('/logs/:service/logs', (req, res) => {
     const service = findService(req.params.service);
     service.store = [];
-    Socket.io?.emit('logs:clear', { label: service.label });
+    Socket.emit('logs:clear', { label: service.label });
     res.send(service.store);
   });
   return router;

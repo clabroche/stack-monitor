@@ -3,6 +3,7 @@ const pathfs = require('path');
 
 /** @type {import('@clabroche/modules-plugins-loader-front/src/views').PluginSM<null>} */
 const plugin = {
+  enabled: true,
   name: 'Bugs',
   displayName: 'Bugs',
   description: 'Find bugs across a whole javascript project',
