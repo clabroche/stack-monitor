@@ -29,7 +29,6 @@ const makeAllPackagesExternalPlugin = {
   async setup(build) {
     await rm(path.resolve(__dirname, 'dist'), {recursive: true, force: true})
     build.onResolve({ filter: /.*/ }, async (args) => {
-      return { external: false };
       if (!/^(#|\/|\.\/|\.\.\/)/.test(args.path)) {
         if (/@clabroche\/*/.test(args.path)) {
           return { external: false };
@@ -111,7 +110,7 @@ export default defineConfig({
   bundle: true,
   publicDir: './src/public',
   esbuildPlugins: [
-    // makeAllPackagesExternalPlugin,
+    makeAllPackagesExternalPlugin,
     copyFilePlugin,
     integrateWebApp,
     syncPackageJSON,
