@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.6](https://github.com/clabroche/stack-monitor/compare/v2.0.5...v2.0.6) (2025-01-04)
+
+### Bug Fixes
+
+* externalize packages since gpt read external file from his package ([e8e50a2](https://github.com/clabroche/stack-monitor/commit/e8e50a2729fef674e9c9bf831ab8c31dac2ffa75))
+
 ## [2.0.5](https://github.com/clabroche/stack-monitor/compare/v2.0.4...v2.0.5) (2025-01-04)
 
 ### Bug Fixes
