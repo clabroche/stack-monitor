@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.5](https://github.com/clabroche/stack-monitor/compare/v2.0.4...v2.0.5) (2025-01-04)
+
+### Bug Fixes
+
+* remove some dependencies ([5667402](https://github.com/clabroche/stack-monitor/commit/5667402d57add874a89ba029ce62b16b3bbed9e0))
+
 # [2.0.0](https://github.com/clabroche/stack-monitor/compare/v1.18.12...v2.0.0) (2024-12-19)
 
 * feat!: migrate stackmonitor to entire UI ([e173073](https://github.com/clabroche/stack-monitor/commit/e173073d932be7e400b1f51261c090116e8fb543))

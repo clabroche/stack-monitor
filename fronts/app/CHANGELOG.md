@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.5](https://github.com/clabroche/stack-monitor/compare/v2.0.4...v2.0.5) (2025-01-04)
+
+### Bug Fixes
+
+* attach heritage to environment instead of service + various fixes ([4647010](https://github.com/clabroche/stack-monitor/commit/4647010eadbf3370155faca171a0b10caea32baf))
+* remove some dependencies ([5667402](https://github.com/clabroche/stack-monitor/commit/5667402d57add874a89ba029ce62b16b3bbed9e0))
+* various fixes ([d3ac538](https://github.com/clabroche/stack-monitor/commit/d3ac538093a6d475cf1eca0f262a2accf91b3373))
+
 ## [2.0.1](https://github.com/clabroche/stack-monitor/compare/v2.0.0...v2.0.1) (2024-12-25)
 
 ### Bug Fixes

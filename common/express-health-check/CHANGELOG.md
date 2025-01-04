@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.5](https://github.com/clabroche/stack-monitor/compare/v2.0.4...v2.0.5) (2025-01-04)
+
+### Bug Fixes
+
+* remove some dependencies ([5667402](https://github.com/clabroche/stack-monitor/commit/5667402d57add874a89ba029ce62b16b3bbed9e0))
+
 # [2.0.0](https://github.com/clabroche/stack-monitor/compare/v1.18.12...v2.0.0) (2024-12-19)
 
 **Note:** Version bump only for package @clabroche/common-express-health-check
