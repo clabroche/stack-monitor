@@ -7,6 +7,15 @@
       </h3>
       <div>
         <IftaLabel>
+          <Select size="small"
+            v-model="environment.extends[0]"
+            :options="['', ...environments.filter(a => a.label !== environment.label).map(a => a.label)]"
+            @blur="saveEnvironment(environment)"
+            fluid
+            placeholder="Choose an environment" />
+          <label>Extend from</label>
+        </IftaLabel>
+        <IftaLabel>
           <InputText size="small" fluid v-model="environment.color" @blur="saveEnvironment(environment)" @keypress.enter="saveEnvironment(environment)"></InputText>
           <label>Color: </label>
         </IftaLabel>
@@ -85,7 +94,7 @@
               }
             }">
               <template #body="{ data, field }">
-                <InputText v-model="environment.envs[data.key + '_STACKMONITOR_OVERRIDE']" @blur="saveEnvironment(environment)" fluid>
+                <InputText v-model="environment.envs[data.key + '_STACK_MONITOR_OVERRIDE']" @blur="saveEnvironment(environment)" fluid>
                 </InputText>
               </template>
             </Column>
@@ -95,6 +104,12 @@
       </Modal>
     </div>
   </SectionCmp>
+
+  <Modal ref="modalDeleteRef" validate-string="Delete">
+    <template #body>
+      Are you sure you want to delete this environment?
+    </template>
+  </Modal>
 </template>
 
 <script setup>
@@ -114,6 +129,7 @@ import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import Textarea from 'primevue/textarea';
 import Popover from '../../components/Popover.vue';
+import Select from 'primevue/select';
 const keyToAdd = ref('')
 function addEnv(environment, value) {
   environment.envs[value] = ''
@@ -146,7 +162,7 @@ function parseCode(environment) {
 }
 
 function parseRawEnvs(envs) {
-  return Object.keys(envs).map((key) => ({ key, value: envs[key] })).filter(({ key }) => !key.endsWith('_STACKMONITOR_OVERRIDE'));
+  return Object.keys(envs).map((key) => ({ key, value: envs[key] })).filter(({ key }) => !key.endsWith('_STACK_MONITOR_OVERRIDE'));
 }
 const envModalRefs = ref({})
 /** @type {import('vue').Ref<Record<string, import('../../../../servers/server/models/stack').Environment>[]>} */
@@ -154,7 +170,6 @@ const environments = ref([])
 onMounted(async () => {
   Socket.on('reloadEnvironments', reload)
   reload()
-
 })
 onBeforeUnmount(() => {
   Socket.off('reloadEnvironments', reload)
@@ -178,7 +193,11 @@ async function saveEnvironment(environment) {
   }, 100);
 }
 
+
+const modalDeleteRef = ref()
 async function deleteEnvironment(environment) {
+  const res = await modalDeleteRef.value.open().promise
+  if(!res) return
   await axios.delete(`/stack/environments/${environment.label}`, environment)
       .then(() => notification.next('success', 'Environment deleted'))
       .catch(() => notification.next('success', 'Environment cant be deleted'));  

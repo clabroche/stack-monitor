@@ -2,45 +2,40 @@
   <div class="root">
     <Modal ref="modalEditEnv" :noCancel="true" validateString="Close" :maxHeight="'80vh'" :noScroll="false">
       <template #header>
-        Edit
-        <Select
-          size="small"
-          v-model="showEnvironment"
-          @change="changeEnvironment"
-          :options="extendsEnvironments.filter(a => a)"
-          placeholder="Select an environment" />
-        environment
+        <div class="line">
+          Edit
+          <Select
+            size="small"
+            v-model="showEnvironment"
+            @change="changeEnvironment"
+            :options="extendsEnvironments.filter(a => a)"
+            placeholder="Select an environment" />
+          environment
+          <div v-if="currentEnvironment.extends?.[0]">
+            <Badge :value="`This environment herit from 
+            ${currentEnvironment.extends[0]}
+            environment`" size="large" severity="warn"></Badge>
+          </div>
+        </div>
       </template>
       <template #body  v-if="command">
         <div class="line spaced">
-          <div></div>
           <div>
-            <Button size="small" label="Import view" @click="toggleimportView()"/>
-            <Button size="small" label="Export env" @click="exportEnv()"/>
-          </div>
-        </div>
-        <div class="line spaced">
-          <div class="line">
-            <template v-if="!importView">
-              <i class="fas fa-plus"></i>
+            <InputGroup v-if="!importView">
               <InputText
                 size="small"
                 icon="fas fa-plus"
                 v-model="envToAdd.key"
                 placeholder="Add new Env"
-                @keypress.enter="addEnv()"></InputText>
-              </template>
+                @keypress.enter="addEnv()"/>
+              <InputGroupAddon icon>
+                <Button size="small" icon="fas fa-plus" @click="addEnv()" />
+              </InputGroupAddon>
+            </InputGroup>
           </div>
-          <div class="line" v-if="!!extendsEnvironments.filter(a => a && a !== currentEnvironment.label).length">
-            <IftaLabel :style="{minWidth: '190px'}">
-              <Select size="small"
-                v-model="service.commands[commandIndex].spawnOptions.envs[currentEnvironment.label].extends[0]"
-                :options="extendsEnvironments.filter(a => a !== currentEnvironment.label)"
-                @change="save"
-                fluid
-                placeholder="Choose an environment" />
-              <label>Extends env variables from</label>
-            </IftaLabel>
+          <div>
+            <Button size="small" :label="importView ? 'Variable view' : 'Import view'" @click="toggleimportView()" icon="fas fa-eye"/>
+            <Button size="small" label="Download env" @click="exportEnv()" icon="fas fa-download"/>
           </div>
         </div>
         <DataTable scrollable class="datatable" size="small"   v-if="!importView" sortField="key" :sortOrder="1"
@@ -86,31 +81,70 @@
               }
             }">
               <template #body="{ data, field }">
-                <IftaLabel>
-                  <AutoComplete
-                    v-model="data.value"
-                    dropdown
-                    size="small"
-                    :suggestions="items"
-                    @complete="search"
-                    @input="() => setOverrideIfNeeded(data)"
-                    @change="() => setOverrideIfNeeded(data)"
-                    autofocus
-                    fluid
-                    @blur="save"
-                    @keypress.enter="save"/>
-                  <label>Variable</label>
-                </IftaLabel>
-                <div v-if="data[field] && data[field].match(/{{(.*)}}/gi)">
-                  <IftaLabel size="small" :style="{marginTop: '4px'}">
-                    <InputText
-                      v-model="currentEnvironment.envs[extractTag(data[field])]"
-                      @blur="saveEnvironment"
-                      @keypress.enter="saveEnvironment"
+                <div class="line">
+                  <IftaLabel :style="{flexGrow: 1}">
+                    <AutoComplete
+                      v-model="data.value"
+                      dropdown
+                      size="small"
+                      :suggestions="items"
+                      @complete="search"
+                      @input="() => setOverrideIfNeeded(data)"
+                      @change="() => setOverrideIfNeeded(data)"
                       autofocus
-                      fluid />
-                      <label>Update variable value globally</label>
+                      fluid
+                      @blur="save"
+                      @keypress.enter="save"/>
+                    <label>Variable</label>
                   </IftaLabel>
+                </div>
+                <div class="line">
+                  <IftaLabel :style="{flexGrow: 1}" v-if="data[field] && data[field].match(/{{(.*)}}/gi)">
+                    <InputText
+                      v-model="data.prefix"
+                      dropdown
+                      size="small"
+                      :suggestions="items"
+                      @complete="search"
+                      @input="() => setOverrideIfNeeded(data)"
+                      @change="() => setOverrideIfNeeded(data)"
+                      autofocus
+                      fluid
+                      @blur="save"
+                      @keypress.enter="save"/>
+                    <label>Prefix</label>
+                  </IftaLabel>
+                  
+                  <IftaLabel :style="{flexGrow: 1}" v-if="data[field] && data[field].match(/{{(.*)}}/gi)">
+                    <InputText
+                      v-model="data.suffix"
+                      dropdown
+                      size="small"
+                      :suggestions="items"
+                      @complete="search"
+                      @input="() => setOverrideIfNeeded(data)"
+                      @change="() => setOverrideIfNeeded(data)"
+                      autofocus
+                      fluid
+                      @blur="save"
+                      @keypress.enter="save"/>
+                    <label>Suffix</label>
+                  </IftaLabel>
+                </div>
+                <div v-if="data[field] && data[field].match(/{{(.*)}}/gi)">
+                  <InputGroup>
+                      <InputGroupAddon v-if="data.prefix">{{data.prefix}}</InputGroupAddon>
+                      <IftaLabel size="small" :style="{marginTop: '4px'}">
+                        <InputText
+                          v-model="currentEnvironment.envs[extractTag(data[field])]"
+                          @blur="saveEnvironment"
+                          @keypress.enter="saveEnvironment"
+                          autofocus
+                          fluid />
+                          <label>Update variable value globally</label>
+                      </IftaLabel>
+                      <InputGroupAddon v-if="data.suffix">{{data.suffix}}</InputGroupAddon>
+                  </InputGroup>
                 </div>
               </template>
             </Column>
@@ -122,30 +156,37 @@
               }
             }">
               <template #body="{ data, field }">
-                <IftaLabel>
-                  <InputText
-                    :disabled="!!extractTag(data.override)"
-                    v-model="data[field]"
-                    autofocus
-                    fluid
-                    @blur="save"
-                    @keypress.enter="save"/>
-                  <label>Variable</label>
-                </IftaLabel>
-                <div v-if="data[field] && data[field].match(/{{(.*)}}/gi)">
-                  <IftaLabel size="small" :style="{marginTop: '4px'}">
+                <div class="line">
+                  <IftaLabel :style="{flexGrow: 1}">
                     <InputText
-                      v-model="currentEnvironment.envs[extractTag(data[field])]"
-                      @blur="saveEnvironment"
-                      @keypress.enter="saveEnvironment"
+                      :disabled="!!extractTag(data.override)"
+                      v-model="data[field]"
                       autofocus
-                      fluid />
-                      <label>Update variable value globally</label>
+                      full
+                      fluid
+                      @blur="save"
+                      @keypress.enter="save"/>
+                    <label>Variable</label>
                   </IftaLabel>
+                </div>
+                <div v-if="data[field] && data[field].match(/{{(.*)}}/gi)">
+                  <InputGroup>
+                      <InputGroupAddon v-if="data.prefix">{{data.prefix}}</InputGroupAddon>
+                      <IftaLabel size="small" :style="{marginTop: '4px'}">
+                        <InputText
+                          v-model="currentEnvironment.envs[extractTag(data[field])]"
+                          @blur="saveEnvironment"
+                          @keypress.enter="saveEnvironment"
+                          autofocus
+                          fluid />
+                          <label>Update variable value globally</label>
+                      </IftaLabel>
+                      <InputGroupAddon v-if="data.suffix">{{data.suffix}}</InputGroupAddon>
+                    </InputGroup>
                 </div>
               </template>
             </Column>
-            <Column field="systemOverride" header="System override">
+            <Column field="systemOverride" header="System override" :style="{maxWidth: '4rem'}">
               <template #body="{ data, field }">
                 {{ data[field] }}
               </template>
@@ -175,6 +216,9 @@ import Modal from '../../../../fronts/app/src/components/Modal.vue';
 import stack from '../../../../fronts/app/src/models/stack';
 import axios from '../../../../fronts/app/src/helpers/axios';
 import notification from '../../../../fronts/app/src/helpers/notification';
+import InputGroupAddon from 'primevue/inputgroupaddon';
+import InputGroup from 'primevue/inputgroup';
+import Badge from 'primevue/badge';
 
 const command = ref();
 const commandIndex = ref();
@@ -183,7 +227,7 @@ const items = ref([]);
 const search = (event) => {
   const query = extractTag(event.query) || event.query;
   items.value = Object.keys(currentEnvironment.value.envs)
-    .filter((key) => key.toUpperCase().includes(query.toUpperCase()) && !key.toUpperCase().includes('STACKMONITOR_OVERRIDE'))
+    .filter((key) => key.toUpperCase().includes(query.toUpperCase()) && !key.toUpperCase().includes('STACK_MONITOR_OVERRIDE'))
     .map((key) => `{{${key}}}`);
 };
 
@@ -200,7 +244,7 @@ const code = ref('');
 function toggleimportView() {
   if (!importView.value) {
     code.value = `# key=value
-${getEnvs().map((env) => `${env.key}=${env.value}`).join('\n')}
+${getEnvs().map((env) => `${env.key}=${env.prefix || ''}${env.value|| ''}${env.suffix || ''}`).join('\n')}
 `;
   }
   importView.value = !importView.value;
@@ -228,7 +272,7 @@ function parseCode() {
       .map((envString) => {
         const [key, ...value] = envString.split('=');
         const env = getEnvs().find((env) => env.key === key) || {
-          key, value: '', systemOverride: '', override: '',
+          key, value: '', systemOverride: '', override: '', prefix: '', suffix: ''
         };
         env.value = value.join('=');
         setOverrideIfNeeded(env);
@@ -251,10 +295,18 @@ function addEnv() {
   save();
 }
 function setOverrideIfNeeded(data) {
-  if (extractTag(data.value)) data.override = `{{${extractTag(data.value)}_STACKMONITOR_OVERRIDE}}`;
+  const tag = extractTag(data.value)
+  if (tag) {
+    const res = /(.*){{.*}}(.*)/gi.exec(data.value)
+    data.prefix = res?.[1] || data.prefix || ''
+    data.suffix = res?.[2] || data.suffix || ''
+    data.value = `{{${tag}}}`
+    data.override = `{{${tag}_STACK_MONITOR_OVERRIDE}}`;
+  }
   else if (extractTag(data.override)) {
     data.override = '';
   }
+  
 }
 
 async function exportEnv() {
@@ -298,9 +350,9 @@ async function deleteEnv(key) {
   setEnvs(getEnvs().filter((env) => env.key !== key));
   save();
 }
-/** @type {import('vue').Ref<{label: string, envs: Record<string, {envs: string}>, overrideEnvs: Record<string, {envs: string}>, }[]>} */
+/** @type {import('vue').Ref<{label: string, envs: Record<string, {envs: string}>, overrideEnvs: Record<string, {envs: string}>, extends: string[]}[]>} */
 const environments = ref([]);
-/** @type {import('vue').Ref<{label: string, envs: Record<string, {envs: string}>, overrideEnvs: Record<string, {envs: string}>, }>} */
+/** @type {import('vue').Ref<{label: string, envs: Record<string, {envs: string}>, overrideEnvs: Record<string, {envs: string}>, extends: string[]}>} */
 const currentEnvironment = ref({ label: '', envs: {}, overrideEnvs: {} });
 const showEnvironment = ref('');
 onMounted(async () => {
@@ -344,11 +396,16 @@ defineExpose({
     .p-datatable-table-container {
       width: 100%;
     }
+    .p-inputgroupaddon {
+      line-break: anywhere
+    }
   }
   .line {
     display: flex;
+    flex-wrap: wrap;
     gap: 10px;
     align-items: center;
+    margin: 5px 0;
     &.spaced {
       justify-content: space-between;
     }

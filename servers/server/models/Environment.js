@@ -17,6 +17,8 @@ class Environment {
     this.bgColor = environment.bgColor || '';
     /** @type {{[key: string]: string}} */
     this.envs = environment.envs || {};
+    /** @type {string[]} */
+    this.extends = environment.extends || [];
     /** @type {{[key: string]: string}} */
     this.overrideEnvs = environment.overrideEnvs || {};
   }
@@ -51,11 +53,30 @@ class Environment {
     return envs.find((env) => env.label === envLabel);
   }
 
+  /** @returns {Promise<Environment[]>} */
+  async getExtendedEnvironments() {
+    return [
+      this,
+      ...await PromiseB
+        .mapSeries(this.extends || [], (environmentLabel) =>  Environment.find(environmentLabel))
+        .filter(a => !!a)
+    ]
+  }
+  async getBank() {
+    const bank = {}
+    const environments = await this.getExtendedEnvironments()
+    await PromiseB.map(environments.reverse(), async environment => {
+      Object.assign(bank, environment?.envs)
+    })
+    Object.assign(bank, this.envs)
+    return bank
+  }
+
   async save() {
     const dbToWrite = this.toStorage();
     const overrideDbToWrite = { envs: {} };
     Object.keys(dbToWrite.envs).forEach((key) => {
-      if (key.endsWith('_STACKMONITOR_OVERRIDE')) {
+      if (key.endsWith('_STACK_MONITOR_OVERRIDE')) {
         overrideDbToWrite.envs[key] = dbToWrite.envs[key];
         delete dbToWrite.envs[key];
       }
@@ -69,6 +90,7 @@ class Environment {
     this.color = env.color;
     this.bgColor = env.bgColor;
     this.envs = env.envs;
+    this.extends = env.extends;
     return this.save();
   }
 
@@ -82,6 +104,7 @@ class Environment {
       default: this.default,
       color: this.color,
       bgColor: this.bgColor,
+      extends: this.extends,
       envs: this.envs,
     });
   }

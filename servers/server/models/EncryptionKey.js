@@ -57,7 +57,7 @@ class EncryptionKey {
     }
   }
 
-  async saveKey(key) {
+  async saveKey(key, {noReload} = {noReload: false}) {
     if (!await this.testKey(key)) throw new Error('Key not valid');
     try {
       const envSample = (await dbs.getDbs('envs'))[0];
@@ -68,7 +68,9 @@ class EncryptionKey {
     }
     this.encryptionKey = key;
     await this.update();
-    await require('./stack').selectConf(require('./stack').getStack()?.confPath || '.');
+    if(!noReload) {
+      await require('./stack').selectConf();
+    }
     return key;
   }
 }

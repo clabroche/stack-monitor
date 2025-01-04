@@ -26,6 +26,7 @@
   "typings": "./typings/export.d.ts",
   "types": "./typings/export.d.ts",
   "dependencies": {
+    "@babel/preset-env": "^7.26.0",
     "@clabroche/common-express": "workspace:*",
     "@clabroche/common-socket-server": "workspace:*",
     "@clabroche/modules-plugins-loader-backend": "workspace:*",
@@ -58,6 +59,7 @@
     "@clabroche/common-retrigger-all-build": "workspace:*",
     "@clabroche/modules-plugins-loader-front": "workspace:*",
     "@clabroche/modules-vscode-extension": "workspace:*",
+    "@types/babel__preset-env": "^7",
     "@types/http-proxy": "^1",
     "@types/libsodium-wrappers": "^0",
     "http-proxy": "^1.18.1",

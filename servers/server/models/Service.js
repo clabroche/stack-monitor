@@ -45,15 +45,9 @@ function Service(service, Stack, { isUpdate } = { isUpdate: false }) {
     this.Stack = Stack;
     /** @type {LogMessage[]} */
     this.queue = service.queue || [];
-    const self = this;
+    this.stopQueue = false
     if (!isUpdate) {
-      (function processQueue() {
-        if (self.queue.length) {
-          const messages = self.queue.splice(0, self.queue.length);
-          sockets.emit('logs:update', messages);
-        }
-        setTimeout(processQueue, 100);
-      }());
+      this.processQueue()
     }
     /** @type {string} */
     this.label = service.label || '';
@@ -91,6 +85,7 @@ function Service(service, Stack, { isUpdate } = { isUpdate: false }) {
      * @type {{
      *  enabled: boolean
      *  name: string,
+     *  user?: string,
      *  build: string,
      *  volumes: string[],
      *  ignoreVolumes: string[],
@@ -121,7 +116,7 @@ function Service(service, Stack, { isUpdate } = { isUpdate: false }) {
      *  id: string,
      *  spawnArgs: string[],
      *  spawnCmd: string,
-     *  spawnOptions: SpawnOptions & {envs: {[key:string]: {extends: [], envs: {key: string, value: string, override: string, systemOverride?: string}[]}}}
+     *  spawnOptions: SpawnOptions & {envs: {[key:string]: {extends: [], envs: {key: string, value: string, override: string, systemOverride?: string, prefix?: string, suffix?: string}[]}}}
      *  effectiveParsers: ParserModel[]
      *  parsers: string[]
      * }[]}
@@ -209,6 +204,15 @@ Service.prototype.getRootPath = function () {
   return replaceEnvs(this.rootPath);
 };
 
+Service.prototype.processQueue = function() {
+  if (this.queue.length) {
+    const messages = this.queue.splice(0, this.queue.length);
+    sockets.emit('logs:update', messages);
+  }
+  if(this.stopQueue) return
+  setTimeout(() => {this.processQueue()}, 100);
+}
+
 Service.prototype.save = async function () {
   const obj = this.toStorage();
   const overrides = {};
@@ -281,6 +285,8 @@ Service.prototype.toStorage = function () {
       command.spawnOptions.envs[this.Stack.getCurrentEnvironment()?.label || ''].envs = command.spawnOptions?.envs[this.Stack.getCurrentEnvironment()?.label || ''].envs.map((env) => ({
         key: env.key,
         value: env.value,
+        prefix: env.prefix,
+        suffix: env.suffix,
         override: env.override,
       }));
       return command;
@@ -556,21 +562,15 @@ Service.prototype.launchProcess = async function (command, isMainProcess = true)
    */
 Service.prototype.launchHealthChecker = async function (spawnProcess) {
   if ((!spawnProcess.pid && !this.container?.name) || !this.health?.enabled) return;
-  await wait(+(this.health.interval || 1000));
-  if (!this.container?.enabled) {
-    if (spawnProcess.pid != null && !(await psTreeAsync(spawnProcess.pid))?.length) {
-      this.crashed = true;
-      sockets.emit('service:healthcheck:down', { label: this.label, pid: spawnProcess.pid });
-      return;
-    }
-  }
   const healthy = await axios({
     method: this.health.method || 'GET',
     url: this.health.url || this.url,
+    headers: {Accept: '*/*'},
     timeout: +(this.health.timeout || 0),
     validateStatus: (status) => status === (+(this.health.returnCode || 200)),
   })
     .then(({ data: response }) => {
+      console.log(response)
       if (this.health.responseText && this.health.responseText !== JSON.stringify(response)) {
         return false;
       }
@@ -584,6 +584,8 @@ Service.prototype.launchHealthChecker = async function (spawnProcess) {
     this.crashed = false;
     sockets.emit('service:healthcheck:up', { label: this.label, pid: spawnProcess.pid });
   }
+  await wait(+(this.health.interval || 1000));
+  console.log('zeklfezlkfjlezjklfzjklfjklkljf')
   this.launchHealthChecker(spawnProcess);
 };
 
@@ -650,21 +652,49 @@ Service.prototype.getGlobalEnvs = async function (environmentLabel) {
 Service.prototype.buildEnvs = async function (
   environmentLabel,
   spawnOptions,
-  envs = {},
 ) {
-  const environment = spawnOptions.envs[environmentLabel];
-  if (!environment) return [];
-  const searchEnv = await this.getGlobalEnvs(environmentLabel);
-  const extendEnvironmentLabel = environment.extends.filter((a) => a)?.[0];
-  if (extendEnvironmentLabel) await this.buildEnvs(extendEnvironmentLabel, spawnOptions, envs);
-  const computedEnvs = environment.envs.reduce((envs, env) => {
-    envs[env.key] = searchEnv(env.systemOverride)
-      || searchEnv(env.override)
-      || searchEnv(env.value)
-      || envs[env.key];
-    return envs;
-  }, envs);
-  return computedEnvs;
+  const globalEnvironment = await Environment.find(environmentLabel)
+  if(!globalEnvironment) return {}
+  const extendedEnvironments = await globalEnvironment.getExtendedEnvironments()
+  const environmentsKeys = new Map()
+  const searchEnv = (label, env) => {
+    const tag = this.extractTag(label);
+    if (tag) {
+      return env[tag] ?? '';
+    }
+    return label;
+  };
+  extendedEnvironments.map(extendedEnvironment => {
+    spawnOptions.envs[extendedEnvironment.label]?.envs.forEach(env => {
+      if(!environmentsKeys.has(env.key)) {
+        for (let i = 0; i < extendedEnvironments.length; i++) {
+          let occurrence = searchEnv(env.systemOverride, extendedEnvironments[i].envs) || searchEnv(env.override, extendedEnvironments[i].envs) || searchEnv(env.value, extendedEnvironments[i].envs)
+          if (occurrence) occurrence = `${env.prefix || ''}${occurrence || ''}${env.suffix || ''}`
+          const value = occurrence
+          if(value) {
+            environmentsKeys.set(env.key, value)
+            return 
+          }
+        }
+      }
+    });
+  });
+  const envs ={}
+  ;[...environmentsKeys].forEach(([key, value]) => {
+    envs[key] = value
+  })
+  // console.log(globalEnvironment?.getExtendedEnvironments())
+  // const environment = spawnOptions.envs[environmentLabel];
+  // if (!environment) return [];
+  // const searchEnv = await this.getGlobalEnvs(environmentLabel);
+  
+  // const computedEnvs = environment.envs.reduce((envs, env) => {
+  //   let occurrence = searchEnv(env.systemOverride) || searchEnv(env.override) || searchEnv(env.value)
+  //   if (occurrence) occurrence = `${env.prefix || ''}${occurrence || ''}${env.suffix || ''}`
+  //   envs[env.key] = occurrence || envs[env.key];
+  //   return envs;
+  // }, envs);
+  return envs;
 };
 
 Service.prototype.extractTag = function (field) {
@@ -707,6 +737,11 @@ Service.prototype.parseIncomingCommand = async function (command, isMainProcess 
   return { cmd, args, options };
 };
 
+function replaceHome(str) {
+  return str.startsWith('~')
+    ? pathfs.resolve(os.homedir(), str.replace('~/', ''))
+    : pathfs.resolve(str);
+}
 /**
    * @param {{cmd: string, args: string[], options: SpawnOptions, isMainProcess: boolean}} spawnCmd
    */
@@ -714,9 +749,7 @@ Service.prototype.buildDocker = async function ({
   cmd, args, options, isMainProcess,
 }) {
   if (!this.container?.enabled) return { cmd, args, options };
-  const internalVolumeRootPath = this.container.sharedVolume.startsWith('~')
-    ? pathfs.resolve(os.homedir(), this.container.sharedVolume.replace('~/', ''))
-    : pathfs.resolve(this.container.sharedVolume);
+  const internalVolumeRootPath = replaceHome(this.container.sharedVolume)
   const dockerFilePath = pathfs.resolve(internalVolumeRootPath, `Dockerfile.${this.container.name}`);
   const dockerIgnoreFilePath = pathfs.resolve(internalVolumeRootPath, '.dockerignore');
   const dockerContextPath = pathfs.resolve(internalVolumeRootPath, '.empty-context');
@@ -724,16 +757,6 @@ Service.prototype.buildDocker = async function ({
   if (!existsSync(dockerContextPath)) await mkdir(dockerContextPath, { recursive: true });
   await writeFile(dockerFilePath, `
 ${this.container.build || ''}
-${
-  this.container.noHostUser
-    ? ''
-    : `
-      RUN echo '${username}:x:${uid}:${gid}::/home/${username}:/usr/bin/sh' >> /etc/passwd
-      RUN mkdir -p /home/${username}
-      RUN chown ${uid}:${gid} /home/${username}
-      USER ${username}
-    `
-}
 ${Object.keys(options.env || {}).map((env) => `ENV ${env}=${(options.env || {})[env]} `).join('\n')}
     `.trim(), 'utf-8');
   await writeFile(dockerIgnoreFilePath, 'Dockerfile.*'.trim(), 'utf-8');
@@ -741,8 +764,9 @@ ${Object.keys(options.env || {}).map((env) => `ENV ${env}=${(options.env || {})[
   cmd = 'docker';
   const volumesCmd = this.container.volumes.map((v) => {
     let [external, internal] = v.split(':');
-    if (external) external = pathfs.resolve(replaceEnvs(pathfs.resolve(this.getRootPath(), external)));
-    if (internal) internal = pathfs.resolve(replaceEnvs(internal));
+    if (external) external = pathfs.resolve(replaceHome(replaceEnvs(external)));
+    if (internal) internal = pathfs.resolve(replaceHome(replaceEnvs(internal)));
+    console.log(external,internal)
     return ['-v', `"${external}:${internal || external}"`];
   });
   volumesCmd.push(...await PromiseB.map(this.container.ignoreVolumes, async (ignoredVolume) => {
@@ -762,6 +786,7 @@ ${Object.keys(options.env || {}).map((env) => `ENV ${env}=${(options.env || {})[
       spawnOptions: { cwd: internalVolumeRootPath, shell: isWindows ? process.env.ComSpec : '/bin/sh' },
     };
     this.add('<i class="fab fa-docker" title="docker"></i> <i class="fas fa-hard-hat" title="build"></i> Building docker image...', { source: 'stdout' }, { pid: null, isMainProcess, command });
+    this.add(`<i class="fab fa-docker" title="docker"></i> <i class="fas fa-hard-hat" title="build"></i> ${command.spwanCmd} ${command.spawnArgs?.join(' ')}}`, { source: 'stdout' }, { pid: null, isMainProcess, command });
     await new Promise((resolve, reject) => {
       const buildProcess = spawn(command.spwanCmd, command.spawnArgs, command.spawnOptions);
       new CreateInterface({
@@ -784,7 +809,7 @@ ${Object.keys(options.env || {}).map((env) => `ENV ${env}=${(options.env || {})[
         return resolve(null);
       });
     });
-    const baseArgs = ['run', '--name', this.container.name, '--init', '--rm', '--user', `${uid}:${gid}`, '--network', 'host', ...volumesCmd.flat(1)];
+    const baseArgs = ['run', '--name', this.container.name, '--init', '--rm', '--user', this.container.user || `${uid}:${gid}`, '--network', 'host', ...volumesCmd.flat(1)];
     args = [...baseArgs, this.container.name, originalCmd];
     if (this.container.bootstrap) {
       const bootstrapCommands = (Array.isArray(this.container.bootstrap)
@@ -796,8 +821,8 @@ ${Object.keys(options.env || {}).map((env) => `ENV ${env}=${(options.env || {})[
         await PromiseB.mapSeries(bootstrapCommands, async (command) => {
           await new Promise((resolve, reject) => {
             const entrypoint = command.entrypoint ? ['--entrypoint', `${command.entrypoint}`] : [];
-            const userEntrypoint = command.user ? ['--user', `${command.user}`] : [];
-            const test = [
+            const userEntrypoint = command.user ? ['--user', `${command.user || this.container.user || `${uid}:${gid}`}`] : [];
+            const bootstrapArgs = [
               ...baseArgs,
               ...entrypoint.flat(1),
               ...userEntrypoint.flat(1),
@@ -806,10 +831,10 @@ ${Object.keys(options.env || {}).map((env) => `ENV ${env}=${(options.env || {})[
             ].filter((a) => a);
             const commandBootstrap = {
               spawnCmd: 'docker',
-              spawnArgs: test,
+              spawnArgs: bootstrapArgs,
               spawnOptions: { shell: isWindows ? process.env.ComSpec : '/bin/sh' },
             };
-            this.add(`<i class="fab fa-docker" title="docker"></i> <i class="fas fa-hourglass-start" title="bootstrap"></i> ${command.entrypoint || ''} ${command.cmd}`, { source: 'stdout' }, { isMainProcess, pid: null, command: commandBootstrap });
+            this.add(`<i class="fab fa-docker" title="docker"></i> <i class="fas fa-hourglass-start" title="bootstrap"></i> ${commandBootstrap.spawnCmd} ${commandBootstrap.spawnArgs?.join(' ')}`, { source: 'stdout' }, { isMainProcess, pid: null, command: commandBootstrap });
             const bootstrapProcess = spawn(
               commandBootstrap.spawnCmd,
               commandBootstrap.spawnArgs,

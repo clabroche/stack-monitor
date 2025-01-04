@@ -4,7 +4,6 @@ const { sockets } = require('@clabroche/common-socket-server');
 // eslint-disable-next-line import/no-extraneous-dependencies
 const plugins = require('@clabroche/modules-plugins-loader-backend');
 const PromiseB = require('bluebird');
-const pathfs = require('path');
 const Service = require('./Service');
 const ports = require('./ports');
 const dbs = require('../helpers/dbs');
@@ -16,8 +15,6 @@ if (!sockets.io) throw new Error('Stack monitor seems not fully inialized: Socke
 /** @param {Partial<Stack>} stack */
 function Stack(stack) {
   return (async () => {
-    /** @type {string | undefined} */
-    this.confPath = stack.confPath;
     /** @type {string[]} */
     this.watchFiles = stack.watchFiles || [];
     /** @type {import('./Service').Parser[]} */
@@ -101,12 +98,7 @@ Stack.prototype.toStorage = function () {
   };
 };
 
-/**
-   *
-   * @param {string} confPath
-   * @returns
-   */
-Stack.parse = async function (confPath) {
+Stack.parse = async function () {
   const dbsRootPath = await dbs.getDbs('services');
   let services = [];
   let environments = [];
@@ -120,7 +112,6 @@ Stack.parse = async function (confPath) {
 
   return new Stack({
     environments,
-    confPath,
     services,
   });
 };
@@ -185,14 +176,12 @@ Stack.prototype.findService = function (serviceLabel) {
   return Stack.findService(serviceLabel);
 };
 
-/** @param {string} confPath */
-Stack.selectConf = async function (confPath) {
-  confPath = pathfs.resolve(confPath);
+Stack.selectConf = async function () {
   await EncryptionKey.init();
   if (!EncryptionKey.encryptionKey) {
     await EncryptionKey.saveKey(await EncryptionKey.generateKey());
   }
-  Stack.currentStack = await this.parse(confPath);
+  Stack.currentStack = await this.parse();
   Stack.currentEnvironment = process.env.STACK_MONITOR_DEFAULT_ENVIRONMENT
     ? Stack.currentStack.environments.find((env) => env.label === process.env.STACK_MONITOR_DEFAULT_ENVIRONMENT) || null
     : Stack.currentStack.environments.find((env) => env.default) || null;

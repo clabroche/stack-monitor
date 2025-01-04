@@ -45,6 +45,7 @@
                 <InputText v-if="slotProps?.node?.model"
                   v-model="slotProps.node.model.obj[slotProps.node.model.key]"
                   size="small"
+                  :placeholder="slotProps.node.placeholder"
                   :type="slotProps.node.inputType || 'text'"
                   @blur="slotProps.node.save"
                   @keypress.enter="slotProps.node.save"
@@ -56,6 +57,7 @@
             <template v-else>
               <InputText v-if="slotProps?.node?.model"
                 v-model="slotProps.node.model.obj[slotProps.node.model.key]"
+                :placeholder="slotProps.node.placeholder"
                 size="small"
                 :type="slotProps.node.inputType || 'text'"
                 fluid
@@ -555,6 +557,24 @@ export default {
               },
             ],
           }, {
+            key: 'service-container-user',
+            label: 'User',
+            description: props.service.container?.user,
+            children: [
+              {
+                key: 'service-container-user-input',
+                label: 'Shared volume',
+                description: props.service.container?.user,
+                type: 'inputtext',
+                placeholder: 'Default: <hostUser>:<hostGroup>',
+                model: {
+                  obj: props.service.container,
+                  key: 'user',
+                },
+                save,
+              },
+            ],
+          }, {
             key: 'service-container-bootstrap',
             label: 'Bootstrap',
             description: props.service.container?.bootstrap.commands.map((a) => `${a.entrypoint} ${a.cmd}`)?.join(', '),
@@ -584,6 +604,7 @@ export default {
                   {
                     type: 'inputtext',
                     inputLabel: 'User:Group',
+                    placeholder: 'Default: <hostUser>:<hostGroup>',
                     model: {
                       obj: props.service.container?.bootstrap.commands[i],
                       key: 'user',

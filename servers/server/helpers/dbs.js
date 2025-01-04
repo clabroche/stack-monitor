@@ -17,8 +17,7 @@ module.exports = new class {
   cache = {};
 
   getRootPath() {
-    const confPath = args.confPath || process.cwd();
-    const rootPath = pathfs.resolve(confPath, '.stackmonitor/dbs');
+    const rootPath = pathfs.resolve(args.rootPath, '.stackmonitor/dbs');
     if (!existsSync(rootPath)) mkdirSync(rootPath, { recursive: true });
     return rootPath;
   }

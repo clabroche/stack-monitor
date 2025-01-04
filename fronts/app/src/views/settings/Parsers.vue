@@ -35,7 +35,7 @@
     </SplitterPanel>
   </Splitter>
   <Modal ref="addModalRef">
-    <template #header>Add new Script</template>
+    <template #header>Add new parser</template>
     <template #body>
       <IftaLabel>
         <InputText v-model="scriptToAdd.label" fluid></InputText>

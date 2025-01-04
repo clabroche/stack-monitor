@@ -2,7 +2,7 @@
   <div class="notif-history-root">
     <modal position="right" ref="modal" width="600px" :noActions="true">
       <template #header>
-        Mes notifications
+        Notifications
       </template>
       <template #body>
         <div class="notifications">

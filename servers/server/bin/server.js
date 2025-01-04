@@ -46,6 +46,6 @@ module.exports = {
         })();
       },
     });
-    await require('../models/stack').selectConf(args.confPath);
+    await require('../models/stack').selectConf();
   },
 };
