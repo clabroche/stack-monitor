@@ -56,6 +56,7 @@
     "uuid": "^9.0.1"
   },
   "devDependencies": {
+    "@babel/preset-typescript": "^7.26.0",
     "@clabroche/common-retrigger-all-build": "workspace:*",
     "@clabroche/modules-plugins-loader-front": "workspace:*",
     "@clabroche/modules-vscode-extension": "workspace:*",
