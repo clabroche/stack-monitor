@@ -114,13 +114,13 @@ module.exports = {
       server.on('upgrade', (req, res) => {
         if (req.url === '/') {
           proxy.ws(req, res, {
-            target: 'ws://localhost:5173',
+            target: 'ws://127.0.0.1:5173',
           });
         }
       });
       app.use((req, res) => {
         proxy.web(req, res, {
-          target: 'ws://localhost:5173',
+          target: 'http://127.0.0.1:5173',
         });
       });
     }

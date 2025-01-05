@@ -5,11 +5,11 @@ const { spawn } = require('child_process');
 const killport = require('kill-port');
 const URL = require('url');
 const path = require('path');
-const psTree = require('ps-tree');
 const PromiseB = require('bluebird');
 const dayjs = require('dayjs');
 const { v4 } = require('uuid');
 const { existsSync, readFileSync } = require('fs');
+const kill = require('tree-kill');
 const axios = require('axios').default;
 const pathfs = require('path');
 const net = require('net');
@@ -310,8 +310,7 @@ Service.prototype.kill = async function (keepEnabled = false) {
   } else {
     await PromiseB.map(this.pids, async (spawnedProcess) => {
       if (!spawnedProcess.pid) return;
-      const children = await psTreeAsync(spawnedProcess.pid);
-      children.map(({ PID }) => process.kill(+PID, 'SIGKILL'));
+      await killAsync(spawnedProcess.pid);
       spawnedProcess.kill('SIGKILL');
     });
     const urls = [...this.urls || [], this.url].filter((a) => a);
@@ -570,7 +569,6 @@ Service.prototype.launchHealthChecker = async function (spawnProcess) {
     validateStatus: (status) => status === (+(this.health.returnCode || 200)),
   })
     .then(({ data: response }) => {
-      console.log(response)
       if (this.health.responseText && this.health.responseText !== JSON.stringify(response)) {
         return false;
       }
@@ -585,7 +583,6 @@ Service.prototype.launchHealthChecker = async function (spawnProcess) {
     sockets.emit('service:healthcheck:up', { label: this.label, pid: spawnProcess.pid });
   }
   await wait(+(this.health.interval || 1000));
-  console.log('zeklfezlkfjlezjklfzjklfjklkljf')
   this.launchHealthChecker(spawnProcess);
 };
 
@@ -883,13 +880,11 @@ ${Object.keys(options.env || {}).map((env) => `ENV ${env}=${(options.env || {})[
 
 const wait = (ms) => new Promise((resolve) => { setTimeout(resolve, ms); });
 /**
- *
  * @param {number} pid
- * @returns {Promise<readonly psTree.PS[]>}
  */
-function psTreeAsync(pid) {
+function killAsync(pid) {
   return new Promise((resolve, reject) => {
-    psTree(pid, (err, children) => {
+    kill(pid, (err, children) => {
       if (err) return reject(err);
       return resolve(children);
     });

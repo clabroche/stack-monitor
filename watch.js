@@ -5,8 +5,8 @@ const pathfs = require('path');
 const { spawn } = require('node:child_process');
 const debounce = require('debounce');
 const killport = require('kill-port');
-const psTree = require('ps-tree');
 const net = require('net');
+const kill = require('tree-kill');
 
 const command = {
   cmd: process.argv[2],
@@ -52,19 +52,19 @@ function mainProcessDaemon() {
     }
   }, 0);
 }
+
 /**
- *
  * @param {number} pid
- * @returns {Promise<readonly psTree.PS[]>}
  */
-function psTreeAsync(pid) {
+function killAsync(pid) {
   return new Promise((resolve, reject) => {
-    psTree(pid, (err, children) => {
+    kill(pid, (err, children) => {
       if (err) return reject(err);
       return resolve(children);
     });
   });
 }
+
 async function runMainProcess() {
   if (restartInProgress) {
     waitingRestart = () => runMainProcess();
@@ -73,8 +73,7 @@ async function runMainProcess() {
   restartInProgress = true;
   if (pid) {
     try {
-      const children = await psTreeAsync(pid);
-      children.map(({ PID }) => process.kill(+PID, 'SIGKILL'));
+      await killAsync(pid)
       process.kill(pid, 'SIGKILL');
     } catch (error) {}
   }

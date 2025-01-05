@@ -51,8 +51,8 @@
     "open": "^8",
     "os-utils": "0.0.14",
     "pidusage-tree": "^2.0.5",
-    "ps-tree": "^1.2.0",
     "slugify": "^1.6.6",
+    "tree-kill": "^1.2.2",
     "uuid": "^9.0.1"
   },
   "devDependencies": {
