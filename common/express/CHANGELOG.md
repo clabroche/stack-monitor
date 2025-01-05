@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.7](https://github.com/clabroche/stack-monitor/compare/v2.0.6...v2.0.7) (2025-01-05)
+
+### Bug Fixes
+
+* **windows:** fix windows support ([5590e7d](https://github.com/clabroche/stack-monitor/commit/5590e7de8f27c45ee76d401e53eeda6fcae5bbfe))
+
 ## [2.0.5](https://github.com/clabroche/stack-monitor/compare/v2.0.4...v2.0.5) (2025-01-04)
 
 ### Bug Fixes
