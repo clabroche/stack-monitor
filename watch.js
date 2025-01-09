@@ -7,6 +7,7 @@ const debounce = require('debounce');
 const killport = require('kill-port');
 const net = require('net');
 const kill = require('tree-kill');
+const { platform } = require('node:os');
 
 const command = {
   cmd: process.argv[2],
@@ -89,7 +90,7 @@ async function runMainProcess() {
   }
   console.log(' ');
   console.log(`<h3 style="padding: 0;margin: 0">Command: ${command.cmd} ${command.args.join(' ')}</h3>`);
-  const spawned = spawn(command.cmd, command.args, { cwd: pathfs.resolve('.') });
+  const spawned = spawn(command.cmd, command.args, { cwd: pathfs.resolve('.'), shell: platform() === 'win32', env: process.env });
   pid = spawned.pid;
   spawned.stdout.on('data', (data) => {
     console.log(data.toString('utf-8'));

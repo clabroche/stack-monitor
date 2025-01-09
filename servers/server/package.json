@@ -17,8 +17,8 @@
     "url": "https://corentinlabroche.fr/"
   },
   "scripts": {
-    "start": "node bin/www $STACKFILE \"$SERVICE\"",
-    "serve": "nodemon -e js,ts,jsx,tsx,vue,swagger.yml,swagger.yaml -x 'node ../../watch.js npm run start'",
+    "start": "cross-env-shell node bin/www $STACKFILE \"$SERVICE\"",
+    "serve": "nodemon -e js,ts,jsx,tsx,vue,swagger.yml,swagger.yaml -x \"node ../../watch.js npm run start\"",
     "build": "tsup",
     "test": ""
   },

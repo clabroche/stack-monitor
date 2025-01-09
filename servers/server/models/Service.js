@@ -780,7 +780,7 @@ ${Object.keys(options.env || {}).map((env) => `ENV ${env}=${(options.env || {})[
     const command = {
       spwanCmd: 'docker',
       spawnArgs: ['build', '-f', dockerFilePath, '-t', this.container?.name || '', dockerContextPath],
-      spawnOptions: { cwd: internalVolumeRootPath, shell: isWindows ? process.env.ComSpec : '/bin/sh' },
+      spawnOptions: { cwd: internalVolumeRootPath, shell: isWindows ? true : '/bin/sh', env: process.env },
     };
     this.add('<i class="fab fa-docker" title="docker"></i> <i class="fas fa-hard-hat" title="build"></i> Building docker image...', { source: 'stdout' }, { pid: null, isMainProcess, command });
     this.add(`<i class="fab fa-docker" title="docker"></i> <i class="fas fa-hard-hat" title="build"></i> ${command.spwanCmd} ${command.spawnArgs?.join(' ')}}`, { source: 'stdout' }, { pid: null, isMainProcess, command });
@@ -806,7 +806,7 @@ ${Object.keys(options.env || {}).map((env) => `ENV ${env}=${(options.env || {})[
         return resolve(null);
       });
     });
-    const baseArgs = ['run', '--name', this.container.name, '--init', '--rm', '--user', this.container.user || `${uid}:${gid}`, '--network', 'host', ...volumesCmd.flat(1)];
+    const baseArgs = ['run', '--name', this.container.name, '--init', '--rm', , ...(isWindows ? [] : ['--user', this.container.user || `${uid}:${gid}`]), ...(isWindows ? [] : ['--network', 'host']), ...volumesCmd.flat(1)];
     args = [...baseArgs, this.container.name, originalCmd];
     if (this.container.bootstrap) {
       const bootstrapCommands = (Array.isArray(this.container.bootstrap)
@@ -818,7 +818,7 @@ ${Object.keys(options.env || {}).map((env) => `ENV ${env}=${(options.env || {})[
         await PromiseB.mapSeries(bootstrapCommands, async (command) => {
           await new Promise((resolve, reject) => {
             const entrypoint = command.entrypoint ? ['--entrypoint', `${command.entrypoint}`] : [];
-            const userEntrypoint = command.user ? ['--user', `${command.user || this.container.user || `${uid}:${gid}`}`] : [];
+            const userEntrypoint = command.user && !isWindows ? ['--user', `${command.user || this.container.user || `${uid}:${gid}`}`] : [];
             const bootstrapArgs = [
               ...baseArgs,
               ...entrypoint.flat(1),
