@@ -1,5 +1,5 @@
 <template>
-  <SectionCmp header="Encrypt">
+  <SectionCmp header="Encryption">
     Key used to encrypt most of the data
     <div class="line">
       <Password v-model="newKey" :feedback="false" toggleMask style="width: 100%;" fluid

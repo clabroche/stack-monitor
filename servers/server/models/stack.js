@@ -197,14 +197,9 @@ Stack.prototype.changeEnvironment = async function (envLabel) {
   if (environment) {
     Stack.currentEnvironment = environment;
     Stack.getServices().forEach((service) => {
-      service.commands?.forEach((command) => {
-        if (!command.spawnOptions.envs[envLabel]) {
-          command.spawnOptions.envs[envLabel] = {
-            extends: [],
-            envs: [],
-          };
-        }
-      });
+      if (!service.envs[envLabel]) {
+        service.envs[envLabel] = {};
+      }
     });
     const enabledServices = Stack.getEnabledServices();
     await Stack.kill();

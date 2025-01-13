@@ -3,6 +3,8 @@ import axios from '../helpers/axios';
 class Service {
   /** @param {import('@clabroche/common-typings').NonFunctionProperties<Service>} service */
   constructor(service) {
+    this.envs = {}
+    this.shortcuts = []
     this.updateFields(service);
   }
 
@@ -78,6 +80,10 @@ class Service {
     };
     /** @type {Array<Record<any, any>>} */
     this.commands = service.commands || [];
+    /** @type {Array<Record<any, any>>} */
+    this.shortcuts = service.shortcuts || [];
+    /** @type {{[key:string]: {[key:string]: {value: string, override: string, systemOverride?: string, prefix?: string, suffix?: string}}}} */
+    this.envs = service.envs || {}
     /** @type {boolean} */
     this.enabled = service.enabled || false;
     /** @type {boolean} */
@@ -86,7 +92,7 @@ class Service {
     this.exited = service.exited || false;
     /** @type {string} */
     this.rootPath = service.rootPath || this.commands?.[0]?.spawnOptions?.cwd || '';
-    /** @type {{enabled: true, name: string, build: string, volumes: string[], ignoreVolumes: string[], bootstrap: {commands: {cmd: string,user: string,entrypoint: string,}[]}}} */
+    /** @type {{enabled: true, name: string, build: string, volumes: string[], ignoreVolumes: string[], ports: string[], bootstrap: {commands: {cmd: string,user: string,entrypoint: string,}[]}}} */
     this.container = service.container;
     /** @type {Record<string, string>} */
     this.meta = service.meta || {};
@@ -118,7 +124,7 @@ class Service {
     return logs;
   }
 
-  /** @param {{message: string, pid?: number}} prompt */
+  /** @param {{command: any, pid?: number}} prompt */
   async sendTerminalPrompt(prompt) {
     const { data: logs } = await axios.post(`/logs/${this.label}/prompt`, { ...prompt, service: this.label });
     return logs;

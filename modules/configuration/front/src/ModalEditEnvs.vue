@@ -18,14 +18,14 @@
           </div>
         </div>
       </template>
-      <template #body  v-if="command">
+      <template #body>
         <div class="line spaced">
           <div>
             <InputGroup v-if="!importView">
               <InputText
                 size="small"
                 icon="fas fa-plus"
-                v-model="envToAdd.key"
+                v-model="envToAdd"
                 placeholder="Add new Env"
                 @keypress.enter="addEnv()"/>
               <InputGroupAddon icon>
@@ -39,7 +39,7 @@
           </div>
         </div>
         <DataTable scrollable class="datatable" size="small"   v-if="!importView" sortField="key" :sortOrder="1"
-          :value="getEnvs()"
+          :value="Object.keys(getEnvs()).map(key => Object.assign(getEnvs()[key], {key}))"
           tableStyle="width: 100%;">
             <Column field="action" header="" :row-span="2" col :pt="{
               bodyCell: {
@@ -220,9 +220,6 @@ import InputGroupAddon from 'primevue/inputgroupaddon';
 import InputGroup from 'primevue/inputgroup';
 import Badge from 'primevue/badge';
 
-const command = ref();
-const commandIndex = ref();
-
 const items = ref([]);
 const search = (event) => {
   const query = extractTag(event.query) || event.query;
@@ -243,8 +240,12 @@ const importView = ref(false);
 const code = ref('');
 function toggleimportView() {
   if (!importView.value) {
+    const envs = getEnvs()
     code.value = `# key=value
-${getEnvs().map((env) => `${env.key}=${env.prefix || ''}${env.value|| ''}${env.suffix || ''}`).join('\n')}
+${Object.keys(envs).map((key) => {
+  const env = envs[key]
+  return `${key}=${env.prefix || ''}${env.value|| ''}${env.suffix || ''}`
+}).join('\n')}
 `;
   }
   importView.value = !importView.value;
@@ -257,47 +258,48 @@ function extractTag(field) {
 }
 
 function getEnvs() {
-  return props.service.commands[commandIndex.value].spawnOptions.envs[showEnvironment.value].envs;
+  return props.service.envs?.[showEnvironment.value] || {}
 }
-function setEnvs(env) {
-  props.service.commands[commandIndex.value].spawnOptions.envs[showEnvironment.value].envs = env;
-  return env;
+function setEnvs(envs) {
+  props.service.envs[showEnvironment.value] = envs;
+  return envs;
 }
 
 function parseCode() {
-  setEnvs(
-    code.value
-      .split('\n')
-      .filter((line) => !line.trim().startsWith('#') && line.trim())
-      .map((envString) => {
-        const [key, ...value] = envString.split('=');
-        const env = getEnvs().find((env) => env.key === key) || {
-          key, value: '', systemOverride: '', override: '', prefix: '', suffix: ''
-        };
-        env.value = value.join('=');
-        setOverrideIfNeeded(env);
-        return env;
-      }),
-  );
+  const envs = {}
+  code.value
+    .split('\n')
+    .filter((line) => !line.trim().startsWith('#') && line.trim())
+    .forEach((envString) => {
+      const [key, ...value] = envString.split('=');
+      const env = getEnvs()[key] || {
+        value: '', systemOverride: '', override: '', prefix: '', suffix: ''
+      };
+      env.value = value.join('=');
+      envs[key] = env
+      setOverrideIfNeeded({key, value: env.value});
+    }),
+  setEnvs(envs);
 }
 
-const envToAdd = ref({
-  key: '', value: '', override: '', systemOverride: '',
-});
+const envToAdd = ref('');
 function addEnv() {
-  setEnvs([
+  setEnvs({
     ...getEnvs(),
-    cloneDeep(envToAdd.value),
-  ]);
-  envToAdd.value = {
-    key: '', value: '', override: '', systemOverride: '',
-  };
+    [envToAdd.value]: {
+      value: '', override: '', systemOverride: '',
+    }
+  });
   save();
 }
-function setOverrideIfNeeded(data) {
-  const tag = extractTag(data.value)
+function setOverrideIfNeeded({key, value}) {
+  if(!props.service.envs[currentEnvironment.value.label][key]) props.service.envs[currentEnvironment.value.label][key] = {
+    value: '', override: ''
+  }
+  const data = props.service.envs[currentEnvironment.value.label][key]
+  const tag = extractTag(value)
   if (tag) {
-    const res = /(.*){{.*}}(.*)/gi.exec(data.value)
+    const res = /(.*){{.*}}(.*)/gi.exec(value)
     data.prefix = res?.[1] || data.prefix || ''
     data.suffix = res?.[2] || data.suffix || ''
     data.value = `{{${tag}}}`
@@ -306,11 +308,10 @@ function setOverrideIfNeeded(data) {
   else if (extractTag(data.override)) {
     data.override = '';
   }
-  
 }
 
 async function exportEnv() {
-  const { data: exportedEnv } = await axios.get('/stack/export-env', { params: { environment: currentEnvironment.value.label, service: props.service.label, commandIndex: commandIndex.value } });
+  const { data: exportedEnv } = await axios.get('/stack/export-env', { params: { environment: currentEnvironment.value.label, service: props.service.label } });
   const envObject = exportedEnv;
   const envString = Object.keys(envObject).map((key) => `${key}=${envObject[key]}`).join('\n');
   const element = document.createElement('a');
@@ -334,20 +335,15 @@ async function saveEnvironment() {
     .then(() => notification.next('success', 'Environment saved'))
     .catch(() => notification.next('success', 'Environment cant be saved'));
 }
-async function open({ command: _command, commandIndex: _commandIndex }) {
-  command.value = _command;
-  commandIndex.value = _commandIndex;
+async function open() {
   await changeEnvironment();
   return modalEditEnv.value.open().promise;
 }
 async function changeEnvironment() {
-  if (!command.value.spawnOptions.envs[showEnvironment.value]) {
-    command.value.spawnOptions.envs[showEnvironment.value] = { extends: [], envs: [] };
-  }
   currentEnvironment.value = environments.value.find((a) => a.label === showEnvironment.value) || { label: 'unknown', envs: {}, overrideEnvs: {} };
 }
 async function deleteEnv(key) {
-  setEnvs(getEnvs().filter((env) => env.key !== key));
+  delete getEnvs()[key]
   save();
 }
 /** @type {import('vue').Ref<{label: string, envs: Record<string, {envs: string}>, overrideEnvs: Record<string, {envs: string}>, extends: string[]}[]>} */

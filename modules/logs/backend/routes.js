@@ -28,24 +28,24 @@ module.exports = (stackMonitor) => {
 
   router.post('/logs/:service/prompt', async (req, res) => {
     const service = findService(req.params.service);
-    /** @type {string | undefined} */
-    let message = req.body.message?.trim();
+    /** @type {Record<any, any>} */
+    let command = req.body.command || {};
     /** @type {number | undefined} */
     const pid = req.body.pid ? +req.body.pid : undefined;
-    if (!message) message = '\n';
+    if (!command.spawnCmd) command.spawnCmd = '\n';
     /** @type {History} */
     let result = {
-      id: v4(), pid, cmd: message, args: [], raw: message, timestamp: Date.now(), service: service.label || '',
+      id: v4(), pid, cmd: command.spawnCmd, args: [], raw: command.spawnCmd, timestamp: Date.now(), service: service.label || '',
     };
-    if (pid) service.respondToProcess(pid, message);
-    else if (message) {
+    if (pid) service.respondToProcess(pid, command.spawnCmd);
+    else if (command) {
       const { spawnProcess, launchMessage } = await service.launchProcess(
-        { spawnCmd: message, spawnArgs: [], spawnOptions: { ...service.spawnOptions, envs: [] } },
+        { spawnCmd: command.spawnCmd, spawnArgs: command.spawnArgs || [], spawnOptions: {  } },
         false,
       );
       result = {
         ...result,
-        pid: spawnProcess.pid,
+        pid: spawnProcess?.pid,
         raw: launchMessage.raw,
         timestamp: launchMessage.timestamp,
       };

@@ -20,9 +20,8 @@ router.get('/should-setup', async (req, res) => {
     return res.json(false);
   } catch (error) {
     console.error(error);
-    res.json(true);
+    return res.json(true);
   }
-  res.json(false);
 });
 router.get('/encryption-key', async (req, res) => {
   res.send(config.encryptionKey);

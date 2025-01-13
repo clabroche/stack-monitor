@@ -11,28 +11,38 @@
     </div>
     <Tree :value="nodes"  v-model:expandedKeys="expandedKeys">
        <template #nodeicon="{node: {svgIcon, icon}}">
-        <div v-html="svgIcon" v-if="svgIcon" :style="{width: '15px', display: 'flex'}"></div>
-        <i :class="icon" v-else></i>
-    </template>
+          <div v-html="svgIcon" v-if="svgIcon" :style="{width: '15px', display: 'flex'}"></div>
+          <i :class="icon" v-else></i>
+      </template>
       <template #default="slotProps">
         <div class="line">
           <div class="column">
-            <b class="label">{{ slotProps.node.label }}</b>
+            <div class="label">
+              <div class="actions">
+                <div class="action" v-for="action of slotProps.node.actions || []">
+                  <Button :icon="action.icon" size="small" @click="action?.action()" :disabled="action.disabled"></Button>
+                </div>
+              </div>
+              <b>{{ slotProps.node.label }}</b>
+              <i class="fas fa-question-circle" v-if="slotProps.node.hint" v-tooltip="slotProps.node.hint"></i>
+            </div>
             <span class="description" v-if="slotProps.node.description">{{ slotProps.node.description }}</span>
           </div>
-          <Button v-for="button of slotProps.node.buttons || []" :key="button.label"
-            :severity="button.severity" :style="{justifyContent:'flex-start', width: 'max-content'}"
-            size="small"
-            @click="button.action">
-            <i :class="button.icon"/>
-            {{button.label}}
-          </Button>
+          <div>
+            <Button :disabled="button.disabled" v-for="button of slotProps.node.buttons || []" :key="button.label"
+              :severity="button.severity" :style="{justifyContent:'flex-start', width: 'max-content', padding: '5px'}"
+              size="small"
+              @click="button.action">
+              <i :class="button.icon"/>
+              {{button.label}}
+            </Button>
+          </div>
         </div>
       </template>
       <template #inputtext="slotProps">
         <div class="line">
-          <Button v-for="button of slotProps.node.buttons || []" :key="button.label"
-            :severity="button.severity" :style="{justifyContent:'flex-start',width: 'max-content'}"
+          <Button :disabled="button.disabled" v-for="button of slotProps.node.buttons || []" :key="button.label"
+            :severity="button.severity" :style="{padding: 0, width: '25px', height: '25px', flexShrink: 0}"
             size="small"
             @click="button.action">
             <i :class="button.icon"/>
@@ -77,8 +87,8 @@
             @blur="slotProps.node.save"
             @keypress.enter="slotProps.node.save"
           ></Textarea>
-          <Button v-for="button of slotProps.node.buttons || []" :key="button.label"
-            :severity="button.severity" fluid :style="{justifyContent:'flex-start', width: 'max-content'}"
+          <Button :disabled="button.disabled" v-for="button of slotProps.node.buttons || []" :key="button.label"
+            :severity="button.severity" fluid :style="{justifyContent:'flex-start', width: 'max-content', padding: '5px'}"
             size="small"
             @click="button.action">
             <i :class="button.icon"/>
@@ -94,8 +104,8 @@
             @blur="slotProps.node.save"
             @change="slotProps.node.save"
           ></ToggleSwitch>
-          <Button v-for="button of slotProps.node.buttons || []" :key="button.label"
-            :severity="button.severity" fluid :style="{justifyContent:'flex-start', width: 'max-content'}"
+          <Button :disabled="button.disabled" v-for="button of slotProps.node.buttons || []" :key="button.label"
+            :severity="button.severity" fluid :style="{justifyContent:'flex-start', width: 'max-content', padding: '5px'}"
             size="small"
             @click="button.action">
             <i :class="button.icon"/>
@@ -114,8 +124,8 @@
             v-model="slotProps.node.model.obj[slotProps.node.model.key]"
             @blur="slotProps.node.save"
           ></Editor>
-          <Button v-for="button of slotProps.node.buttons || []" :key="button.label"
-            :severity="button.severity" fluid :style="{justifyContent:'flex-start', width: 'max-content'}"
+          <Button :disabled="button.disabled" v-for="button of slotProps.node.buttons || []" :key="button.label"
+            :severity="button.severity" fluid :style="{justifyContent:'flex-start', width: 'max-content', padding: '5px'}"
             size="small"
             @click="button.action">
             <i :class="button.icon"/>
@@ -136,7 +146,7 @@
             size="small"
             :severity="node.severity"
             fluid
-            :style="{justifyContent:'flex-start', width: 'max-content'}">
+            :style="{justifyContent:'flex-start', width: 'max-content', padding: '5px'}">
             <i v-if="node.buttonIcon" :class="node.buttonIcon"></i>
             {{ node.label }}
           </Button>
@@ -146,7 +156,7 @@
             size="small"
             :severity="node.severity"
             fluid
-            :style="{justifyContent:'flex-start', width: 'max-content'}">
+            :style="{justifyContent:'flex-start', width: 'max-content', padding: '5px'}">
             <i v-if="node.buttonIcon" :class="node.buttonIcon"></i>
             {{ node.label }}
           </Button>
@@ -273,6 +283,20 @@ export default {
         .then(() => notification.next('success', 'Configuration saved'))
         .catch(() => notification.next('error', 'Cannot save configuration'));
     };
+    function reorder(arr, index) {
+      return [
+        {icon: 'fas fa-chevron-up', disabled: index ===0,  action() {
+          const [el] = arr.splice(index, 1)
+          arr.splice(index - 1 , 0, el)
+          save();
+        }},
+        {icon: 'fas fa-chevron-down', disabled: (index ===(arr?.length || 0) - 1), action() {
+          const [el] = arr.splice(index, 1)
+          arr.splice(index + 1 , 0, el)
+          save();
+        }},
+      ]
+    }
     const nodes = computed(() => ([
       {
         key: 'general',
@@ -312,6 +336,7 @@ export default {
             key: 'rootpath',
             label: 'Root path',
             icon: 'home',
+            hint: 'This is the root path of your services. In a monorepo, this is the root path of your monorepo. You can specify the subpath in your commands below.',
             description: props.service.rootPath,
             children: [
               {
@@ -442,7 +467,8 @@ export default {
         children: [
           {
             key: 'git-home',
-            label: 'home',
+            label: 'Home',
+            hint: 'Add a link to your service to the git repository',
             description: props.service.git?.home,
             children: [
               {
@@ -458,7 +484,8 @@ export default {
           },
           {
             key: 'git-remote',
-            label: 'remote',
+            label: 'Remote',
+            hint: 'Enables git features of the service',
             description: props.service.git?.remote,
             children: [
               {
@@ -478,6 +505,7 @@ export default {
         key: 'service-parsers',
         icon: 'fas fa-scroll',
         label: 'Parsers',
+        hint: 'Modify the lines produced by your commands to display them the way you want. You can go to the settings to add more.',
         description: props.service.parsers?.map((parserId) => {
           const parser = parsers.value.find((p) => p.id === parserId);
           return parser?.label;
@@ -488,6 +516,7 @@ export default {
             return {
               key: `service-parser-${i}`,
               label: parser?.label,
+              actions: reorder(props.service.parsers, i),
               buttons: [{ severity: 'danger', icon: 'fas fa-trash', action: () => { props.service.parsers?.splice(i, 1); save(); } }],
               save,
             };
@@ -543,6 +572,7 @@ export default {
           {
             key: 'service-container-build',
             label: 'Dockerfile',
+            hint: 'Only Linux images are supported at the moment and commands will be run in a sh shell to support environment variables in arguments',
             description: props.service.container?.build?.split('\n')?.[0] || '',
             children: [
               {
@@ -582,6 +612,7 @@ export default {
               ...props.service.container?.bootstrap.commands?.map((command, i) => ({
                 key: `service-container-bootstrap-${i}`,
                 label: `${command.entrypoint} ${command.cmd}`,
+                actions: reorder(props.service.container?.bootstrap.commands, i),
                 children: [
                   {
                     type: 'inputtext',
@@ -628,7 +659,32 @@ export default {
                 click: () => props.service.container.bootstrap.commands?.push({ user: '$UID:$GID', cmd: '-c ""', entrypoint: '/bin/sh' }),
               },
             ],
-          }, {
+          }, 
+          // {
+          //   key: 'service-container-ports',
+          //   label: 'Ports',
+          //   description: props.service.container?.ports?.join(', '),
+          //   children: [
+          //     ...props.service.container?.ports?.map((_, i) => ({
+          //       key: `service-container-ports-${i}`,
+          //       type: 'inputtext',
+          //       model: {
+          //         obj: props.service.container?.ports,
+          //         key: i,
+          //       },
+          //       buttons: [{ severity: 'danger', icon: 'fas fa-trash', action: () => { props.service.container?.ports?.splice(i, 1); save(); } }],
+          //       save,
+          //     })) || [],
+          //     {
+          //       key: 'volume-add',
+          //       type: 'button',
+          //       label: 'Add new port',
+          //       buttonIcon: 'fas fa-plus',
+          //       click: () => props.service.container?.ports.push(''),
+          //     },
+          //   ],
+          // },
+          {
             key: 'service-container-volumes',
             label: 'Volumes',
             description: props.service.container?.volumes?.join(', '),
@@ -640,8 +696,11 @@ export default {
                   obj: props.service.container?.volumes,
                   key: i,
                 },
-                buttons: [{ severity: 'danger', icon: 'fas fa-trash', action: () => { props.service.container?.volumes?.splice(i, 1); save(); } }],
-                save,
+                buttons: [
+                  { severity: 'danger', icon: 'fas fa-trash', action: () => { props.service.container?.volumes?.splice(i, 1); save(); } },
+                  ...reorder(props.service.container?.volumes, i)
+                ],
+                  save,
               })) || [],
               {
                 key: 'volume-add',
@@ -663,7 +722,10 @@ export default {
                   obj: props.service.container?.ignoreVolumes,
                   key: i,
                 },
-                buttons: [{ severity: 'danger', icon: 'fas fa-trash', action: () => { props.service.container?.ignoreVolumes?.splice(i, 1); save(); } }],
+                buttons: [
+                  { severity: 'danger', icon: 'fas fa-trash', action: () => { props.service.container?.ignoreVolumes?.splice(i, 1); save(); } },
+                  ...reorder(props.service.container?.ignoreVolumes, i)
+                ],
                 save,
               })) || [],
               {
@@ -734,6 +796,7 @@ export default {
           ...props.service.commands?.map((command, commandIndex) => ({
             key: `command-${commandIndex}`,
             label: `${command.spawnCmd} ${command.spawnArgs.join(' ')}`?.trim() || 'Put a command below...',
+            actions: reorder(props.service.commands, commandIndex),
             children: [
               {
                 key: `command-${commandIndex}-command`,
@@ -761,7 +824,10 @@ export default {
                       obj: command.spawnArgs,
                       key: i,
                     },
-                    buttons: [{ severity: 'danger', icon: 'fas fa-trash', action: () => { command.spawnArgs?.splice(i, 1); save(); } }],
+                    buttons: [
+                      { severity: 'danger', icon: 'fas fa-trash', action: () => { command.spawnArgs?.splice(i, 1); save(); } },
+                      ...reorder(command.spawnArgs, i)
+                    ],
                     save,
                   })) || [],
                   {
@@ -775,6 +841,7 @@ export default {
               }, {
                 key: `command-${commandIndex}-path`,
                 label: 'Path',
+                hint: 'It\'s the concatenation of the rootpath and this one. If stack monitor was launched with environments variables, you can reference them in the path. Example: $EXTERNAL_PATH_TO_SERVICES/platform',
                 description: `${command.spawnOptions?.cwd || ''}`,
                 children: [
                   {
@@ -799,7 +866,10 @@ export default {
                   ...command.parsers?.map((parserId, i) => ({
                     key: `command-${commandIndex}-parser-${i}`,
                     label: parsers.value.find((p) => p.id === parserId)?.label,
-                    buttons: [{ severity: 'danger', icon: 'fas fa-trash', action: () => { command.parsers?.splice(i, 1); save(); } }],
+                    actions: reorder(command.parsers, i),
+                    buttons: [
+                      { severity: 'danger', icon: 'fas fa-trash', action: () => { command.parsers?.splice(i, 1); save(); } },
+                    ],
                     save,
                   })) || [],
                   {
@@ -818,22 +888,7 @@ export default {
                     save,
                   },
                 ],
-              }, {
-                key: `command-${commandIndex}-env`,
-                buttonIcon: 'fas fa-edit',
-                label: 'Edit envs',
-                type: 'button',
-                click: () => editEnvForCommand(command, commandIndex),
-              }, {
-                key: `command-${commandIndex}-env`,
-                label: 'Show envs',
-                buttonIcon: 'fas fa-eye',
-                type: 'button',
-                click: async () => {
-                  const { data: exportedEnv } = await axios.get('/stack/export-env', { params: { environment: currentEnvironment.value.label, service: props.service.label, commandIndex } });
-                  await modalShowEnvRef.value.open(exportedEnv).promise;
-                },
-              }, {
+              },  {
                 key: `command-${commandIndex}-env`,
                 label: 'Delete command ',
                 buttonIcon: 'fas fa-trash',
@@ -851,7 +906,7 @@ export default {
             click: async () => {
               if (!props.service.commands) return;
               props.service.commands.push({
-                id: uuid(), spawnOptions: { cwd: '', envs: { [currentEnvironment.value.label]: { extends: [], envs: [] } } }, spawnArgs: [], spawnCmd: '',
+                id: uuid(), spawnOptions: { cwd: '' }, spawnArgs: [], spawnCmd: '',
               });
               expandedKeys.value[`command-${props.service.commands.length - 1}`] = true;
               expandedKeys.value[`command-${props.service.commands.length - 1}-argument`] = true;
@@ -863,6 +918,162 @@ export default {
           },
         ],
       },
+      {
+        key: 'shortcut',
+        label: 'Shortcut',
+        icon: 'fas fa-terminal',
+        description: `${props.service.shortcuts?.length} command(s)`,
+        children: [
+          ...props.service.shortcuts?.map((shortcut, shortcutIndex) => ({
+            key: `shortcut-${shortcutIndex}`,
+            label: shortcut.label || `${shortcut.spawnCmd} ${shortcut.spawnArgs.join(' ')}`?.trim() || 'Put a shortcut below...',
+            actions: reorder(props.service.shortcuts, shortcutIndex),
+            children: [
+              {
+                key: `shortcut-${shortcutIndex}-label`,
+                label: 'Label',
+                description: shortcut.label,
+                children: [
+                  {
+                    type: 'inputtext',
+                    model: {
+                      obj: shortcut,
+                      key: 'label',
+                    },
+                    save,
+                  },
+                ],
+              }, {
+                key: `shortcut-${shortcutIndex}-shortcut`,
+                label: 'Command',
+                description: shortcut.spawnCmd,
+                children: [
+                  {
+                    type: 'inputtext',
+                    model: {
+                      obj: shortcut,
+                      key: 'spawnCmd',
+                    },
+                    save,
+                  },
+                ],
+              }, {
+                key: `shortcut-${shortcutIndex}-argument`,
+                label: 'Arguments',
+                description: shortcut.spawnArgs?.join(', '),
+                children: [
+                  ...shortcut.spawnArgs?.map((argument, i) => ({
+                    key: `shortcut-${shortcutIndex}-argument-${i}`,
+                    type: 'inputtext',
+                    model: {
+                      obj: shortcut.spawnArgs,
+                      key: i,
+                    },
+                    buttons: [{ severity: 'danger', icon: 'fas fa-trash', action: () => { shortcut.spawnArgs?.splice(i, 1); save(); } }],
+                    save,
+                  })) || [],
+                  {
+                    key: 'argument-add',
+                    type: 'button',
+                    label: 'Add new argument',
+                    buttonIcon: 'fas fa-plus',
+                    click: () => shortcut.spawnArgs?.push(''),
+                  },
+                ],
+              }, {
+                key: `shortcut-${shortcutIndex}-path`,
+                label: 'Path',
+                hint: 'It\'s the concatenation of the rootpath and this one. If stack monitor was launched with environments variables, you can reference them in the path. Example: $EXTERNAL_PATH_TO_SERVICES/platform',
+                description: `${shortcut.spawnOptions?.cwd || ''}`,
+                children: [
+                  {
+                    type: 'inputtext',
+                    beforeText: `${props.service.rootPath || '.'}`,
+                    model: {
+                      obj: shortcut.spawnOptions,
+                      key: 'cwd',
+                    },
+                    save,
+                  },
+                ],
+              }, {
+                key: `shortcut-${shortcutIndex}-parsers`,
+                icon: 'parsers',
+                label: 'Parsers',
+                description: shortcut.parsers?.map((parserId) => {
+                  const parser = parsers.value.find((p) => p.id === parserId);
+                  return parser?.label;
+                }).join(', '),
+                children: [
+                  ...shortcut.parsers?.map((parserId, i) => ({
+                    key: `shortcut-${shortcutIndex}-parser-${i}`,
+                    label: parsers.value.find((p) => p.id === parserId)?.label,
+                    actions: reorder(shortcut.parsers, i),
+                    buttons: [{ severity: 'danger', icon: 'fas fa-trash', action: () => { shortcut.parsers?.splice(i, 1); save(); } }],
+                    save,
+                  })) || [],
+                  {
+                    type: 'select',
+                    model: {
+                      obj: shortcut.spawnOptions,
+                      key: 'cwd',
+                    },
+                    options: parsers.value.filter((parser) => !(shortcut.parsers || []).includes(parser.id)),
+                    onChange({ value }) {
+                      if (!shortcut.parsers) shortcut.parsers = [];
+                      shortcut.parsers.push(value);
+                      save();
+                    },
+                    value: '',
+                    save,
+                  },
+                ],
+              },  {
+                key: `shortcut-${shortcutIndex}-env`,
+                label: 'Delete shortcut ',
+                buttonIcon: 'fas fa-trash',
+                type: 'button',
+                severity: 'danger',
+                click: () => { props.service.shortcuts?.splice(shortcutIndex, 1); save(); },
+              },
+            ],
+          })) || [],
+          {
+            key: 'group-add',
+            type: 'button',
+            label: 'Add new shortcut',
+            buttonIcon: 'fas fa-plus',
+            click: async () => {
+              if (!props.service.shortcuts) return;
+              props.service.shortcuts.push({
+                id: uuid(), spawnOptions: { cwd: '' }, spawnArgs: [], spawnCmd: '',
+              });
+              expandedKeys.value[`shortcut-${props.service.shortcuts.length - 1}`] = true;
+              expandedKeys.value[`shortcut-${props.service.shortcuts.length - 1}-argument`] = true;
+              expandedKeys.value[`shortcut-${props.service.shortcuts.length - 1}-shortcut`] = true;
+              expandedKeys.value[`shortcut-${props.service.shortcuts.length - 1}-path`] = true;
+              await save();
+              stack.loadServices();
+            },
+          },
+        ],
+      },
+      {
+            key: `service-env`,
+            buttonIcon: 'fas fa-edit',
+            label: 'Edit envs',
+            type: 'button',
+            click: () => editEnvForCommand(),
+          }, {
+            key: `service-env`,
+            label: 'Show envs',
+            buttonIcon: 'fas fa-eye',
+            type: 'button',
+            click: async () => {
+              const { data: exportedEnv } = await axios.get('/stack/export-env', { params: { environment: currentEnvironment.value.label, service: props.service.label } });
+              await modalShowEnvRef.value.open(exportedEnv).promise;
+            },
+          },
     ]));
 
     const expandedKeys = ref({
@@ -870,13 +1081,6 @@ export default {
       commands: true,
     });
     const expandAll = () => {
-      for (const node of nodes.value) {
-        if (node.key === 'commands') {
-          for (const nodeCommand of node.children) {
-            expandedKeys.value[nodeCommand.key] = true;
-          }
-        }
-      }
       expandedKeys.value = { ...expandedKeys.value };
     };
     onMounted(async () => {
@@ -884,8 +1088,8 @@ export default {
       currentEnvironment.value = await stack.getEnvironment();
       parsers.value = await Parsers.all();
     });
-    async function editEnvForCommand(command, commandIndex) {
-      const result = await modalEditEnvsRef.value.open({ command, commandIndex });
+    async function editEnvForCommand() {
+      const result = await modalEditEnvsRef.value.open();
       if (result) return save();
       return null;
     }
@@ -967,9 +1171,27 @@ $grey: var(--system-border-borderColor);
 }
 .label {
   white-space: nowrap;
-  display: inline-block;
+  display: flex;
   text-overflow: ellipsis;
   overflow: hidden;
+  flex-wrap: wrap;
+  align-items: center;
+  .actions {
+    display: flex;
+    align-items: center;
+    :deep(button) {
+      padding: 0;
+      width: 25px;
+      height: 25px;
+    }
+  }
+  i {
+    margin-left: 5px;
+    font-size: 12px;
+    position: relative;
+    vertical-align:super;
+    text-decoration:none;
+  }
 }
 .description {
   color: var(--system-tertiary-color);
@@ -991,6 +1213,9 @@ $grey: var(--system-border-borderColor);
   .p-tree-node-label {
     flex-grow: 1;
     overflow: hidden;
+  }
+  .p-tree-node-children {
+    padding: 0 30px
   }
 }
 </style>

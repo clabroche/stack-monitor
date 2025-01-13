@@ -2,6 +2,11 @@ import { defineConfig } from 'vitepress'
 
 export default defineConfig({
   title: "Stack Monitor",
+  vite: {
+    server: {
+      port: process.env.PORT
+    } 
+  },
   description: "Configure, share, launch and monitor all yours services in the same place for your development team",
   base: '/stack-monitor/',
   locales: {
@@ -33,19 +38,15 @@ export default defineConfig({
           { text: 'Getting started', link: '/introduction/getting-started' },
         ]
       }, {
-        text: 'Reference',
+        text: 'Guide',
         items: [
-          {text: 'Options', collapsed: true, items: [
-            { text: 'Service options', link: '/reference/service-options' },
-            { text: 'Global options', link: '/reference/global-options' },
-          ]},
-          { text: 'Extend capacities', link: '/reference/extended-options' },
+          { text: 'First launch', link: '/guide/first-launch.md' },
+          { text: 'Create your first service', link: '/guide/create-new-service.md' }
         ]
       }, {
-        text: 'Features',
+        text: 'Reference',
         items: [
-          { text: 'Actions', link: '/features/actions' },
-          { text: 'Git', link: '/features/git' },
+          { text: 'Global environments variables', link:'/reference/global-environment-variables.md'}
         ]
       }, {
         text: 'Integration',

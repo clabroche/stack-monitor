@@ -7,7 +7,7 @@ const args = require('../helpers/args');
 module.exports = {
   async launch() {
     await launch({
-      port: process.env.HTTP_PORT || 0,
+      port: process.env.STACK_MONITOR_HTTP_PORT || 0,
       controllers: () => require('../app'),
       socket: true,
       apiPrefix: '/',
@@ -37,7 +37,7 @@ module.exports = {
         (() => {
           table([
             { '': 'Version', Value: require('../helpers/version').version, 'Overrided By': '-' },
-            { '': 'Port', Value: ports.http, 'Overrided By': 'HTTP_PORT' },
+            { '': 'Port', Value: ports.http, 'Overrided By': 'STACK_MONITOR_HTTP_PORT' },
             { '': 'Url', Value: `http://localhost:${ports.http}`, 'Overrided By': '-' },
             ...args.services.length
               ? [{ '': 'Services', Value: args.services.join(', '), 'Overrided By': '-' }]

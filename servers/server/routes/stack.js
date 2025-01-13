@@ -54,7 +54,7 @@ router.get('/export-env', async (req, res) => {
   if (!service) return res.status(404).send('Service not found');
   const command = service.commands?.[+(req.query.commandIndex?.toString() || '0')];
   if (!command) return res.status(404).send('Command not found');
-  const envs = await service.buildEnvs(req.query.environment, command.spawnOptions);
+  const envs = await service.buildEnvs(req.query.environment);
   res.send(envs);
 });
 

@@ -227,9 +227,10 @@ module.exports = () => {
 
   router.get('/openai/ready', async (req, res) => {
     if (!openai) return res.json(false);
+    console.log(process.env.STACK_MONITOR_OPENAI_APIKEY, openaiconf?.apikey)
     try {
-      await openai.models.list({});
-      res.json(!!openaiconf?.apikey);
+      const {data} = await openai.models.list({});
+      res.json(!!data?.length);
     } catch (error) {
       res.json(false);
     }

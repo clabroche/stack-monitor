@@ -201,6 +201,11 @@
           </div>
 
           <div class="input-container-terminal" v-if="!currentPidView || currentPidView.cmd?.status == 'running'">
+            <div class="shortcuts">
+              <Tag class="shortcut" v-for="shortcut of service.shortcuts" severity="info" @click="sendShortcut(shortcut)">
+                {{shortcut.label || shortcut.spawnCmd + ' ' + (shortcut.spawnArgs?.join(' ') || '')}}
+              </Tag>
+            </div>
             <div class="histories" v-if="histories?.length">
               <div
                 class="history" :class="{active: history.active}"
@@ -245,7 +250,7 @@
             </div>
             <div class="input-content-terminal">
               <div class="badge" v-if="currentPidView?.pid">Pid: {{ currentPidView.pid }}</div>
-              <i class="fab fa-docker" v-if="service.container?.name"></i>
+              <i class="fab fa-docker" v-if="service.container?.enabled"></i>
               <i class="fas fa-chevron-right" v-else></i>
               <PassThrough>
                 <textarea ref="textareaRef"
@@ -257,7 +262,6 @@
                   :placeholder="currentPidView ? `Send command to ${currentPidView.pid}...` : 'Send new command...'"
                 />
               </PassThrough>
-              <!-- <button @click="send"><i class="fas fa-envelope"></i></button> -->
             </div>
           </div>
           <div class="input-container-terminal" v-else-if="currentPidView">
@@ -270,6 +274,11 @@
   </div>
   <sectionCmp v-else>
     <div class="not-launch">
+      <div class="shortcuts">
+        <Tag class="shortcut" v-for="shortcut of service.shortcuts" severity="info" @click="sendShortcut(shortcut)">
+          {{shortcut.label || shortcut.spawnCmd + ' ' + (shortcut.spawnArgs?.join(' ') || '')}}
+        </Tag>
+      </div>
       <i class="fas fa-ban"></i>
       Launch this service to view logs
     </div>
@@ -314,6 +323,7 @@ import notification from '../../../../fronts/app/src/helpers/notification';
 import Popover from '../../../../fronts/app/src/components/Popover.vue';
 import fs from '../../../../fronts/app/src/models/fs';
 import Spinner from '../../../../fronts/app/src/components/Spinner.vue';
+import Tag from 'primevue/tag';
 import PassThrough from './PassThrough.vue';
 
 const props = defineProps({
@@ -544,23 +554,21 @@ async function scroll(force = false, customElement = null) {
 }
 
 const messageToSend = ref('');
-/** @param {Event} ev */
-async function send(ev) {
-  ev.preventDefault();
+/** @param {Event | undefined} ev */
+async function send(command, ev = undefined) {
+  ev?.preventDefault?.();
   const pid = await props.service.sendTerminalPrompt({
-    message: messageToSend.value.trim(),
+    command,
     pid: currentPidView.value?.pid || undefined,
   });
-  if (messageToSend.value.trim()) {
-    setTimeout(() => {
-      const lineFound = logs.value.find((log) => log.pid === pid.pid);
-      if (lineFound?.cmd?.status === 'running') {
-        currentPidView.value = lineFound;
-      }
-    }, 100);
-  }
+  setTimeout(() => {
+    const lineFound = logs.value.find((log) => log.pid === pid.pid);
+    if (lineFound?.cmd?.status === 'running') {
+      currentPidView.value = lineFound;
+    }
+  }, 100);
   messageToSend.value = '';
-  if (ev.target) {
+  if (ev?.target) {
     await nextTick();
     rerenderTextarea();
   }
@@ -587,7 +595,7 @@ async function sendEnter(ev) {
     });
     return;
   }
-  if (!ev.shiftKey) await send(ev);
+  if (!ev.shiftKey) await send({spawnCmd: messageToSend.value.trim()}, ev);
   else messageToSend.value += '\n';
 }
 /** @param {Event} ev */
@@ -741,6 +749,9 @@ function setPid(line) {
 function setSelectedLine(line) {
   if (window.getSelection()?.toString()) return;
   selectedLine.value = line;
+}
+async function sendShortcut(shortcut) {
+  return send(shortcut)
 }
 /**
  * @typedef {import('../../../../servers/server/models/Service').LogMessage} LogMessage
@@ -1339,5 +1350,16 @@ button.config {
   i {
     margin: 0 !important;
   }
+}
+.shortcuts {
+  width: 100%;
+  margin-bottom: 5px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px
+}
+.shortcut {
+  border: 1px solid var(--p-tag-info-color);
+  cursor: pointer;
 }
 </style>

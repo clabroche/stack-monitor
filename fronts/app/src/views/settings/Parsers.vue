@@ -12,7 +12,7 @@
         </template>
       </Tree>
     </SplitterPanel>
-    <SplitterPanel :size="75" class="right-panel">
+    <SplitterPanel :size="75" class="right-panel"  v-if="currentScript && currentScript?.label">
       <template v-if="currentScript">
         <Message size="small" severity="warn" closable>
           Caution: This script is designed to execute as is with an eval(). <br/>Please ensure it does not contain harmful content.
@@ -130,11 +130,16 @@ async function add() {
   const result = await addModalRef.value.open().promise
   if(result) {
     await Parsers.create(scriptToAdd.value)
-      .then(() => notification.next('success', 'Parser created'))
+      .then(async (result) => {
+        notification.next('success', 'Parser created')
+        router.push({query: {...router.currentRoute.value.query, parser: result.id}})
+        currentScript.value = result
+      })
       .catch(() => notification.next('error', 'Parser cant be saved'))
+    
   } 
-  reload()
   scriptToAdd.value = getDefaultParser()
+  await reload()
 }
 
 
@@ -143,8 +148,8 @@ onMounted(async() => {
   await reload()
   const parserId = router.currentRoute.value.query.parser
   currentScript.value = parserId  
-    ? currentScript.value = parsers.value.find(a => a.id === parserId)
-    : currentScript.value = parsers.value[0]
+    ? parsers.value.find(a => a.id === parserId)
+    : parsers.value.filter(a => a.readonly === false)[0]
   currentScriptKey.value[currentScript.value?.id] = true
 })
 watch(() => currentScriptKey, () => {
@@ -155,7 +160,7 @@ watch(() => currentScriptKey, () => {
 async function deleteCurrentParser() {
   const result = await deleteModalRef.value.open().promise
   if(!result) return
-  Parsers.delete(currentScript.value.id)
+  await Parsers.delete(currentScript.value.id)
       .then(() => notification.next('success', 'Parser deleted'))
       .catch(() => notification.next('error', 'Parser cant be deleted'))
   await reload()

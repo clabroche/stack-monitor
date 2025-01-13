@@ -1,6 +1,7 @@
 import PrimeVue from 'primevue/config';
 import Aura from '@primevue/themes/aura';
 import Socket from './helpers/Socket';
+import Tooltip from 'primevue/tooltip';
 
 (async () => {
   console.log('Init Socket...');
@@ -31,7 +32,8 @@ import Socket from './helpers/Socket';
         },
       },
     })
-    .use(router);
+    .use(router)
+    .directive('tooltip', Tooltip);
   views.forEach((cmp) => app.component(cmp.name, cmp.cmp));
   app.mount('#app');
 })();

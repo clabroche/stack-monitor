@@ -16,7 +16,7 @@ const net = require('net');
 // eslint-disable-next-line import/no-extraneous-dependencies
 const { sockets } = require('@clabroche/common-socket-server');
 const { mkdir, writeFile } = require('fs/promises');
-const { cloneDeep } = require('lodash');
+const { cloneDeep, over } = require('lodash');
 const CreateInterface = require('../helpers/readline');
 const { stripAnsi, ansiconvert, unescapeAnsi } = require('../helpers/ansiconvert');
 const isWindows = require('../helpers/isWindows');
@@ -34,7 +34,6 @@ const alias = {
   ls: { cmd: 'ls', args: ['--color=force'] },
   gco: { cmd: 'git', args: ['checkout'] },
 };
-const bootstrapConcurrency = {};
 
 /**
  * @param {import('@clabroche/common-typings').NonFunctionProperties<Service>} service
@@ -76,7 +75,11 @@ function Service(service, Stack, { isUpdate } = { isUpdate: false }) {
     /** @type {string[]} */
     this.groups = service.groups || [];
     /** @type {string[]} */
-    this.parsers = service.parsers || [];
+    this.parsers = service.parsers || [
+      'stack-monitor-parser-debug',
+      'stack-monitor-parser-jsons',
+      'stack-monitor-parser-links',
+    ];
     /** @type {boolean} */
     this.enabled = service.enabled || false;
     /** @type {boolean} */
@@ -90,18 +93,20 @@ function Service(service, Stack, { isUpdate } = { isUpdate: false }) {
      *  volumes: string[],
      *  ignoreVolumes: string[],
      *  sharedVolume: string,
+     *  ports: string[],
      *  noHostUser: true
      *  noChangeWorkDir: true,
      *  customPid?: ({cmd, args, pid})=> Promise<number | null>
-     *  bootstrap: {commands: Array<{concurrencyKey?:string, commands: {user: string, cmd: string, entrypoint:string}}>}
+     *  bootstrap: {commands: Array<{user: string, cmd: string, entrypoint:string}>}
      * }}
      */
     // @ts-ignore
     this.container = service.container || {};
     if (this.container) {
-      if (!this.container.name) this.container.name = humanStringToKey(this.label);
+      this.container.name = humanStringToKey(this.label);
       if (!this.container.volumes?.length) this.container.volumes = [];
       if (!this.container.build) this.container.build = '';
+      this.container.ports = this.container.ports || [];
       this.container.sharedVolume = this.container.sharedVolume || '~/.stack-monitor';
       this.container.ignoreVolumes = this.container.ignoreVolumes?.length
         ? this.container.ignoreVolumes.filter((f) => !f.startsWith(this.container?.sharedVolume || ''))
@@ -111,17 +116,30 @@ function Service(service, Stack, { isUpdate } = { isUpdate: false }) {
     }
     /** @type {boolean} */
     this.exited = service.exited || false;
+    /** @type {{[key:string]: {[key:string]: {value: string, override: string, systemOverride?: string, prefix?: string, suffix?: string}}}} */
+    this.envs = service.envs || {}
     /**
      * @type {{
      *  id: string,
      *  spawnArgs: string[],
      *  spawnCmd: string,
-     *  spawnOptions: SpawnOptions & {envs: {[key:string]: {extends: [], envs: {key: string, value: string, override: string, systemOverride?: string, prefix?: string, suffix?: string}[]}}}
+     *  spawnOptions: SpawnOptions
      *  effectiveParsers: ParserModel[]
      *  parsers: string[]
      * }[]}
      * */
     this.commands = service.commands || [];
+    /**
+     * @type {{
+     *  id: string,
+     *  spawnArgs: string[],
+     *  spawnCmd: string,
+     *  spawnOptions: SpawnOptions
+     *  effectiveParsers: ParserModel[]
+     *  parsers: string[]
+     * }[]}
+     * */
+    this.shortcuts = service.shortcuts || [];
     /** @type {LogMessage[]} */
     this.store = service.store || [];
     /** @type {import('child_process').ChildProcess[]} */
@@ -153,38 +171,15 @@ function Service(service, Stack, { isUpdate } = { isUpdate: false }) {
     };
     const environments = await Environment.all();
     const overrides = await dbs.getDb(`overrides/${this.label}-envs`).read();
-
     // Load variables from db and envs
     if (!isUpdate) {
-      this.commands.forEach((command) => {
-        // Load .env
-        if (!command.spawnOptions?.cwd) command.spawnOptions.cwd = '';
-        const customEnvs = this.loadCustomEnv(command.spawnOptions.cwd.toString()) || {};
-        Object.keys(customEnvs).forEach((key) => {
-          if (!command.spawnOptions?.envs) return;
-          const value = customEnvs[key];
-          environments.forEach((environment) => {
-            if (!command.spawnOptions.envs[environment.label]) {
-              command.spawnOptions.envs[environment.label] = { extends: [], envs: [] };
-            }
-            const existingEnv = command.spawnOptions.envs[environment.label].envs.find((env) => env.key === key);
-            if (existingEnv) {
-              existingEnv.systemOverride = value;
-            } else {
-              command.spawnOptions.envs[environment.label].envs.push({
-                key, value: '', override: '', systemOverride: value,
-              });
-            }
-          });
-        });
-        // Load overrides
-        environments.forEach((environment) => {
-          command.spawnOptions.envs?.[environment.label]?.envs.forEach((env) => {
-            const override = overrides?.[command.id]?.[environment.label]?.[env.key];
-            if (override) {
-              env.override = override;
-            }
-          });
+      environments.forEach((environment) => {
+        const envs = this.envs[environment.label] || {}
+        Object.keys(envs).forEach((key) => {
+          const env = envs[key] 
+          const override = overrides[environment.label]?.[key];
+          if (!env || !override) return
+          envs[key].override = override
         });
       });
     }
@@ -216,18 +211,14 @@ Service.prototype.processQueue = function() {
 Service.prototype.save = async function () {
   const obj = this.toStorage();
   const overrides = {};
-  await PromiseB.map((obj.commands || []), async (command) => {
-    if (!overrides[command.id]) overrides[command.id] = {};
-    await PromiseB.map(Object.keys(command.spawnOptions.envs), (environmentLabel) => {
-      if (!overrides[command.id][environmentLabel]) overrides[command.id][environmentLabel] = {};
-      command.spawnOptions.envs[environmentLabel].envs.forEach((env) => {
-        overrides[command.id][environmentLabel][env.key] = env.override;
-        delete env.systemOverride;
-        // @ts-ignore
-        delete env.override;
-      });
+  await PromiseB.map(Object.keys(obj.envs), (environmentLabel) => {
+    if (!overrides[environmentLabel]) overrides[environmentLabel] = {};
+    Object.keys(obj.envs[environmentLabel]).forEach((key) => {
+      const env = obj.envs[environmentLabel][key]
+      overrides[environmentLabel][key] = env.override;
+      delete env.systemOverride;
+      delete env.override;
     });
-    delete command.spawnOptions?.overrideEnvs;
   });
   await dbs.getDb(`overrides/${this.label}-envs`).write(overrides);
   await dbs.getDb(`services/${this.label}`).write(obj);
@@ -278,20 +269,9 @@ Service.prototype.toStorage = function () {
     parsers: this.parsers,
     container: this.container,
     meta: this.meta,
+    envs: this.envs,
+    shortcuts: this.shortcuts
   });
-  if (service.commands) {
-    service.commands.map((command) => {
-      if (!command.spawnOptions.envs[this.Stack.getCurrentEnvironment()?.label || '']) command.spawnOptions.envs[this.Stack.getCurrentEnvironment()?.label || ''] = { extends: [], envs: [] };
-      command.spawnOptions.envs[this.Stack.getCurrentEnvironment()?.label || ''].envs = command.spawnOptions?.envs[this.Stack.getCurrentEnvironment()?.label || ''].envs.map((env) => ({
-        key: env.key,
-        value: env.value,
-        prefix: env.prefix,
-        suffix: env.suffix,
-        override: env.override,
-      }));
-      return command;
-    });
-  }
   return service;
 };
 
@@ -307,6 +287,7 @@ Service.prototype.sendHasBeenModified = function () {
 Service.prototype.kill = async function (keepEnabled = false) {
   if (this.container?.enabled && this.container?.name) {
     await execAsync(`docker stop ${this.container.name}`, {}).catch(console.error);
+    await execAsync(`docker rm ${this.container.name}`, {}).catch(console.error);
   } else {
     await PromiseB.map(this.pids, async (spawnedProcess) => {
       if (!spawnedProcess.pid) return;
@@ -345,6 +326,9 @@ Service.prototype.kill = async function (keepEnabled = false) {
 Service.prototype.launch = async function () {
   this.store = [];
   await this.kill(true).catch(console.error);
+  if(this.container?.enabled) {
+    await this.buildDocker({isMainProcess: true})
+  }
   if (this.commands?.length) {
     await PromiseB.map(this.commands, async (command) => {
       if (command?.spawnCmd) {
@@ -418,9 +402,13 @@ Service.prototype.add = async function (data, logMessageOverride, {
 
 Service.prototype.launchProcess = async function (command, isMainProcess = true) {
   try {
+    this.enabled = true;
+    this.sendHasBeenModified();
     this.crashed = false;
     this.exited = false;
-    const { cmd, args, options } = await this.parseIncomingCommand(command, isMainProcess);
+    let { cmd, args, options } = this.container.enabled
+      ? await this.parseIncomingCommandDocker(command)
+      : await this.parseIncomingCommand(command);
     if (!existsSync(options.cwd)) {
       this.crashed = true;
       this.exited = true;
@@ -441,7 +429,7 @@ Service.prototype.launchProcess = async function (command, isMainProcess = true)
       };
       console.error(launchMessage.msg);
       this.add(launchMessage.msg, { source: 'stderr' }, { pid: null, command, isMainProcess });
-      return undefined;
+      return {spawnProcess: null, launchMessage};
     }
     const spawnProcess = spawn(cmd, args, { ...options, detached: !isWindows });
 
@@ -648,7 +636,6 @@ Service.prototype.getGlobalEnvs = async function (environmentLabel) {
 
 Service.prototype.buildEnvs = async function (
   environmentLabel,
-  spawnOptions,
 ) {
   const globalEnvironment = await Environment.find(environmentLabel)
   if(!globalEnvironment) return {}
@@ -662,36 +649,25 @@ Service.prototype.buildEnvs = async function (
     return label;
   };
   extendedEnvironments.map(extendedEnvironment => {
-    spawnOptions.envs[extendedEnvironment.label]?.envs.forEach(env => {
-      if(!environmentsKeys.has(env.key)) {
+    Object.keys(this.envs[extendedEnvironment.label] || {}).forEach(key => {
+      const env = this.envs[extendedEnvironment.label][key]
+      if(!environmentsKeys.has(key)) {
         for (let i = 0; i < extendedEnvironments.length; i++) {
           let occurrence = searchEnv(env.systemOverride, extendedEnvironments[i].envs) || searchEnv(env.override, extendedEnvironments[i].envs) || searchEnv(env.value, extendedEnvironments[i].envs)
           if (occurrence) occurrence = `${env.prefix || ''}${occurrence || ''}${env.suffix || ''}`
           const value = occurrence
           if(value) {
-            environmentsKeys.set(env.key, value)
+            environmentsKeys.set(key, value)
             return 
           }
         }
       }
     });
   });
-  const envs ={}
-  ;[...environmentsKeys].forEach(([key, value]) => {
-    envs[key] = value
-  })
-  // console.log(globalEnvironment?.getExtendedEnvironments())
-  // const environment = spawnOptions.envs[environmentLabel];
-  // if (!environment) return [];
-  // const searchEnv = await this.getGlobalEnvs(environmentLabel);
-  
-  // const computedEnvs = environment.envs.reduce((envs, env) => {
-  //   let occurrence = searchEnv(env.systemOverride) || searchEnv(env.override) || searchEnv(env.value)
-  //   if (occurrence) occurrence = `${env.prefix || ''}${occurrence || ''}${env.suffix || ''}`
-  //   envs[env.key] = occurrence || envs[env.key];
-  //   return envs;
-  // }, envs);
-  return envs;
+  return ([...environmentsKeys]).reduce((agg, [key, value]) => {
+    agg[key] = value
+    return agg
+  }, {})
 };
 
 Service.prototype.extractTag = function (field) {
@@ -699,10 +675,32 @@ Service.prototype.extractTag = function (field) {
   return extractedTag;
 };
 
-/**
-   * @param {boolean} isMainProcess
-   */
-Service.prototype.parseIncomingCommand = async function (command, isMainProcess = true) {
+Service.prototype.parseIncomingCommandDocker = async function (command) {
+  let { spawnCmd, spawnArgs = [], spawnOptions = { envs: [] } } = command;
+  const isAlive = await execAsync(`docker inspect --format {{.State.Pid}}  ${this.container.name}`, {})
+    .then((pid) => pid.trim() !== '0')
+    .catch(() => false);
+  const cmd = 'docker'
+  const args = isAlive 
+    ? ['exec', this.container.name, spawnCmd, ...spawnArgs]
+    : [
+      'run',
+      '--rm',
+      ...await this.getDockerEnvsArgs(), ...await this.getDockerVolumesArgs(), ...await this.getDockerPorts(),
+      '--network', 'host',
+      '--name', this.container.name,
+      this.container.name,
+      'sh', `-c '${spawnCmd} ${spawnArgs.join(' ')}'`
+    ]
+  const cwd = replaceEnvs(pathfs.resolve(spawnOptions.cwd || this.commands[0]?.spawnOptions?.cwd || this.getRootPath() || '.'));
+  const options = {
+    cwd,
+    shell: isWindows ? process.env.ComSpec : '/bin/sh',
+  };
+  return {cmd, args, options}
+}
+
+Service.prototype.parseIncomingCommand = async function (command) {
   const { spawnCmd, spawnArgs = [], spawnOptions = { envs: [] } } = command;
   let cmd = spawnCmd?.split(' ')?.[0];
   const argFromCmd = spawnCmd?.split(' ')?.slice(1).join(' ');
@@ -718,17 +716,14 @@ Service.prototype.parseIncomingCommand = async function (command, isMainProcess 
     ...spawnOptions,
     cwd,
     shell: isWindows ? process.env.ComSpec : '/bin/sh',
-    env: await this.buildEnvs(this.Stack.getCurrentEnvironment()?.label, spawnOptions),
+    env: {
+      ...process.env,
+      ...await this.buildEnvs(this.Stack.getCurrentEnvironment()?.label)
+    },
   };
 
   if (cmd.match(/[/\\]/g)) {
     cmd = path.resolve(options.cwd.toString(), cmd);
-  }
-  if (this.container?.enabled) {
-    const result = await this.buildDocker({
-      cmd, args, options, isMainProcess,
-    });
-    return result;
   }
   options.env = { ...process.env, ...options.env };
   return { cmd, args, options };
@@ -739,31 +734,13 @@ function replaceHome(str) {
     ? pathfs.resolve(os.homedir(), str.replace('~/', ''))
     : pathfs.resolve(str);
 }
-/**
-   * @param {{cmd: string, args: string[], options: SpawnOptions, isMainProcess: boolean}} spawnCmd
-   */
-Service.prototype.buildDocker = async function ({
-  cmd, args, options, isMainProcess,
-}) {
-  if (!this.container?.enabled) return { cmd, args, options };
+
+Service.prototype.getDockerVolumesArgs = async function () {
   const internalVolumeRootPath = replaceHome(this.container.sharedVolume)
-  const dockerFilePath = pathfs.resolve(internalVolumeRootPath, `Dockerfile.${this.container.name}`);
-  const dockerIgnoreFilePath = pathfs.resolve(internalVolumeRootPath, '.dockerignore');
-  const dockerContextPath = pathfs.resolve(internalVolumeRootPath, '.empty-context');
-  if (!existsSync(internalVolumeRootPath)) await mkdir(internalVolumeRootPath, { recursive: true });
-  if (!existsSync(dockerContextPath)) await mkdir(dockerContextPath, { recursive: true });
-  await writeFile(dockerFilePath, `
-${this.container.build || ''}
-${Object.keys(options.env || {}).map((env) => `ENV ${env}=${(options.env || {})[env]} `).join('\n')}
-    `.trim(), 'utf-8');
-  await writeFile(dockerIgnoreFilePath, 'Dockerfile.*'.trim(), 'utf-8');
-  const originalCmd = `${cmd} ${args.join(' ')}`;
-  cmd = 'docker';
   const volumesCmd = this.container.volumes.map((v) => {
     let [external, internal] = v.split(':');
     if (external) external = pathfs.resolve(replaceHome(replaceEnvs(external)));
     if (internal) internal = pathfs.resolve(replaceHome(replaceEnvs(internal)));
-    console.log(external,internal)
     return ['-v', `"${external}:${internal || external}"`];
   });
   volumesCmd.push(...await PromiseB.map(this.container.ignoreVolumes, async (ignoredVolume) => {
@@ -771,97 +748,126 @@ ${Object.keys(options.env || {}).map((env) => `ENV ${env}=${(options.env || {})[
     if (!existsSync(volumePath)) await mkdir(volumePath, { recursive: true }); // Pre create folders with host uid,gid to prevent docker to create as root user
     return ['-v', `"${volumePath}:${ignoredVolume}"`];
   }).filter((f) => !!f?.length));
+  return volumesCmd.flat(1)
+}
+Service.prototype.getDockerPorts = async function () {
+  const portsCmd = []
+  this.container.ports.forEach(port => {
+    portsCmd.push('-p', port)
+  })
+  return portsCmd.flat(1)
+}
 
-  const isAlive = await execAsync(`docker inspect --format {{.State.Pid}}  ${this.container.name}`, {})
-    .then((pid) => pid.trim() !== '0')
-    .catch(() => false);
+Service.prototype.getDockerEnvsArgs = async function () {
+  const envs = await this.buildEnvs(this.Stack.getCurrentEnvironment()?.label)
+  const envCmd = []
+  Object.keys(envs).map(key => {
+    envCmd.push('-e', `"${key}=${envs[key]}"`)
+  })
+  return envCmd
+}
 
-  if (!isAlive) {
-    const command = {
-      spwanCmd: 'docker',
-      spawnArgs: ['build', '-f', dockerFilePath, '-t', this.container?.name || '', dockerContextPath],
-      spawnOptions: { cwd: internalVolumeRootPath, shell: isWindows ? true : '/bin/sh', env: process.env },
-    };
-    this.add('<i class="fab fa-docker" title="docker"></i> <i class="fas fa-hard-hat" title="build"></i> Building docker image...', { source: 'stdout' }, { pid: null, isMainProcess, command });
-    this.add(`<i class="fab fa-docker" title="docker"></i> <i class="fas fa-hard-hat" title="build"></i> ${command.spwanCmd} ${command.spawnArgs?.join(' ')}}`, { source: 'stdout' }, { pid: null, isMainProcess, command });
-    await new Promise((resolve, reject) => {
-      const buildProcess = spawn(command.spwanCmd, command.spawnArgs, command.spawnOptions);
-      new CreateInterface({
-        input: buildProcess.stdout,
-      })
-        .on('line', (message) => {
-          this.add(`<i class="fab fa-docker" title="docker"></i> <i class="fas fa-hard-hat" title="build"></i> ${message}`, { source: 'stdout' }, { isMainProcess, pid: buildProcess.pid, command });
-        });
-      new CreateInterface({
-        input: buildProcess.stderr,
-      }).on('line', (message) => {
+Service.prototype.launchDockerBuild = async function ({ isMainProcess }) {
+  const internalVolumeRootPath = replaceHome(this.container.sharedVolume)
+  const dockerFilePath = pathfs.resolve(internalVolumeRootPath, `Dockerfile.${this.container.name}`);
+  const dockerContextPath = pathfs.resolve(internalVolumeRootPath, '.empty-context');
+  const command = {
+    spwanCmd: 'docker',
+    spawnArgs: ['build', '-f', dockerFilePath, '-t', this.container?.name || '', dockerContextPath],
+    spawnOptions: { cwd: internalVolumeRootPath, shell: isWindows ? true : '/bin/sh', env: process.env },
+  };
+  this.add('<i class="fab fa-docker" title="docker"></i> <i class="fas fa-hard-hat" title="build"></i> Building docker image...', { source: 'stdout' }, { pid: null, isMainProcess, command });
+  this.add(`<i class="fab fa-docker" title="docker"></i> <i class="fas fa-hard-hat" title="build"></i> ${command.spwanCmd} ${command.spawnArgs?.join(' ')}}`, { source: 'stdout' }, { pid: null, isMainProcess, command });
+  await new Promise((resolve, reject) => {
+    const buildProcess = spawn(command.spwanCmd, command.spawnArgs, command.spawnOptions);
+    new CreateInterface({
+      input: buildProcess.stdout,
+    })
+      .on('line', (message) => {
         this.add(`<i class="fab fa-docker" title="docker"></i> <i class="fas fa-hard-hat" title="build"></i> ${message}`, { source: 'stdout' }, { isMainProcess, pid: buildProcess.pid, command });
       });
-      buildProcess.on('exit', (code) => {
-        if (code) {
-          this.exited = true;
-          this.crashed = true;
-          return reject(code);
-        }
-        return resolve(null);
-      });
+    new CreateInterface({
+      input: buildProcess.stderr,
+    }).on('line', (message) => {
+      this.add(`<i class="fab fa-docker" title="docker"></i> <i class="fas fa-hard-hat" title="build"></i> ${message}`, { source: 'stdout' }, { isMainProcess, pid: buildProcess.pid, command });
     });
-    const baseArgs = ['run', '--name', this.container.name, '--init', '--rm', , ...(isWindows ? [] : ['--user', this.container.user || `${uid}:${gid}`]), ...(isWindows ? [] : ['--network', 'host']), ...volumesCmd.flat(1)];
-    args = [...baseArgs, this.container.name, originalCmd];
-    if (this.container.bootstrap) {
-      const bootstrapCommands = (Array.isArray(this.container.bootstrap)
-        ? this.container.bootstrap
-        : this.container.bootstrap.commands) || [];
-      const concurrency = '';
-      if (!concurrency || (concurrency && !bootstrapConcurrency[concurrency])) {
-        bootstrapConcurrency[concurrency] = true;
-        await PromiseB.mapSeries(bootstrapCommands, async (command) => {
-          await new Promise((resolve, reject) => {
-            const entrypoint = command.entrypoint ? ['--entrypoint', `${command.entrypoint}`] : [];
-            const userEntrypoint = command.user && !isWindows ? ['--user', `${command.user || this.container.user || `${uid}:${gid}`}`] : [];
-            const bootstrapArgs = [
-              ...baseArgs,
-              ...entrypoint.flat(1),
-              ...userEntrypoint.flat(1),
-              this.container.name,
-              command.cmd,
-            ].filter((a) => a);
-            const commandBootstrap = {
-              spawnCmd: 'docker',
-              spawnArgs: bootstrapArgs,
-              spawnOptions: { shell: isWindows ? process.env.ComSpec : '/bin/sh' },
-            };
-            this.add(`<i class="fab fa-docker" title="docker"></i> <i class="fas fa-hourglass-start" title="bootstrap"></i> ${commandBootstrap.spawnCmd} ${commandBootstrap.spawnArgs?.join(' ')}`, { source: 'stdout' }, { isMainProcess, pid: null, command: commandBootstrap });
-            const bootstrapProcess = spawn(
-              commandBootstrap.spawnCmd,
-              commandBootstrap.spawnArgs,
-              commandBootstrap.spawnOptions,
-            );
-            new CreateInterface({
-              input: bootstrapProcess.stdout,
-            })
-              .on('line', (message) => {
-                this.add(`<i class="fab fa-docker" title="docker"></i> <i class="fas fa-hourglass-start" title="bootstrap"></i> ${message}`, { source: 'stdout' }, { isMainProcess, pid: bootstrapProcess.pid, command: commandBootstrap });
-              });
-            new CreateInterface({
-              input: bootstrapProcess.stderr,
-            }).on('line', (message) => {
-              this.add(`<i class="fab fa-docker" title="docker"></i> <i class="fas fa-hourglass-start" title="bootstrap"></i> ${message}`, { source: 'stderr' }, { isMainProcess, pid: bootstrapProcess.pid, command: commandBootstrap });
-            });
-            bootstrapProcess.on('exit', (code) => {
-              if (code) return reject(code);
-              return resolve(null);
-            });
-          });
-        }).finally(() => {
-          bootstrapConcurrency[concurrency] = false;
-        });
+    buildProcess.on('exit', (code) => {
+      if (code) {
+        this.exited = true;
+        this.crashed = true;
+        return reject(code);
       }
-    }
-  } else {
-    await this.add('Attach to container...', { source: 'stdout' }, { pid: null, isMainProcess, command: { spwanCmd: cmd, spawnArgs: args, spawnOptions: options } });
-    args = ['exec ', this.container.name, originalCmd];
+      return resolve(null);
+    });
+  });
+}
+
+
+Service.prototype.launchDockerBootstrap = async function ({ isMainProcess }) {
+  const volumesCmd = await this.getDockerVolumesArgs()
+  const baseArgs = ['run', '--name', this.container.name, '--init', '--rm', , ...(isWindows ? [] : ['--user', this.container.user || `${uid}:${gid}`]), '--network', 'host', ...volumesCmd];
+  if (this.container.bootstrap) {
+    const envCmd = await this.getDockerEnvsArgs()
+    await PromiseB.mapSeries(this.container.bootstrap.commands || [], async (command) => {
+      await new Promise((resolve, reject) => {
+        const entrypoint = command.entrypoint ? ['--entrypoint', `${command.entrypoint}`] : [];
+        const userEntrypoint = command.user && !isWindows ? ['--user', `${command.user || this.container.user || `${uid}:${gid}`}`] : [];
+        const bootstrapArgs = /**@type {String[]}*/([
+          ...baseArgs,
+          ...entrypoint.flat(1),
+          ...userEntrypoint.flat(1),
+          ...envCmd.flat(1),
+          this.container.name,
+          command.cmd,
+        ].filter((a) => !!a));
+        const commandBootstrap = {
+          spawnCmd: 'docker',
+          spawnArgs: bootstrapArgs,
+          spawnOptions: { shell: isWindows ? process.env.ComSpec : '/bin/sh' },
+        };
+        this.add(`<i class="fab fa-docker" title="docker"></i> <i class="fas fa-hourglass-start" title="bootstrap"></i> ${commandBootstrap.spawnCmd} ${commandBootstrap.spawnArgs?.join(' ')}`, { source: 'stdout' }, { isMainProcess, pid: null, command: commandBootstrap });
+        const bootstrapProcess = spawn(
+          commandBootstrap.spawnCmd,
+          commandBootstrap.spawnArgs,
+          commandBootstrap.spawnOptions,
+        );
+        new CreateInterface({
+          input: bootstrapProcess.stdout,
+        })
+          .on('line', (message) => {
+            this.add(`<i class="fab fa-docker" title="docker"></i> <i class="fas fa-hourglass-start" title="bootstrap"></i> ${message}`, { source: 'stdout' }, { isMainProcess, pid: bootstrapProcess.pid, command: commandBootstrap });
+          });
+        new CreateInterface({
+          input: bootstrapProcess.stderr,
+        }).on('line', (message) => {
+          this.add(`<i class="fab fa-docker" title="docker"></i> <i class="fas fa-hourglass-start" title="bootstrap"></i> ${message}`, { source: 'stderr' }, { isMainProcess, pid: bootstrapProcess.pid, command: commandBootstrap });
+        });
+        bootstrapProcess.on('exit', (code) => {
+          if (code) return reject(code);
+          return resolve(null);
+        });
+      });
+    })
   }
+}
+
+
+/**
+   * @param {{isMainProcess: boolean}} spawnCmd
+   */
+Service.prototype.buildDocker = async function ({
+   isMainProcess
+}) {
+  const internalVolumeRootPath = replaceHome(this.container.sharedVolume)
+  const dockerFilePath = pathfs.resolve(internalVolumeRootPath, `Dockerfile.${this.container.name}`);
+  const dockerIgnoreFilePath = pathfs.resolve(internalVolumeRootPath, '.dockerignore');
+  const dockerContextPath = pathfs.resolve(internalVolumeRootPath, '.empty-context');
+  if (!existsSync(internalVolumeRootPath)) await mkdir(internalVolumeRootPath, { recursive: true });
+  if (!existsSync(dockerContextPath)) await mkdir(dockerContextPath, { recursive: true });
+  await writeFile(dockerFilePath, `${this.container.build || ''}`);
+  await writeFile(dockerIgnoreFilePath, 'Dockerfile.*'.trim(), 'utf-8');
+  await this.launchDockerBuild({ isMainProcess })
+  await this.launchDockerBootstrap({ isMainProcess })
   this.container.customPid = async () => {
     const getPid = () => execAsync(`docker inspect --format {{.State.Pid}}  ${this.container?.name}`, {}).then((a) => a.trim()).catch(() => null);
     let pid = await getPid();
@@ -870,11 +876,6 @@ ${Object.keys(options.env || {}).map((env) => `ENV ${env}=${(options.env || {})[
       pid = await getPid();
     }
     return pid && !Number.isNaN(+pid) ? +pid : null;
-  };
-  return {
-    cmd,
-    args,
-    options,
   };
 };
 

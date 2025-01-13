@@ -78,7 +78,7 @@ async function runMainProcess() {
       process.kill(pid, 'SIGKILL');
     } catch (error) {}
   }
-  const port = +(process.env.PORT || process.env.HTTP_PORT || '');
+  const port = +(process.env.PORT || process.env.STACK_MONITOR_HTTP_PORT || '');
   if (port && !Number.isNaN(port)) {
     await new Promise((resolve) => {
       setTimeout(resolve, 100);

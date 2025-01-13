@@ -6,7 +6,7 @@
   "scripts": {
     "prepare": "husky install",
     "postinstall": "husky install && node prepare-monorepo.js || true",
-    "serve": "cross-env HTTP_PORT=6874 stack-monitor",
+    "serve": "cross-env STACK_MONITOR_HTTP_PORT=6874 stack-monitor",
     "check:monorepo": "cd common/check-monorepo && npm run start",
     "check:dependencies-consistency": "check-dependency-version-consistency .",
     "check:unused": "knip",
