@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.8](https://github.com/clabroche/stack-monitor/compare/v2.0.7...v2.0.8) (2025-01-13)
+
+### Bug Fixes
+
+* documentation + various bugfixes ([bddd9f6](https://github.com/clabroche/stack-monitor/commit/bddd9f6a5507a5a45ea2e54d0fe836e1e518c820))
+* replace npm tag to version 2 ([3ca5665](https://github.com/clabroche/stack-monitor/commit/3ca56655b588e6e9449044e3f389fbb7c678481f))
+* **windows:** add specific code to windows support ([f15719d](https://github.com/clabroche/stack-monitor/commit/f15719dd5cf13e076831c1bcfedf8497127068fe))
+
 ## [2.0.7](https://github.com/clabroche/stack-monitor/compare/v2.0.6...v2.0.7) (2025-01-05)
 
 ### Bug Fixes
