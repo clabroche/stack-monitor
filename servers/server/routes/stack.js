@@ -2,7 +2,7 @@ const { express } = require('@clabroche/common-express');
 const { exec } = require('child_process');
 const open = require('open');
 const commandExists = require('command-exists').sync;
-const { Octokit } = require('@octokit/core');
+const { Octokit } = require('fix-esm').require('@octokit/core');
 const { restEndpointMethods } = require('@octokit/plugin-rest-endpoint-methods');
 
 const { sockets } = require('@clabroche/common-socket-server');
