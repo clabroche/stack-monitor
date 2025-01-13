@@ -8,8 +8,7 @@
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org",
-    "scope": "@iryu54",
-    "tag": "staging"
+    "scope": "@iryu54"
   },
   "author": {
     "name": "clabroche",
