@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.11](https://github.com/clabroche/stack-monitor/compare/v2.0.10...v2.0.11) (2025-01-13)
+
+### Bug Fixes
+
+* and same for octokit/plugin-rest-endpoint-methods ([6a3e460](https://github.com/clabroche/stack-monitor/commit/6a3e46059860cdac48d0bb5f9b37be32ea5429ac))
+
 ## [2.0.10](https://github.com/clabroche/stack-monitor/compare/v2.0.9...v2.0.10) (2025-01-13)
 
 ### Bug Fixes
