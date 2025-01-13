@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.10](https://github.com/clabroche/stack-monitor/compare/v2.0.9...v2.0.10) (2025-01-13)
+
+### Bug Fixes
+
+* fix-esm for octokit ([30f63bc](https://github.com/clabroche/stack-monitor/commit/30f63bc85a7480724a6a983d063ac0fe91bf7218))
+
 ## [2.0.8](https://github.com/clabroche/stack-monitor/compare/v2.0.7...v2.0.8) (2025-01-13)
 
 ### Bug Fixes
