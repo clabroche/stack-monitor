@@ -22,7 +22,3 @@ Type ```log``` in vs code, it should produce something like that:
 ``` javascript 
 console.log(JSON.stringify(['stack-monitor', <what you want>, <and others>]));
 ```
-
-Fill what you want and the output should be parsed into logs:
-
-![parse logs](/screenshots/imgs/parse-json.png)

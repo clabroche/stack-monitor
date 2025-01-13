@@ -13,7 +13,7 @@ The Health Check system allows you to monitor the availability and health of you
 - Field: Select the HTTP method to use (e.g., GET, POST, PUT, DELETE). Default: GET.
 
 3. **URL**
-- Field: Specify the URL to check. Example: http://localhost:8080/health.
+- Field: Specify the URL to check. Example: `http://localhost:8080/health`.
 
 4. **Expected Response Code**
 - Field: Set the expected HTTP code to consider the check successful. Default: 200.
@@ -32,10 +32,10 @@ The Health Check system allows you to monitor the availability and health of you
 
 ## Configuration Example
 
-For an application listening on http://localhost:8080/health, you can configure:
+For an application listening on `http://localhost:8080/health`, you can configure:
 
 - HTTP Method: GET
-- URL: http://localhost:8080/health
+- URL: `http://localhost:8080/health`
 - Expected Response Code: 200
 - Interval: 5000
 - Timeout: 2000
