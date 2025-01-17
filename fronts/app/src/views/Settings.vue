@@ -6,9 +6,12 @@
           </Tree>
         </SplitterPanel>
         <SplitterPanel :size="75" class="rightPanel">
-          <Crypto v-if="selectedKey['crypto']"></Crypto>
-          <Environments v-else-if="selectedKey['environments']"></Environments>
-          <Parsers v-else-if="selectedKey['parsers']"></Parsers>
+          <div class="splitter-content" :class="{full: selectedKey['parsers']}">
+            <Crypto v-if="selectedKey['crypto']"></Crypto>
+            <Environments v-else-if="selectedKey['environments']"></Environments>
+            <Parsers v-else-if="selectedKey['parsers']"></Parsers>
+            <General v-else-if="selectedKey['general']"></General>
+          </div>
         </SplitterPanel>
     </Splitter>
   </div>
@@ -17,6 +20,7 @@
 <script setup>
 import Environments from './settings/Environments.vue';
 import Crypto from './settings/Crypto.vue';
+import General from './settings/General.vue';
 import Parsers from './settings/Parsers.vue';
 import { computed, onMounted, ref, watch } from 'vue';
 import Splitter from 'primevue/splitter';
@@ -40,6 +44,11 @@ function navigate(res) {
 }
 
 const nodes = computed(() => ([
+   {
+    key: 'general',
+    label: 'General',
+    icon: 'fas fa-home',
+  },
   {
     key: 'crypto',
     label: 'Security',
@@ -68,6 +77,8 @@ const nodes = computed(() => ([
   }
   .rightPanel {
     padding: 10px;
+    display: flex;
+    justify-content: center;
   }
   .leftPanel {
     background-color: var(--p-content-background);
@@ -80,6 +91,13 @@ const nodes = computed(() => ([
         display: none;
       }
       .p-splitterpanel {}
+    }
+  }
+  .splitter-content {
+    width: 100%;
+    max-width: 800px;
+    &.full {
+      max-width: inherit
     }
   }
 </style>

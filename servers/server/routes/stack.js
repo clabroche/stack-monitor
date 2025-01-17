@@ -131,14 +131,16 @@ router.get('/all-confs-path', (req, res) => {
 });
 router.post('/select-conf', async (req, res) => {
   const { path } = req.body;
-  await Stack.selectConf(path);
+  await Stack.selectConf();
   res.json(path);
 });
+
 router.post('/delete-conf', async (req, res) => {
   const { path } = req.body;
   await myConfs.remove(path);
   res.json(path);
 });
+
 router.post('/choose', async (req, res) => {
   /** @type {{label: string, enabled: boolean}[]} */
   const servicesLabelSelected = req.body;
@@ -148,17 +150,10 @@ router.post('/choose', async (req, res) => {
   await stack.enable(servicesLabelSelected);
   return res.json(stack.getEnabledServices().map((s) => s.exportInApi()));
 });
+
 router.get('/', (req, res) => {
   const stack = Stack.getStack();
   res.json(stack ? stack.exportInApi() : null);
-});
-
-router.get('/open-link-in-vs-code', (req, res) => {
-  const command = (commandExists('code') ? 'code' : null) || (commandExists('code-insiders') ? 'code-insiders' : null);
-  if (command) {
-    exec(`${command} --goto "${req.query.link}" .`, { cwd: req.query.root?.toString() || '.', env: process.env });
-  }
-  res.send(command);
 });
 
 router.get('/services', (req, res) => {
@@ -168,20 +163,6 @@ router.get('/services', (req, res) => {
 router.get('/:service', (req, res) => {
   const service = findService(req.params.service);
   res.send(service.exportInApi());
-});
-router.get('/:service/open-in-vs-code', (req, res) => {
-  const command = (commandExists('code') ? 'code' : null) || (commandExists('code-insiders') ? 'code-insiders' : null);
-  if (command) {
-    exec(`${command} .`, { cwd: replaceEnvs(req.query.path?.toString() || '.') });
-  }
-  res.send(command);
-});
-router.get('/:service/open-link-in-vs-code', (req, res) => {
-  const command = (commandExists('code') ? 'code' : null) || (commandExists('code-insiders') ? 'code-insiders' : null);
-  if (command) {
-    exec(`${command} --goto "${req.query.link}" .`, { cwd: replaceEnvs(req.query.path?.toString() || '.'), env: process.env });
-  }
-  res.send(command);
 });
 
 router.get('/:service/open-folder', (req, res) => {

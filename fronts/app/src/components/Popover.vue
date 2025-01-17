@@ -1,6 +1,6 @@
 <template>
   <div class="popover-root" v-if="!disable" :class="{fullWidth}">
-    <div ref="refTrigger" class="trigger">
+    <div ref="refTrigger" class="trigger" :style="{height: triggerHeight}">
       <slot name="trigger" ></slot>
     </div>
     <div ref="refContent" class="content" :style="{maxHeight, overflow: maxHeight !== 'auto' ? 'auto' : 'inherit'}">
@@ -23,6 +23,7 @@ import 'tippy.js/animations/shift-away.css';
 
 export default {
   props: {
+    triggerHeight: {default: 'auto'},
     maxHeight: { default: 'auto' },
     maxWidth: { default: '100vh'},
     trigger: { default: 'click' },

@@ -11,6 +11,7 @@ router.use('/stack', require('./stack'));
 router.use('/fs', require('./fs'));
 router.use('/crypto', require('./crypto'));
 router.use('/parsers', require('./parsers'));
+router.use('/editors', require('./editors'));
 
 router.get('/version', async (req, res) => {
   res.send(require('../helpers/version').version);

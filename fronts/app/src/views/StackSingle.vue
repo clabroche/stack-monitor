@@ -24,7 +24,7 @@
             <a v-if="currentService.git && currentService.git.home" :href="currentService.git.home" target="_blank" title="Open git home"><i class="fab fa-github"  aria-hidden="true"></i></a>
             <a v-if="currentService.url" :href="currentService.url" target="_blank" title="Open service URL"><i class="fas fa-globe"  aria-hidden="true"></i></a>
             <a v-for="url in currentService.urls" :key="url" :href="url" target="_blank" :title="url"><i class="fas fa-globe"  aria-hidden="true"></i></a>
-            <img v-if="currentService.rootPath" src="@/assets/vscode-icon.png" alt="vscode icon"  aria-hidden="true" title="Open in Visual Studio Code" @click="openInVsCode(currentService.rootPath)"/>
+            <CurrentEditor :service="currentService" @openEditor="openInVsCode(currentService.rootPath, $event)"></CurrentEditor>
             <i v-if="currentService.rootPath"  class="fas fa-folder" aria-hidden="true" title="Open folder" @click="openFolder(currentService.rootPath)"></i>
           </div>
         </div>
@@ -81,7 +81,7 @@ import axios from '../helpers/axios'
 import Socket from '../helpers/Socket';
 import { useRouter } from 'vue-router';
 import Popover from '../../../../fronts/app/src/components/Popover.vue';
-
+import CurrentEditor from '../components/CurrentEditor.vue';
 export default {
   name: 'StackSingle',
   components: {
@@ -89,6 +89,7 @@ export default {
     sectionCmp: SectionVue,
     Tabs,
     Card,
+    CurrentEditor,
     Popover,
     NotificationBell,
   },
@@ -170,8 +171,8 @@ export default {
       cpu, mem,
       tabs,
       restartInProgress,
-      async openInVsCode(path) {
-        currentService.value?.openInVsCode(path)
+      async openInVsCode(path, editor) {
+        currentService.value?.openInVsCode(path, editor)
       },
       async openFolder(path) {
         currentService.value?.openFolder(path)
@@ -241,16 +242,24 @@ export default {
         flex-shrink: 0;
         img {
           width: 18px;
-          filter: contrast(0) brightness(2);
+          height: 18px;
+          filter: invert(1);
+          &.filter-dark {
+            filter:  grayscale(1) opacity(0.7)
+          }
+        }
+        .icons {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 10px;
         }
         i {
           color: white;
-          font-size: 1.4em;
+          font-size: 18px;
         }
         i,img {
           cursor: pointer;
           transition: 300ms;
-          margin: 0 5px;
           &:hover {
             transform: scale(1.1);
           }

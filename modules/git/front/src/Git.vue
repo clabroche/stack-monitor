@@ -86,7 +86,7 @@
     </section-cmp>
   </div>
 
-  <modal ref="reset-modal" cancelString="No" validateString="Yes">
+  <modal ref="resetModal" cancelString="No" validateString="Yes">
     <template #header>
       Reset
     </template>
@@ -94,7 +94,7 @@
       Do you really want to launch "git reset --hard" on this repository ?
     </template>
   </modal>
-  <modal ref="checkout-modal" cancelString="No" validateString="Yes">
+  <modal ref="checkoutModal" cancelString="No" validateString="Yes">
     <template #header>
       Checkout
     </template>
@@ -102,7 +102,7 @@
       Do you really want to launch "git checkout {{file}}" on this repository ?
     </template>
   </modal>
-  <modal ref="branch-modal" cancelString="No" validateString="Yes">
+  <modal ref="branchModal" cancelString="No" validateString="Yes">
     <template #header>
       Branch change
     </template>
@@ -110,7 +110,7 @@
       Do you really want to change branch to "{{branchName}}" on this repository ?
     </template>
   </modal>
-  <modal ref="add-branch-modal" cancelString="Cancel" validateString="Validate">
+  <modal ref="addBranchModal" cancelString="Cancel" validateString="Validate">
     <template #header>
       Add Branch
     </template>
@@ -122,7 +122,7 @@
       </div>
     </template>
   </modal>
-    <modal ref="branch-delete-modal" cancelString="No" validateString="Yes">
+    <modal ref="branchDeleteModal" cancelString="No" validateString="Yes">
     <template #header>
       Branch delete
     </template>
@@ -130,7 +130,7 @@
       Do you really want to delete branch "{{branchName}}" on this repository ?
     </template>
   </modal>
-  <modal ref="review-modal" cancelString="No" validateString="Yes">
+  <modal ref="reviewModal" cancelString="No" validateString="Yes">
     <template #header>
       Review from AI
     </template>
@@ -139,7 +139,7 @@
     </template>
   </modal>
 
-  <modal ref="review-result" cancelString="OK" :noValidate="true">
+  <modal ref="reviewResult" cancelString="OK" :noValidate="true">
     <template #header>
       Review from AI
     </template>
@@ -151,307 +151,314 @@
   </modal>
 </template>
 
-<script>
+<script setup>
 import { Terminal } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';
 import { CanvasAddon } from 'xterm-addon-canvas';
 import { SearchAddon } from 'xterm-addon-search';
 import notification from '../../../../fronts/app/src/helpers/notification';
 import Service from '../../../../fronts/app/src/models/service';
-import ModalVue from '../../../../fronts/app/src/components/Modal.vue';
-import SectionVue from '../../../../fronts/app/src/components/Section.vue';
+import modal from '../../../../fronts/app/src/components/Modal.vue';
+import sectionCmp from '../../../../fronts/app/src/components/Section.vue';
 import Theme from '../../../../fronts/app/src/helpers/Theme';
+import { useCurrentEditor } from '../../../../fronts/app/src/models/currentEditor';
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 
-export default {
-  components: {
-    sectionCmp: SectionVue,
-    modal: ModalVue,
+const props = defineProps({
+  noStyle: { default: false },
+  customGit: { default: null },
+  service: {
+    /** @type {import('../../../../fronts/app/src/models/service').default | null} */
+    default: null,
+    required: true,
+    type: Service,
   },
-  props: {
-    noStyle: { default: false },
-    customGit: { default: null },
-    service: {
-      /** @type {import('../../../../fronts/app/src/models/service').default | null} */
-      default: null,
-      required: true,
-      type: Service,
-    },
-  },
-  computed: {
-    /** @return {import('../../../../fronts/app/src/models/service').default['git']} */
-    git() {
-      return this.service.git;
-    },
-    /** @return {string} */
-    pullLabel() {
-      if (this.git?.delta == null) return 'Refresh...';
-      return `Pull (${this.git.delta || 0})`;
-    },
-    displayBranches() {
-      return (this.git?.branches || [])
-        .filter((branch) => branch.name.toUpperCase().includes(this.searchBranch.toUpperCase()))
-        .filter((branch) => {
-          if (this.displayOnlyLocalBranches) return !branch.isRemote;
-          return true;
-        });
-    },
-  },
-  data() {
-    return {
-      /** @type {number | null} */
-      interval: null,
-      /** @type {number | null} */
-      longInterval: null,
-      /** @type {import('xterm').Terminal | null} */
-      terminal: null,
-      loader: false,
-      graphOnAll: false,
-      /** @type {string | null} */
-      defaultBranch: null,
-      search: '',
-      /** @type {import('xterm-addon-search').SearchAddon | null} */
-      terminalSearch: null,
-      displayOnlyLocalBranches: true,
-      searchBranch: '',
-      observable: null,
-    };
-  },
-  async mounted() {
-    if (this.customGit) return;
-    const commandRef = /** @type {HTMLElement} */(this.$refs.terminalRef);
-    if (!commandRef) return;
-    // @ts-ignore
-    this.interval = setInterval(() => this.service.updateGit(), 1000);
-    // @ts-ignore
-    this.longInterval = setInterval(() => this.gitFetch(), 1000 * 60);
-    await this.service.updateGit();
-    if (!this.defaultBranch) {
-      const branchNames = this.service.git?.branches?.map((/** @type {*} */a) => a.name) || [];
-      if (branchNames.includes('develop')) this.defaultBranch = 'develop';
-      else if (branchNames.includes('dev')) this.defaultBranch = 'dev';
-      else if (branchNames.includes('master')) this.defaultBranch = 'master';
-      else if (branchNames.includes('main')) this.defaultBranch = 'main';
-    }
-    await this.loadTerminal();
+})
 
-    this.observable = Theme.observableCurrentTheme.subscribe(async () => {
-      this.loadTerminal();
-      await this.updateGraph();
-      await this.gitFetch();
+const {
+  currentEditor
+} = useCurrentEditor(props.service)
+
+/** @type {import('vue').Ref<number | null>} */
+const interval = ref(null)
+/** @type {import('vue').Ref<number | null>} */
+const longInterval = ref(null)
+/** @type {import('vue').Ref<import('xterm').Terminal | null>} */
+const terminal = ref(null)
+const loader = ref(false)
+const graphOnAll = ref(false)
+/** @type {import('vue').Ref<string | null>} */
+const defaultBranch = ref(null)
+const search = ref('')
+/** @type {import('vue').Ref<import('xterm-addon-search').SearchAddon | null>} */
+const terminalSearch = ref(null)
+const displayOnlyLocalBranches = ref(true)
+const searchBranch = ref('')
+const observable = ref(null)
+
+const git = computed(() => {
+  return props.service.git;
+})
+/** @return {string} */
+const pullLabel = computed(() => {
+  if (git.value?.delta == null) return 'Refresh...';
+  return `Pull (${git.value.delta || 0})`;
+})
+const displayBranches = computed(() => {
+  return (git.value?.branches || [])
+    .filter((branch) => branch.name.toUpperCase().includes(searchBranch.value.toUpperCase()))
+    .filter((branch) => {
+      if (displayOnlyLocalBranches.value) return !branch.isRemote;
+      return true;
     });
-    await this.updateGraph();
-    await this.gitFetch();
-  },
-  beforeUnmount() {
-    clearInterval(this.interval || undefined);
-    clearInterval(this.longInterval || undefined);
-    this.observable?.unsubscribe?.();
-  },
-  methods: {
-    loadTerminal() {
-      const commandRef = /** @type {HTMLElement} */(this.$refs.terminalRef);
-      if (!commandRef) return;
-      commandRef.innerHTML = '';
-      this.terminal = new Terminal({
-        smoothScrollDuration: 100,
-        fontFamily: 'MesloLGS NF, monospace',
-        convertEol: true,
-        disableStdin: true,
-        fontSize: 13,
-        allowTransparency: true,
-        minimumContrastRatio: Theme.get('system.terminal/contrastRatio'),
-        theme: {
-          background: Theme.get('system.terminal/backgroundColor'),
-          foreground: Theme.get('system.terminal/color'),
-          selectionBackground: '#1d95db',
-          selectionForeground: 'white',
-        },
-      });
-      const fitAddon = new FitAddon();
-      if (this.terminal) {
-        this.terminal.loadAddon(fitAddon);
-        this.terminal.loadAddon(new CanvasAddon());
-        const searchAddon = new SearchAddon();
-        this.terminalSearch = searchAddon;
-        this.terminal.loadAddon(searchAddon);
-        this.terminal.open(commandRef);
-        fitAddon.activate(this.terminal);
-        fitAddon.fit();
-      }
-    },
-    /** @param {KeyboardEvent | MouseEvent} ev */
-    async nextSearch(ev) {
-      if (ev.shiftKey) {
-        return this.previousSearch();
-      }
-      if (this.terminalSearch) {
-        this.terminalSearch.findNext(this.search);
-      }
-      return null;
-    },
-    async previousSearch() {
-      if (this.terminalSearch) {
-        this.terminalSearch.findPrevious(this.search);
-      }
-    },
-    /** @param {string} line */
-    openInVsCode(line) {
-      const path = line.trim().split(' ').slice(1).join(' ');
-      this.service.openLinkInVsCode(path);
-    },
-    async gitFetch() {
-      try {
-        if (!this.service.git) return;
-        this.service.git.delta = null;
-        await this.service.gitFetch()
-          .catch((/** @type {*} */err) => notification.next('error', err?.response?.data || err?.message || err));
-        const currentBranch = await this.service.getCurrentBranch();
-        if (!currentBranch) return;
-        this.service.git.delta = await this.service.gitRemoteDelta(currentBranch);
-      } catch (error) {
-        console.error(error);
-        if (this.service.git) this.service.git.delta = 0;
-      }
-    },
-    async addBranch() {
-      const model = {
-        name: '',
-        shouldPush: false,
-      };
-      // @ts-ignore
-      const res = await this.$refs['add-branch-modal'].open(model).promise;
-      if (res) {
-        if (!model.name) return notification.next('error', 'Branch name cannot be empty');
-        await this.service.addBranch(model.name, model.shouldPush);
-        if (model.shouldPush) await this.gitFetch();
-      }
-      return null;
-    },
+})
+const terminalRef = ref()
+onMounted(async () => {
+ if (props.customGit) return;
+  const commandRef = /** @type {HTMLElement} */(terminalRef.value);
+  if (!commandRef) return;
+  // @ts-ignore
+  interval.value = setInterval(() => props.service.updateGit(), 1000);
+  // @ts-ignore
+  longInterval.value = setInterval(() => gitFetch(), 1000 * 60);
+  await props.service.updateGit();
+  if (!defaultBranch.value) {
+    const branchNames = props.service.git?.branches?.map((/** @type {*} */a) => a.name) || [];
+    if (branchNames.includes('develop')) defaultBranch.value = 'develop';
+    else if (branchNames.includes('dev')) defaultBranch.value = 'dev';
+    else if (branchNames.includes('master')) defaultBranch.value = 'master';
+    else if (branchNames.includes('main')) defaultBranch.value = 'main';
+  }
+  await loadTerminal();
 
-    async updateGraph() {
-      const graph = await this.service.getGraph(this.graphOnAll)
-        .catch((/** @type {*} */err) => notification.next('error', err?.response?.data || err?.message || err));
-      if (graph && this.terminal) {
-        this.terminal.clear();
-        this.terminal.writeln(graph.join('\n'));
-        setTimeout(() => {
-          if (!this.terminal) return;
-          this.terminal.scrollToTop();
-        });
-      }
-    },
-    /** @param {string} status */
-    colorStatus(status) {
-      status = status.trim();
-      if (status.charAt(0) === 'D') {
-        status = `<span style="color: #ff7f7f; font-weight: bold">D</span>${status.slice(1)}`;
-      }
-      if (status.charAt(0) === 'M') {
-        status = `<span style="color: #ffe47f; font-weight: bold">M</span>${status.slice(1)}`;
-      }
-      if (status.charAt(0) === '?') {
-        status = `<span style="color: #7fe1ff; font-weight: bold">??</span>${status.slice(2)}`;
-      }
-      return status;
-    },
-    /** @param {string} branchName */
-    async changeBranch(branchName) {
-      this.loader = true;
-      try {
-        branchName = branchName.trim();
-        // @ts-ignore
-        const res = await this.$refs['branch-modal'].open(branchName).promise;
-        if (res) {
-          await this.service.changeBranch(branchName)
-            .then(() => notification.next('success', `Branch is now on ${branchName}`))
-            .catch((/** @type {*} */err) => notification.next('error', err.response.data));
-        }
-        this.updateGraph();
-      } catch (error) {
+  observable.value = Theme.observableCurrentTheme.subscribe(async () => {
+    loadTerminal();
+    await updateGraph();
+    await gitFetch();
+  });
+  await updateGraph();
+  await gitFetch();
+})
 
-      } finally {
-        this.loader = false;
-        await this.service.updateGit();
-        await this.gitFetch();
-      }
+onBeforeUnmount(() => {
+  clearInterval(interval.value || undefined);
+  clearInterval(longInterval.value || undefined);
+  observable.value?.unsubscribe?.();
+})
+function loadTerminal() {
+  const commandRef = /** @type {HTMLElement} */(terminalRef.value);
+  if (!commandRef) return;
+  commandRef.innerHTML = '';
+  terminal.value = new Terminal({
+    smoothScrollDuration: 100,
+    fontFamily: 'MesloLGS NF, monospace',
+    convertEol: true,
+    disableStdin: true,
+    fontSize: 13,
+    allowTransparency: true,
+    minimumContrastRatio: Theme.get('system.terminal/contrastRatio'),
+    theme: {
+      background: Theme.get('system.terminal/backgroundColor'),
+      foreground: Theme.get('system.terminal/color'),
+      selectionBackground: '#1d95db',
+      selectionForeground: 'white',
     },
-    /** @param {string} branchName */
-    async deleteBranch(branchName) {
-      this.loader = true;
-      try {
-        branchName = branchName.trim();
-        // @ts-ignore
-        const res = await this.$refs['branch-delete-modal'].open(branchName).promise;
-        if (res) {
-          await this.service.deleteBranch(branchName)
-            .then(() => notification.next('success', `Branch ${branchName} is deleted`))
-            .catch((/** @type {*} */err) => notification.next('error', err.response.data));
-        }
-        await this.service.updateGit();
-        this.updateGraph();
-      } catch (error) {
+  });
+  const fitAddon = new FitAddon();
+  if (terminal.value) {
+    terminal.value.loadAddon(fitAddon);
+    terminal.value.loadAddon(new CanvasAddon());
+    const searchAddon = new SearchAddon();
+    terminalSearch.value = searchAddon;
+    terminal.value.loadAddon(searchAddon);
+    terminal.value.open(commandRef);
+    fitAddon.activate(terminal.value);
+    fitAddon.fit();
+  }
+}
+/** @param {KeyboardEvent | MouseEvent} ev */
+async function  nextSearch(ev) {
+  if (ev.shiftKey) {
+    return previousSearch();
+  }
+  if (terminalSearch.value) {
+    terminalSearch.value.findNext(search.value);
+  }
+  return null;
+}
+async function  previousSearch() {
+  if (terminalSearch.value) {
+    terminalSearch.value.findPrevious(search.value);
+  }
+}
+/** @param {string} line */
+function openInVsCode(line) {
+  const path = line.trim().split(' ').slice(1).join(' ');
+  props.service.openLinkInVsCode(path, currentEditor.value.key);
+}
+async function gitFetch() {
+  try {
+    if (!props.service.git) return;
+    props.service.git.delta = null;
+    await props.service.gitFetch()
+      .catch((/** @type {*} */err) => notification.next('error', err?.response?.data || err?.message || err));
+    const currentBranch = await props.service.getCurrentBranch();
+    if (!currentBranch) return;
+    props.service.git.delta = await props.service.gitRemoteDelta(currentBranch);
+  } catch (error) {
+    console.error(error);
+    if (props.service.git) props.service.git.delta = 0;
+  }
+}
 
-      } finally {
-        this.loader = false;
-        await this.service.updateGit();
-        await this.gitFetch();
-      }
-    },
-    /** @param {string} fileStatus */
-    async checkoutFile(fileStatus) {
-      const file = fileStatus.split(' ').slice(1).join(' ');
-      // @ts-ignore
-      const res = await this.$refs['checkout-modal'].open(file).promise;
-      if (res) {
-        await this.service.checkoutFile(file)
-          .then(() => notification.next('success', `Changes on ${file} are deleted`))
-          .catch((/** @type {*} */err) => notification.next('error', err.response.data));
-        await this.updateGraph();
-      }
-    },
-    async reset() {
-      // @ts-ignore
-      const res = await this.$refs['reset-modal'].open().promise;
-      if (res) {
-        await this.service.reset()
-          .then(() => notification.next('success', 'All changes are lost'))
-          .catch((/** @type {*} */err) => notification.next('error', err.response.data));
-        await this.updateGraph();
-      }
-    },
-    async openReview() {
-      const diff = await this.service.getDiff();
-      const tokens = await Service.getTokens(diff);
-      // @ts-ignore
-      const res = await this.$refs['review-modal'].open(tokens).promise;
-      if (res) {
-        const review = await Service.reviewFromAi(diff);
-        // @ts-ignore
-        await this.$refs['review-result'].open(review).promise;
-      }
-    },
-    async stash() {
-      await this.service.stash()
-        .then(() => notification.next('success', 'All changes is in stash'))
+const addBranchModal = ref()
+async function addBranch() {
+  const model = {
+    name: '',
+    shouldPush: false,
+  };
+  // @ts-ignore
+  const res = await addBranchModal.value.open(model).promise;
+  if (res) {
+    if (!model.name) return notification.next('error', 'Branch name cannot be empty');
+    await props.service.addBranch(model.name, model.shouldPush);
+    if (model.shouldPush) await gitFetch();
+  }
+  return null;
+}
+
+async function updateGraph() {
+  const graph = await props.service.getGraph(graphOnAll.value)
+    .catch((/** @type {*} */err) => notification.next('error', err?.response?.data || err?.message || err));
+  if (graph && terminal.value) {
+    terminal.value.clear();
+    terminal.value.writeln(graph.join('\n'));
+    setTimeout(() => {
+      if (!terminal.value) return;
+      terminal.value.scrollToTop();
+    });
+  }
+}
+/** @param {string} status */
+function colorStatus(status) {
+  status = status.trim();
+  if (status.charAt(0) === 'D') {
+    status = `<span style="color: #ff7f7f; font-weight: bold">D</span>${status.slice(1)}`;
+  }
+  if (status.charAt(0) === 'M') {
+    status = `<span style="color: #ffe47f; font-weight: bold">M</span>${status.slice(1)}`;
+  }
+  if (status.charAt(0) === '?') {
+    status = `<span style="color: #7fe1ff; font-weight: bold">??</span>${status.slice(2)}`;
+  }
+  return status;
+}
+
+const branchModal = ref()
+/** @param {string} branchName */
+async function changeBranch(branchName) {
+  loader.value = true;
+  try {
+    branchName = branchName.trim();
+    // @ts-ignore
+    const res = await branchModal.value.open(branchName).promise;
+    if (res) {
+      await props.service.changeBranch(branchName)
+        .then(() => notification.next('success', `Branch is now on ${branchName}`))
         .catch((/** @type {*} */err) => notification.next('error', err.response.data));
-      return this.service.updateGit();
-    },
-    async stashPop() {
-      await this.service.stashPop()
-        .then(() => notification.next('success', 'All changes unstashed'))
+    }
+    updateGraph();
+  } catch (error) {
+
+  } finally {
+    loader.value = false;
+    await props.service.updateGit();
+    await gitFetch();
+  }
+}
+
+const branchDeleteModal = ref()
+/** @param {string} branchName */
+async function deleteBranch(branchName) {
+  loader.value = true;
+  try {
+    branchName = branchName.trim();
+    // @ts-ignore
+    const res = await branchDeleteModal.value.open(branchName).promise;
+    if (res) {
+      await props.service.deleteBranch(branchName)
+        .then(() => notification.next('success', `Branch ${branchName} is deleted`))
         .catch((/** @type {*} */err) => notification.next('error', err.response.data));
-      return this.service.updateGit();
-    },
-    async pull() {
-      await this.service.pull()
-        .then(() => notification.next('success', 'Branch is now up to date'))
-        .catch((/** @type {*} */err) => notification.next('error', err.response.data));
-      await this.service.updateGit();
-      await this.updateGraph();
-      await this.gitFetch();
-    },
-  },
-};
+    }
+    await props.service.updateGit();
+    updateGraph();
+  } catch (error) {
+
+  } finally {
+    loader.value = false;
+    await props.service.updateGit();
+    await gitFetch();
+  }
+}
+const checkoutModal = ref()
+/** @param {string} fileStatus */
+async function checkoutFile(fileStatus) {
+  const file = fileStatus.split(' ').slice(1).join(' ');
+  // @ts-ignore
+  const res = await checkoutModal.value.open(file).promise;
+  if (res) {
+    await props.service.checkoutFile(file)
+      .then(() => notification.next('success', `Changes on ${file} are deleted`))
+      .catch((/** @type {*} */err) => notification.next('error', err.response.data));
+    await updateGraph();
+  }
+}
+
+const resetModal = ref()
+async function reset() {
+  // @ts-ignore
+  const res = await resetModal.value.open().promise;
+  if (res) {
+    await props.service.reset()
+      .then(() => notification.next('success', 'All changes are lost'))
+      .catch((/** @type {*} */err) => notification.next('error', err.response.data));
+    await updateGraph();
+  }
+}
+
+const reviewModal = ref()
+const reviewResult = ref()
+async function openReview() {
+  const diff = await props.service.getDiff();
+  const tokens = await Service.getTokens(diff);
+  // @ts-ignore
+  const res = await reviewModal.value.open(tokens).promise;
+  if (res) {
+    const review = await Service.reviewFromAi(diff);
+    // @ts-ignore
+    await reviewResult.value.open(review).promise;
+  }
+}
+async function stash() {
+  await props.service.stash()
+    .then(() => notification.next('success', 'All changes is in stash'))
+    .catch((/** @type {*} */err) => notification.next('error', err.response.data));
+  return props.service.updateGit();
+}
+async function stashPop() {
+  await props.service.stashPop()
+    .then(() => notification.next('success', 'All changes unstashed'))
+    .catch((/** @type {*} */err) => notification.next('error', err.response.data));
+  return props.service.updateGit();
+}
+async function pull() {
+  await props.service.pull()
+    .then(() => notification.next('success', 'Branch is now up to date'))
+    .catch((/** @type {*} */err) => notification.next('error', err.response.data));
+  await props.service.updateGit();
+  await updateGraph();
+  await gitFetch();
+}
 </script>
 
 <style lang="scss" scoped>

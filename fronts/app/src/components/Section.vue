@@ -28,7 +28,7 @@
         
       </div>
     </div>
-    <div class="content" :style="{maxHeight}">
+    <div class="content" :style="{maxHeight, overflow: scroll ? 'auto': 'inherit'}">
       <slot></slot>
     </div>
   </div>
@@ -46,6 +46,7 @@ const props = defineProps({
   maxHeight: {default: 'auto'},
   noStyle: {default: false},
   noBodyPadding: {default: false},
+  scroll: {default: true},
   headerBold: {default: false},
   headerCenter: {default: false},
   noRadius: { default: false },

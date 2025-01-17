@@ -152,8 +152,8 @@ class Service {
     return logs;
   }
 
-  async openInVsCode(path) {
-    return axios.get(`/stack/${this.label}/open-in-vs-code`, { params: { path } });
+  async openInVsCode(path, editor) {
+    return axios.get(`/editors/${this.label}/open-in-vs-code`, { params: { path, editor } });
   }
 
   /**
@@ -161,8 +161,8 @@ class Service {
    * @param {string} link
    * @returns
    */
-  async openLinkInVsCode(link) {
-    return axios.get(`/stack/${this.label}/open-link-in-vs-code`, { params: { link } });
+  async openLinkInVsCode(link, editor) {
+    return axios.get(`/editors/${this.label}/open-link-in-vs-code`, { params: { link, editor } });
   }
 
   async openFolder(path) {

@@ -78,6 +78,11 @@ Stack.prototype.getService = async function (label) {
   return this.services.value.filter((service) => service.label === label).pop();
 };
 
+Stack.prototype.getAvailableEditors = async function () {
+  const { data: editors } = await axios.get('/editors/available-editors');
+  return editors;
+};
+
 Stack.prototype.getEnabledServices = async function () {
   if (!this.services.value.length) await this.loadServices();
   return this.services.value.filter((service) => service.enabled);
