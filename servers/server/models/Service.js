@@ -381,7 +381,7 @@ Service.prototype.add = async function (data, logMessageOverride, {
   if (line.hide) return;
 
   if (line.source === 'stderr' && isMainProcess) {
-    sockets.emit('alert', { label: this.label, message: line.raw.toString(), type: 'error' });
+    sockets.emit('alert', { label: this.label, message: line.raw.toString(), type: 'error', commandId: command?.id });
   }
 
   if (timestamp > (this.lastDatePrinted || Date.now()) + 2000) {

@@ -11,6 +11,7 @@
             <Environments v-else-if="selectedKey['environments']"></Environments>
             <Parsers v-else-if="selectedKey['parsers']"></Parsers>
             <General v-else-if="selectedKey['general']"></General>
+            <Notifications v-else-if="selectedKey['notifications']"></Notifications>
           </div>
         </SplitterPanel>
     </Splitter>
@@ -20,6 +21,7 @@
 <script setup>
 import Environments from './settings/Environments.vue';
 import Crypto from './settings/Crypto.vue';
+import Notifications from './settings/Notifications.vue';
 import General from './settings/General.vue';
 import Parsers from './settings/Parsers.vue';
 import { computed, onMounted, ref, watch } from 'vue';
@@ -64,6 +66,11 @@ const nodes = computed(() => ([
     label: 'Parsers',
     icon: 'fas fa-scroll',
   },
+  {
+    key: 'notifications',
+    label: 'Notifications',
+    icon: 'fas fa-bell',
+  },
 ]));
 
 </script>
@@ -79,6 +86,7 @@ const nodes = computed(() => ([
     padding: 10px;
     display: flex;
     justify-content: center;
+    overflow: auto;
   }
   .leftPanel {
     background-color: var(--p-content-background);

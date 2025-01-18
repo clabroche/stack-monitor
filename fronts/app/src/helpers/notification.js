@@ -1,4 +1,4 @@
-import { ref } from 'vue';
+import { ref , watch} from 'vue';
 import { v4 as uuid } from 'uuid';
 import Observable from './CustomObservable';
 import router from '../router/router';
@@ -10,6 +10,10 @@ class Notification {
     /** @type {import('vue').Ref<Notif[]>} */
     this.notifsHistory = ref([]);
     this.openHistory = new Observable();
+    this.mutedNotifications = ref(JSON.parse(localStorage.getItem('muted-notifications') || JSON.stringify({error: {}})))
+    watch(() => this.mutedNotifications.value,() => {
+      localStorage.setItem('muted-notifications', JSON.stringify(this.mutedNotifications.value))
+    }, {deep: true})
   }
 
   /**
@@ -17,11 +21,14 @@ class Notification {
    * @param {'error' | 'success'} type
    * @param {string} msg
    * @param {string | undefined} serviceLabel
+   * @param {string | null} commandId
    * @param {Notif[] | null} notifAggregator
    */
-  next(type, msg, serviceLabel = undefined, notifAggregator = null) {
+  next(type, msg, serviceLabel = undefined, notifAggregator = null, commandId = null) {
+    if (this.mutedNotifications.value[type]?.['MUTED_ALL']) return
+    if (commandId && this.mutedNotifications.value[type]?.[commandId]) return 
     if (!notifAggregator) {
-      this.next(type, msg, serviceLabel, this.notifsHistory.value);
+      this.next(type, msg, serviceLabel, this.notifsHistory.value, commandId);
       notifAggregator = this.notifs.value;
     }
     let notif = notifAggregator.find((n) => n.type === type && n.serviceLabel === serviceLabel && serviceLabel);
