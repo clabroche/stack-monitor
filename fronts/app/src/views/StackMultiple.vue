@@ -17,7 +17,7 @@
                   :actions="[
                     {click: () => goTo(service.git.home), icon: 'fab fa-github'},
                     {click: () => goTo(service.url), icon: 'fas fa-globe'},
-                    {click: () => openInVsCode(service), icon: 'fas fa-file-code'},
+                    // {click: () => openInVsCode(service), icon: 'fas fa-file-code'},
                     {click: () => openFolder(service), icon: 'fas fa-folder'},
                   ]">
                   <component :is="tab.id" :service="service" :key="service.label" :isInMultiMode="true"  :noStyle="true"></component>
