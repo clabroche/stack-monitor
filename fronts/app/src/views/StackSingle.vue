@@ -24,7 +24,7 @@
             <a v-if="currentService.git && currentService.git.home" :href="currentService.git.home" target="_blank" title="Open git home"><i class="fab fa-github"  aria-hidden="true"></i></a>
             <a v-if="currentService.url" :href="currentService.url" target="_blank" title="Open service URL"><i class="fas fa-globe"  aria-hidden="true"></i></a>
             <a v-for="url in currentService.urls" :key="url" :href="url" target="_blank" :title="url"><i class="fas fa-globe"  aria-hidden="true"></i></a>
-            <CurrentEditor :service="currentService" @openEditor="openInVsCode(currentService.rootPath, $event)"></CurrentEditor>
+            <CurrentEditor :key="'current-editor-' + currentService.label" :service="currentService" @openEditor="openInVsCode(currentService.rootPath, $event)"></CurrentEditor>
             <i v-if="currentService.rootPath"  class="fas fa-folder" aria-hidden="true" title="Open folder" @click="openFolder(currentService.rootPath)"></i>
           </div>
         </div>
