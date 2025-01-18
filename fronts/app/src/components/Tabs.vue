@@ -1,5 +1,7 @@
 <template>
-  <div class="tabs" :class="{[direction]: true}">
+  <div class="tabs" :class="{[direction]: true}" :style="{
+    height
+  }">
     <div class="buttons" :class="{invert:invertColor}">
       <template v-for="tab of availableTabs" :key="tab.label" >
         <Popover appendTo="parent" trigger="mouseenter" placement="right" :fullWidth="true">
@@ -35,6 +37,9 @@ const props = defineProps({
   tabs: {
     /** @type {Tab[]} */
     default: []
+  },
+  height: {
+    default: 'calc(100vh - 220px)'
   },
   direction: {default: ''},
   showLabels: {default: true},

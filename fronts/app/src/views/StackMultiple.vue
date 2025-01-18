@@ -1,6 +1,6 @@
 <template>
   <div class="stack-multiple">
-    <tabs :tabs="tabs" :showLabels="false" ref="tabRef">
+    <tabs :tabs="tabs" :showLabels="false" ref="tabRef" height="100%">
       <template #default="{tab}">
           <div class="tab" >
             <draggableVue v-model="services"
