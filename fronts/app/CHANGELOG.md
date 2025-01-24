@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.15](https://github.com/clabroche/stack-monitor/compare/v2.0.14...v2.0.15) (2025-01-24)
+
+### Bug Fixes
+
+* **Npm:** support for new command selector ([edfbb76](https://github.com/clabroche/stack-monitor/commit/edfbb76cfddec911a210f5be9554e497c60f92fb))
+
 ## [2.0.14](https://github.com/clabroche/stack-monitor/compare/v2.0.13...v2.0.14) (2025-01-24)
 
 **Note:** Version bump only for package @clabroche/fronts-app

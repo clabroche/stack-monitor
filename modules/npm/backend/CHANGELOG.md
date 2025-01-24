@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.15](https://github.com/clabroche/stack-monitor/compare/v2.0.14...v2.0.15) (2025-01-24)
+
+### Bug Fixes
+
+* **Bugs:** support for new command selector ([afd2815](https://github.com/clabroche/stack-monitor/commit/afd2815b8c7cf3dd01e5f9408174000e8913996b))
+* **Npm:** support for new command selector ([edfbb76](https://github.com/clabroche/stack-monitor/commit/edfbb76cfddec911a210f5be9554e497c60f92fb))
+
 ## [2.0.14](https://github.com/clabroche/stack-monitor/compare/v2.0.13...v2.0.14) (2025-01-24)
 
 **Note:** Version bump only for package @clabroche/modules-npm-backend
