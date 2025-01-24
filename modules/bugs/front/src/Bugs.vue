@@ -1,10 +1,11 @@
 <template>
+  <Select v-model="cwd" :options="npmPaths" :style="{marginBottom: '10px'}"/>
   <section-cmp
     v-if="service" :key="service.label"
     :header="'Bugs(' + (bugs?.length || 0) + ')'"
     class="bug-root"
     :style="{maxHeight: isInMultiMode ? '400px' : 'inherit' }"
-    :actions="[{label: 'Reload', icon: 'fas fa-sync', click: () => reload(), hidden: loading}]"
+    :actions="[{label: 'Launch', icon: 'fas fa-play', click: () => launch(), hidden: loading}]"
     >
     <div v-if="loading" class="loading">
       <spinner  :size="40"></spinner>
@@ -25,11 +26,13 @@ import Service from '../../../../fronts/app/src/models/service';
 import SectionVue from '../../../../fronts/app/src/components/Section.vue';
 import SpinnerVue from '../../../../fronts/app/src/components/Spinner.vue';
 import notification from '../../../../fronts/app/src/helpers/notification';
+import Select from 'primevue/select';
 
 export default {
   components: {
     sectionCmp: SectionVue,
     spinner: SpinnerVue,
+    Select
   },
   props: {
     service: {
@@ -44,11 +47,21 @@ export default {
   },
   setup(props) {
     const bugs = ref([]);
-    const loading = ref(true);
-    const reload = (() => (async () => {
+    const loading = ref(false);
+    const npmPaths = ref([]);
+    const cwd = ref();
+    const reload = async () => {
+      if (props.service) {
+        npmPaths.value = await props.service.getNpmPaths();
+        if(!cwd.value) cwd.value = npmPaths.value[0]
+      }
+    };
+    onMounted(reload);
+    watch(() => props.service, reload);
+    const launch = async () => {
       bugs.value = [];
       loading.value = true;
-      bugs.value = await props.service.getBugs()
+      bugs.value = await props.service.getBugs(cwd.value)
         .catch((err) => {
           if (err?.response?.data?.code === 'TSC_NOT_FOUND') {
             notification.next('error', 'Please "npm i -g typescript"');
@@ -57,15 +70,17 @@ export default {
             notification.next('error', 'Please create a jsconfig.json in project');
           }
           return [];
-        });
-    })()
-      .then(() => { loading.value = false; })
-      .catch(() => { loading.value = false; }));
-    onMounted(reload);
-    watch(() => props.service, reload);
+        })
+        .finally(() => {
+          loading.value = false
+        })
+    }
 
     return {
       reload,
+      launch,
+      npmPaths,
+      cwd,
       loading,
       bugs,
       /**

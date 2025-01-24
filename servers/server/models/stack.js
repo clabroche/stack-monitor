@@ -226,7 +226,7 @@ Stack.stopWatchers = function () {
 const pluginsToLoad = /** @type {(keyof typeof plugins)[]} */(Object.keys(plugins)).reduce((p, key) => {
   const plugin = plugins[key];
   if (plugin.export) {
-    p[key] = typeof plugin.export === 'function'
+    p[key] = typeof plugin.export === 'function' && !(/^\s*class\s+/.test(plugin.export.toString()))
       ? plugin.export(/** @type {StackWithPlugins} */(Stack))
       // @ts-ignore
       : plugin.export;

@@ -13,17 +13,11 @@ const plugin = {
   export: null,
   hidden: async (service) => {
     if (!service) return true;
-    const serviceIsNpm = await isNpm(service);
+    const npm = new service.Stack.npm(service)
+    const serviceIsNpm = !!npm.getNpmPaths(service);
     return !serviceIsNpm;
   },
   routes: require('./routes'),
 };
 module.exports = plugin;
 
-/** @param {import('../../../servers/server/models/Service')} service */
-async function isNpm(service) {
-  const path = service?.spawnOptions?.cwd;
-  return path
-    ? existsSync(pathfs.resolve(path.toString(), 'package.json'))
-    : false;
-}

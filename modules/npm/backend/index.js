@@ -1,13 +1,13 @@
 const Npm = require('./Npm');
 
-/** @type {import('@clabroche/modules-plugins-loader-front/src/views').PluginSM<null>} */
+/** @type {import('@clabroche/modules-plugins-loader-front/src/views').PluginSM<import('./Npm')>} */
 const plugin = {
   enabled: true,
   name: 'Npm',
   displayName: 'Npm',
   description: 'View your dependencies and execute your scripts on a service',
   icon: 'fab fa-npm',
-  export: null,
+  export: Npm,
   placements: ['service'],
   order: 4,
   /**
