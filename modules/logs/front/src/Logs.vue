@@ -1163,7 +1163,7 @@ async function sendShortcut(shortcut) {
         }
         &::after {
           content: '';
-          border: 9px solid transparent;
+          border: 13px solid transparent;
           border-top-color: transparent !important;
           border-bottom-color: transparent !important;
           border-right-color: transparent !important;
@@ -1244,6 +1244,7 @@ async function sendShortcut(shortcut) {
   background: transparent;
   border: none;
   color: white;
+  padding: 0;
 }
 </style>
 
