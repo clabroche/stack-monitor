@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.16](https://github.com/clabroche/stack-monitor/compare/v2.0.15...v2.0.16) (2025-01-24)
+
+### Bug Fixes
+
+* **Npm:** priority to commands over rootpath ([460df64](https://github.com/clabroche/stack-monitor/commit/460df64d4ed66056ae26c213b8f83e5fe932d980))
+
 ## [2.0.15](https://github.com/clabroche/stack-monitor/compare/v2.0.14...v2.0.15) (2025-01-24)
 
 ### Bug Fixes

@@ -1,6 +1,6 @@
 {
   "name": "@clabroche/modules-npm-front",
-  "version": "2.0.15",
+  "version": "2.0.16",
   "repository": "https://github.com/clabroche/stack-monitor",
   "private": true,
   "scripts": {
