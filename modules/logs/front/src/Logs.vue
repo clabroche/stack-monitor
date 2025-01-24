@@ -1240,7 +1240,7 @@ async function sendShortcut(shortcut) {
 :deep(.p-select-dropdown) {
   color: white;
 }
-:deep(.p-select) {
+:deep(.p-select), :deep(.p-select-sm .p-select-label) {
   background: transparent;
   border: none;
   color: white;
