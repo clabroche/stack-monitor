@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.17](https://github.com/clabroche/stack-monitor/compare/v2.0.16...v2.0.17) (2025-01-24)
+
+### Bug Fixes
+
+* **Logs:** fix arrow height for terminal bar ([eaa2dc3](https://github.com/clabroche/stack-monitor/commit/eaa2dc3f4333040dfb23dc04221bec1735f1ca3f))
+
 ## [2.0.16](https://github.com/clabroche/stack-monitor/compare/v2.0.15...v2.0.16) (2025-01-24)
 
 ### Bug Fixes
