@@ -185,6 +185,12 @@ Stack.selectConf = async function () {
   Stack.currentEnvironment = process.env.STACK_MONITOR_DEFAULT_ENVIRONMENT
     ? Stack.currentStack.environments.find((env) => env.label === process.env.STACK_MONITOR_DEFAULT_ENVIRONMENT) || null
     : Stack.currentStack.environments.find((env) => env.default) || null;
+  if (process.env.STACK_MONITOR_SERVICES) {
+    process.env.STACK_MONITOR_SERVICES.split(',').forEach((serviceLabel) => {
+      const service = Stack.findService(serviceLabel)
+      if(service) service.enable()
+    })
+  }
   return sockets.emit('stack:selectConf');
 };
 

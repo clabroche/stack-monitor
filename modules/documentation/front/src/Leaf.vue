@@ -1,84 +1,90 @@
 <template>
-  <div class="label" :class="{
-    active: leaf?.path === activeLeaf?.path,
-    isFile: !leaf.isDir,
-    isDir: leaf.isDir
-  }" @click.stop="leaf.isDir ? toggleLeaf() : $emit('go', leaf)">
-    <i class="icon-folder fas fa-chevron-right" v-if="leaf.isDir" :class="{opened }"></i>
-    <i class="fas fa-file" v-else></i>
-    {{ leaf.name || leaf.path }}
-  </div>
-  <div v-if="leaf?.isDir">
-    <div class="children" v-if="leaf?.children && opened">
-      <Tree :tree="leaf.children" @go="$emit('go', $event)" :activeLeaf="activeLeaf"></Tree>
+  <div class="leaf-root" @click.stop="$emit('select')">
+    <input v-model="node.label" v-if="edit" @change="emitEdit()" @blur="emitEdit()"/>
+    <div v-else>{{ node.label }}</div>
+    <div class="actions" v-if="!edit">
+      <i class="fas fa-edit" @click.stop="edit = true"></i>
+      <!-- <i class="fas fa-plus" @click="addChild(node)"></i> -->
+      <i class="fas fa-trash" @click.stop="$emit('deleteDoc', node)"></i>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import Tree from './Tree.vue';
+import { ref, defineProps } from 'vue';
+import axios from '../../../../fronts/app/src/helpers/axios';
+import Service from '../../../../fronts/app/src/models/service'
 
+const edit = ref(false)
 const props = defineProps({
-  leaf: {
-    /** @type {import('./Index.vue').Leaf | null} */
-    default: null,
+  node: {
+    /**@type {import('primevue/treenode').TreeNode} */
+    default: {key: ''}
   },
-  activeLeaf: {
-    /** @type {import('./Index.vue').Leaf | null} */
-    default: null,
+  service: {
+    type: Service,
   },
-});
+  tree: {
+    /**@type {import('primevue/treenode').TreeNode[]} */
+    default: []
+  }
+})
 
-const opened = ref(props.leaf.opened);
-const toggleLeaf = () => {
-  opened.value = !opened.value;
-};
+const emit = defineEmits(['updateDoc'])
+
+async function emitEdit() {
+  edit.value = false
+  emit('updateDoc', props.node)
+}
+async function addChild(node) {
+  if(!node.children) node.children = []
+  await axios.post('/documentations/services/') 
+}
+
+function walkthrough(children, cb) {
+  children.forEach(node => {
+    cb({node, parent: children})
+    if(node.children) walkthrough(node.children, cb)
+  });
+
+}
+function deleteChild(_node) {
+  
+}
 </script>
 
 <style lang="scss" scoped>
 
-.label {
+.leaf-root {
+  cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 5px;
-  padding: 2px;
-  box-sizing: border-box;
-  transition: 300ms;
-  &:hover {
-    background-color: var(--system-sections-backgroundColor-darker);
-    color: var(--system-color);
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  input {
+    width: 100%
   }
-  i {
-    width: 20px;
-    height: 20px;
+  .actions {
+    position: absolute;
+    right: 0;
+    opacity: 0;
+    transition: 300ms;
     display: flex;
-    justify-content: center;
+    height: 100%;
     align-items: center;
-    text-align: center;
-  }
-  &.active {
-    background-color: var(--system-accent-backgroundColor1);
+    padding: 0 10px;
+    gap: 10px;
+    background-color: var(--system-accent-backgroundColor2);
     color: white;
-    border-right: 5px solid var(--system-accent-backgroundColor1-darkest)
+    right: -100%;
   }
-  &.isFile {
-    cursor: pointer;
+  &:hover {
+    .actions {
+      opacity: 1;
+      right: 0;
+      cursor: pointer;
+    }
   }
-  &.isDir {
-    cursor: pointer;
-  }
-}
-.icon-folder {
-  transition: 300ms;
-  transform-origin: center;
-  &.opened {
-    transform: rotate(90deg);
-
-  }
-}
-
-.children {
-  margin-left: 25px;
 }
 </style>

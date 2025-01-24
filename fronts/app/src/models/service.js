@@ -3,6 +3,12 @@ import axios from '../helpers/axios';
 class Service {
   /** @param {import('@clabroche/common-typings').NonFunctionProperties<Service>} service */
   constructor(service) {
+    /** @type {string} */
+    this.label = service.label || ''
+    /** @type {Array<Record<any, any>>} */
+    this.commands = service.commands || [];
+    /** @type {string} */
+    this.rootPath = service.rootPath || this.commands?.[0]?.spawnOptions?.cwd || '';
     this.envs = {}
     this.shortcuts = []
     this.updateFields(service);

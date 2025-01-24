@@ -1,6 +1,7 @@
 const { existsSync } = require('fs');
 const pathfs = require('path');
 const { execAsync, execAsyncWithoutErr } = require('../../../servers/server/helpers/exec');
+const HTTPError = require('@clabroche/common-express-http-error');
 
 /** @param {import('@clabroche/common-typings').StackMonitor} stackMonitor */
 const Git = (stackMonitor) => {
@@ -75,7 +76,7 @@ const Git = (stackMonitor) => {
     async getCurrentBranch(serviceName) {
       const service = findService(serviceName);
       if (!await requirements(service)) return '';
-      return (await execAsync('git rev-parse --abbrev-ref HEAD', { cwd: getGitRootPath(service) }))?.trim();
+      return (await execAsync('git rev-parse --abbrev-ref HEAD', { cwd: getGitRootPath(service) }).catch(err => {}))?.trim();
     },
     /**
      *
@@ -134,8 +135,7 @@ const Git = (stackMonitor) => {
       if (!await requirements(service)) return 0;
       const upstream = await execAsync('git rev-parse --abbrev-ref --symbolic-full-name @{u}', { cwd: getGitRootPath(service) }).catch(() => {});
       if (!upstream) {
-        await execAsync(`git branch --set-upstream-to=origin/${branchName} ${branchName}`, { cwd: getGitRootPath(service) }).catch(() => {});
-        return 1;
+        throw new HTTPError('BRANCH_NOT_PUSHED', 500.12578)
       }
       await execAsync(`git fetch origin ${branchName}`, { cwd: getGitRootPath(service) });
       const localCommit = await execAsync(`git log --oneline ${branchName}`, { cwd: getGitRootPath(service) });

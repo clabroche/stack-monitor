@@ -1,5 +1,6 @@
 const express = require('express');
-const pathfs = require('path');
+const Leaf = require('./Leaf');
+const PromiseB = require('bluebird')
 
 const router = express.Router();
 
@@ -7,48 +8,41 @@ const router = express.Router();
 module.exports = (stackMonitor) => {
   const { findService } = stackMonitor;
 
-  /** @param {import('@clabroche/common-typings').Service} service */
-  function getDocumentationPath(service) {
-    const pathToDocumentation = service?.documentation || stackMonitor.getStack()?.documentation;
-    return pathToDocumentation
-      ? pathfs.resolve(pathToDocumentation)
-      : null;
-  }
+  router.get('/documentation/tree', async (req, res) => {
+    const service = findService(req.query.serviceId?.toString() || '');
+    const result = await Leaf.getTree(service?.label)
+    return res.send(result);
+  });
+  router.post('/documentation/tree/sort', async (req, res) => {
+    const leafs = await PromiseB.mapSeries(req.body, async (_leaf, index) => {
+      const leaf = await Leaf.find({ id: _leaf.id})
+      if(!leaf) return
+      leaf.position = index
+      await leaf.save()
+      return leaf
+    })
+    return res.send(leafs);
+  });
+  router.post('/documentation/tree', async (req, res) => {
+    const result = await new Leaf({
+      ...req.body,
+    }).save()
+    return res.send(result);
+  });
+  router.post('/documentation/tree/:key', async (req, res) => {
+    const result = await new Leaf({
+      ...req.body,
+      id: req.params.key,
+    }).save()
+    return res.send(result);
+  });
 
-  router.get('/documentation/service/:label', async (req, res) => {
-    const service = findService(req.params.label);
-    const documentationPath = getDocumentationPath(service);
-    if (!documentationPath) return res.status(400).send('Documentation path not found');
-    const dir = await stackMonitor.documentation.getTree(req.query.path?.toString() || '', documentationPath);
-    return res.json(dir);
-  });
-  router.get('/documentation/service/:label/is-available', async (req, res) => {
-    const service = findService(req.params.label);
-    const documentationPath = getDocumentationPath(service);
-    if (!documentationPath) return res.json(false);
-    return res.json(true);
-  });
-  router.get('/documentation/service/:label/flat', async (req, res) => {
-    const service = findService(req.params.label);
-    const documentationPath = getDocumentationPath(service);
-    if (!documentationPath) return res.status(400).send('Documentation path not found');
-    const dir = await stackMonitor.documentation.getFlatFiles(req.query.path?.toString() || '', documentationPath);
-    return res.json(dir);
-  });
-
-  router.get('/documentation/service/:label/:path', async (req, res) => {
-    const service = findService(req.params.label);
-    const documentationPath = getDocumentationPath(service);
-    if (!documentationPath) return res.status(400).send('Documentation path not found');
-    const file = await stackMonitor.documentation.readFile(req.params.path, documentationPath);
-    return res.send(file);
-  });
-  router.post('/documentation/service/:label/:path', async (req, res) => {
-    const service = findService(req.params.label);
-    const documentationPath = getDocumentationPath(service);
-    if (!documentationPath) return res.status(400).send('Documentation path not found');
-    const file = await stackMonitor.documentation.writeFile(req.params.path, documentationPath, req.body.page);
-    return res.send(file);
+  router.delete('/documentation/tree/:key', async (req, res) => {
+    const result = await Leaf.find({
+      id: req.params.key,
+    })
+    if (result) return res.send(await result.remove())
+    return res.send();
   });
   return router;
 };

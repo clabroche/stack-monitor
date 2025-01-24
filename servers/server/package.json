@@ -31,6 +31,7 @@
     "@clabroche/modules-plugins-loader-backend": "workspace:*",
     "@octokit/core": "^6.1.2",
     "@octokit/plugin-rest-endpoint-methods": "^13.2.6",
+    "alasql": "^4.6.2",
     "ansi-to-html": "^0.7.2",
     "axios": "^1.7.9",
     "bluebird": "^3.7.2",

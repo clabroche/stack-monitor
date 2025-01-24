@@ -2047,6 +2047,7 @@ __metadata:
     "@clabroche/modules-plugins-loader-front": "workspace:*"
     "@fortawesome/fontawesome-free": "npm:^6.5.1"
     "@primevue/themes": "npm:^4.2.5"
+    "@shopify/draggable": "npm:^1.1.3"
     "@vitejs/plugin-vue": "npm:^5.0.3"
     autoprefixer: "npm:^10.4.20"
     axios: "npm:^1.7.9"
@@ -2758,6 +2759,7 @@ __metadata:
     "@types/babel__preset-env": "npm:^7"
     "@types/http-proxy": "npm:^1"
     "@types/libsodium-wrappers": "npm:^0"
+    alasql: "npm:^4.6.2"
     ansi-to-html: "npm:^0.7.2"
     axios: "npm:^1.7.9"
     bluebird: "npm:^3.7.2"
@@ -5546,6 +5548,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@shopify/draggable@npm:^1.1.3":
+  version: 1.1.3
+  resolution: "@shopify/draggable@npm:1.1.3"
+  checksum: 10/274633591bf9550a0927e298791496df63366db164c961f468986194f50e84374d3c6b319dc3b6a1d901f6093a15ea9ba6b2ba8bbf0aa68e2a1d08f58f9e17ee
+  languageName: node
+  linkType: hard
+
 "@sigstore/bundle@npm:^2.1.1":
   version: 2.1.1
   resolution: "@sigstore/bundle@npm:2.1.1"
@@ -7686,6 +7695,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"alasql@npm:^4.6.2":
+  version: 4.6.2
+  resolution: "alasql@npm:4.6.2"
+  dependencies:
+    cross-fetch: "npm:4.1.0"
+    yargs: "npm:16"
+  bin:
+    alasql: bin/alasql-cli.js
+  checksum: 10/163dc5e73c8d5eeeebb2b9e1e9946e63fae43c923c85de4bf938ab09137ac1684d33908fb55f5e2cb0278581dc1a0866c303da11cf69348e7b48e97dd2796707
+  languageName: node
+  linkType: hard
+
 "algoliasearch@npm:^5.14.2":
   version: 5.19.0
   resolution: "algoliasearch@npm:5.19.0"
@@ -9500,6 +9521,15 @@ __metadata:
     cross-env: src/bin/cross-env.js
     cross-env-shell: src/bin/cross-env-shell.js
   checksum: 10/e99911f0d31c20e990fd92d6fd001f4b01668a303221227cc5cb42ed155f086351b1b3bd2699b200e527ab13011b032801f8ce638e6f09f854bdf744095e604c
+  languageName: node
+  linkType: hard
+
+"cross-fetch@npm:4.1.0":
+  version: 4.1.0
+  resolution: "cross-fetch@npm:4.1.0"
+  dependencies:
+    node-fetch: "npm:^2.7.0"
+  checksum: 10/07624940607b64777d27ec9c668ddb6649e8c59ee0a5a10e63a51ce857e2bbb1294a45854a31c10eccb91b65909a5b199fcb0217339b44156f85900a7384f489
   languageName: node
   linkType: hard
 
@@ -15436,7 +15466,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"node-fetch@npm:^2.6.7":
+"node-fetch@npm:^2.6.7, node-fetch@npm:^2.7.0":
   version: 2.7.0
   resolution: "node-fetch@npm:2.7.0"
   dependencies:
@@ -20915,7 +20945,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"yargs@npm:16.2.0, yargs@npm:^16.2.0":
+"yargs@npm:16, yargs@npm:16.2.0, yargs@npm:^16.2.0":
   version: 16.2.0
   resolution: "yargs@npm:16.2.0"
   dependencies:
