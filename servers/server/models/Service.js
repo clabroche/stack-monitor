@@ -69,7 +69,7 @@ function Service(service, Stack, { isUpdate } = { isUpdate: false }) {
     /** @type {string} */
     this.url = service.url || '';
     /** @type {string} */
-    this.rootPath = service.rootPath || service.commands?.[0]?.spawnOptions?.cwd?.toString() || '.';
+    this.rootPath = service.rootPath || '.';
     /** @type {string[]} */
     this.urls = service.urls || [];
     /** @type {string[]} */
@@ -692,7 +692,7 @@ Service.prototype.parseIncomingCommandDocker = async function (command) {
       this.container.name,
       'sh', `-c '${spawnCmd} ${spawnArgs.join(' ')}'`
     ]
-  const cwd = replaceEnvs(pathfs.resolve(spawnOptions.cwd || this.commands[0]?.spawnOptions?.cwd || this.getRootPath() || '.'));
+  const cwd = pathfs.resolve(replaceEnvs(spawnOptions.cwd || this.getRootPath() || '.'));
   const options = {
     cwd,
     shell: isWindows ? process.env.ComSpec : '/bin/sh',
@@ -711,7 +711,7 @@ Service.prototype.parseIncomingCommand = async function (command) {
     cmd = currentAlias?.cmd || cmd;
     args = [...(currentAlias?.args || []), ...args];
   }
-  const cwd = replaceEnvs(pathfs.resolve(spawnOptions.cwd || this.commands[0]?.spawnOptions?.cwd || this.getRootPath() || '.'));
+  const cwd = pathfs.resolve(replaceEnvs(spawnOptions.cwd || this.getRootPath() || '.'));
   const options = {
     ...spawnOptions,
     cwd,

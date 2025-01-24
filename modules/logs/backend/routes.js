@@ -40,7 +40,7 @@ module.exports = (stackMonitor) => {
     if (pid) service.respondToProcess(pid, command.spawnCmd);
     else if (command) {
       const { spawnProcess, launchMessage } = await service.launchProcess(
-        { spawnCmd: command.spawnCmd, spawnArgs: command.spawnArgs || [], spawnOptions: {  } },
+        { spawnCmd: command.spawnCmd, spawnArgs: command.spawnArgs || [], spawnOptions: command.spawnOptions || {  } },
         false,
       );
       result = {

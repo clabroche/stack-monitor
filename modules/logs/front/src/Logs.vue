@@ -231,8 +231,19 @@
             <div class="bar-terminal">
               <div class="left">
                 <div class="blue">
+                  <template v-if="service.container?.enabled">
+                    <i class="fab fa-docker"/>
+                  </template>
+                  <template v-else>
                   <i class="icon fas fa-folder"></i>
-                  <label>{{ getShortPath(cwd) }}</label>
+                    <Select
+                      size="small"
+                      v-model="cwd"
+                      :options="cwds"
+                    >
+                      <option v-for="cwd of cwds">{{ getShortPath(cwd) }}</option>
+                    </Select>
+                  </template>
                 </div>
                 <div :class="gitChanges?.length ? 'yellow': 'green'" v-if="currentBranch">
                   <i class="icon fas fa-code-branch"></i>
@@ -250,8 +261,7 @@
             </div>
             <div class="input-content-terminal">
               <div class="badge" v-if="currentPidView?.pid">Pid: {{ currentPidView.pid }}</div>
-              <i class="fab fa-docker" v-if="service.container?.enabled"></i>
-              <i class="fas fa-chevron-right" v-else></i>
+              <i class="fas fa-chevron-right"></i>
               <PassThrough>
                 <textarea ref="textareaRef"
                   v-model="messageToSend"
@@ -325,6 +335,7 @@ import fs from '../../../../fronts/app/src/models/fs';
 import Spinner from '../../../../fronts/app/src/components/Spinner.vue';
 import Tag from 'primevue/tag';
 import PassThrough from './PassThrough.vue';
+import Select from 'primevue/select';
 
 const props = defineProps({
   service: {
@@ -595,7 +606,12 @@ async function sendEnter(ev) {
     });
     return;
   }
-  if (!ev.shiftKey) await send({spawnCmd: messageToSend.value.trim()}, ev);
+  if (!ev.shiftKey) await send({
+    spawnCmd: messageToSend.value.trim(),
+    spawnOptions: {
+      cwd: cwd.value
+    }
+  }, ev);
   else messageToSend.value += '\n';
 }
 /** @param {Event} ev */
@@ -718,12 +734,14 @@ const reloadBarInfos = debounce(async (reloadCostingInfos = false) => {
     gitRemoteDelta.value = await props.service.gitRemoteDelta(currentBranch.value);
   }
 }, 100);
-
-const cwd = ref(
-  props?.service?.spawnOptions?.cwd
-  || props.service?.commands?.[0]?.spawnOptions?.cwd
-  || props.service?.rootPath,
+const cwds = ref(
+  [
+    props.service?.rootPath,
+    ...(props.service?.commands?.map(a => a.spawnOptions.cwd) || []).filter(a => a && !!a.trim() && a !== '.')
+  ]
 );
+
+const cwd = ref(cwds.value[0] || '.');
 /**
  *
  * @param {string | undefined} path
@@ -1217,6 +1235,15 @@ async function sendShortcut(shortcut) {
       width: max-content;
     }
   }
+}
+
+:deep(.p-select-dropdown) {
+  color: white;
+}
+:deep(.p-select) {
+  background: transparent;
+  border: none;
+  color: white;
 }
 </style>
 
