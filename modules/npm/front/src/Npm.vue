@@ -1,5 +1,4 @@
 <template>
-  
   <Select v-model="cwd" :options="npmPaths" :style="{marginBottom: '10px'}"/>
   <div class="npm-root" v-if="npmPaths?.length && packageJson">
     <section-cmp class="scripts-container" :key="service.label" header="Scripts">

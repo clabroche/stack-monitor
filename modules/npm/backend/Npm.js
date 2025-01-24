@@ -19,10 +19,10 @@ class Npm {
 
   getNpmPaths() {
     return [
-      this.service.getRootPath(),
       ...this.service.commands
         .filter(cmd => cmd.spawnOptions.cwd?.toString()?.trim() && cmd.spawnOptions.cwd !== '.')
-        .map(cmd => replaceEnvs(cmd.spawnOptions.cwd))
+        .map(cmd => replaceEnvs(cmd.spawnOptions.cwd)),
+      this.service.getRootPath(),
     ].filter(cwd => this.isNpm(cwd))
   }
 
