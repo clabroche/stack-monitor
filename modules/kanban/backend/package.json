@@ -1,6 +1,6 @@
 {
   "name": "@clabroche/modules-kanban-backend",
-  "version": "2.0.8",
+  "version": "2.0.12",
   "repository": "https://github.com/clabroche/stack-monitor",
   "private": true,
   "scripts": {

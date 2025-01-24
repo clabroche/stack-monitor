@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.12](https://github.com/clabroche/stack-monitor/compare/v2.0.11...v2.0.12) (2025-01-24)
+
+### Bug Fixes
+
+* **editors:** can choose an editor by services ([0807227](https://github.com/clabroche/stack-monitor/commit/08072273fa2b3a7c3b133baddb2983771b68063c))
+* reenable documentation and improve global git view ([2e4dd75](https://github.com/clabroche/stack-monitor/commit/2e4dd75c0513d92f12b8303b3dddd2f2fa6ccc73))
+
 ## [2.0.5](https://github.com/clabroche/stack-monitor/compare/v2.0.4...v2.0.5) (2025-01-04)
 
 ### Bug Fixes

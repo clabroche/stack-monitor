@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.12](https://github.com/clabroche/stack-monitor/compare/v2.0.11...v2.0.12) (2025-01-24)
+
+### Bug Fixes
+
+* **editor:** disable for stackmultiple ([ae4735f](https://github.com/clabroche/stack-monitor/commit/ae4735f27d3a443da4eedf11d6688ce8e9b6bc79))
+* **editor:** fix a reactive problem ([b292771](https://github.com/clabroche/stack-monitor/commit/b292771896ea9c37bcf03f4bbf0fd53d6819c718))
+* **editors:** can choose an editor by services ([0807227](https://github.com/clabroche/stack-monitor/commit/08072273fa2b3a7c3b133baddb2983771b68063c))
+* **notifications:** can mute channel error from each command in settings ([ede9be5](https://github.com/clabroche/stack-monitor/commit/ede9be5f819d13364e2e96503e3ee70cdcf5181b))
+* reenable documentation and improve global git view ([2e4dd75](https://github.com/clabroche/stack-monitor/commit/2e4dd75c0513d92f12b8303b3dddd2f2fa6ccc73))
+* **stack-multiple:** resolve wrong tabs height ([32fcb7f](https://github.com/clabroche/stack-monitor/commit/32fcb7fac9c4ef464d13bcb9cfdc34bb7c480597))
+
 ## [2.0.8](https://github.com/clabroche/stack-monitor/compare/v2.0.7...v2.0.8) (2025-01-13)
 
 ### Bug Fixes
