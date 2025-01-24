@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.14](https://github.com/clabroche/stack-monitor/compare/v2.0.13...v2.0.14) (2025-01-24)
+
+### Bug Fixes
+
+* **Log:** fix color css to view the cwd path ([8e38a36](https://github.com/clabroche/stack-monitor/commit/8e38a36394c1332c9607696fb659a0e3cf8247a3))
+
 ## [2.0.13](https://github.com/clabroche/stack-monitor/compare/v2.0.12...v2.0.13) (2025-01-24)
 
 ### Bug Fixes
