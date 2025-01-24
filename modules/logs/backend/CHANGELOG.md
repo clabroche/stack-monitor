@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.13](https://github.com/clabroche/stack-monitor/compare/v2.0.12...v2.0.13) (2025-01-24)
+
+### Bug Fixes
+
+* **services:** dont guess anymore cwd from the first command ([e62077f](https://github.com/clabroche/stack-monitor/commit/e62077f377c11553fcae6dfd19dbffe989342551))
+
 ## [2.0.12](https://github.com/clabroche/stack-monitor/compare/v2.0.11...v2.0.12) (2025-01-24)
 
 **Note:** Version bump only for package @clabroche/modules-logs-backend

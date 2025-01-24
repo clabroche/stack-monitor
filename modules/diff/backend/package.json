@@ -1,6 +1,6 @@
 {
   "name": "@clabroche/modules-diff-backend",
-  "version": "2.0.12",
+  "version": "2.0.13",
   "repository": "https://github.com/clabroche/stack-monitor",
   "private": true,
   "scripts": {
