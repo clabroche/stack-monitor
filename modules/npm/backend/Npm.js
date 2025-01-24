@@ -1,6 +1,7 @@
 const pathfs = require('path');
 const { execAsync } = require('@clabroche/servers-server/helpers/exec');
 const { readFile } = require('fs/promises');
+const { replaceEnvs } = require('../../../servers/server/helpers/stringTransformer.helper');
 const { existsSync } = require('fs');
 
 class Npm {
@@ -9,25 +10,31 @@ class Npm {
     this.service = service;
   }
 
-  async isNpm() {
-    if (this.service?.commands?.[0]?.spawnOptions?.cwd) {
-      const path = this.service.commands?.[0].spawnOptions.cwd;
+  async isNpm(path) {
+    if (path) {
       return existsSync(pathfs.resolve(path?.toString(), 'package.json'));
     }
     return null;
   }
 
-  async packageJSON() {
-    if (this.service?.commands?.[0]?.spawnOptions?.cwd) {
-      const path = this.service.commands?.[0].spawnOptions.cwd;
+  getNpmPaths() {
+    return [
+      this.service.getRootPath(),
+      ...this.service.commands
+        .filter(cmd => cmd.spawnOptions.cwd?.toString()?.trim() && cmd.spawnOptions.cwd !== '.')
+        .map(cmd => replaceEnvs(cmd.spawnOptions.cwd))
+    ].filter(cwd => this.isNpm(cwd))
+  }
+
+  async packageJSON(path) {
+    if (path) {
       return JSON.parse(await readFile(pathfs.resolve(path?.toString(), 'package.json'), 'utf-8'));
     }
     return {};
   }
 
-  async packageLock() {
-    if (this.service?.commands?.[0]?.spawnOptions?.cwd) {
-      const path = this.service.commands?.[0].spawnOptions.cwd;
+  async packageLock(path) {
+    if (path) {
       return JSON.parse(await readFile(pathfs.resolve(path?.toString(), 'package-lock.json'), 'utf-8')).catch((err) => {
         console.error(err);
         return {};
@@ -39,8 +46,8 @@ class Npm {
   /**
      * @returns {Promise<import('./index').Outdated>}
      */
-  async outdated() {
-    const result = await execAsync('npm outdated --json || true', { cwd: this.service?.commands?.[0]?.spawnOptions?.cwd });
+  async outdated(path) {
+    const result = await execAsync('npm outdated --json || true', { cwd: path });
     return JSON.parse(result);
   }
 }

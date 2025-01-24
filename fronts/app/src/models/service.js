@@ -299,23 +299,35 @@ class Service {
     await axios.delete(`/git/${this.label}/checkout/${file}`);
   }
 
-  async isNpm() {
-    const { data: isNpm } = await axios.get(`/npm/${this.label}`);
+  async isNpm(cwd) {
+    const { data: isNpm } = await axios.get(`/npm/${this.label}`, {
+      params: { cwd }
+    });
     return isNpm;
   }
+  async getNpmPaths() {
+    const { data: paths } = await axios.get(`/npm/${this.label}/paths`);
+    return paths;
+  }
 
-  async getPackageJSON() {
-    const { data: packageJSON } = await axios.get(`/npm/${this.label}/packagejson`);
+  async getPackageJSON(cwd) {
+    const { data: packageJSON } = await axios.get(`/npm/${this.label}/packagejson`, {
+      params: {cwd}
+    });
     return packageJSON;
   }
 
-  async outdatedNpm() {
-    const { data: outdated } = await axios.get(`/npm/${this.label}/outdated`);
+  async outdatedNpm(cwd) {
+    const { data: outdated } = await axios.get(`/npm/${this.label}/outdated`, {
+      params: {cwd}
+    });
     return outdated;
   }
 
-  async getBugs() {
-    const { data: bugs } = await axios.get(`/bugs/${this.label}`);
+  async getBugs(cwd) {
+    const { data: bugs } = await axios.get(`/bugs/${this.label}`, {
+      params: {cwd}
+    });
     return bugs || [];
   }
 

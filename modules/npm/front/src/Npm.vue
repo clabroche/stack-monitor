@@ -1,5 +1,7 @@
 <template>
-  <div class="npm-root" v-if="isNpm && packageJson">
+  
+  <Select v-model="cwd" :options="npmPaths" :style="{marginBottom: '10px'}"/>
+  <div class="npm-root" v-if="npmPaths?.length && packageJson">
     <section-cmp class="scripts-container" :key="service.label" header="Scripts">
       <div class="command-container">
         <div class=button-container>
@@ -84,11 +86,13 @@ import { useRouter } from 'vue-router';
 import Service from '../../../../fronts/app/src/models/service';
 import SectionVue from '../../../../fronts/app/src/components/Section.vue';
 import Spinner from '../../../../fronts/app/src/components/Spinner.vue';
+import Select from 'primevue/select';
 
 export default {
   components: {
     sectionCmp: SectionVue,
     Spinner,
+    Select
   },
   props: {
     service: {
@@ -103,22 +107,25 @@ export default {
   },
   setup(props) {
     const router = useRouter();
-    const isNpm = ref(false);
+    const npmPaths = ref([]);
+    const cwd = ref();
     /** @type {import('vue').Ref<Record<string, any> | null>} */
     const packageJson = ref(null);
     /** @type {import('vue').Ref<import('../../backend/index').Outdated | null>} */
     const outdated = ref(null);
     const reload = async () => {
       if (props.service) {
-        isNpm.value = await props.service.isNpm();
-        packageJson.value = await props.service.getPackageJSON();
-        outdated.value = await props.service.outdatedNpm();
+        npmPaths.value = await props.service.getNpmPaths();
+        if(!cwd.value) cwd.value = npmPaths.value[0]
+        packageJson.value = await props.service.getPackageJSON(cwd.value);
+        outdated.value = await props.service.outdatedNpm(cwd.value);
       }
     };
     onMounted(reload);
-    watch(() => props.service, reload);
+    watch(() => ([props.service, cwd.value]), reload);
     return {
-      isNpm,
+      cwd,
+      npmPaths,
       packageJson,
       outdated,
       /** @param {string} command */
@@ -126,11 +133,21 @@ export default {
         if (props.service) {
           if (['install', 'build', 'rebuild'].includes(command)) {
             await props.service.sendTerminalPrompt({
-              message: `npm ${command}`,
+              command: {
+                spawnCmd: `npm ${command}`,
+                spawnOptions: {
+                  cwd: cwd.value
+                }
+              },
             });
           } else {
             await props.service.sendTerminalPrompt({
-              message: `npm run ${command}`,
+              command: {
+                spawnCmd: `npm run ${command}`,
+                spawnOptions: {
+                  cwd: cwd.value
+                }
+              },
             });
           }
           router.push({ path: router.currentRoute.value.fullPath, query: { ...router.currentRoute.value.query || {}, tab: 'Logs' } });
