@@ -1,0 +1,75 @@
+<script type="text/javascript">
+  RED.nodes.registerType('sm-services-events-launcher', {
+    category: 'Stack Monitor',
+    color: '#83e183',
+    defaults: {
+      name: { value: "[SM] Service events" },
+      events: { value: "" },
+      services: { value: "" }
+    },
+    async oneditprepare(){
+      const services = await (await fetch('/stack/services')).json()
+      $("#node-input-services").typedInput({
+        types: [
+          {
+            value: "",
+            multiple: "true",
+            options: services.map(service => ({
+              value: service.label,
+              label: service.label
+            }))
+          }
+        ]
+      })
+      const events =  [
+        ['service:start', 'Start'],
+        ['service:crash', 'Crash'],
+        ['service:exit', 'Exit'],
+        ['service:healthcheck:down', 'Health check down'],
+        ['service:healthcheck:up', 'Health check up'],
+      ]
+      $("#node-input-events").typedInput({
+        types: [
+          {
+            value: "",
+            multiple: "true",
+            options: events.map(([value, label]) => ({value,label}))
+          }
+        ]
+      })
+    },
+    inputs: 0,
+    outputs: 1,
+    icon: "feed.svg",
+    paletteLabel: "Service events",
+    label: function () {
+      return this.name || "[SM] Service events";
+    }
+  });
+</script>
+
+<script type="text/html" data-template-name="sm-services-events-launcher">
+  <h2>Services Events</h2>
+  <p>
+    This service injects a msg.payload.service when selected events are triggered by the chosen services.
+  </p>
+  <p class="form-tips" style="max-width: 100%;">
+    If no services or events are selected, the injection applies to all by default.
+  </p>
+  <div class="form-row">
+    <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+    <input type="text" id="node-input-name" placeholder="Name">
+  </div>
+  <div class="form-row">
+    <label for="node-input-name"><i class="fa fa-tag"></i> Events</label>
+    <input type="text" id="node-input-events" placeholder="Events">
+  </div>
+  <div class="form-row">
+    <label for="node-input-name"><i class="fa fa-filter"></i> Services</label>
+    <input type="text" id="node-input-services" placeholder="Services">
+  </div>
+</script>
+
+<script type="text/html" data-help-name="sm-services-events-launcher">
+    <p>Just a passthrough node to launch from stack monitor</p>
+</script>

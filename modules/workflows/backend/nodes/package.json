@@ -1,0 +1,12 @@
+{
+  "name": "node-red-contrib-stack-monitor",
+    "node-red": {
+    "nodes": {
+      "services-events-launcher": "services-events-launcher/index.js",
+      "manual-launcher": "manual-launcher/index.js",
+      "service-selector": "service-selector/index.js",
+      "popup": "popup/index.js",
+      "service-action": "service-action/index.js"
+    }
+  }
+}

@@ -9,11 +9,16 @@ const ports = require('./ports');
 const dbs = require('../helpers/dbs');
 const EnvironmentModel = require('./Environment');
 const EncryptionKey = require('./EncryptionKey');
+const CustomObservable = require('@clabroche/common-socket-server/src/CustomObservable');
+const args = require('../helpers/args');
+const { existsSync, mkdirSync } = require('fs');
+const pathfs = require('path')
 
 if (!sockets.io) throw new Error('Stack monitor seems not fully inialized: Socket is empty, check if socket connection is launched before require this file');
 
 /** @param {Partial<Stack>} stack */
 function Stack(stack) {
+  this.onServerLauch = new CustomObservable()
   return (async () => {
     /** @type {string[]} */
     this.watchFiles = stack.watchFiles || [];
@@ -97,6 +102,12 @@ Stack.prototype.toStorage = function () {
     services: this.services.map((s) => s.toStorage()),
   };
 };
+
+Stack.getRootPath = () => {
+  const rootPath = pathfs.resolve(args.rootPath, '.stackmonitor');
+  if (!existsSync(rootPath)) mkdirSync(rootPath, { recursive: true });
+  return rootPath;
+}
 
 Stack.parse = async function () {
   const dbsRootPath = await dbs.getDbs('services');

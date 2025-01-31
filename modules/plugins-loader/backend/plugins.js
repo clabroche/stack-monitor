@@ -23,6 +23,7 @@ const plugins = {
   openapi: require('@clabroche/modules-openapi-backend'),
   vscode: require('@clabroche/modules-vscode-backend'),
   docker: require('@clabroche/modules-docker-backend'),
+  nodered: require('@clabroche/modules-workflows-backend'),
 };
 module.exports = Object.keys(plugins).reduce((acc, key) => {
   if (plugins[key].enabled) acc[key] = plugins[key];

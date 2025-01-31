@@ -2,7 +2,10 @@
 process.title = 'stack-monitor';
 const args = require('../helpers/args');
 
-if(args.rootPath) process.chdir(args.rootPath)
+if(args.rootPath) {
+  args.initialCwd = process.cwd()
+  process.chdir(args.rootPath)
+}
 
 require('dotenv').config()
 

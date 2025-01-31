@@ -1,0 +1,36 @@
+<script type="text/javascript">
+  RED.nodes.registerType('sm-popup', {
+    category: 'Stack Monitor',
+    color: '#eaeab6',
+    defaults: {
+      name: { value: "[SM] Popup" },
+      header: { value: "" },
+    },
+    inputs: 1,
+    outputs: 1,
+    icon: "envelope.svg",
+    paletteLabel: "Popup",
+    label: function () {
+      return this.name || "[SM] Popup";
+    }
+  });
+</script>
+
+<script type="text/html" data-template-name="sm-popup">
+  <h2>Popup</h2>
+  <p>
+    Popup to display data of your flow in your stack monitor. Html should be placed on msg.payload.toDisplay
+  </p>
+  <div class="form-row">
+    <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+    <input type="text" id="node-input-name" placeholder="Name...">
+  </div>
+  <div class="form-row">
+    <label for="node-input-header"><i class="fa fa-tag"></i> Header</label>
+    <input type="text" id="node-input-header" placeholder="Header...">
+  </div>
+</script>
+
+<script type="text/html" data-help-name="sm-popup">
+    <p>A simple node to display data in stack monitor</p>
+</script>

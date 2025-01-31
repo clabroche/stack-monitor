@@ -1,0 +1,80 @@
+<script type="text/javascript">
+  RED.nodes.registerType('sm-manual-launcher', {
+    category: 'Stack Monitor',
+    color: '#83e183',
+    defaults: {
+      name: { value: "" },
+      launchType: { value: "services" },
+      services: { value: "" }
+    },
+    async oneditprepare(){
+      const services = await (await fetch('/stack/services')).json()
+      const $type = $("#node-input-launch-type")
+      const $groupType = $("#node-group-launch-type")
+      const $services = $("#node-input-services")
+      const $groupServices = $("#node-group-services")
+
+      $type.typedInput({
+        types: [
+          {
+            value: "services",
+            disabled: true,
+            options: [
+              { value: 'services', label: 'Services'},
+            ]
+          }
+        ]
+      })
+      $type.on('change', () => {
+        $groupServices.hide()
+        if($type[0].value === 'services') $groupServices.show()
+      })
+
+      $services.typedInput({
+        types: [
+          {
+            value: "",
+            multiple: 'true',
+            options: [
+              ...services.map(service => ({
+                value: service.label,
+                label: service.label
+              }))
+            ]
+          }
+        ]
+      })
+    },
+    inputs: 0,
+    outputs: 1,
+    icon: "inject.svg",
+    paletteLabel: "Manual launcher",
+    label: function () {
+      return this.name || `[SM]${this.launchType==='services' ? `[services]` :''} Manual launcher ${this.launchType === 'services' ? `[${this.services}]` : ''}`;
+    }
+  });
+</script>
+
+<script type="text/html" data-template-name="sm-manual-launcher">
+  <h2>Manual Launcher</h2>
+  <p>
+    Provide a shortcut inside the application to launch this workflow.
+    <br> For services, shortcuts are provided for use on the terminal view alongside others.
+  </p>
+  <div class="form-row" id="node-group-name">
+    <label for="node-input-name"><i class="fa fa-filter"></i> Name</label>
+    <input type="text" id="node-input-name" placeholder="Name">
+  </div>
+  <div class="form-row" id="node-group-launch-type">
+    <label for="node-input-name"><i class="fa fa-filter"></i> Type</label>
+    <input type="text" id="node-input-launch-type" placeholder="Type">
+  </div>
+  <div class="form-row" id="node-group-services">
+    <label for="node-input-name"><i class="fa fa-filter"></i> Services</label>
+    <input type="text" id="node-input-services" placeholder="Services">
+  </div>
+</script>
+
+<script type="text/html" data-help-name="sm-manual-launcher">
+    <p>Just a passthrough node to launch from stack monitor</p>
+</script>

@@ -32,7 +32,8 @@
     "@clabroche/modules-regex-backend": "workspace:*",
     "@clabroche/modules-toolbox-backend": "workspace:*",
     "@clabroche/modules-uuid-backend": "workspace:*",
-    "@clabroche/modules-vscode-backend": "workspace:*"
+    "@clabroche/modules-vscode-backend": "workspace:*",
+    "@clabroche/modules-workflows-backend": "workspace:*"
   },
   "devDependencies": {
     "@clabroche/common-retrigger-all-build": "workspace:*"

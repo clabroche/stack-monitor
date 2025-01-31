@@ -15,6 +15,9 @@
     <a :href="githubIssue" target="_blank">Click here</a>
   </div>
 
+  <template v-for="cmp of componentsToLoad">
+    <component :is="cmp"></component>
+  </template>
   <Finder/>
   <notif-history/>
   <notifications/>
@@ -36,9 +39,12 @@ import SidebarViewMode from './components/SidebarViewMode.vue'
 import EnvironmentsChooser from './components/EnvironmentsChooser.vue'
 import { useRouter } from 'vue-router';
 import Theme from './helpers/Theme'
-import axios from './helpers/axios'
+import plugins from '@clabroche/modules-plugins-loader-front/src/views';
 
-
+const componentsToLoad = plugins.filter(p => p.load).reduce((agg, {cmp, name}) => {
+  agg[name] = cmp
+  return agg
+}, {})
 export default {
   components: {
     sidebar: sidebarVue,
@@ -46,6 +52,7 @@ export default {
     NotifHistory,
     SidebarViewMode,
     EnvironmentsChooser,
+    ...componentsToLoad
   },
   setup() {
     (async () => {
@@ -90,6 +97,7 @@ export default {
       }
     })
     return {
+      componentsToLoad: ref(Object.keys(componentsToLoad)),
       redirect,
       connected,
       githubIssue,

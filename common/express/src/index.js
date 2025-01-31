@@ -9,10 +9,22 @@ const cookieParser = require('cookie-parser');
 const compression = require('compression');
 const http = require('http');
 const Socket = require('@clabroche/common-socket-server');
+const CustomObservable = require('@clabroche/common-socket-server/src/CustomObservable');
 
+const onServerLaunch = new CustomObservable()
+let _server
 require('express-async-errors');
 
 module.exports = {
+  onServerLaunch, 
+  getServer: () => {
+    return new Promise((res) => {
+      if(_server) return res(_server)
+      onServerLaunch.subscribe(() => {
+        res(_server)
+      })
+    })
+  },
   /**
    * @param {{
    *  port: number | string,
@@ -34,7 +46,7 @@ module.exports = {
    * }} param0
    * @returns
    */
-  launch: async ({
+  async launch({
     port = process.env.PORT || 4002,
     baseUrl = __dirname,
     helmetConf = {},
@@ -51,7 +63,7 @@ module.exports = {
     apiPrefix = '/api',
     bodyLimit = '50mb',
     healthPath = apiPrefix,
-  }) => {
+  }) {
     const pkgJSONPath = pathfs.resolve(baseUrl, 'package.json');
     const isPkgJSONExists = fs.existsSync(pkgJSONPath);
     const pkgJSON = isPkgJSONExists ? require(pkgJSONPath) : { name: 'unknown', version: 'unknown' };
@@ -65,9 +77,12 @@ module.exports = {
 
     const server = http.createServer(app);
     if (helmetConf) {
-      app.use(helmet(
-        helmetConf,
-      ));
+      app.use((req, res, next) => {
+        if(req.url.startsWith('/red')) return next()
+        helmet(
+          helmetConf
+        )(req, res, next)
+      });
     }
 
     console.log('Enable cors...');
@@ -137,6 +152,8 @@ module.exports = {
     server.on('listening', () => onListening({ server, app }));
 
     server.listen(port, async () => {
+      _server = server
+      onServerLaunch.next({ server, app })
       console.log('<h1>✓ Launched</h1>');
     });
     server.on('close', async () => {

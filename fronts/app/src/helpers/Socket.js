@@ -14,4 +14,7 @@ export default {
   off(...args) {
     this.socket.off(...args);
   },
+  emit(...args) {
+    this.socket.emit(...args);
+  },
 };

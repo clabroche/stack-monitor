@@ -4,6 +4,9 @@ const { writeFile, readFile, appendFile } = require('fs/promises');
 const { randomUUID } = require('crypto');
 const dbs = require('../helpers/dbs');
 const { generateKey, encrypt, decrypt } = require('../helpers/crypto');
+const reencryptNodered = require('../helpers/reencrypt-nodered');
+const pathfs = require('path');
+const args = require('../helpers/args');
 
 class EncryptionKey {
   constructor() {
@@ -30,6 +33,8 @@ class EncryptionKey {
   }
 
   async update() {
+
+    console.log(JSON.stringify(['stack-monitor', 'update'],(_, v) => (typeof v === 'function' ? `[func]` : v)));
     return this.#getDb().write(this.toStorage());
   }
 
@@ -62,14 +67,27 @@ class EncryptionKey {
     try {
       const envSample = (await dbs.getDbs('envs'))[0];
       if (envSample) await dbs.getDb(`envs/${envSample}`).read();
-      if (this.encryptionKey) await dbs.reencrypt(this.encryptionKey, key);
+      if (this.encryptionKey) {
+        await reencryptNodered(this.encryptionKey, key, pathfs.resolve(require('./stack').getRootPath(), 'nodered/flow_cred.json'))
+        await dbs.reencrypt(this.encryptionKey, key)
+      };
     } catch (error) {
       console.error(error);
     }
+    const shouldRestart = this.encryptionKey !== key
     this.encryptionKey = key;
     await this.update();
     if(!noReload) {
       await require('./stack').selectConf();
+    }
+    if(shouldRestart) {
+      console.log('Restart...')
+      require("child_process").spawn(process.argv[0], process.argv.slice(1), {
+        cwd: args.initialCwd,
+        detached: true,
+        stdio: "inherit"
+      }).unref();
+      process.exit(0)
     }
     return key;
   }

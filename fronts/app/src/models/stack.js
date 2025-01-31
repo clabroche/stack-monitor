@@ -22,6 +22,15 @@ Stack.prototype.loadServices = async function () {
   this.services.value = services.filter((s) => s).map((service) => new Service(service));
   return this.services.value;
 };
+Stack.prototype.scenarios = async function (type, data) {
+  const { data: flows } = await axios.get('/red/flows');
+  return flows.filter(flow => {
+    if (type === 'services' && flow.launchType === type) {
+      return flow.services.split(',').includes(data)
+    }
+    return false
+  });
+};
 
 Stack.prototype.getEnvironment = async function () {
   const { data: environment } = await axios.get('/stack/environment');

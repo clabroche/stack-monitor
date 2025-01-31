@@ -203,7 +203,10 @@
           <div class="input-container-terminal" v-if="!currentPidView || currentPidView.cmd?.status == 'running'">
             <div class="shortcuts">
               <Tag class="shortcut" v-for="shortcut of service.shortcuts" severity="info" @click="sendShortcut(shortcut)">
-                {{shortcut.label || shortcut.spawnCmd + ' ' + (shortcut.spawnArgs?.join(' ') || '')}}
+                <i class="fas fa-terminal"/>{{shortcut.label || shortcut.spawnCmd + ' ' + (shortcut.spawnArgs?.join(' ') || '')}}
+              </Tag>
+              <Tag class="shortcut" v-for="scenario of scenarios" severity="warn" @click="sendScenario(scenario)">
+                <i class="fas fa-sitemap"/>{{scenario.name}}
               </Tag>
             </div>
             <div class="histories" v-if="histories?.length">
@@ -286,7 +289,10 @@
     <div class="not-launch">
       <div class="shortcuts">
         <Tag class="shortcut" v-for="shortcut of service.shortcuts" severity="info" @click="sendShortcut(shortcut)">
-          {{shortcut.label || shortcut.spawnCmd + ' ' + (shortcut.spawnArgs?.join(' ') || '')}}
+          <i class="fas fa-terminal"/>{{shortcut.label || shortcut.spawnCmd + ' ' + (shortcut.spawnArgs?.join(' ') || '')}}
+        </Tag>
+        <Tag class="shortcut" v-for="scenario of scenarios" severity="warn" @click="sendScenario(scenario)">
+          <i class="fas fa-sitemap"/>{{scenario.name}}
         </Tag>
       </div>
       <i class="fas fa-ban"></i>
@@ -336,6 +342,7 @@ import Spinner from '../../../../fronts/app/src/components/Spinner.vue';
 import Tag from 'primevue/tag';
 import PassThrough from './PassThrough.vue';
 import Select from 'primevue/select';
+import Stack from '../../../../fronts/app/src/models/stack'
 
 const props = defineProps({
   service: {
@@ -364,6 +371,7 @@ const simplifiedMode = ref(false);
 const numberToDisplay = ref(100);
 const findSolutionResultModal = ref();
 const mode = ref('');
+const scenarios = ref([]);
 /** @type {import('vue').Ref<{active: boolean, cmd: string, args: string, raw: string, timestamp: number,timestamps: number[]}[]>} */
 const histories = ref([]);
 
@@ -488,6 +496,7 @@ onBeforeUnmount(() => {
 });
 async function mounted() {
   logs.value = await props.service.getLogs();
+  scenarios.value = await Stack.scenarios('services', props.service.label)
   scroll(true);
 }
 const crashEventCB = (/** @type {{label:string, code: number, signal: string, pid?: number}} */data) => {
@@ -770,6 +779,9 @@ function setSelectedLine(line) {
 }
 async function sendShortcut(shortcut) {
   return send(shortcut)
+}
+async function sendScenario(scenario) {
+  Socket.emit(scenario.id, scenario, props.service.label)
 }
 /**
  * @typedef {import('../../../../servers/server/models/Service').LogMessage} LogMessage
@@ -1387,7 +1399,6 @@ button.config {
   gap: 5px
 }
 .shortcut {
-  border: 1px solid var(--p-tag-info-color);
   cursor: pointer;
 }
 </style>

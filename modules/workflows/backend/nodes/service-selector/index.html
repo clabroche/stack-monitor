@@ -1,0 +1,36 @@
+<script type="text/javascript">
+  RED.nodes.registerType('sm-service-selector', {
+    category: 'Stack Monitor',
+    color: '#eaeab6',
+    defaults: {
+      name: { value: "[SM] Service selector" },
+      serviceEnabled: { value: false },
+    },
+    inputs: 1,
+    outputs: 1,
+    icon: "envelope.svg",
+    paletteLabel: "Service selector",
+    label: function () {
+      return this.name || "[SM] Service selector";
+    }
+  });
+</script>
+
+<script type="text/html" data-template-name="sm-service-selector">
+    <h2>Services Selector</h2>
+    <p>
+      This node opens a modal to select a service from Stack Monitor and loads it into msg.payload.service
+    </p>
+    <div class="form-row">
+      <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+      <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+    <div class="form-row">
+      <label for="node-input-serviceEnabled"><i class="fa fa-filter"></i> Only enabled services</label>
+      <input type="checkbox" id="node-input-serviceEnabled" placeholder="Only enabled services">
+    </div>
+</script>
+
+<script type="text/html" data-help-name="sm-service-selector">
+    <p>A simple node to choose your service</p>
+</script>

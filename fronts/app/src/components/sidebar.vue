@@ -1,7 +1,7 @@
 <template>
   <div class="sidebar-root" :class="{ minimized, mouseInAnchor }" @mouseenter="mouseInAnchor = true" @mouseleave="mouseInAnchor = false">
-    <div class="sidebar">
-      <ul>
+    <div>
+      <div class="sidebar">
         <div class="header">
           <input type="text" v-model="search" @input="openGroup = 'All'" placeholder="Search service..." @keypress.enter="launchService" >
           <i class="fas fa-chevron-left" @click="minimized = true"></i>
@@ -19,7 +19,7 @@
         <sidebar-group :header="group.label" v-for="(group) of groups" :open="openGroup === group.label" @open="openGroup = group.label" @close="openGroup = 'All'">
           <sidebar-item v-for="service of group.services" :key="service.label" :service="service"/>
         </sidebar-group>
-      </ul>
+      </div>
     </div>
     <div class="minimized anchor" @click="minimized = false" >
       <i class="fas fa-thumbtack" v-if="mouseInAnchor"></i>
@@ -221,7 +221,6 @@ input {
     display: flex;
     overflow: auto;
     flex-direction: column;
-    justify-content: space-between;
     box-shadow: 0px 0px 4px 0px black;
     width: 250px;
     max-width: 250px;

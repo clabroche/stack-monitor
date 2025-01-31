@@ -23,6 +23,8 @@ import Finder from '@clabroche/modules-finder-front/src/Index.vue';
 import Help from '@clabroche/modules-help-front/src/Index.vue';
 import Vscode from '@clabroche/modules-vscode-front/src/Index.vue';
 import Docker from '@clabroche/modules-docker-front/src/Index.vue';
+import Workflows from '@clabroche/modules-workflows-front/src/Index.vue';
+import WorkflowsModals from '@clabroche/modules-workflows-front/src/modals/Modals.vue';
 import DynamicComponent from './DynamicComponent.vue';
 
 const toolboxPlugins = [
@@ -39,6 +41,7 @@ const toolboxPlugins = [
   { name: 'Help', component: Help },
   { name: 'OpenAI', component: OpenAI },
   { name: 'GlobalScripts', component: GlobalScripts },
+  { name: 'Workflows', component: Workflows },
   { name: 'Kanban', component: Kanban },
   { name: 'Vscode', component: Vscode },
   { name: 'Docker', component: Docker },
@@ -68,10 +71,12 @@ const toolboxPlugins = [
 
 /**
  * @type {{
+ *  load?: boolean,
  *  name: string, cmp: import('vue').Component, routes?: import('vue-router').RouteRecordRaw[]
  * }[]}
  * */
 const plugins = [
+  { name: 'WorkflowsModals', cmp: WorkflowsModals, load: true },
   { name: 'DynamicComponent', cmp: DynamicComponent },
   ...toolboxPlugins.map(({ name, component, children }) => ({
     name,
@@ -114,12 +119,12 @@ export default plugins;
  *  finder?: (search: string, stackMonitor: typeof import('../../../../servers/server/models/stack')) => import('../../../finder/backend/routes').FinderChoice[] | Promise<import('../../../finder/backend/routes').FinderChoice[]>
  *  placements: ({
  *    label: string,
- *    position?: 'toolbox' | 'sidebar' | 'dev-ops',
+ *    position?: 'toolbox' | 'sidebar' | 'sidebar-top' | 'dev-ops',
  *    icon?: string,
  *    img?: string,
  *    iconText?: string,
  *    goTo?: import('vue-router').RouteLocationRaw | string,
  *    active: string
- *  } | 'toolbox' | 'sidebar' | 'dev-ops' | 'service' | 'global')[]
+ *  } | 'toolbox' | 'sidebar' | 'sidebar-top'  | 'dev-ops' | 'service' | 'global')[]
  * }} PluginSM
  */

@@ -82,7 +82,9 @@ module.exports = new class {
       if (encrypted) db = await encrypt(db, { additionnalNonce });
       writeFileSync(path, db, 'utf-8');
       this.cache[id] = data;
-      alasql.tables[table].data = data;
+      if (alasql.tables[table]) {
+        alasql.tables[table].data = data;
+      }
     }
     const escapeQuote = (data) => {
       if (typeof data === 'string') {

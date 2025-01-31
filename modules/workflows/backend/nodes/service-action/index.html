@@ -1,0 +1,76 @@
+<script type="text/javascript">
+  RED.nodes.registerType('sm-service-action', {
+    category: 'Stack Monitor',
+    color: '#50c4f6',
+    defaults: {
+      name: { value: "[SM] Service action" },
+      service: { value: "" },
+      action: { value: "" }
+    },
+    async oneditprepare(){
+      const services = await (await fetch('/stack/services')).json()
+      const $service = $("#node-input-service")
+      $service.typedInput({
+        type: 'STACK_LOAD_FROM_INPUT',
+        default: 'STACK_LOAD_FROM_INPUT',
+        types: [
+          {
+            value: "STACK_LOAD_FROM_INPUT",
+            options: [
+              {label: 'Load from input node', value: 'STACK_LOAD_FROM_INPUT'},
+              ...services.map(service => ({
+                value: service.label,
+                label: service.label
+              }))
+            ]
+          }
+        ]
+      })
+      const $action = $("#node-input-action")
+      $action.typedInput({
+        types: [
+          {
+            value: "start",
+            options: [
+              {value: 'start', label: 'Start' },
+              { value: 'stop', label: 'Stop'},
+            ]
+          }
+        ]
+      })
+    },
+    inputs: 1,
+    outputs: 1,
+    icon: "bridge.svg",
+    paletteLabel: "Service action",
+    label: function () {
+      return this.name || `[SM] Service action`;
+    }
+  });
+</script>
+
+<script type="text/html" data-template-name="sm-service-action">
+    <h2>Service action</h2>
+    <p>
+      This node make an action on your selected service.
+    </p>
+    <p class="form-tips" style="max-width: 100%;">
+      In case you choose "Load from input node", service will be loaded from the msg.payload.service.label or the msg.service.label
+    </p>
+  <div class="form-row" id="node-group-name">
+    <label for="node-input-name"><i class="fa fa-filter"></i> Name</label>
+    <input type="text" id="node-input-name" placeholder="Name">
+  </div>
+  <div class="form-row" id="node-group-services">
+    <label for="node-input-name"><i class="fa fa-filter"></i> Service</label>
+    <input type="text" id="node-input-service" placeholder="Service">
+  </div>
+  <div class="form-row" id="node-group-action">
+    <label for="node-input-name"><i class="fa fa-filter"></i> Action</label>
+    <input type="text" id="node-input-action" placeholder="Action" value="STACK_LOAD_FROM_INPUT">
+  </div>
+</script>
+
+<script type="text/html" data-help-name="sm-service-action">
+    <p>Make an action to a service</p>
+</script>

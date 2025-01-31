@@ -132,13 +132,17 @@ export default {
     const router = useRouter(); 
     /** @type {import('vue').Ref<import('@clabroche/modules-plugins-loader-front/src/views').PluginSM<null>[]>} */
     const plugins = ref([])
+    /** @type {import('vue').Ref<import('@clabroche/modules-plugins-loader-front/src/views').PluginSM<null>[]>} */
+    const pluginsTop = ref([])
     const cpu = ref(0)
     const mem = ref(0)
 
     onMounted(async () => {
       await stack.loadServices()
       const { data: _plugins } = await axios.get('/plugins/sidebar')
+      const { data: _pluginsTop } = await axios.get('/plugins/sidebar-top')
       plugins.value = _plugins?.flat() || []
+      pluginsTop.value = _pluginsTop?.flat() || []
       Socket.on('infos:global', data => {
         const {memPercentage, cpu: _cpu} = data
         cpu.value = _cpu
@@ -190,6 +194,18 @@ export default {
           icon: 'fas fa-th',
           click: () => router.push({name: 'stack-multiple'})
         },
+        ...pluginsTop.value.map(plugin => {
+          return plugin.placements.map(placement => {
+            if(typeof placement === 'string') return
+            return {
+              text: placement.label,
+              icon: placement.icon,
+              img: system.proxyImg(placement.img),
+              click: placement.goTo ? () => router.push(placement.goTo || '/') : () => { },
+              active: placement.active
+            }
+          })
+        }).flat().filter(f => f),
       ])),
       buttonsPlugins: computed(() => ([
         ...plugins.value.map(plugin => {

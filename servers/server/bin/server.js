@@ -19,6 +19,7 @@ module.exports = {
         crossOriginResourcePolicy: false,
         contentSecurityPolicy: {
           directives: {
+            upgradeInsecureRequests: null,
             'frame-src': ["'self'", 'clabroche.github.io', 'jsoncrack.com'],
           },
           useDefaults: true,

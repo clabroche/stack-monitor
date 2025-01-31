@@ -1,6 +1,8 @@
 export default {
   events: new Map(),
   connected: false,
+  /** @type {WebSocket | null} */
+  socket: null,
   reconnectAttempts: 0,
   maxReconnectAttempts: 10,
   reconnectDelay: 100,
@@ -83,4 +85,12 @@ export default {
     store = store.filter((_cb) => _cb !== cb);
     this.events.set(event, store);
   },
+  emit(channel, ...data) {
+    if (this.connected && this.socket) {
+      this.socket.send(JSON.stringify({ channel, data }));
+    } else {
+      console.warn('Socket non connecté, impossible d\'émettre un message.');
+    }
+  }
+
 };
