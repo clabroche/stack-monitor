@@ -10,7 +10,7 @@
               <template #trigger>
                 <button @click="item?.click()" :class="{ active: $router.currentRoute.value.fullPath.includes(item?.active || ''), 'button-speed-dial': true }" class="sidebar-item" :title="item?.text">
                   <i v-if="item?.icon" :class="{ [item?.icon]: true }" aria-hidden="true"/>
-                  <img v-else-if="item?.img" :src="item?.img" height="10px">
+                  <img :alt="`Icon for ${item?.text}`" v-else-if="item?.img" :src="item?.img" height="10px">
                 </button>
               </template>
               <template #content>
@@ -116,7 +116,6 @@ import Socket from '../helpers/Socket';
 import { useRouter } from 'vue-router';
 import Theme from '../helpers/Theme'
 import Popover from './Popover.vue';
-import system from '../models/system'
 import SpeedDial from 'primevue/speeddial'
 import Button from 'primevue/button'
 
@@ -149,6 +148,21 @@ export default {
         mem.value = memPercentage
       })
     })
+    function extractButtonFromPlugin(plugin) {
+      return plugin.placements.map(placement => {
+        if(typeof placement === 'string') return
+        return {
+          text: placement.label,
+          icon: placement.icon,
+          img: System.proxyImg(placement.img),
+          click: placement.goTo ? () => router.push(placement.goTo || '/') : () => { },
+          active: placement.active
+        }
+      })
+    }
+    function extractButtonsFromPlugin(plugins) {
+      return plugins.map(extractButtonFromPlugin).flat().filter(f => f)
+    }
 
     return {
       speedDialVisible: ref(true),
@@ -194,32 +208,10 @@ export default {
           icon: 'fas fa-th',
           click: () => router.push({name: 'stack-multiple'})
         },
-        ...pluginsTop.value.map(plugin => {
-          return plugin.placements.map(placement => {
-            if(typeof placement === 'string') return
-            return {
-              text: placement.label,
-              icon: placement.icon,
-              img: system.proxyImg(placement.img),
-              click: placement.goTo ? () => router.push(placement.goTo || '/') : () => { },
-              active: placement.active
-            }
-          })
-        }).flat().filter(f => f),
+        ...extractButtonsFromPlugin(pluginsTop.value),
       ])),
       buttonsPlugins: computed(() => ([
-        ...plugins.value.map(plugin => {
-          return plugin.placements.map(placement => {
-            if(typeof placement === 'string') return
-            return {
-              text: placement.label,
-              icon: placement.icon,
-              img: system.proxyImg(placement.img),
-              click: placement.goTo ? () => router.push(placement.goTo || '/') : () => { },
-              active: placement.active
-            }
-          })
-        }).flat().filter(f => f),
+        ...extractButtonsFromPlugin(plugins.value),
       ])),
       buttonsBottom: computed(() => ([
         {

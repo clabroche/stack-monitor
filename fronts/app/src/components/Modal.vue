@@ -185,7 +185,7 @@ export default {
   display: flex;
   .notif-button {
     background: none;
-    color: var(--system-secondary-color);;
+    color: var(--system-secondary-color);
     font-size: 18px;
     padding: 12px 0px 12px 0px;
     background-color: var(--system-secondary-backgroundColor);

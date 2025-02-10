@@ -1,5 +1,5 @@
 const cp = require('child_process');
-const Promise = require('bluebird');
+const PromiseB = require('bluebird');
 const pathfs = require('path');
 const os = require('os');
 
@@ -9,7 +9,7 @@ module.exports.import = async (conf = {
 }) => {
   const paths = conf.paths.map((path) => pathfs.resolve(path));
   this.currentFile = '';
-  return new Promise((resolve) => {
+  return new PromiseB((resolve) => {
     this.status = 'import is working';
     const dirs = paths;
     let finish = 0;

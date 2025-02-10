@@ -141,7 +141,7 @@ export default {
     const offset = ref(0)
     // Init list in async/sync way
     const asyncValue = ref([])
-    const isAsync = ref(props.asyncValue ? true : false)
+    const isAsync = ref(!!props.asyncValue)
     const list = computed(() => {
       return isAsync.value ? asyncValue.value : props.value
     })
@@ -296,9 +296,9 @@ export default {
       return Number.isNaN(page) ? 0 : page
     })
     const formatDateIfNeeded = (value) => {
-      if(/[0-9]{2}\/[0-9]{2}\/[0-9]{4}/.test(props.filterValue) ) {
+      if(/\d{2}\/\d{2}\/\d{4}/.test(props.filterValue) ) {
         value = dayjs(props.filterValue, 'DD/MM/YYYY').format('YYYY-MM-DD') 
-      } else if(/[0-9]{2}\/[0-9]{4}/.test(props.filterValue) ) {
+      } else if(/\d{2}\/\d{4}/.test(props.filterValue) ) {
         value = dayjs(props.filterValue, 'MM/YYYY').format('YYYY-MM') 
       }
       return value
@@ -408,7 +408,7 @@ export default {
 <style lang="scss" scoped>
 .table-root {
   background-color: var(--system-sidebar-backgroundColor);
-  color: var(--system-sidebar-color);;
+  color: var(--system-sidebar-color);
 
   border-radius: 10px;
   overflow: hidden;
@@ -423,7 +423,7 @@ export default {
     text-align: left;
     z-index: 1;
     font-weight: normal;
-    color: var(--system-sidebar-color);;
+    color: var(--system-sidebar-color);
     .header {
       display: flex;
     }
@@ -470,7 +470,7 @@ export default {
       position: sticky;
       top: 0;
       background-color: var(--system-sidebar-backgroundColor);
-      color: var(--system-sidebar-color);;
+      color: var(--system-sidebar-color);
 
   }
 }
@@ -486,7 +486,7 @@ table {
       width: 40px;
       height: 100%;
       background-color: var(--system-sidebar-backgroundColor);
-      color: var(--system-sidebar-color);;
+      color: var(--system-sidebar-color);
       position: absolute;
       left: 0;
       top: 0;
@@ -511,7 +511,7 @@ table {
     }
     div {
       background-color: var(--system-sidebar-backgroundColor);
-      color: var(--system-sidebar-color);;
+      color: var(--system-sidebar-color);
       border: 1px solid #ddd;
       padding: 10px 12px;
       box-sizing: border-box;

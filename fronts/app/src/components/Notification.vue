@@ -3,16 +3,16 @@
   <template v-if="!notif.hover">
     <h2 v-if="notif.serviceLabel">{{notif.serviceLabel}}</h2>
   </template>
-  <template v-else-if="notif.serviceLabel">
-    <h2><i class="fas fa-chevron-right" aria-hidden="true"></i></h2>
-  </template>
+  <h2 v-else-if="notif.serviceLabel">
+    <i class="fas fa-chevron-right"></i>
+  </h2>
   <div class="messages">
     <div class="message" v-for="msg of notif?.msgs" :key="msg.label" :class="{glow: notif?.msgs?.length > 1, oneline: !nolimit}">
       {{msg.label}}
-      <label class="badge" v-if="notif.msgs.length > 1  && msg?.nb > 1">{{msg?.nb}}</label>
+      <div class="badge" v-if="notif.msgs.length > 1  && msg?.nb > 1">{{msg?.nb}}</div>
     </div>
   </div>
-  <label class="badge" v-if="notif?.msgs?.length===1 && notif?.msgs[0]?.nb > 1">{{notif?.msgs[0]?.nb}}</label>
+  <div class="badge" v-if="notif?.msgs?.length===1 && notif?.msgs[0]?.nb > 1">{{notif?.msgs[0]?.nb}}</div>
 </div>
 </template>
 
@@ -67,13 +67,13 @@ defineProps({
       flex-shrink: 0;
     }
   }
-  &, label {
+  &, .badge {
     background: #11998e;  /* fallback for old browsers */
     background: -webkit-linear-gradient(right, #38ef7d, #11998e);  /* Chrome 10-25, Safari 5.1-6 */
     background: linear-gradient(to right, #1dcf61, #11998e); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
     box-shadow: 0px 0px 10px 0px #11998e;
   }
-  label {
+  .badge {
     position: absolute;
     top: 0;
     right: 0;
@@ -88,12 +88,12 @@ defineProps({
     transform-origin: top;
     transform: translateX(50%) translateY(-50%);
   }
-  .message label {
+  .message .badge {
     transform: translateX(0) translateY(5px);
     height: 10px;
     width: 10px;
   }
-  &.error, &.error label{
+  &.error, &.error .badge{
     background: #CB356B;  /* fallback for old browsers */
     background: -webkit-linear-gradient(right, #BD3F32, #CB356B);  /* Chrome 10-25, Safari 5.1-6 */
     background: linear-gradient(to right, #BD3F32, #CB356B); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */

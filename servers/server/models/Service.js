@@ -761,7 +761,7 @@ Service.prototype.getDockerPorts = async function () {
 Service.prototype.getDockerEnvsArgs = async function () {
   const envs = await this.buildEnvs(this.Stack.getCurrentEnvironment()?.label)
   const envCmd = []
-  Object.keys(envs).map(key => {
+  Object.keys(envs).forEach(key => {
     envCmd.push('-e', `"${key}=${envs[key]}"`)
   })
   return envCmd

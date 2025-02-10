@@ -113,11 +113,6 @@ $shadow: rgb(165, 177, 179);
       left: calc(50%);
       bottom: calc(50%);
       transform: rotate(200deg);
-      // right: 100px;
-      // bottom: calc(50% + 100px);
-
-      // transform: rotate(80deg);
-      // transform-origin: bottom left;
     }
   }
   .title {

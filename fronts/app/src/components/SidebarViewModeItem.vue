@@ -3,7 +3,7 @@
     <template #trigger>
       <button @click="button.click()" :class="{ active: isActive }" class="sidebar-item" :title="button.text">
         <i v-if="button.icon" :class="{ [button.icon]: true }" aria-hidden="true"/>
-        <img v-else-if="button.img" :src="button.img">
+        <img :alt="`Icon for ${button.text}`" v-else-if="button.img" :src="button.img">
       </button>
     </template>
     <template #content>

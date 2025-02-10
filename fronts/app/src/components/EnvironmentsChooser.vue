@@ -53,16 +53,16 @@
     </template>
     <template #body>
       <IftaLabel>
-        <InputText size="small" v-model="environmentToCreate.label" fluid></InputText>
-        <label>Label</label>
+        <InputText id="environment-to-create-label" size="small" v-model="environmentToCreate.label" fluid></InputText>
+        <label for="environment-to-create-label">Label</label>
       </IftaLabel>
       <IftaLabel>
-        <InputText size="small" v-model="environmentToCreate.bgColor" fluid></InputText>
-        <label>Background color</label>
+        <InputText id="environment-to-create-bgColor" size="small" v-model="environmentToCreate.bgColor" fluid></InputText>
+        <label for="environment-to-create-bgColor">Background color</label>
       </IftaLabel>
       <IftaLabel>
-        <InputText size="small" v-model="environmentToCreate.color" fluid></InputText>
-        <label>Color</label>
+        <InputText id="environment-to-create-color" size="small" v-model="environmentToCreate.color" fluid></InputText>
+        <label for="environment-to-create-color">Color</label>
       </IftaLabel>
     </template>
   </Modal>

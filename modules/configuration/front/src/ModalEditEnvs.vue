@@ -278,7 +278,7 @@ function parseCode() {
       env.value = value.join('=');
       envs[key] = env
       setOverrideIfNeeded({key, value: env.value});
-    }),
+    })
   setEnvs(envs);
 }
 

@@ -67,7 +67,6 @@ function deleteChild(_node) {
   }
   .actions {
     position: absolute;
-    right: 0;
     opacity: 0;
     transition: 300ms;
     display: flex;

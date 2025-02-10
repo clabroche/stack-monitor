@@ -89,18 +89,6 @@ describe('Files', () => {
   });
 });
 
-// describe('Jest', () => {
-//   getWorkspaces().filter((workspace) => fse.existsSync(pathfs.resolve(workspace.path, 'jest.config.js'))
-//       || fse.existsSync(pathfs.resolve(workspace.path, 'jest.config.ts'))).forEach((workspace) => {
-//     it(`${workspace.packageJSON.name} should depend on Jest sonar reporter in devDependencies`, () => {
-//       if (!workspace.packageJSON.devDependencies['jest-sonar-reporter']) {
-//         expect(undefined).toBe('jest-sonar-reporter: ^2.0.0');
-//       }
-//       expect(workspace.packageJSON.devDependencies['jest-sonar-reporter']).toBe('^2.0.0');
-//     });
-//   });
-// });
-
 describe('Publish config', () => {
   getWorkspaces().filter((workspace) => fse.existsSync(pathfs.resolve(workspace.path, 'package.json'))).forEach((workspace) => {
     it(`${workspace.packageJSON.name} should be in private mode`, () => {

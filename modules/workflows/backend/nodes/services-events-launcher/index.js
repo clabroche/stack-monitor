@@ -14,7 +14,7 @@ module.exports = function (RED) {
       'service:healthcheck:up',
     ]
       .filter(event => ((!filteredEvents?.length) || filteredEvents.includes(event)))
-      .map(event => {
+      .forEach(event => {
         sockets.on(event, async ({label, pid, code}) => {
           if (filteredServices?.length && !filteredServices.includes(label)) return
           const service = stack.getServices().find(s => s.label === label)

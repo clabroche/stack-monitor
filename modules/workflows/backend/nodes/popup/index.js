@@ -7,7 +7,7 @@ module.exports = function (RED) {
     var node = this;
     node.on('input', async function (msg) {
       if (!msg.payload) msg.payload = {}
-      const service = await askUiFor('displayPopup', {
+      await askUiFor('displayPopup', {
         ui: {
           header: config.header,
           html: msg.payload.toDisplay

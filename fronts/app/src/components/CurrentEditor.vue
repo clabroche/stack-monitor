@@ -6,7 +6,13 @@
     </template>
     <template #content>
       <div class="icons">
-        <img :src="allEditors[editor]?.icon" v-for="editor of availableEditors" :style="{width: '35px', height: '35px'}" @click="setDefaultEditor(editor)" class="filter-dark"></img>
+        <img
+          v-for="editor of availableEditors"
+          :alt="`Editor icon: ${editor}`"
+          :src="allEditors[editor]?.icon"
+          :style="{width: '35px', height: '35px'}"
+          @click="setDefaultEditor(editor)"
+          class="filter-dark"/>
       </div>
     </template>
   </Popover>
