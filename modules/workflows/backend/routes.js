@@ -47,6 +47,7 @@ module.exports = (Stack) => {
     if (existsSync(modulePath)) {
       console.log(moduleName, 'found, delete it before start nodered')
       await rm(modulePath, { recursive: true, force: true })
+      await execAsync('npm uninstall node-red-contrib-stack-monitor', { cwd: userDir })
     }
 
     await PromiseB.map(await readdir(userDir), async file => {
@@ -86,7 +87,7 @@ module.exports = (Stack) => {
     if (existsSync(packageJSONPath)) {
       packageJSON = JSON.parse(await readFile(packageJSONPath, 'utf-8'))
     }
-    const tgzFileName = `${moduleName}-${v4()}.tgz`
+    const tgzFileName = `${moduleName}.tgz`
     packageJSON.dependencies[moduleName] = `file:${tgzFileName}`
     const pathToTgz = pathfs.resolve(userDir, `${tgzFileName}`) 
     await writeFile(pathToTgz, buffer)
