@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.1.1](https://github.com/clabroche/stack-monitor/compare/v2.1.0...v2.1.1) (2025-02-11)
+
+**Note:** Version bump only for package @clabroche/modules-toolbox-backend
+
 # [2.1.0](https://github.com/clabroche/stack-monitor/compare/v2.0.17...v2.1.0) (2025-01-31)
 
 **Note:** Version bump only for package @clabroche/modules-toolbox-backend
