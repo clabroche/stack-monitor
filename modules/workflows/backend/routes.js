@@ -84,8 +84,8 @@ module.exports = (Stack) => {
       "dependencies": {}
     }
     
-    if (existsSync(packageJSONPath)) {
-      packageJSON = JSON.parse(await readFile(packageJSONPath, 'utf-8'))
+    if(existsSync(packageJSONPath)) {
+      Object.assign(packageJSON, JSON.parse(await readFile(packageJSONPath, 'utf-8')))
     }
     const tgzFileName = `${moduleName}.tgz`
     packageJSON.dependencies[moduleName] = `file:${tgzFileName}`
