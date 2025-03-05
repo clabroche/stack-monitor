@@ -40,8 +40,8 @@ module.exports = {
             { '': 'Version', Value: require('../helpers/version').version, 'Overrided By': '-' },
             { '': 'Port', Value: ports.http, 'Overrided By': 'STACK_MONITOR_HTTP_PORT' },
             { '': 'Url', Value: `http://localhost:${ports.http}`, 'Overrided By': '-' },
-            ...args.services.length
-              ? [{ '': 'Services', Value: args.services.join(', '), 'Overrided By': '-' }]
+            ...args.ss.length
+              ? [{ '': 'Services', Value: args.ss.join(', '), 'Overrided By': '-' }]
               : [],
           ]);
         })();

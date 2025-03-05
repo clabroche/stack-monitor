@@ -2,16 +2,26 @@
 process.title = 'stack-monitor';
 const args = require('../helpers/args');
 
-if(args.rootPath) {
-  args.initialCwd = process.cwd()
-  process.chdir(args.rootPath)
-}
 
-require('dotenv').config()
-
-require('./server')
-  .launch()
-    .catch((err) => {
-      console.error(err)
-      return err
-    })
+require('dotenv').config();
+(async () => {
+  if(args['pull-env']) {
+    await require('../models/stack').selectConf();
+    const service = require('../models/stack').findService(args.s)
+    if(!service) {
+      console.error('Service', args.s, 'not found')
+      process.exit(1)
+    }
+    const envs = await service.buildEnvs(args['e'])
+    console.log(Object.keys(envs).reduce((agg, key) => (agg+=`\n${key}=${envs[key]}`), '').trim())
+    process.exit(0)
+  } else {
+    console.log('Root path:', args.rootPath)
+    require('./server')
+      .launch()
+        .catch((err) => {
+          console.error(err)
+          return err
+        })
+  }
+})()

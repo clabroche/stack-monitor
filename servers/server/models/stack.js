@@ -14,7 +14,6 @@ const args = require('../helpers/args');
 const { existsSync, mkdirSync } = require('fs');
 const pathfs = require('path')
 
-if (!sockets.io) throw new Error('Stack monitor seems not fully inialized: Socket is empty, check if socket connection is launched before require this file');
 
 /** @param {Partial<Stack>} stack */
 function Stack(stack) {
@@ -193,8 +192,11 @@ Stack.selectConf = async function () {
     await EncryptionKey.saveKey(await EncryptionKey.generateKey());
   }
   Stack.currentStack = await this.parse();
-  Stack.currentEnvironment = process.env.STACK_MONITOR_DEFAULT_ENVIRONMENT
-    ? Stack.currentStack.environments.find((env) => env.label === process.env.STACK_MONITOR_DEFAULT_ENVIRONMENT) || null
+  Stack.currentEnvironment = (args.e || process.env.STACK_MONITOR_DEFAULT_ENVIRONMENT)
+    ? Stack.currentStack.environments.find((env) => (
+      env.label === args.e?.toString() ||
+      env.label === process.env.STACK_MONITOR_DEFAULT_ENVIRONMENT
+    )) || null
     : Stack.currentStack.environments.find((env) => env.default) || null;
   if (process.env.STACK_MONITOR_SERVICES) {
     process.env.STACK_MONITOR_SERVICES.split(',').forEach((serviceLabel) => {

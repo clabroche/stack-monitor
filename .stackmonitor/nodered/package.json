@@ -4,6 +4,6 @@
   "version": "0.0.1",
   "private": true,
   "dependencies": {
-    "node-red-contrib-stack-monitor": "file:node-red-contrib-stack-monitor-f12e2fee-aa5c-4028-9c28-044949d45574.tgz"
+    "node-red-contrib-stack-monitor": "file:node-red-contrib-stack-monitor.tgz"
   }
 }
