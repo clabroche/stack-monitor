@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.1.3](https://github.com/clabroche/stack-monitor/compare/v2.1.2...v2.1.3) (2025-03-05)
+
+### Bug Fixes
+
+* uuid vanilla for nodered ([20ec123](https://github.com/clabroche/stack-monitor/commit/20ec1232a9db39f024c8db3159123bd2266aa915))
+
 ## [2.1.2](https://github.com/clabroche/stack-monitor/compare/v2.1.1...v2.1.2) (2025-03-05)
 
 ### Bug Fixes
