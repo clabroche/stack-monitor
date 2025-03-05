@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.1.2](https://github.com/clabroche/stack-monitor/compare/v2.1.1...v2.1.2) (2025-03-05)
+
+### Bug Fixes
+
+* **docs:** update actions ([ad568b0](https://github.com/clabroche/stack-monitor/commit/ad568b04e4227aa5714ef1093428fc3972be77ec))
+* increase action versions ([2c5c66c](https://github.com/clabroche/stack-monitor/commit/2c5c66c474c499f8c92a1707bb30336037d85119))
+* set needed fields on nodered packagejson when missing ([8e6bdce](https://github.com/clabroche/stack-monitor/commit/8e6bdcef674023ed560d631fa2d0dc5f1cb16cfd))
+
 ## [2.1.1](https://github.com/clabroche/stack-monitor/compare/v2.1.0...v2.1.1) (2025-02-11)
 
 ### Bug Fixes
