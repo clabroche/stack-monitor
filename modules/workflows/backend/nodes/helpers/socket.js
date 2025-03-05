@@ -1,9 +1,9 @@
-const { v4 } = require('uuid');
+const crypto = require("crypto");
 
 module.exports.askUiFor = async function(label, data, RED) {
   const {sockets} = RED.settings.functionGlobalContext.stackmonitor
   return new Promise(resolve => {
-    const uuid = v4()
+    const uuid = crypto.randomUUID();
     sockets.emit('node-red-' + label, {
       respondTo: uuid, data: data
     })
