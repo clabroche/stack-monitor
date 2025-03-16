@@ -12,7 +12,8 @@ const EncryptionKey = require('./EncryptionKey');
 const CustomObservable = require('@clabroche/common-socket-server/src/CustomObservable');
 const args = require('../helpers/args');
 const { existsSync, mkdirSync } = require('fs');
-const pathfs = require('path')
+const pathfs = require('path');
+const { default: axios } = require('axios');
 
 
 /** @param {Partial<Stack>} stack */
@@ -152,6 +153,9 @@ Stack.deleteService = async function (label) {
 
 Stack.prototype.getServices = function () {
   return Stack.getServices();
+};
+Stack.getAxios = function () {
+  return axios.create({baseURL: this.url});
 };
 
 Stack.getEnabledServices = function () {

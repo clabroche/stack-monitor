@@ -1,0 +1,64 @@
+<script type="text/javascript">
+  RED.nodes.registerType('sm-run-command', {
+    category: 'Stack Monitor',
+    color: '#50c4f6',
+    defaults: {
+      name: { value: "[SM] Run command" },
+      commandId: { value: "" },
+    },
+    async oneditprepare(){
+      const services = await (await fetch('/stack/services')).json()
+      const $command = $("#node-input-commandId")
+      $command.typedInput({
+        types: [
+          {
+            // value: "STACK_LOAD_FROM_INPUT",
+            options: [
+              {label: 'Choose...', value: '', disabled: true},
+              // {label: 'Load from input node', value: 'STACK_LOAD_FROM_INPUT'},
+              ...services.map(service => ([
+                ...service.commands.map((command) => ({
+                  value: command.id,
+                  label: `[${service.label}] ${command.spawnCmd} ${command.spawnArgs.join(' ')}`
+                })),
+                ...service.shortcuts.map((command) => ({
+                  value: command.id,
+                  label: `[${service.label}] ${command.label || `${command.spawnCmd} ${command.spawnArgs.join(' ')}`}`
+                }))
+              ])).flat(10).filter(a => a)
+            ]
+          }
+        ]
+      })
+    },
+    inputs: 1,
+    outputs: 1,
+    icon: "bridge.svg",
+    paletteLabel: "Run command",
+    label: function () {
+      return this.name || `[SM] Run command`;
+    }
+  });
+</script>
+
+<script type="text/html" data-template-name="sm-run-command">
+    <h2>Run command</h2>
+    <p>
+      This node run a predefined command.
+    </p>
+    <p class="form-tips" style="max-width: 100%;">
+      <!-- In case you choose "Load from input node", service will be loaded from the msg.payload.commandId or the msg.commandId as  -->
+    </p>
+  <div class="form-row" id="node-group-name">
+    <label for="node-input-name"><i class="fa fa-filter"></i> Name</label>
+    <input type="text" id="node-input-name" placeholder="Name">
+  </div>
+  <div class="form-row" id="node-group-commands">
+    <label for="node-input-commandId"><i class="fa fa-filter"></i> Command</label>
+    <input type="text" id="node-input-commandId" placeholder="Command...">
+  </div>
+</script>
+
+<script type="text/html" data-help-name="sm-run-command">
+    <p>Run a predefined command from stackmonitor</p>
+</script>

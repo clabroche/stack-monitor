@@ -6,7 +6,8 @@
       "manual-launcher": "manual-launcher/index.js",
       "service-selector": "service-selector/index.js",
       "popup": "popup/index.js",
-      "service-action": "service-action/index.js"
+      "service-action": "service-action/index.js",
+      "run-command": "run-command/index.js"
     }
   }
 }
