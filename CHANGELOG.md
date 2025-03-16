@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.1.4](https://github.com/clabroche/stack-monitor/compare/v2.1.3...v2.1.4) (2025-03-16)
+
+### Bug Fixes
+
+* **nodered:** add possibility to launch single command or shortcut ([a9f5d09](https://github.com/clabroche/stack-monitor/commit/a9f5d094098c08a04278464013b0eb3956c460e9))
+
 ## [2.1.3](https://github.com/clabroche/stack-monitor/compare/v2.1.2...v2.1.3) (2025-03-05)
 
 ### Bug Fixes

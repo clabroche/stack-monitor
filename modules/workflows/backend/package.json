@@ -1,6 +1,6 @@
 {
   "name": "@clabroche/modules-workflows-backend",
-  "version": "2.1.3",
+  "version": "2.1.4",
   "repository": "https://github.com/clabroche/stack-monitor",
   "private": true,
   "scripts": {
