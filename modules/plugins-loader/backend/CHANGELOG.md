@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.1.5](https://github.com/clabroche/stack-monitor/compare/v2.1.4...v2.1.5) (2025-03-21)
+
+**Note:** Version bump only for package @clabroche/modules-plugins-loader-backend
+
 ## [2.1.4](https://github.com/clabroche/stack-monitor/compare/v2.1.3...v2.1.4) (2025-03-16)
 
 **Note:** Version bump only for package @clabroche/modules-plugins-loader-backend

@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.1.5](https://github.com/clabroche/stack-monitor/compare/v2.1.4...v2.1.5) (2025-03-21)
+
+### Bug Fixes
+
+* **nodered:** debug run command ([5eff16e](https://github.com/clabroche/stack-monitor/commit/5eff16e95ef4578eb71abe3ee45e26dc9d4c2c4f))
+
 ## [2.1.4](https://github.com/clabroche/stack-monitor/compare/v2.1.3...v2.1.4) (2025-03-16)
 
 ### Bug Fixes
