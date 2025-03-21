@@ -2841,7 +2841,7 @@ __metadata:
     "@commitlint/config-conventional": "npm:^17.6.7"
     "@eslint/eslintrc": "npm:^3.2.0"
     "@eslint/js": "npm:^9.17.0"
-    "@iryu54/stack-monitor": "npm:2.1.0"
+    "@iryu54/stack-monitor": "npm:^2.1.4"
     "@lerna-lite/changed": "npm:^2.5.0"
     "@lerna-lite/cli": "npm:^2.5.0"
     "@lerna-lite/diff": "npm:^2.5.0"
@@ -3975,9 +3975,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@iryu54/stack-monitor@npm:2.1.0":
-  version: 2.1.0
-  resolution: "@iryu54/stack-monitor@npm:2.1.0"
+"@iryu54/stack-monitor@npm:^2.1.4":
+  version: 2.1.4
+  resolution: "@iryu54/stack-monitor@npm:2.1.4"
   dependencies:
     "@babel/preset-env": "npm:^7.26.0"
     "@octokit/core": "npm:^6.1.2"
@@ -4019,9 +4019,10 @@ __metadata:
     uuid: "npm:^9.0.1"
     workspace-tools: "npm:^0.36.4"
     ws: "npm:^8.18.0"
+    yargs: "npm:^17.7.2"
   bin:
     stack-monitor: www.js
-  checksum: 10/a818f0dab51130b7ee0876a042ed2fcd3789af46c81c6b1a1eeef041fd66397875f14b50485e362785aa3f2d75106a245b793ae2208e3640e0fee217d88b4fe6
+  checksum: 10/0c2b28f0a9866a855696fe49638039c711827b581f7e13c2aaeed8859747b5d8bb3d01fb7828f807e2208f0e08906dfffab4e8f7de1b55b9a60a181aa771e253
   languageName: node
   linkType: hard
 
