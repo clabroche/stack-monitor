@@ -1,0 +1,14 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+This repository is build with turborepo, yarn en mode workspace.
+Quand tu créé de nouveaux modules et que tu les utilises dans d'autres dependances n'oublie pas de les enregistrer dans le packagejson du module concerné. exemple: 
+"@clabroche/common-retrigger-all-build": "workspace:*",
+
+Les noms de packets sont normé par rapport a leurs path. Exemple
+@clabroche/common-retrigger-all-build => common/retrigger-all-build
+@clabroche/modules-uuid-front => modules/uuid/front
+
+ecris toujours le vue en version 3 avec l'api de composition

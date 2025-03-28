@@ -25,6 +25,7 @@ import Vscode from '@clabroche/modules-vscode-front/src/Index.vue';
 import Docker from '@clabroche/modules-docker-front/src/Index.vue';
 import Workflows from '@clabroche/modules-workflows-front/src/Index.vue';
 import WorkflowsModals from '@clabroche/modules-workflows-front/src/modals/Modals.vue';
+import SQLBeautifier from '@clabroche/modules-sql-beautifier-front/src/SQLBeautifier.vue';
 import DynamicComponent from './DynamicComponent.vue';
 
 const toolboxPlugins = [
@@ -45,6 +46,7 @@ const toolboxPlugins = [
   { name: 'Kanban', component: Kanban },
   { name: 'Vscode', component: Vscode },
   { name: 'Docker', component: Docker },
+  { name: 'SQLBeautifier', component: SQLBeautifier },
   {
     name: 'Toolbox',
     component: Toolbox,
@@ -96,6 +98,7 @@ const plugins = [
   { name: 'Documentation', cmp: Documentation },
   { name: 'Npm', cmp: NpmVue },
   { name: 'Bugs', cmp: BugsVue },
+  { name: 'SQLBeautifier', cmp: SQLBeautifier },
   { name: 'Configuration', cmp: ConfigsVue },
 ];
 export default plugins;

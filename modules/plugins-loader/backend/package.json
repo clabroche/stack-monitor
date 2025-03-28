@@ -30,6 +30,7 @@
     "@clabroche/modules-openai-backend": "workspace:*",
     "@clabroche/modules-openapi-backend": "workspace:*",
     "@clabroche/modules-regex-backend": "workspace:*",
+    "@clabroche/modules-sql-beautifier-backend": "workspace:*",
     "@clabroche/modules-toolbox-backend": "workspace:*",
     "@clabroche/modules-uuid-backend": "workspace:*",
     "@clabroche/modules-vscode-backend": "workspace:*",

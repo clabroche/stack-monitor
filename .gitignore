@@ -66,3 +66,4 @@ sandbox
 lerna-debug.log
 .pnp.*
 tsup.config.bundled*
+encryption-key.json

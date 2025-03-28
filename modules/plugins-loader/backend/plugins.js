@@ -17,6 +17,7 @@ const plugins = {
   npm: require('@clabroche/modules-npm-backend'),
   openai: require('@clabroche/modules-openai-backend'),
   regex: require('@clabroche/modules-regex-backend'),
+  sqlBeautifier: require('@clabroche/modules-sql-beautifier-backend'),
   toolbox: require('@clabroche/modules-toolbox-backend'),
   uuid: require('@clabroche/modules-uuid-backend'),
   help: require('@clabroche/modules-help-backend'),

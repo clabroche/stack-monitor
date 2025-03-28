@@ -31,6 +31,7 @@
     "@clabroche/modules-openai-front": "workspace:*",
     "@clabroche/modules-openapi-front": "workspace:*",
     "@clabroche/modules-regex-front": "workspace:*",
+    "@clabroche/modules-sql-beautifier-front": "workspace:*",
     "@clabroche/modules-toolbox-front": "workspace:*",
     "@clabroche/modules-uuid-front": "workspace:*",
     "@clabroche/modules-vscode-front": "workspace:*",

@@ -35,5 +35,6 @@ import Tooltip from 'primevue/tooltip';
     .use(router)
     .directive('tooltip', Tooltip);
   views.forEach((cmp) => app.component(cmp.name, cmp.cmp));
+  console.log('views', views);
   app.mount('#app');
 })();

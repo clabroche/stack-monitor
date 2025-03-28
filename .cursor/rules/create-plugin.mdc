@@ -1,0 +1,69 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+You can take as exemple the module modules/uuid
+
+It will be composed from a backend and a frontend in vue. To make a toolbox module. It should be register in [views.js](mdc:modules/plugins-loader/front/src/views.js) and [plugins.js](mdc:modules/plugins-loader/backend/plugins.js), n'oublie pas de referencer les nouveaux modules dans modules/plugins-loader/front/package.json et modules/plugins-loader/backend/package.json
+
+
+Le fichier d'entrée du plugin ressemble a ca:
+
+/** @type {import('@clabroche/modules-plugins-loader-front/src/views').PluginSM<import('./UUID')>} */
+const plugin = {
+  enabled: true, // si le plugin est actif
+  name: 'UUID', // Le nom interne 
+  displayName: 'UUID', // le nom affiché dans l'interface
+  description: 'Generate an UUID', // la description pour l'interface
+  icon: 'fas fa-random', // l'icon font awesome
+  order: 7, // Ordre ou l'on veut afficher par rapport aux autre plugin
+  export: null, // Si on veux exporter dans toute l'application une lib
+  routes: require('./routes'), // C'est une fonction qui exporte les routes d'express
+  placements: [ // Le placement a differents endroits dans l'interface
+    {
+      position: 'toolbox', // la position c'est si on la veut dans la toolbox
+      label: 'UUID', // Avec ce nom
+      icon: 'fas fa-random', // et cette icon font awesome
+      goTo: { path: '/UUID' }, // le lien qui est fait dans l'interface (elle dois correspondre a ce que tu mets dans le [views.js](mdc:modules/plugins-loader/front/src/views.js))
+      active: 'UUID', // Ca c'est le path qui permet de mettre en surbrillance dans la navbar quand on y'est
+    },
+    { // la meme chose mais si on le veut dispo dans la sidebar
+      position: 'sidebar', 
+      label: 'DevOps',
+      icon: 'fas fa-hard-hat',
+      goTo: { path: '/DevOps' },
+      active: 'DevOps',
+    }
+  ],
+  export: require('./UUID'),
+  order: 6,
+  routes: require('./routes'),
+};
+
+module.exports = plugin;
+
+
+les routes doivent etre prefixer par le nom du module. Reverifie bien que tu accede correctement a la route dans le front. Par exemple si tu créé une routes express
+
+router.post('/UUID/generate') alors dans le front axios devra acceder a /UUID/generate (cette regle n'a rien a voir avec le goTo)
+
+N'ecrit jamais en typescript meme dans vue
+
+
+Dans le module front fait appelle directement aux imports avec des chemins relatif. clabroche/front-app ferait une dependance cyclique 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

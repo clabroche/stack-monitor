@@ -24,7 +24,8 @@ const props = defineProps({
     /** @type {import('monaco-editor/esm/vs/editor/editor.api').editor.IStandaloneDiffEditorConstructionOptions} */
     default: {}
   },
-  diff: { default: false }
+  diff: { default: false },
+  readonly: { default: false }
 })
 const emit = defineEmits([
   'update:modelValue',
@@ -60,7 +61,7 @@ onMounted(async() => {
   /** @type {import('monaco-editor/esm/vs/editor/editor.api').editor.IStandaloneDiffEditorConstructionOptions} */
   const options = {
     theme: 'monokai',
-    readOnly: false,
+    readOnly: props.readonly,
     automaticLayout: true,
     autoIndent: 'brackets',
     formatOnPaste: true,
@@ -77,7 +78,7 @@ onMounted(async() => {
       original: monaco.editor.createModel('', 'text/plain'),
       modified: monaco.editor.createModel('', 'text/plain'),
     });
-    _editor.updateOptions({ readOnly: false, originalEditable: true });
+    _editor.updateOptions({ readOnly: props.readonly, originalEditable: true });
     editor.value = _editor
   } else {
     const _editor = monaco.editor.create(monacoRef.value, options)
@@ -97,9 +98,11 @@ onMounted(async() => {
       })
     }
     _editor.setModel(monaco.editor.createModel('', props.language));
-    _editor.updateOptions({ readOnly: false });
+    _editor.updateOptions({ readOnly: props.readonly });
     _editor.onDidChangeModelContent((model) => {
-      emit('update:modelValue', _editor.getValue())
+      if (!props.readonly) {
+        emit('update:modelValue', _editor.getValue())
+      }
     })
     const KM = monaco.KeyMod;
     const KC = monaco.KeyCode;
@@ -119,7 +122,13 @@ watchEffect(() => {
     // @ts-ignore
     editor.value?.setValue?.(props.modelValue)
   }
+  // @ts-ignore
+  if(editor.value) {
+    // @ts-ignore
+    editor.value.updateOptions({ readOnly: props.readonly })
+  }
 })
+
 defineExpose({
   editor,
   isReady
