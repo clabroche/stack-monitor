@@ -7,7 +7,12 @@ const UUID = require('./UUID');
 module.exports = (stackMonitor) => {
   const uuid = UUID(stackMonitor);
   router.get('/uuid/', async (req, res) => {
-    res.json(uuid.generate());
+    const { count, noDash, uppercase } = req.query;
+    res.json(uuid.generate({
+      count: count ? parseInt(count, 10) : undefined,
+      noDash: noDash === 'true',
+      uppercase: uppercase === 'true'
+    }));
   });
   return router;
 };

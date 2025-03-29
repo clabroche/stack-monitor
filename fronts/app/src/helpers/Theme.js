@@ -117,6 +117,7 @@ class Theme {
     setCssVariable('--p-highlight-background', theme.rules['system.secondary'].backgroundColor);
     setCssVariable('--p-primary-50', theme.rules['system.secondary'].backgroundColor);
     setCssVariable('--p-primary-100', theme.rules['system.secondary'].backgroundColor);
+    setCssVariable('--p-primary-200', theme.rules['system.tertiary'].backgroundColor);
     console.log(theme.rules);
   }
 }

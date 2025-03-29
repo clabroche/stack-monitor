@@ -163,6 +163,7 @@ input {
   padding: 5px 10px;
   box-sizing: border-box;
   height: 100%;
+  overflow: auto;
 }
 .no-tools {
   display: flex;
