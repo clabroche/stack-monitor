@@ -1,11 +1,11 @@
-/** @type {import('@clabroche/modules-plugins-loader-front/src/views').PluginSM<null>} */
+/** @type {import('@clabroche/modules-plugins-loader-front/src/views').PluginSM<import('./JWT')>} */
 const plugin = {
   enabled: true,
   name: 'JWT',
   displayName: 'JWT',
-  description: 'View a json web token',
+  description: 'Decode, verify and create JSON Web Tokens',
   icon: 'fas fa-key',
-  export: null,
+  export: require('./JWT'),
   placements: [
     {
       position: 'toolbox',
@@ -18,4 +18,5 @@ const plugin = {
   order: 6,
   routes: require('./routes'),
 };
+
 module.exports = plugin;
