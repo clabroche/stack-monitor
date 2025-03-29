@@ -2474,11 +2474,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@clabroche/modules-node-repl-backend@workspace:modules/node-repl/backend"
   dependencies:
-    "@clabroche/common-retrigger-all-build": "workspace:*"
-    "@clabroche/modules-plugins-loader-front": "workspace:*"
-    "@types/express": "npm:^4.17.21"
-    "@types/uuid": "npm:^9.0.8"
+    "@clabroche/common-typings": "workspace:*"
     express: "npm:^4.18.2"
+    prettier: "npm:^3.1.0"
     uuid: "npm:^9.0.1"
   languageName: unknown
   linkType: soft
@@ -2487,11 +2485,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@clabroche/modules-node-repl-front@workspace:modules/node-repl/front"
   dependencies:
-    "@clabroche/common-retrigger-all-build": "workspace:*"
-    vue: "npm:^3.4.18"
-    vue-eslint-parser: "npm:^9.4.2"
-    xterm: "npm:^5.3.0"
-    xterm-addon-fit: "npm:^0.8.0"
+    "@vueuse/core": "npm:^10.7.0"
   languageName: unknown
   linkType: soft
 
@@ -2682,12 +2676,10 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@clabroche/modules-sql-beautifier-front@workspace:modules/sql-beautifier/front"
   dependencies:
-    "@clabroche/common-socket-front": "workspace:*"
     "@types/node": "npm:^20.11.19"
     axios: "npm:^1.6.7"
     debounce: "npm:^2.0.0"
     typescript: "npm:^5.3.3"
-    vue: "npm:^3.4.15"
   languageName: unknown
   linkType: soft
 
@@ -7932,6 +7924,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@vueuse/core@npm:^10.7.0":
+  version: 10.11.1
+  resolution: "@vueuse/core@npm:10.11.1"
+  dependencies:
+    "@types/web-bluetooth": "npm:^0.0.20"
+    "@vueuse/metadata": "npm:10.11.1"
+    "@vueuse/shared": "npm:10.11.1"
+    vue-demi: "npm:>=0.14.8"
+  checksum: 10/bbebdcd1ef0a77437cf2432062bb57c13e0afdadc474861ddad7ce343a8638778c5e54ad302c80e1d4351d4bdaf43501dc5937185e08d257fd000bdfea4ecb36
+  languageName: node
+  linkType: hard
+
 "@vueuse/integrations@npm:^11.1.0":
   version: 11.3.0
   resolution: "@vueuse/integrations@npm:11.3.0"
@@ -7981,10 +7985,26 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@vueuse/metadata@npm:10.11.1":
+  version: 10.11.1
+  resolution: "@vueuse/metadata@npm:10.11.1"
+  checksum: 10/20336a05eb4945c1486d5e0a81c91a8ba08137f567b86d2bc1171af36d916c56d30166163016ed64642cce904cad1af09332655f7f0178eb5f2c65e54f648b4f
+  languageName: node
+  linkType: hard
+
 "@vueuse/metadata@npm:11.3.0":
   version: 11.3.0
   resolution: "@vueuse/metadata@npm:11.3.0"
   checksum: 10/d8b6976896d2bc9924fcbcdaa2f3ffd6f60ff3a13355c92136ed6ad83ee6188d308064f0a8e56d07060b8829b29e41958ec3df9248231859e487a0af0f5e6b2f
+  languageName: node
+  linkType: hard
+
+"@vueuse/shared@npm:10.11.1":
+  version: 10.11.1
+  resolution: "@vueuse/shared@npm:10.11.1"
+  dependencies:
+    vue-demi: "npm:>=0.14.8"
+  checksum: 10/5d8c28ed441a66b200c76ab44b6dbc6af152a6cecc527a1f4f645d95547e1de65e4b99e16d25f77609cb146e9e4b4961b260fe723043b08ab198e88ed1d47f4e
   languageName: node
   linkType: hard
 
@@ -18354,6 +18374,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"prettier@npm:^3.1.0":
+  version: 3.5.3
+  resolution: "prettier@npm:3.5.3"
+  bin:
+    prettier: bin/prettier.cjs
+  checksum: 10/7050c08f674d9e49fbd9a4c008291d0715471f64e94cc5e4b01729affce221dfc6875c8de7e66b728c64abc9352eefb7eaae071b5f79d30081be207b53774b78
+  languageName: node
+  linkType: hard
+
 "pretty-format@npm:^29.7.0":
   version: 29.7.0
   resolution: "pretty-format@npm:29.7.0"
@@ -22329,7 +22358,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vue-demi@npm:>=0.14.10":
+"vue-demi@npm:>=0.14.10, vue-demi@npm:>=0.14.8":
   version: 0.14.10
   resolution: "vue-demi@npm:0.14.10"
   peerDependencies:
@@ -22390,24 +22419,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vue@npm:^3.4.15, vue@npm:^3.5.12":
-  version: 3.5.13
-  resolution: "vue@npm:3.5.13"
-  dependencies:
-    "@vue/compiler-dom": "npm:3.5.13"
-    "@vue/compiler-sfc": "npm:3.5.13"
-    "@vue/runtime-dom": "npm:3.5.13"
-    "@vue/server-renderer": "npm:3.5.13"
-    "@vue/shared": "npm:3.5.13"
-  peerDependencies:
-    typescript: "*"
-  peerDependenciesMeta:
-    typescript:
-      optional: true
-  checksum: 10/bcab4ca74c4a37a2bd3f892d6783f8b01748281cd5aedc2f5dd16521b97a3ba0303cf56df5e217eaa712d38ed2a14b75a92d875cf2596973ac985ca806f44e79
-  languageName: node
-  linkType: hard
-
 "vue@npm:^3.4.18":
   version: 3.4.18
   resolution: "vue@npm:3.4.18"
@@ -22423,6 +22434,24 @@ __metadata:
     typescript:
       optional: true
   checksum: 10/c932afe613dc8da43aa2e84a38fed95f8ba1df6f7fa43a44862ad240c9d2e6c7e4b091a83036654a082b8edfe08d4937e96837d303de1a9f76ad4a75b56469a1
+  languageName: node
+  linkType: hard
+
+"vue@npm:^3.5.12":
+  version: 3.5.13
+  resolution: "vue@npm:3.5.13"
+  dependencies:
+    "@vue/compiler-dom": "npm:3.5.13"
+    "@vue/compiler-sfc": "npm:3.5.13"
+    "@vue/runtime-dom": "npm:3.5.13"
+    "@vue/server-renderer": "npm:3.5.13"
+    "@vue/shared": "npm:3.5.13"
+  peerDependencies:
+    typescript: "*"
+  peerDependenciesMeta:
+    typescript:
+      optional: true
+  checksum: 10/bcab4ca74c4a37a2bd3f892d6783f8b01748281cd5aedc2f5dd16521b97a3ba0303cf56df5e217eaa712d38ed2a14b75a92d875cf2596973ac985ca806f44e79
   languageName: node
   linkType: hard
 
