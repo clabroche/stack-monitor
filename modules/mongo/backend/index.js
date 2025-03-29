@@ -2,14 +2,14 @@
 const plugin = {
   enabled: true,
   name: 'Mongo',
-  displayName: 'Mongo',
-  description: 'Make some operation on mongo objectid',
+  displayName: 'MongoDB',
+  description: 'MongoDB toolkit with ObjectID operations, validation, comparison and connection testing',
   icon: 'fab fa-envira',
   export: null,
   placements: [
     {
       position: 'toolbox',
-      label: 'Mongo',
+      label: 'MongoDB',
       icon: 'fab fa-envira',
       goTo: { path: '/Mongo' },
       active: 'Mongo',
