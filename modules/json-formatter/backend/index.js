@@ -1,20 +1,21 @@
-/** @type {import('@clabroche/modules-plugins-loader-front/src/views').PluginSM<null>} */
+/** @type {import('@clabroche/modules-plugins-loader-front/src/views').PluginSM<import('./JSONFormatter')>} */
 const plugin = {
   enabled: true,
   name: 'JSONFormatter',
-  displayName: 'Json Formatter',
-  description: 'View json validity and explore it',
-  icon: 'fas fa-random',
-  export: null,
+  displayName: 'JSON',
+  description: 'View, edit, validate, transform and explore JSON data',
+  icon: 'fas fa-brackets-curly',
+  export: require('./JSONFormatter'),
   placements: [
     {
       position: 'toolbox',
       label: 'JSON',
       iconText: '{}',
       goTo: { path: '/JSONFormatter' },
-      active: 'JSON-formatter',
+      active: 'JSONFormatter',
     },
   ],
+  routes: require('./routes'),
   order: 6,
 };
-module.exports = plugin;
+module.exports = plugin; 
