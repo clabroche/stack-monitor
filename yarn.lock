@@ -2398,6 +2398,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@clabroche/modules-json-formatter-backend@workspace:modules/json-formatter/backend"
   dependencies:
+    "@clabroche/common-retrigger-all-build": "workspace:*"
     ajv: "npm:^8.12.0"
     express: "npm:^4.18.2"
     js-yaml: "npm:^4.1.0"
@@ -2409,6 +2410,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@clabroche/modules-json-formatter-front@workspace:modules/json-formatter/front"
   dependencies:
+    "@clabroche/common-retrigger-all-build": "workspace:*"
     axios: "npm:^1.5.0"
     jsonrepair: "npm:^3.2.0"
     primeflex: "npm:^3.3.1"
@@ -2523,6 +2525,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@clabroche/modules-node-repl-backend@workspace:modules/node-repl/backend"
   dependencies:
+    "@clabroche/common-retrigger-all-build": "workspace:*"
     "@clabroche/common-typings": "workspace:*"
     express: "npm:^4.18.2"
     prettier: "npm:^3.1.0"
@@ -2534,6 +2537,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@clabroche/modules-node-repl-front@workspace:modules/node-repl/front"
   dependencies:
+    "@clabroche/common-retrigger-all-build": "workspace:*"
     "@vueuse/core": "npm:^10.7.0"
   languageName: unknown
   linkType: soft
@@ -2718,6 +2722,7 @@ __metadata:
   dependencies:
     "@clabroche/common-express": "workspace:*"
     "@clabroche/common-express-error-handler": "workspace:*"
+    "@clabroche/common-retrigger-all-build": "workspace:*"
     "@types/express": "npm:^4.17.21"
     "@types/node": "npm:^20.11.19"
     express: "npm:^4.18.2"
@@ -2731,6 +2736,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@clabroche/modules-sql-beautifier-front@workspace:modules/sql-beautifier/front"
   dependencies:
+    "@clabroche/common-retrigger-all-build": "workspace:*"
     "@types/node": "npm:^20.11.19"
     axios: "npm:^1.6.7"
     debounce: "npm:^2.0.0"

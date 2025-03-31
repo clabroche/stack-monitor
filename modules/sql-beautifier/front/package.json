@@ -13,8 +13,8 @@
     "debounce": "^2.0.0"
   },
   "devDependencies": {
+    "@clabroche/common-retrigger-all-build": "workspace:*",
     "@types/node": "^20.11.19",
-    "typescript": "^5.3.3",
-    "@clabroche/common-retrigger-all-build": "workspace:*"
+    "typescript": "^5.3.3"
   }
 }
