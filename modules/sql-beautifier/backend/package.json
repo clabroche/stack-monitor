@@ -2,7 +2,12 @@
   "name": "@clabroche/modules-sql-beautifier-backend",
   "version": "1.0.0",
   "description": "SQL Beautifier module backend",
+  "repository": "https://github.com/clabroche/stack-monitor",
   "main": "index.js",
+  "private": true,
+  "scripts": {
+    "test": "echo \"Error: no test specified\""
+  },
   "dependencies": {
     "@clabroche/common-express": "workspace:*",
     "@clabroche/common-express-error-handler": "workspace:*",
@@ -13,6 +18,7 @@
   "devDependencies": {
     "@types/express": "^4.17.21",
     "@types/node": "^20.11.19",
-    "typescript": "^5.3.3"
+    "typescript": "^5.3.3",
+    "@clabroche/common-retrigger-all-build": "workspace:*"
   }
 }

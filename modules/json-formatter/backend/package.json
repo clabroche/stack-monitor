@@ -2,6 +2,7 @@
   "name": "@clabroche/modules-json-formatter-backend",
   "version": "1.0.0",
   "description": "JSON Formatter Enhanced Backend Module",
+  "repository": "https://github.com/clabroche/stack-monitor",
   "main": "index.js",
   "private": true,
   "scripts": {
@@ -12,6 +13,9 @@
     "express": "^4.18.2",
     "js-yaml": "^4.1.0",
     "xml-js": "^1.6.11"
+  },
+  "devDependencies": {
+    "@clabroche/common-retrigger-all-build": "workspace:*"
   },
   "author": "",
   "license": "ISC"

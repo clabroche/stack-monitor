@@ -2,13 +2,19 @@
   "name": "@clabroche/modules-sql-beautifier-front",
   "version": "1.0.0",
   "description": "SQL Beautifier module frontend",
+  "repository": "https://github.com/clabroche/stack-monitor",
   "main": "src/SQLBeautifier.vue",
+  "private": true,
+  "scripts": {
+    "test": "echo \"Error: no test specified\""
+  },
   "dependencies": {
     "axios": "^1.6.7",
     "debounce": "^2.0.0"
   },
   "devDependencies": {
     "@types/node": "^20.11.19",
-    "typescript": "^5.3.3"
+    "typescript": "^5.3.3",
+    "@clabroche/common-retrigger-all-build": "workspace:*"
   }
 }
