@@ -2114,8 +2114,9 @@ __metadata:
   resolution: "@clabroche/modules-base64-front@workspace:modules/base64/front"
   dependencies:
     "@clabroche/common-retrigger-all-build": "workspace:*"
-    primevue: "npm:^3.46.0"
-    vue: "npm:^3.4.18"
+    axios: "npm:^1.4.0"
+    primevue: "npm:^3.30.0"
+    vue: "npm:^3.3.4"
     vue-eslint-parser: "npm:^9.4.2"
   languageName: unknown
   linkType: soft
@@ -18493,7 +18494,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"primevue@npm:^3.37.0, primevue@npm:^3.46.0":
+"primevue@npm:^3.30.0, primevue@npm:^3.37.0, primevue@npm:^3.46.0":
   version: 3.53.1
   resolution: "primevue@npm:3.53.1"
   peerDependencies:
