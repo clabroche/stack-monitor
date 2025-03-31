@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@clabroche/common-express": "workspace:*",
+    "@clabroche/modules-base64-backend": "workspace:*",
     "@clabroche/modules-bugs-backend": "workspace:*",
     "@clabroche/modules-configuration-backend": "workspace:*",
     "@clabroche/modules-dev-ops-backend": "workspace:*",

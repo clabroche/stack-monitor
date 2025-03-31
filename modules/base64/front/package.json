@@ -1,0 +1,20 @@
+{
+  "name": "@clabroche/modules-base64-front",
+  "version": "1.0.0",
+  "repository": "https://github.com/clabroche/stack-monitor",
+  "private": true,
+  "main": "./src/Base64.vue",
+  "types": "./src/Base64.vue",
+  "scripts": {
+    "test": ""
+  },
+  "dependencies": {
+    "primevue": "^3.30.0",
+    "vue": "^3.3.4",
+    "axios": "^1.4.0"
+  },
+  "devDependencies": {
+    "@clabroche/common-retrigger-all-build": "workspace:*",
+    "vue-eslint-parser": "^9.4.2"
+  }
+}

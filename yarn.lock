@@ -2098,6 +2098,28 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@clabroche/modules-base64-backend@workspace:*, @clabroche/modules-base64-backend@workspace:modules/base64/backend":
+  version: 0.0.0-use.local
+  resolution: "@clabroche/modules-base64-backend@workspace:modules/base64/backend"
+  dependencies:
+    "@clabroche/common-retrigger-all-build": "workspace:*"
+    "@clabroche/modules-plugins-loader-front": "workspace:*"
+    "@types/express": "npm:^4.17.21"
+    express: "npm:^4.18.2"
+  languageName: unknown
+  linkType: soft
+
+"@clabroche/modules-base64-front@workspace:*, @clabroche/modules-base64-front@workspace:modules/base64/front":
+  version: 0.0.0-use.local
+  resolution: "@clabroche/modules-base64-front@workspace:modules/base64/front"
+  dependencies:
+    "@clabroche/common-retrigger-all-build": "workspace:*"
+    primevue: "npm:^3.46.0"
+    vue: "npm:^3.4.18"
+    vue-eslint-parser: "npm:^9.4.2"
+  languageName: unknown
+  linkType: soft
+
 "@clabroche/modules-bugs-backend@workspace:*, @clabroche/modules-bugs-backend@workspace:modules/bugs/backend":
   version: 0.0.0-use.local
   resolution: "@clabroche/modules-bugs-backend@workspace:modules/bugs/backend"
@@ -2595,6 +2617,7 @@ __metadata:
   dependencies:
     "@clabroche/common-express": "workspace:*"
     "@clabroche/common-retrigger-all-build": "workspace:*"
+    "@clabroche/modules-base64-backend": "workspace:*"
     "@clabroche/modules-bugs-backend": "workspace:*"
     "@clabroche/modules-configuration-backend": "workspace:*"
     "@clabroche/modules-dev-ops-backend": "workspace:*"
@@ -2631,6 +2654,7 @@ __metadata:
   dependencies:
     "@clabroche/common-retrigger-all-build": "workspace:*"
     "@clabroche/common-typings": "workspace:*"
+    "@clabroche/modules-base64-front": "workspace:*"
     "@clabroche/modules-bugs-front": "workspace:*"
     "@clabroche/modules-configuration-front": "workspace:*"
     "@clabroche/modules-dev-ops-front": "workspace:*"

@@ -10,6 +10,7 @@
   },
   "devDependencies": {
     "@clabroche/common-retrigger-all-build": "workspace:*",
+    "@clabroche/modules-base64-front": "workspace:*",
     "@clabroche/modules-bugs-front": "workspace:*",
     "@clabroche/modules-configuration-front": "workspace:*",
     "@clabroche/modules-dev-ops-front": "workspace:*",
@@ -45,6 +46,7 @@
   },
   "dependencies": {
     "@clabroche/common-typings": "workspace:*",
+    "@clabroche/modules-base64-front": "workspace:*",
     "@clabroche/modules-bugs-front": "workspace:*",
     "@clabroche/modules-configuration-front": "workspace:*",
     "@clabroche/modules-dev-ops-front": "workspace:*",

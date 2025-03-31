@@ -1,5 +1,6 @@
 const plugins = {
   bugs: require('@clabroche/modules-bugs-backend'),
+  base64: require('@clabroche/modules-base64-backend'),
   configuration: require('@clabroche/modules-configuration-backend'),
   devOps: require('@clabroche/modules-dev-ops-backend'),
   diff: require('@clabroche/modules-diff-backend'),

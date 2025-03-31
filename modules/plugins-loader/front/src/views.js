@@ -8,6 +8,7 @@ import OpenAI from '@clabroche/modules-openai-front/src/OpenAi.vue';
 import Toolbox from '@clabroche/modules-toolbox-front/src/Toolbox.vue';
 import UUID from '@clabroche/modules-uuid-front/src/UUID.vue';
 import HttpClient from '@clabroche/modules-http-client-front/src/HttpClient.vue';
+import Base64 from '@clabroche/modules-base64-front/src/Base64.vue';
 import JWT from '@clabroche/modules-jwt-front/src/Index.vue';
 import Mongo from '@clabroche/modules-mongo-front/src/Index.vue';
 import NodeREPL from '@clabroche/modules-node-repl-front/src/Index.vue';
@@ -37,6 +38,7 @@ const toolboxPlugins = [
   { name: 'Regex', component: Regex },
   { name: 'UUID', component: UUID },
   { name: 'HttpClient', component: HttpClient },
+  { name: 'Base64', component: Base64 },
   { name: 'JSONFormatter', component: JSONFormatter },
   { name: 'Diff', component: Diff },
   { name: 'NodeREPL', component: NodeREPL },
