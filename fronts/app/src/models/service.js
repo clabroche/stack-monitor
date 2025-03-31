@@ -15,29 +15,43 @@ class Service {
   }
 
   /**
-   * @param {import('@clabroche/common-typings').NonFunctionProperties<Service>} service} service
+   * @param {import('@clabroche/common-typings').NonFunctionProperties<Service>} service
    */
   updateFields(service) {
     if (!service.label) throw new Error('A service should have a label');
+    
+    // Update simple properties
     /** @type {string} */
     this.label = service.label;
     /** @type {string} */
     this.description = service.description || '';
     /** @type {string} */
     this.url = service.url || '';
-    /**
-     * @type {{
-     *  enabled: boolean,
-     *  url: string,
-     *  interval: string,
-     *  method: 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE'
-     *  returnCode: number,
-     *  responseText: string,
-     *  timeout: number,
-     *  startAfter: number
-     * }}
-     */
-    this.health = service.health || {
+    /** @type {string} */
+    this.openapiURL = service.openapiURL || '';
+    /** @type {string} */
+    this.spawnCmd = service.spawnCmd || '';
+    /** @type {boolean} */
+    this.enabled = service.enabled || false;
+    /** @type {boolean} */
+    this.crashed = service.crashed || false;
+    /** @type {boolean} */
+    this.exited = service.exited || false;
+
+    // Update arrays of primitives
+    /** @type {string[]} */
+    this.groups = service.groups || [];
+    /** @type {string[]} */
+    this.parsers = service.parsers || [];
+    /** @type {string[]} */
+    this.urls = service.urls || [];
+    /** @type {string[]} */
+    this.spawnArgs = service.spawnArgs || [];
+    
+    // Update complex objects while preserving references
+    // Health object
+    if (!this.health) this.health = {};
+    this._updateObjectWithReferences(this.health, service.health || {
       enabled: false,
       url: '',
       interval: '',
@@ -46,27 +60,11 @@ class Service {
       responseText: '',
       timeout: 0,
       startAfter: 0,
-    };
-    /** @type {string[]} */
-    this.groups = service.groups || [];
-    /** @type {string[]} */
-    this.parsers = service.parsers || [];
-    /** @type {string[]} */
-    this.urls = service.urls || [];
-    /** @type {string} */
-    this.openapiURL = service.openapiURL || '';
-    /**
-     * @type {{
-     *   home: string,
-     *   remote: string,
-     *   branches: {name: string, merged: boolean, canDelete: boolean, isRemote: boolean}[],
-     *   stash: string[],
-     *   delta: number | null,
-     *   currentBranch: string,
-     *   status: []
-     * }}
-     * */
-    this.git = service.git || {
+    });
+    
+    // Git object
+    if (!this.git) this.git = {};
+    this._updateObjectWithReferences(this.git, service.git || {
       home: '',
       remote: '',
       branches: [],
@@ -74,38 +72,160 @@ class Service {
       delta: 0,
       currentBranch: '',
       status: [],
-    };
-    /** @type {string} */
-    this.spawnCmd = service.spawnCmd || '';
-    /** @type {string[]} */
-    this.spawnArgs = service.spawnArgs || [];
-    /** @type {Record<any, any>} */
-    this.spawnOptions = service.spawnOptions || {
+    });
+    
+    // SpawnOptions object
+    if (!this.spawnOptions) this.spawnOptions = {};
+    this._updateObjectWithReferences(this.spawnOptions, service.spawnOptions || {
       cwd: '',
       env: '',
-    };
-    /** @type {Array<Record<any, any>>} */
-    this.commands = service.commands || [];
-    /** @type {Array<Record<any, any>>} */
-    this.shortcuts = service.shortcuts || [];
-    /** @type {{[key:string]: {[key:string]: {value: string, override: string, systemOverride?: string, prefix?: string, suffix?: string}}}} */
-    this.envs = service.envs || {}
-    /** @type {boolean} */
-    this.enabled = service.enabled || false;
-    /** @type {boolean} */
-    this.crashed = service.crashed || false;
-    /** @type {boolean} */
-    this.exited = service.exited || false;
+    });
+    
+    // Commands array of objects
+    if (!this.commands) this.commands = [];
+    if (service.commands) {
+      this._updateArrayWithReferences(this.commands, service.commands, 'spawnCmd');
+    } else {
+      this.commands.length = 0;
+    }
+    
+    // Shortcuts array of objects
+    if (!this.shortcuts) this.shortcuts = [];
+    if (service.shortcuts) {
+      this._updateArrayWithReferences(this.shortcuts, service.shortcuts, 'label');
+    } else {
+      this.shortcuts.length = 0;
+    }
+    
+    // Envs object (nested objects)
+    if (!this.envs) this.envs = {};
+    this._updateObjectWithReferences(this.envs, service.envs || {});
+    
+    // Root path
     /** @type {string} */
     this.rootPath = service.rootPath || this.commands?.[0]?.spawnOptions?.cwd || '';
-    /** @type {{enabled: true, name: string, build: string, volumes: string[], ignoreVolumes: string[], ports: string[], bootstrap: {commands: {cmd: string,user: string,entrypoint: string,}[]}}} */
-    this.container = service.container;
-    /** @type {Record<string, string>} */
-    this.meta = service.meta || {};
-    if (this.container) {
-      if (!this.container.volumes?.length) this.container.volumes = [];
-      if (!this.container.ignoreVolumes?.length) this.container.ignoreVolumes = [];
+    
+    // Container object
+    if (service.container) {
+      if (!this.container) this.container = {};
+      this._updateObjectWithReferences(this.container, service.container);
+      
+      if (!this.container.volumes) this.container.volumes = [];
+      if (!this.container.ignoreVolumes) this.container.ignoreVolumes = [];
+    } else {
+      this.container = service.container;
     }
+    
+    // Meta object
+    if (!this.meta) this.meta = {};
+    this._updateObjectWithReferences(this.meta, service.meta || {});
+  }
+
+  /**
+   * Updates an array while preserving object references when possible
+   * @param {Array<Record<string, any>>} existingArray - The current array to update
+   * @param {Array<Record<string, any>>} newArray - The new array with updated data
+   * @param {string} idField - The field to use as an identifier
+   * @private
+   */
+  _updateArrayWithReferences(existingArray, newArray, idField) {
+    if (!existingArray || !newArray) return;
+    
+    // Create a map of existing items by identifier
+    const existingMap = {};
+    existingArray.forEach(item => {
+      if (item && item[idField]) {
+        existingMap[item[idField]] = item;
+      }
+    });
+    
+    // Clear the array but maintain the reference
+    existingArray.length = 0;
+    
+    // Add items from the new array, preserving references where possible
+    newArray.forEach(newItem => {
+      if (newItem && newItem[idField] && existingMap[newItem[idField]]) {
+        // Update existing item
+        const existingItem = existingMap[newItem[idField]];
+        this._updateObjectWithReferences(existingItem, newItem);
+        existingArray.push(existingItem);
+      } else {
+        // Add new item
+        existingArray.push(newItem);
+      }
+    });
+  }
+
+  /**
+   * Updates an object while preserving nested references when possible
+   * @param {Record<string, any>} existingObj - The current object to update
+   * @param {Record<string, any>} newObj - The new object with updated data
+   * @private
+   */
+  _updateObjectWithReferences(existingObj, newObj) {
+    if (!existingObj || !newObj) return;
+    
+    // Handle removals - remove properties that no longer exist
+    Object.keys(existingObj).forEach(key => {
+      if (!(key in newObj)) {
+        delete existingObj[key];
+      }
+    });
+    
+    // Update or add properties
+    Object.keys(newObj).forEach(key => {
+      const newValue = newObj[key];
+      
+      // Skip if the value is undefined
+      if (newValue === undefined) return;
+      
+      // If the property doesn't exist yet in the target, just assign it
+      if (!(key in existingObj)) {
+        existingObj[key] = newValue;
+        return;
+      }
+      
+      const existingValue = existingObj[key];
+      
+      // Handle different types
+      if (newValue === null) {
+        // Set null values directly
+        existingObj[key] = null;
+      } else if (Array.isArray(newValue)) {
+        // Handle arrays
+        if (!Array.isArray(existingValue)) {
+          // If the existing value is not an array, replace it
+          existingObj[key] = newValue;
+        } else if (
+          newValue.length > 0 && 
+          typeof newValue[0] === 'object' && 
+          newValue[0] !== null
+        ) {
+          // For arrays of objects, try to find a common id field
+          const sampleObj = newValue[0];
+          const possibleIdFields = ['id', 'name', 'label', 'spawnCmd', 'key'];
+          const idField = possibleIdFields.find(field => field in sampleObj) || Object.keys(sampleObj)[0];
+          
+          this._updateArrayWithReferences(existingValue, newValue, idField);
+        } else {
+          // For arrays of primitives, replace the contents
+          existingValue.length = 0;
+          newValue.forEach(item => existingValue.push(item));
+        }
+      } else if (typeof newValue === 'object') {
+        // Handle objects (recursively)
+        if (typeof existingValue !== 'object' || existingValue === null) {
+          // If the existing value is not an object, replace it
+          existingObj[key] = newValue;
+        } else {
+          // Recursively update the nested object
+          this._updateObjectWithReferences(existingValue, newValue);
+        }
+      } else {
+        // Handle primitives (direct assignment)
+        existingObj[key] = newValue;
+      }
+    });
   }
 
   async updateGit() {

@@ -19,9 +19,29 @@ function Stack() {
 Stack.prototype.loadServices = async function () {
   /** @type {{data: import('./service').default[]}} */
   const { data: services } = await axios.get('/stack/services');
-  this.services.value = services.filter((s) => s).map((service) => new Service(service));
+  
+  // Keep track of current services by label for reference preservation
+  const existingServicesByLabel = {};
+  this.services.value.forEach(service => {
+    existingServicesByLabel[service.label] = service;
+  });
+  
+  // Update or create services
+  const updatedServices = services.filter((s) => s).map((serviceData) => {
+    if (existingServicesByLabel[serviceData.label]) {
+      // Update existing service
+      existingServicesByLabel[serviceData.label].updateFields(serviceData);
+      return existingServicesByLabel[serviceData.label];
+    } else {
+      // Create new service
+      return new Service(serviceData);
+    }
+  });
+  
+  this.services.value = updatedServices;
   return this.services.value;
 };
+
 Stack.prototype.scenarios = async function (type, data) {
   const { data: flows } = await axios.get('/red/flows');
   return flows.filter(flow => {
