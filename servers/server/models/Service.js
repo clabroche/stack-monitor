@@ -176,7 +176,9 @@ function Service(service, Stack, { isUpdate } = { isUpdate: false }) {
       environments.forEach((environment) => {
         const envs = this.envs[environment.label] || {}
         Object.keys(envs).forEach((key) => {
-          const env = envs[key] 
+          const env = envs[key]
+          const tag = extractTag(env.value);
+          if (tag) envs[key].override = `{{${tag}_STACK_MONITOR_OVERRIDE}}`;
           const override = overrides[environment.label]?.[key];
           if (!env || !override) return
           envs[key].override = override
@@ -906,6 +908,11 @@ function checkport(_port) {
     });
     s.listen(_port);
   });
+}
+
+function extractTag(field) {
+  const extractedTag = /{{(.*)}}/gi.exec(field)?.[1]?.trim();
+  return extractedTag || '';
 }
 
 module.exports = Service;

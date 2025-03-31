@@ -1,6 +1,7 @@
 const PromiseB = require('bluebird');
-const { cloneDeep, merge } = require('lodash');
+const { cloneDeep, merge, over } = require('lodash');
 const dbs = require('../helpers/dbs');
+const { existsSync } = require('fs');
 
 class Environment {
   /**
@@ -25,6 +26,8 @@ class Environment {
 
   static async load(label, Stack) {
     const environmentDB = await dbs.getDb(`envs/${label}`).read();
+    const overridesDB = dbs.getDb(`overrides/${label}-environment`)
+    if(!existsSync(await overridesDB.getPath())) await new Environment(environmentDB).save()
     const overrides = await dbs.getDb(`overrides/${label}-environment`).read();
     merge(environmentDB?.envs || {}, overrides?.envs || {});
     return new Environment(environmentDB, Stack);
