@@ -214,8 +214,6 @@
       </div>
     </section-cmp>
     
-    <SpeedDial :model="speedDialItems" :radius="120" type="semi-circle" direction="up-left" :style="{ right: '1rem', bottom: '1rem' }" buttonClass="p-button-info" />
-
     <!-- Modal for tree visualization -->
     <Dialog v-model:visible="showJsonCrack" header="JSON Visualizer" modal maximizable :style="{width: '90vw'}" :contentStyle="{height: '80vh'}">
       <iframe width="100%" height="100%" ref="jsoncrackEmbed" id="jsoncrackEmbed" :src="`https://jsoncrack.com/widget`" />
@@ -849,19 +847,21 @@ const queryJson = async () => {
 }
 
 .editor {
-  height: calc(100vh - 250px);
   margin-bottom: 0.5rem;
   border: 1px solid var(--surface-border);
   border-radius: 6px;
+  flex-grow: 1;
 }
 
 .editor-sm {
-  height: calc(100vh - 350px);
   margin-bottom: 0.5rem;
   border: 1px solid var(--surface-border);
   border-radius: 6px;
 }
 
+.actions {
+  height: 40px;
+}
 .actions, .conversion-options, .validation-actions {
   margin-top: 10px;
   display: flex;
