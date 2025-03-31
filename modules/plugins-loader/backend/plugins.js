@@ -8,6 +8,7 @@ const plugins = {
   git: require('@clabroche/modules-git-backend'),
   github: require('@clabroche/modules-github-backend'),
   globalScripts: require('@clabroche/modules-global-scripts-backend'),
+  httpClient: require('@clabroche/modules-http-client-backend'),
   jsonFormatter: require('@clabroche/modules-json-formatter-backend'),
   jwt: require('@clabroche/modules-jwt-backend'),
   kanban: require('@clabroche/modules-kanban-backend'),

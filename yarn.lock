@@ -2348,6 +2348,29 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@clabroche/modules-http-client-backend@workspace:*, @clabroche/modules-http-client-backend@workspace:modules/http-client/backend":
+  version: 0.0.0-use.local
+  resolution: "@clabroche/modules-http-client-backend@workspace:modules/http-client/backend"
+  dependencies:
+    "@clabroche/common-retrigger-all-build": "workspace:*"
+    "@clabroche/modules-plugins-loader-front": "workspace:*"
+    "@types/express": "npm:^4.17.21"
+    axios: "npm:^1.6.0"
+    express: "npm:^4.18.2"
+  languageName: unknown
+  linkType: soft
+
+"@clabroche/modules-http-client-front@workspace:*, @clabroche/modules-http-client-front@workspace:modules/http-client/front":
+  version: 0.0.0-use.local
+  resolution: "@clabroche/modules-http-client-front@workspace:modules/http-client/front"
+  dependencies:
+    "@clabroche/common-retrigger-all-build": "workspace:*"
+    primevue: "npm:^3.46.0"
+    vue: "npm:^3.4.18"
+    vue-eslint-parser: "npm:^9.4.2"
+  languageName: unknown
+  linkType: soft
+
 "@clabroche/modules-json-formatter-backend@workspace:*, @clabroche/modules-json-formatter-backend@workspace:modules/json-formatter/backend":
   version: 0.0.0-use.local
   resolution: "@clabroche/modules-json-formatter-backend@workspace:modules/json-formatter/backend"
@@ -2583,6 +2606,7 @@ __metadata:
     "@clabroche/modules-github-backend": "workspace:*"
     "@clabroche/modules-global-scripts-backend": "workspace:*"
     "@clabroche/modules-help-backend": "workspace:*"
+    "@clabroche/modules-http-client-backend": "workspace:*"
     "@clabroche/modules-json-formatter-backend": "workspace:*"
     "@clabroche/modules-jwt-backend": "workspace:*"
     "@clabroche/modules-kanban-backend": "workspace:*"
@@ -2618,6 +2642,7 @@ __metadata:
     "@clabroche/modules-github-front": "workspace:*"
     "@clabroche/modules-global-scripts-front": "workspace:*"
     "@clabroche/modules-help-front": "workspace:*"
+    "@clabroche/modules-http-client-front": "workspace:*"
     "@clabroche/modules-json-formatter-front": "workspace:*"
     "@clabroche/modules-jwt-front": "workspace:*"
     "@clabroche/modules-kanban-front": "workspace:*"
@@ -8653,7 +8678,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios@npm:^1.5.0, axios@npm:^1.6.7":
+"axios@npm:^1.5.0, axios@npm:^1.6.0, axios@npm:^1.6.7":
   version: 1.8.4
   resolution: "axios@npm:1.8.4"
   dependencies:
@@ -18444,7 +18469,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"primevue@npm:^3.37.0":
+"primevue@npm:^3.37.0, primevue@npm:^3.46.0":
   version: 3.53.1
   resolution: "primevue@npm:3.53.1"
   peerDependencies:
