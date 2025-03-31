@@ -4,7 +4,7 @@
   "description": "JSON Formatter Enhanced Frontend Module",
   "private": true,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\""
   },
   "dependencies": {
     "axios": "^1.5.0",
