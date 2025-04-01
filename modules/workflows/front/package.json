@@ -13,6 +13,6 @@
     "vue-router": "^4.2.5"
   },
   "dependencies": {
-    "primevue": "^4.2.5"
+    "primevue": "^4.3.3"
   }
 }

@@ -89,6 +89,7 @@
   "dependencies": {
     "@octokit/core": "^6.1.2",
     "@octokit/plugin-rest-endpoint-methods": "^13.2.6",
+    "primevue": "^4.3.3",
     "quill": "^2.0.3"
   }
 }
