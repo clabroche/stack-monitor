@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.2.0](https://github.com/clabroche/stack-monitor/compare/v2.1.5...v2.2.0) (2025-04-01)
+
+### Bug Fixes
+
+* **package:** update test script in package.json files to remove exit code ([b6fded2](https://github.com/clabroche/stack-monitor/commit/b6fded2acf6130a992e461c43c61dd44b3fbbbb8))
+
+### Features
+
+* **node-repl:** refactor REPL backend and frontend with enhanced features ([243f769](https://github.com/clabroche/stack-monitor/commit/243f769f5ef80ee1de8c7a6febfc4cff558c2eaf))
+
 ## [2.1.1](https://github.com/clabroche/stack-monitor/compare/v2.1.0...v2.1.1) (2025-02-11)
 
 **Note:** Version bump only for package @clabroche/modules-node-repl-backend

@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.2.0](https://github.com/clabroche/stack-monitor/compare/v2.1.5...v2.2.0) (2025-04-01)
+
+### Features
+
+* **jwt:** implement JWT toolkit with decoding, verification, generation, and analysis features ([5467a6d](https://github.com/clabroche/stack-monitor/commit/5467a6dd4dfa3fd1ba8270187ffcc9a952ac7ba4))
+
 ## [2.0.5](https://github.com/clabroche/stack-monitor/compare/v2.0.4...v2.0.5) (2025-01-04)
 
 ### Bug Fixes

@@ -1,6 +1,6 @@
 {
   "name": "@clabroche/modules-git-backend",
-  "version": "2.1.1",
+  "version": "2.2.0",
   "repository": "https://github.com/clabroche/stack-monitor",
   "private": true,
   "scripts": {

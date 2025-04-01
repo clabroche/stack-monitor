@@ -1,6 +1,6 @@
 {
   "name": "@clabroche/modules-node-repl-backend",
-  "version": "1.0.0",
+  "version": "2.2.0",
   "description": "",
   "repository": "https://github.com/clabroche/stack-monitor",
   "main": "index.js",

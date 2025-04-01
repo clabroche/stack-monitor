@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.2.0](https://github.com/clabroche/stack-monitor/compare/v2.1.5...v2.2.0) (2025-04-01)
+
+### Features
+
+* **uuid:** enhance UUID generation with customizable options and add CopyButton component ([eb4b19d](https://github.com/clabroche/stack-monitor/commit/eb4b19d7a7cbf3da0f75cdda4d73d365cdbe6fc5))
+
 ## [2.1.1](https://github.com/clabroche/stack-monitor/compare/v2.1.0...v2.1.1) (2025-02-11)
 
 **Note:** Version bump only for package @clabroche/modules-uuid-backend

@@ -8,9 +8,8 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 ### Bug Fixes
 
 * **stack:** update package.json ([9cda995](https://github.com/clabroche/stack-monitor/commit/9cda9955878501659bb9e70c539dae0494b00b30))
-
-# [2.1.0](https://github.com/clabroche/stack-monitor/compare/v2.0.17...v2.1.0) (2025-01-31)
+* **yarn:** update yarn.lock ([5d24e89](https://github.com/clabroche/stack-monitor/commit/5d24e89192508f716ca4fae99d62e5db8dd3813f))
 
 ### Features
 
-* **nodered:** add nodered into app ([f897eb2](https://github.com/clabroche/stack-monitor/commit/f897eb2c4a9128e0d4615f6765d3ef0ce1d2ca3e))
+* **base64:** add Base64 encoding/decoding module with frontend and backend support ([035aed5](https://github.com/clabroche/stack-monitor/commit/035aed5ae0a598ba81a32339ed04f4b1061637fb))

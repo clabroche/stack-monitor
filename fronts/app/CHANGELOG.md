@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.2.0](https://github.com/clabroche/stack-monitor/compare/v2.1.5...v2.2.0) (2025-04-01)
+
+### Bug Fixes
+
+* **service:** refont all settings ([b266912](https://github.com/clabroche/stack-monitor/commit/b266912ec38be80e531866e46b4401337557f186))
+* **stack:** update package.json ([9cda995](https://github.com/clabroche/stack-monitor/commit/9cda9955878501659bb9e70c539dae0494b00b30))
+
+### Features
+
+* **json-formatter:** enhance JSON Formatter module with new features and improved UI ([fe6455a](https://github.com/clabroche/stack-monitor/commit/fe6455a213ca0690100877dc76ea6658ef0cbc4e))
+* **sql-beautifier:** add SQL beautifier module for formatting SQL queries ([e4b4e2d](https://github.com/clabroche/stack-monitor/commit/e4b4e2dd332cfa120c70e382b799d81f655e24ff))
+* **uuid:** enhance UUID generation with customizable options and add CopyButton component ([eb4b19d](https://github.com/clabroche/stack-monitor/commit/eb4b19d7a7cbf3da0f75cdda4d73d365cdbe6fc5))
+
 ## [2.1.1](https://github.com/clabroche/stack-monitor/compare/v2.1.0...v2.1.1) (2025-02-11)
 
 ### Bug Fixes

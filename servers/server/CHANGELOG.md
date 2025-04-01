@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.2.0](https://github.com/clabroche/stack-monitor/compare/v2.1.5...v2.2.0) (2025-04-01)
+
+### Features
+
+* **environment:** add support for environment overrides and extract tags for service configurations ([0c2c58c](https://github.com/clabroche/stack-monitor/commit/0c2c58c8ee45c40c785f88a51fe220ae6227d36b))
+
 ## [2.1.5](https://github.com/clabroche/stack-monitor/compare/v2.1.4...v2.1.5) (2025-03-21)
 
 **Note:** Version bump only for package @clabroche/servers-server
