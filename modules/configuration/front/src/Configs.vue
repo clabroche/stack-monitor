@@ -13,38 +13,57 @@
     <TabView v-model:activeIndex="activeTabIndex">
       <TabPanel>
         <template #header>
-          <i class="fas fa-home mr-2"></i>
-          <span>General</span>
+          <div style="display: flex; align-items: center;">
+            <i class="fas fa-home"></i>
+            <span style="margin-left: 10px;">General</span>
+          </div>
         </template>
-        <GeneralTab :service="service" v-model:expandedKeys="expandedKeys" />
+        <GeneralTab :service="service" />
       </TabPanel>
       <TabPanel>
         <template #header>
-          <i class="fas fa-terminal mr-2"></i>
-          <span>Commands</span>
+          <div style="display: flex; align-items: center;">
+            <i class="fas fa-terminal"></i>
+            <span style="margin-left: 10px;">Commands</span>
+          </div>
         </template>
-        <CommandsTab :service="service" v-model:expanded-keys="expandedKeys" />
+        <CommandsTab :service="service" />
       </TabPanel>
       <TabPanel>
         <template #header>
-          <i class="fas fa-bolt mr-2"></i>
-          <span>Shortcuts</span>
+          <div style="display: flex; align-items: center;">
+            <i class="fas fa-bolt"></i>
+            <span style="margin-left: 10px;">Shortcuts</span>
+          </div>
         </template>
-        <ShortcutsTab :service="service" v-model:expandedKeys="expandedKeys" />
+        <ShortcutsTab :service="service" />
       </TabPanel>
       <TabPanel>
         <template #header>
-          <i class="fab fa-docker mr-2"></i>
-          <span>Docker</span>
+          <div style="display: flex; align-items: center;">
+            <i class="fas fa-heartbeat"></i>
+            <span style="margin-left: 10px;">Health Check</span>
+          </div>
         </template>
-        <DockerTab :service="service" v-model:expandedKeys="expandedKeys" />
+        <HealthCheckTab :service="service" />
       </TabPanel>
       <TabPanel>
         <template #header>
-          <i class="fas fa-cog mr-2"></i>
-          <span>Environment</span>
+          <div style="display: flex; align-items: center;">
+            <i class="fab fa-docker"></i>
+            <span style="margin-left: 10px;">Docker</span>
+          </div>
         </template>
-        <EnvTab :service="service" v-model:expandedKeys="expandedKeys" />
+        <DockerTab :service="service" />
+      </TabPanel>
+      <TabPanel>
+        <template #header>
+          <div style="display: flex; align-items: center;">
+            <i class="fas fa-cog"></i>
+            <span style="margin-left: 10px;">Environment</span>
+          </div>
+        </template>
+        <EnvTab :service="service" />
       </TabPanel>
     </TabView>
 
@@ -129,6 +148,7 @@ import GeneralTab from './GeneralTab.vue';
 import ShortcutsTab from './ShortcutsTab.vue';
 import DockerTab from './DockerTab.vue';
 import EnvTab from './EnvTab.vue';
+import HealthCheckTab from './HealthCheckTab.vue';
 
 export default {
   components: {
@@ -153,6 +173,7 @@ export default {
     ShortcutsTab,
     DockerTab,
     EnvTab,
+    HealthCheckTab,
     TabView,
     TabPanel
   },
@@ -191,15 +212,7 @@ export default {
     }
     const activeTabIndex = ref(0);
 
-    const expandedKeys = ref({
-      general: true,
-      commands: true,
-    });
-    const expandAll = () => {
-      expandedKeys.value = { ...expandedKeys.value };
-    };
     onMounted(async () => {
-      expandAll();
       currentEnvironment.value = await stack.getEnvironment();
       parsers.value = await Parsers.all();
     });
@@ -232,7 +245,6 @@ export default {
       modalShowEnvRef,
       exportEnv,
       parseRawEnvs,
-      expandedKeys,
       activeTabIndex,
       removeModalRef,
       save,
@@ -309,6 +321,12 @@ $grey: var(--system-border-borderColor);
     text-decoration:none;
   }
 }
+
+/* Tab panel icons spacing */
+:deep(.p-tabview-nav li .p-tabview-nav-link i) {
+  margin-right: 10px;
+}
+
 .description {
   color: var(--system-tertiary-color);
   white-space: nowrap;
