@@ -10,62 +10,36 @@
       </div>
     </div>
 
-    <TabView v-model:activeIndex="activeTabIndex">
-      <TabPanel>
-        <template #header>
+    <Tabs v-model:value="activeTabIndex" scrollable>
+      <TabList>
+        <Tab v-for="(tab, index) in tabs" :key="index" :value="index">
           <div style="display: flex; align-items: center;">
-            <i class="fas fa-home"></i>
-            <span style="margin-left: 10px;">General</span>
+            <i :class="tab.icon"></i>
+            <span style="margin-left: 10px;">{{ tab.label }}</span>
           </div>
-        </template>
-        <GeneralTab :service="service" />
-      </TabPanel>
-      <TabPanel>
-        <template #header>
-          <div style="display: flex; align-items: center;">
-            <i class="fas fa-terminal"></i>
-            <span style="margin-left: 10px;">Commands</span>
-          </div>
-        </template>
-        <CommandsTab :service="service" />
-      </TabPanel>
-      <TabPanel>
-        <template #header>
-          <div style="display: flex; align-items: center;">
-            <i class="fas fa-bolt"></i>
-            <span style="margin-left: 10px;">Shortcuts</span>
-          </div>
-        </template>
-        <ShortcutsTab :service="service" />
-      </TabPanel>
-      <TabPanel>
-        <template #header>
-          <div style="display: flex; align-items: center;">
-            <i class="fas fa-heartbeat"></i>
-            <span style="margin-left: 10px;">Health Check</span>
-          </div>
-        </template>
-        <HealthCheckTab :service="service" />
-      </TabPanel>
-      <TabPanel>
-        <template #header>
-          <div style="display: flex; align-items: center;">
-            <i class="fab fa-docker"></i>
-            <span style="margin-left: 10px;">Docker</span>
-          </div>
-        </template>
-        <DockerTab :service="service" />
-      </TabPanel>
-      <TabPanel>
-        <template #header>
-          <div style="display: flex; align-items: center;">
-            <i class="fas fa-cog"></i>
-            <span style="margin-left: 10px;">Environment</span>
-          </div>
-        </template>
-        <EnvTab :service="service" />
-      </TabPanel>
-    </TabView>
+        </Tab>
+      </TabList>
+      <TabPanels>
+        <TabPanel :value="0">
+          <GeneralTab :service="service" />
+        </TabPanel>
+        <TabPanel :value="1">
+          <CommandsTab :service="service" />
+        </TabPanel>
+        <TabPanel :value="2">
+          <ShortcutsTab :service="service" />
+        </TabPanel>
+        <TabPanel :value="3">
+          <HealthCheckTab :service="service" />
+        </TabPanel>
+        <TabPanel :value="4">
+          <DockerTab :service="service" />
+        </TabPanel>
+        <TabPanel :value="5">
+          <EnvTab :service="service" />
+        </TabPanel>
+      </TabPanels>
+    </Tabs>
 
   </section-cmp>
   <ModalEditEnvs ref="modalEditEnvsRef" :service="service"></ModalEditEnvs>
@@ -129,7 +103,10 @@ import Select from 'primevue/select';
 import Textarea from 'primevue/textarea';
 import IftaLabel from 'primevue/iftalabel';
 import ToggleSwitch from 'primevue/toggleswitch';
-import TabView from 'primevue/tabview';
+import Tabs from 'primevue/tabs';
+import TabList from 'primevue/tablist';
+import Tab from 'primevue/tab';
+import TabPanels from 'primevue/tabpanels';
 import TabPanel from 'primevue/tabpanel';
 import { v4 as uuid } from 'uuid';
 import { Form, FormField } from '@primevue/forms';
@@ -174,7 +151,10 @@ export default {
     DockerTab,
     EnvTab,
     HealthCheckTab,
-    TabView,
+    Tabs,
+    TabList,
+    Tab,
+    TabPanels,
     TabPanel
   },
   props: {
@@ -191,6 +171,16 @@ export default {
     const currentEnvironment = ref();
     const router = useRouter();
     const parsers = ref([]);
+    const activeTabIndex = ref(0);
+    const tabs = ref([
+      { label: 'General', icon: 'fas fa-home' },
+      { label: 'Commands', icon: 'fas fa-terminal' },
+      { label: 'Shortcuts', icon: 'fas fa-bolt' },
+      { label: 'Health Check', icon: 'fas fa-heartbeat' },
+      { label: 'Docker', icon: 'fab fa-docker' },
+      { label: 'Environment', icon: 'fas fa-cog' }
+    ]);
+    
     const save = () => {
       props.service.save()
         .then(() => notification.next('success', 'Configuration saved'))
@@ -210,7 +200,6 @@ export default {
         }},
       ]
     }
-    const activeTabIndex = ref(0);
 
     onMounted(async () => {
       currentEnvironment.value = await stack.getEnvironment();
@@ -239,6 +228,7 @@ export default {
     const duplicateModalRef = ref();
     const labelOfDuplicatedService = ref('');
     return {
+      tabs,
       duplicateModalRef,
       labelOfDuplicatedService,
       modalEditEnvsRef,
@@ -281,7 +271,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-$grey: var(--system-border-borderColor);
 .header {
   display: flex;
   align-items: center;
@@ -289,135 +278,20 @@ $grey: var(--system-border-borderColor);
   h2 {
     margin: 0;
   }
-  input {
-    height: max-content;
-  }
 }
+
 .line {
   display: flex;
   align-items: center;
-}
-.label {
-  white-space: nowrap;
-  display: flex;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  flex-wrap: wrap;
-  align-items: center;
-  .actions {
-    display: flex;
-    align-items: center;
-    :deep(button) {
-      padding: 0;
-      width: 25px;
-      height: 25px;
-    }
-  }
-  i {
-    margin-left: 5px;
-    font-size: 12px;
-    position: relative;
-    vertical-align:super;
-    text-decoration:none;
-  }
-}
-
-/* Tab panel icons spacing */
-:deep(.p-tabview-nav li .p-tabview-nav-link i) {
-  margin-right: 10px;
-}
-
-.description {
-  color: var(--system-tertiary-color);
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  display: inline-block;
-}
-.column {
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-.line {
-  display: flex;
   justify-content: space-between;
 }
-::v-deep {
-  .p-tree-node-label {
-    flex-grow: 1;
-    overflow: hidden;
-  }
-  .p-tree-node-children {
-    padding: 0 30px
-  }
+
+:deep(button:hover) {
+  background: initial;
+  color: var(--system-accent-backgroundColor1-darkest);
 }
 
-.editable-input {
-  position: relative;
-  width: 100%;
-  
-  &.fluid {
-    width: 100%;
-  }
-  
-  .editable-display {
-    display: flex;
-    align-items: center;
-    padding: 5px 8px;
-    border: 1px solid transparent;
-    border-radius: 4px;
-    min-height: 30px;
-    cursor: pointer;
-    
-    &:hover {
-      background-color: var(--system-neutral-03);
-      border-color: var(--system-border-borderColor);
-      
-      .edit-button {
-        opacity: 1;
-      }
-    }
-    
-    span.placeholder {
-      color: #999;
-      font-style: italic;
-    }
-    
-    .edit-button {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      opacity: 0.3;
-      margin-left: auto;
-      width: 20px;
-      height: 20px;
-      border: none;
-      background: transparent;
-      cursor: pointer;
-      transition: opacity 0.2s;
-      
-      i {
-        font-size: 12px;
-        color: var(--text-color);
-      }
-    }
-  }
-  
-  .editable-field {
-    width: 100%;
-    
-    .editable-input-field {
-      width: 100%;
-      padding: 5px 8px;
-      border: 1px solid var(--primary-color);
-      border-radius: 4px;
-      outline: none;
-      
-      &:focus {
-        box-shadow: 0 0 0 2px rgba(var(--primary-color-rgb), 0.2);
-      }
-    }
-  }
+:deep(button) {
+  border: 0;
 }
 </style>
