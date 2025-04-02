@@ -10,7 +10,7 @@
     "@clabroche/common-retrigger-all-build": "workspace:*",
     "json-tree-view-vue3": "^1.0.1",
     "monaco-editor": "^0.46.0",
-    "vue": "^3.4.18",
+    "vue": "^3.5.13",
     "vue-eslint-parser": "^9.4.2"
   }
 }
