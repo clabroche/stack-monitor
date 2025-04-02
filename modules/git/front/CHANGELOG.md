@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.2.1](https://github.com/clabroche/stack-monitor/compare/v2.2.0...v2.2.1) (2025-04-02)
+
+**Note:** Version bump only for package @clabroche/modules-git-front
+
 ## [2.0.12](https://github.com/clabroche/stack-monitor/compare/v2.0.11...v2.0.12) (2025-01-24)
 
 ### Bug Fixes

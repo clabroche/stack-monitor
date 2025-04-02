@@ -1,6 +1,6 @@
 {
   "name": "@clabroche/modules-documentation-backend",
-  "version": "2.2.0",
+  "version": "2.2.1",
   "repository": "https://github.com/clabroche/stack-monitor",
   "private": true,
   "scripts": {

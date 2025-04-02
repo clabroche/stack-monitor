@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.2.1](https://github.com/clabroche/stack-monitor/compare/v2.2.0...v2.2.1) (2025-04-02)
+
+**Note:** Version bump only for package @clabroche/modules-npm-front
+
 ## [2.0.16](https://github.com/clabroche/stack-monitor/compare/v2.0.15...v2.0.16) (2025-01-24)
 
 ### Bug Fixes
