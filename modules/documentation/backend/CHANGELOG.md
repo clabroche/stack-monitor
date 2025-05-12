@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.2.2](https://github.com/clabroche/stack-monitor/compare/v2.2.1...v2.2.2) (2025-05-12)
+
+### Bug Fixes
+
+* **documentation:** fix documentation insertion ([9ad6911](https://github.com/clabroche/stack-monitor/commit/9ad691166de388776e7c7f0cdaf56d07847a6198))
+
 ## [2.2.1](https://github.com/clabroche/stack-monitor/compare/v2.2.0...v2.2.1) (2025-04-02)
 
 **Note:** Version bump only for package @clabroche/modules-documentation-backend

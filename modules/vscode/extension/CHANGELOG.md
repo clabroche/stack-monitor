@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.2.2](https://github.com/clabroche/stack-monitor/compare/v2.2.1...v2.2.2) (2025-05-12)
+
+### Bug Fixes
+
+* **vscode:** can log with variable name ([4f2224a](https://github.com/clabroche/stack-monitor/commit/4f2224acc2f214a079986d24218ba1e106bc6ee4))
+
 ## [2.0.5](https://github.com/clabroche/stack-monitor/compare/v2.0.4...v2.0.5) (2025-01-04)
 
 ### Bug Fixes
